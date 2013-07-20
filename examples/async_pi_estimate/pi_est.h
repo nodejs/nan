@@ -1,0 +1,1 @@
+double Estimate (int points);
