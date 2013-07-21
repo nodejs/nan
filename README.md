@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.0.1***
+***Current version: 0.1.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 
@@ -112,7 +112,7 @@ class PiWorker : public NanAsyncWorker {
       , Number::New(estimate)
     };
 
-    callback->Run(2, argv);
+    callback->Call(2, argv);
   };
 
  private:
@@ -136,6 +136,8 @@ NAN_METHOD(CalculateAsync) {
 ## API
 
  * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
+ * <a href="#api_nan_getter"><b><code>NAN_GETTER</code></b></a>
+ * <a href="#api_nan_setter"><b><code>NAN_SETTER</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
@@ -144,8 +146,9 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
- * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b></a>
- * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle</code></b></a>
+ * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Local<Value>)</code></b></a>
+ * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
+ * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
  * <a href="#api_nan_dispose"><b><code>NanDispose</code></b></a>
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
@@ -189,6 +192,20 @@ void name(const v8::FunctionCallbackInfo<v8::Value>& args)
 ```
 
 The introduction of `FunctionCallbackInfo` brings additional complications:
+
+<a name="api_nan_getter"></a>
+### NAN_GETTER(methodname)
+
+Use `NAN_GETTER` to declare your V8 accessible getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act like the `args` argument to a `NAN_METHOD` call.
+
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_GETTER`.
+
+<a name="api_nan_setter"></a>
+### NAN_SETTER(methodname)
+
+Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but you also get a `Local<Value>` `value` object to work with.
+
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
 
 <a name="api_nan_return_value"></a>
 ### NanReturnValue(v8::Handle<v8::Value>)
@@ -284,7 +301,7 @@ uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
 ```
 
 <a name="api_nan_throw_error"></a>
-### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message)
+### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local<Value>)
 
 For throwing `Error`, `TypeError` and `RangeError` objects. You should `return` this call:
 
@@ -292,14 +309,23 @@ For throwing `Error`, `TypeError` and `RangeError` objects. You should `return` 
 return NanThrowError("you must supply a callback argument");
 ```
 
+Can also handle any custom object you may want to throw.
+
 <a name="api_nan_new_buffer_handle"></a>
-### v8::Local<v8::Object> NanNewBufferHandle(char *, uint32_t)
+### v8::Local<v8::Object> NanNewBufferHandle(char *, uint32_t), v8::Local<v8::Object> NanNewBufferHandle(uint32_t)
 
 The `Buffer` API has changed a little in Node 0.11, this helper provides consistent access to `Buffer` creation:
 
 ```c++
 NanNewBufferHandle((char*)value.data(), value.size());
 ```
+
+Can also be used to initialize a `Buffer` with just a `size` argument.
+
+<a name="api_nan_has_instance"></a>
+### bool NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)
+
+Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_persistent_to_local"></a>
 ### v8::Local<Type> NanPersistentToLocal(v8::Persistent<Type>&)
@@ -341,7 +367,7 @@ NanAssignPersistent(v8::Object, persistentHandle, obj)
 <a name="api_nan_callback"></a>
 ### NanCallback
 
-Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `v8::Local<v8::Function>` handles is annoyingly tricky. `NanCallback` makes it easier by taking your `Local` handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Run()` method to fetch and execute the callback `Function`.
+Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `v8::Local<v8::Function>` handles is annoyingly tricky. `NanCallback` makes it easier by taking your `Local` handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Call()` method to fetch and execute the callback `Function`.
 
 ```c++
 v8::Local<v8::Function> callbackHandle = callback = args[0].As<v8::Function>();
@@ -354,21 +380,23 @@ You can execute the callback like so:
 
 ```c++
 // no arguments:
-callback->Run(0, NULL);
+callback->Call(0, NULL);
 
 // an error argument:
 v8::Local<v8::Value> argv[] = {
   v8::Exception::Error(v8::String::New("fail!"))
 };
-callback->Run(1, argv);
+callback->Call(1, argv);
 
 // a success argument:
 v8::Local<v8::Value> argv[] = {
   v8::Local<v8::Value>::New(v8::Null()),
   v8::String::New("w00t!")
 };
-callback->Run(2, argv);
+callback->Call(2, argv);
 ```
+
+`NanCallback` also has a `Local<Function> GetCallback()` method that you can use to fetch a local handle to the underlying callback function if you need it.
 
 <a name="api_nan_async_worker"></a>
 ### NanAsyncWorker

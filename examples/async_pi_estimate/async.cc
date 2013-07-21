@@ -30,7 +30,7 @@ class PiWorker : public NanAsyncWorker {
       , Number::New(estimate)
     };
 
-    callback->Run(2, argv);
+    callback->Call(2, argv);
   };
 
  private:

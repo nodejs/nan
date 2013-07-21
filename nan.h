@@ -4,7 +4,18 @@
  * Copyright (c) 2013 Rod Vagg
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.0.1
+ * Version 0.1.0 (current Node unstable: 0.11.4)
+ *
+ * Changelog:
+ *  * 0.1.0 Jul 21 2013
+ *           - Added `NAN_GETTER`, `NAN_SETTER`
+ *           - Added `NanThrowError` with single Local<Value> argument
+ *           - Added `NanNewBufferHandle` with single uint32_t argument
+ *           - Added `NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)`
+ *           - Added `Local<Function> NanCallback#GetFunction()`
+ *           - Added `NanCallback#Call(int, Local<Value>[])`
+ *           - Deprecated `NanCallback#Run(int, Local<Value>[])` in favour of Call
+ *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/
 
@@ -68,6 +79,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
 # define NAN_METHOD(name)                                                      \
     void name(const v8::FunctionCallbackInfo<v8::Value>& args)
+# define NAN_GETTER(name)                                                      \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+      , const v8::PropertyCallbackInfo<v8::Value>& args)
+# define NAN_SETTER(name)                                                      \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+      , v8::Local<v8::Value> value                                             \
+      , const v8::PropertyCallbackInfo<void>& args)
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value);
@@ -83,6 +103,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   inline static void NanThrowError(const char* errmsg) {
     THROW_ERROR(v8::Exception::Error, errmsg);
+  }
+
+  inline static void NanThrowError(v8::Local<v8::Value> error) {
+    NanScope();
+    v8::ThrowException(error);
   }
 
   inline static void NanThrowTypeError(const char* errmsg) {
@@ -102,6 +127,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return node::Buffer::New(data, size);
   }
 
+  static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
+    return node::Buffer::New(size);
+  }
+
   template <class TypeName>
   inline v8::Local<TypeName> NanPersistentToLocal(
      const v8::Persistent<TypeName>& persistent) {
@@ -113,11 +142,26 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     }
   }
 
+  inline bool NanHasInstance(
+        v8::Persistent<v8::FunctionTemplate>& function_template
+      , v8::Handle<v8::Value> value) {
+    return NanPersistentToLocal(function_template)->HasInstance(value);
+  }
+
 #else
 // Node 0.8 and 0.10
 
 # define NAN_METHOD(name)                                                      \
     v8::Handle<v8::Value> name(const v8::Arguments& args)
+# define NAN_GETTER(name)                                                      \
+    v8::Handle<v8::Value> name(                                                \
+        v8::Local<v8::String> property                                         \
+      , const v8::AccessorInfo &args)
+# define NAN_SETTER(name)                                                      \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+      , v8::Local<v8::Value> value                                             \
+      , const v8::AccessorInfo &args)
 
 # define NanScope() v8::HandleScope scope
 # define NanReturnValue(value) return scope.Close(value);
@@ -134,6 +178,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   inline static v8::Handle<v8::Value> NanThrowError(const char* errmsg) {
     THROW_ERROR(v8::Exception::Error, errmsg);
+  }
+
+  inline static v8::Handle<v8::Value> NanThrowError(
+      v8::Local<v8::Value> error) {
+    NanScope();
+    return v8::ThrowException(error);
   }
 
   inline static v8::Handle<v8::Value> NanThrowTypeError(const char* errmsg) {
@@ -164,6 +214,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     }
   }
 
+  inline bool NanHasInstance(
+        v8::Persistent<v8::FunctionTemplate>& function_template
+      , v8::Handle<v8::Value> value) {
+    return function_template->HasInstance(value);
+  }
+
 #endif // node version
 
 class NanCallback {
@@ -180,7 +236,17 @@ class NanCallback {
    handle.Dispose();
   }
 
+  v8::Local<v8::Function> GetFunction () {
+    NanScope();
+    return NanPersistentToLocal(handle).As<v8::Function>();
+  }
+
+  // deprecated
   void Run(int argc, v8::Local<v8::Value> argv[]) {
+    Call(argc, argv);
+  }
+
+  void Call(int argc, v8::Local<v8::Value> argv[]) {
    NanScope();
    v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
        Get(NanSymbol("callback")).As<v8::Function>();
@@ -242,7 +308,7 @@ protected:
   virtual void HandleOKCallback () {
     NanScope();
 
-    callback->Run(0, NULL);
+    callback->Call(0, NULL);
   };
 
   virtual void HandleErrorCallback () {
@@ -251,7 +317,7 @@ protected:
     v8::Local<v8::Value> argv[] = {
         v8::Exception::Error(v8::String::New(errmsg))
     };
-    callback->Run(1, argv);
+    callback->Call(1, argv);
   }
 };
 
