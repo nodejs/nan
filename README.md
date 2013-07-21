@@ -9,6 +9,130 @@ Thanks to the crazy changes in V8 (and some in Node core), keeping native addons
 
 This project also contains some helper utilities that make addon development a bit more pleasant.
 
+ * **[Usage](#usage)**
+ * **[Example](#example)**
+ * **[API](#api)**
+
+<a name="usage"></a>
+## Usage
+
+Simply copy **[nan.h](https://github.com/rvagg/nan/blob/master/nan.h)** from this repository into your project and load it in your source files with `#include "nan.h"`. The version is listed at the top of the file so be sure to check back here regularly for updates.
+
+<a name="example"></a>
+## Example
+
+See **[LevelDOWN](https://github.com/rvagg/node-leveldown/pull/48)** for a full example of **NAN** in use.
+
+or a simpler example, see the **[async pi estimation example](https://github.com/rvagg/nan/tree/master/examples/async_pi_estimate)** in the examples directory for full code an explanation of what this Monte Carlo Pi estimation example does. Below are just some parts of the full example that illustrate the use of **NAN**.
+
+Compare to the current 0.10 version of this example, found in the [node-addon-examples](https://github.com/rvagg/node-addon-examples/tree/master/9_async_work) repository and also a 0.11 version of the same found [here](https://github.com/kkoopa/node-addon-examples/tree/5c01f58fc993377a567812597e54a83af69686d7/9_async_work).
+
+Note that there is no embedded version sniffing going on here and also the async work is made much simpler, see below for details on the `NanAsyncWorker` class.
+
+```c++
+// addon.cc
+#include <node.h>
+#include "nan.h"
+// ...
+
+using namespace v8;
+
+void InitAll(Handle<Object> exports) {
+  exports->Set(NanSymbol("calculateSync"),
+    FunctionTemplate::New(CalculateSync)->GetFunction());
+
+  exports->Set(NanSymbol("calculateAsync"),
+    FunctionTemplate::New(CalculateAsync)->GetFunction());
+}
+
+NODE_MODULE(addon, InitAll)
+```
+
+```c++
+// sync.h
+#include <node.h>
+#include "nan.h"
+
+NAN_METHOD(CalculateSync);
+```
+
+```c++
+// sync.cc
+#include <node.h>
+#include "nan.h"
+#include "sync.h"
+// ...
+
+using namespace v8;
+
+// Simple synchronous access to the `Estimate()` function
+NAN_METHOD(CalculateSync) {
+  NanScope();
+
+  // expect a number as the first argument
+  int points = args[0]->Uint32Value();
+  double est = Estimate(points);
+
+  NanReturnValue(Number::New(est));
+}
+```
+
+```c++
+// async.cc
+#include <node.h>
+#include "nan.h"
+#include "async.h"
+
+// ...
+
+using namespace v8;
+
+class PiWorker : public NanAsyncWorker {
+ public:
+  PiWorker(NanCallback *callback, int points)
+    : NanAsyncWorker(callback), points(points) {}
+  ~PiWorker() {}
+
+  // Executed inside the worker-thread.
+  // It is not safe to access V8, or V8 data structures
+  // here, so everything we need for input and output
+  // should go on `this`.
+  void Execute () {
+    estimate = Estimate(points);
+  }
+
+  // Executed when the async work is complete
+  // this function will be run inside the main event loop
+  // so it is safe to use V8 again
+  void HandleOKCallback () {
+    NanScope();
+
+    Local<Value> argv[] = {
+        Local<Value>::New(Null())
+      , Number::New(estimate)
+    };
+
+    callback->Run(2, argv);
+  };
+
+ private:
+  int points;
+  double estimate;
+};
+
+// Asynchronous access to the `Estimate()` function
+NAN_METHOD(CalculateAsync) {
+  NanScope();
+
+  int points = args[0]->Uint32Value();
+  NanCallback *callback = new NanCallback(args[1].As<Function>());
+
+  NanAsyncQueueWorker(new PiWorker(callback, points));
+  NanReturnUndefined();
+}
+```
+
+<a name="api"></a>
 ## API
 
  * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
