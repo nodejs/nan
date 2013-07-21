@@ -79,6 +79,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
 # define NAN_METHOD(name)                                                      \
     void name(const v8::FunctionCallbackInfo<v8::Value>& args)
+# define NAN_CONSTRUCTOR(name)                                                 \
+    name(const v8::FunctionCallbackInfo<v8::Value>& args)
 # define NAN_GETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
@@ -153,6 +155,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
 # define NAN_METHOD(name)                                                      \
     v8::Handle<v8::Value> name(const v8::Arguments& args)
+# define NAN_CONSTRUCTOR(name)                                                 \
+    name(const v8::Arguments& args)
 # define NAN_GETTER(name)                                                      \
     v8::Handle<v8::Value> name(                                                \
         v8::Local<v8::String> property                                         \
