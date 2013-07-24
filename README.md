@@ -135,7 +135,6 @@ NAN_METHOD(CalculateAsync) {
 <a name="api"></a>
 ## API
 
- * <a href="#api_nan_constructor"><b><code>NAN_CONSTRUCTOR</code></b></a>
  * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
  * <a href="#api_nan_getter"><b><code>NAN_GETTER</code></b></a>
  * <a href="#api_nan_setter"><b><code>NAN_SETTER</code></b></a>
@@ -156,23 +155,6 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
-
-<a name="api_nan_constructor"></a>
-### NAN_CONSTRUCTOR(methodname)
-Use `NAN_CONSTRUCTOR` to define constructors used by your V8 accessible methods:
-
-```c++
-struct Foo {
-  NAN_CONSTRUCTOR(Foo);
-  ...
-};
-
-NAN_CONSTRUCTOR(Foo::Foo) {
- ...
-}
-```
-
-The reason for this macro is that constructors have no explicit return type and cannot thus be declared the way methods are.
 
 <a name="api_nan_method"></a>
 ### NAN_METHOD(methodname)
