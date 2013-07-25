@@ -127,6 +127,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return node::Buffer::New(data, size);
   }
 
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return node::Buffer::Use(data, size);
+  }
+
   static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
     return node::Buffer::New(size);
   }
@@ -201,6 +205,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
+  }
+
+  void FreeData(char *data, void *hint) {
+    delete[] data;
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return v8::Local<v8::Object>::New(
+        node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
   template <class TypeName>
