@@ -89,31 +89,31 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         , v8::Local<v8::Value> value                                           \
         , _NAN_SETTER_ARGS)
 # define _NAN_PROPERTY_GETTER_ARGS                                             \
-    const v8::PropertyCallbackInfo<v8::Value>& info
+    const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_PROPERTY_GETTER(name)                                             \
     void name(v8::Local<v8::String> property                                   \
-    _NAN_PROPERTY_GETTER_ARGS)
+    , _NAN_PROPERTY_GETTER_ARGS)
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
-    const v8::PropertyCallbackInfo<v8::Value>& info
+    const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_PROPERTY_SETTER(name)                                             \
     void name(v8::Local<v8::String> property                                   \
     , v8::Local<v8::Value> value,                                              \
     _NAN_PROPERTY_SETTER_ARGS)
-# define _NAN_PROPERTY_ENUMERATOR_INFO                                         \
-    const v8::PropertyCallbackInfo<v8::Array>& info
+# define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
+    const v8::PropertyCallbackInfo<v8::Array>& args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
-    void name(_NAN_PROPERTY_ENUMERATOR_INFO)
-# define _NAN_PROPERTY_DELETER_INFO                                            \
-    const v8::PropertyCallbackInfo<v8::Boolean>& info
+    void name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS                                            \
+    const v8::PropertyCallbackInfo<v8::Boolean>& args
 # define NAN_PROPERTY_DELETER(name)                                            \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
-        , _NAN_PROPERTY_DELETER_INFO)
-# define _NAN_PROPERTY_QUERY_INFO                                              \
-    const v8::PropertyCallbackInfo<v8::Integer>& info
+        , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS                                              \
+    const v8::PropertyCallbackInfo<v8::Integer>& args
 # define NAN_PROPERTY_QUERY(name)                                              \
     void name(v8::Local<v8::String> property                                   \
-        , _NAN_PROPERTY_QUERY_INFO)
+        , _NAN_PROPERTY_QUERY_ARGS)
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value);
 # define NanReturnUndefined() return;
@@ -173,6 +173,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return NanPersistentToLocal(function_template)->HasInstance(value);
   }
 
+  static inline v8::Local<v8::Context> NanNewContextHandle(
+    v8::ExtensionConfiguration* extensions = NULL,
+    v8::Handle<v8::ObjectTemplate> global_template = v8::Handle<v8::ObjectTemplate>(),
+    v8::Handle<v8::Value> global_object = v8::Handle<v8::Value>()) {
+      return v8::Local<v8::Context>::New(nan_isolate, v8::Context::New(
+          nan_isolate, extensions, global_template, global_object = v8::Handle<v8::Value>()));
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -188,31 +196,31 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
 # define _NAN_PROPERTY_GETTER_ARGS                                             \
-    const v8::AccessorInfo& info
+    const v8::AccessorInfo& args
 # define NAN_PROPERTY_GETTER(name)                                             \
     v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
     _NAN_PROPERTY_GETTER_ARGS)
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
-    const v8::AccessorInfo& info
+    const v8::AccessorInfo& args
 # define NAN_PROPERTY_SETTER(name)                                             \
     v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
     , v8::Local<v8::Value> value,                                              \
     _NAN_PROPERTY_SETTER_ARGS)
-# define _NAN_PROPERTY_ENUMERATOR_INFO                                         \
-    const v8::AccessorInfo& info
+# define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
+    const v8::AccessorInfo& args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
-    v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_INFO)
-# define _NAN_PROPERTY_DELETER_INFO                                            \
-    const v8:::AccessorInfo& info
+    v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS                                            \
+    const v8:::AccessorInfo& args
 # define NAN_PROPERTY_DELETER(name)                                            \
     v8::Handle<v8::Boolean> name(                                              \
         v8::Local<v8::String> property                                         \
-        , _NAN_PROPERTY_DELETER_INFO)
-# define _NAN_PROPERTY_QUERY_INFO                                              \
-    const v8:::AccessorInfo& info
+        , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS                                              \
+    const v8:::AccessorInfo& args
 # define NAN_PROPERTY_QUERY(name)                                              \
     v8::Handle<v8::Integer> name(v8::Local<v8::String> property                \
-        , _NAN_PROPERTY_QUERY_INFO)
+        , _NAN_PROPERTY_QUERY_ARGS)
 
 
 # define NanScope() v8::HandleScope scope
@@ -270,6 +278,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         v8::Persistent<v8::FunctionTemplate>& function_template
       , v8::Handle<v8::Value> value) {
     return function_template->HasInstance(value);
+  }
+
+  static inline v8::Local<v8::Context> NanNewContextHandle(
+    v8::ExtensionConfiguration* extensions = NULL,
+    v8::Handle<v8::ObjectTemplate> global_template = v8::Handle<v8::ObjectTemplate>(),
+    v8::Handle<v8::Value> global_object = v8::Handle<v8::Value>()) {
+      return v8::Local<v8::Context>::New(
+          nan_isolate, extensions, global_template, global_object = v8::Handle<v8::Value>());
   }
 
 #endif // node version
