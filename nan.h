@@ -86,9 +86,23 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
-      , v8::Local<v8::Value> value                                             \
-      , _NAN_SETTER_ARGS)
-
+        , v8::Local<v8::Value> value                                           \
+        , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_INFO                                         \
+    const v8::PropertyCallbackInfo<v8::Array>& info
+# define NAN_PROPERTY_ENUMERATOR(name)                                         \
+    void name(_NAN_PROPERTY_ENUMERATOR_INFO)
+# define _NAN_PROPERTY_DELETER_INFO                                            \
+    const v8::PropertyCallbackInfo<v8::Boolean>& info
+# define NAN_PROPERTY_DELETER(name)                                            \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+        , _NAN_PROPERTY_DELETER_INFO)
+# define _NAN_PROPERTY_QUERY_INFO                                              \
+    const v8::PropertyCallbackInfo<v8::Integer>& info
+# define NAN_PROPERTY_QUERY(name)                                              \
+    void name(v8::Local<v8::String> property                                   \
+        , _NAN_PROPERTY_QUERY_INFO)
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value);
 # define NanReturnUndefined() return;
@@ -162,6 +176,22 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_INFO                                         \
+    const v8::AccessorInfo& info
+# define NAN_PROPERTY_ENUMERATOR(name)                                         \
+    v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_INFO)
+# define _NAN_PROPERTY_DELETER_INFO                                            \
+    const v8:::AccessorInfo& info
+# define NAN_PROPERTY_DELETER(name)                                            \
+    v8::Handle<v8::Boolean> name(                                                                 \
+        v8::Local<v8::String> property                                         \
+        , _NAN_PROPERTY_DELETER_INFO)
+# define _NAN_PROPERTY_QUERY_INFO                                              \
+    const v8:::AccessorInfo& info
+# define NAN_PROPERTY_QUERY(name)                                              \
+    v8::Handle<v8::Integer> name(v8::Local<v8::String> property                                   \
+        , _NAN_PROPERTY_QUERY_INFO)
+
 
 # define NanScope() v8::HandleScope scope
 # define NanReturnValue(value) return scope.Close(value);
