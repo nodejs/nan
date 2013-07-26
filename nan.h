@@ -86,19 +86,19 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
-        , v8::Local<v8::Value> value                                           \
-        , _NAN_SETTER_ARGS)
+      , v8::Local<v8::Value> value                                             \
+      , _NAN_SETTER_ARGS)
 # define _NAN_PROPERTY_GETTER_ARGS                                             \
     const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_PROPERTY_GETTER(name)                                             \
     void name(v8::Local<v8::String> property                                   \
-    , _NAN_PROPERTY_GETTER_ARGS)
+      , _NAN_PROPERTY_GETTER_ARGS)
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
     const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_PROPERTY_SETTER(name)                                             \
     void name(v8::Local<v8::String> property                                   \
-    , v8::Local<v8::Value> value,                                              \
-    _NAN_PROPERTY_SETTER_ARGS)
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_PROPERTY_SETTER_ARGS)
 # define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
     const v8::PropertyCallbackInfo<v8::Array>& args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
@@ -108,7 +108,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_PROPERTY_DELETER(name)                                            \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
-        , _NAN_PROPERTY_DELETER_ARGS)
+      , _NAN_PROPERTY_DELETER_ARGS)
 # define _NAN_PROPERTY_QUERY_ARGS                                              \
     const v8::PropertyCallbackInfo<v8::Integer>& args
 # define NAN_PROPERTY_QUERY(name)                                              \
@@ -191,9 +191,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_SETTER_ARGS const v8::AccessorInfo &args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
-        v8::Local<v8::String> property                                         \
-      , v8::Local<v8::Value> value                                             \
-      , _NAN_SETTER_ARGS)
+      v8::Local<v8::String> property                                           \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_SETTER_ARGS)
 # define _NAN_PROPERTY_GETTER_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_GETTER(name)                                             \
     v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
@@ -201,8 +201,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_PROPERTY_SETTER_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_SETTER(name)                                             \
     v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
-    , v8::Local<v8::Value> value,                                              \
-    _NAN_PROPERTY_SETTER_ARGS)
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_PROPERTY_SETTER_ARGS)
 # define _NAN_PROPERTY_ENUMERATOR_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
     v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_ARGS)
