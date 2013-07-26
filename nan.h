@@ -77,17 +77,17 @@ static inline uint32_t NanUInt32OptionValue(
 
 static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
-# define NAN_METHOD(name)                                                      \
-    void name(const v8::FunctionCallbackInfo<v8::Value>& args)
+# define _NAN_METHOD_ARGS const v8::FunctionCallbackInfo<v8::Value>& args
+# define NAN_METHOD(name) void name(_NAN_METHOD_ARGS)
+# define _NAN_GETTER_ARGS const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_GETTER(name)                                                      \
-    void name(                                                                 \
-        v8::Local<v8::String> property                                         \
-      , const v8::PropertyCallbackInfo<v8::Value>& args)
+    void name(v8::Local<v8::String> property, _NAN_GETTER_ARGS)
+# define _NAN_SETTER_ARGS const v8::PropertyCallbackInfo<void>& args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
-      , const v8::PropertyCallbackInfo<void>& args)
+      , _NAN_SETTER_ARGS)
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value);
@@ -118,13 +118,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static inline void NanDispose(v8::Persistent<v8::Object> &handle) {
+  template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose(nan_isolate);
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return node::Buffer::New(data, size);
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return node::Buffer::Use(data, size);
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
@@ -151,17 +155,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 #else
 // Node 0.8 and 0.10
 
-# define NAN_METHOD(name)                                                      \
-    v8::Handle<v8::Value> name(const v8::Arguments& args)
+# define _NAN_METHOD_ARGS const v8::Arguments& args
+# define NAN_METHOD(name) v8::Handle<v8::Value> name(_NAN_METHOD_ARGS)
+# define _NAN_GETTER_ARGS const v8::AccessorInfo &args
 # define NAN_GETTER(name)                                                      \
-    v8::Handle<v8::Value> name(                                                \
-        v8::Local<v8::String> property                                         \
-      , const v8::AccessorInfo &args)
+    v8::Handle<v8::Value> name(v8::Local<v8::String> property, _NAN_GETTER_ARGS)
+# define _NAN_SETTER_ARGS const v8::AccessorInfo &args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
-      , const v8::AccessorInfo &args)
+      , _NAN_SETTER_ARGS)
 
 # define NanScope() v8::HandleScope scope
 # define NanReturnValue(value) return scope.Close(value);
@@ -194,13 +198,22 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static inline void NanDispose(v8::Persistent<v8::Object> &handle) {
+  template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
+  }
+
+  void FreeData(char *data, void *hint) {
+    delete[] data;
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return v8::Local<v8::Object>::New(
+        node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
   template <class TypeName>
