@@ -118,7 +118,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static inline void NanDispose(v8::Persistent<v8::Object> &handle) {
+  template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose(nan_isolate);
   }
 
@@ -194,7 +194,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static inline void NanDispose(v8::Persistent<v8::Object> &handle) {
+  template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose();
   }
 
