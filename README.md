@@ -389,7 +389,7 @@ v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
 ```
 
 <a href="#api_nan_new_context_handle">
-### Local&lt;Context&gt; NanNewContextHandle(ExtensionConfiguration* extensions = NULL, Handle&lt;ObjectTemplate&gt; g_template = Handle&lt;ObjectTemplate&gt;(), Handle&lt;Value&gt; g_object = Handle&lt;Value&gt;())
+### Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
 Creates a new `Local<Context>` handle.
 
 ```c++
