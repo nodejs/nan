@@ -89,6 +89,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
 
+# define NAN_WEAK_CALLBACK(type, name)                                         \
+    void name(                                                                 \
+    v8::Isolate* isolate,                                                      \
+    v8::Persistent<v8::Object>* object,                                        \
+    type data)
+# define NAN_WEAK_CALLBACK_OBJECT (*object)
+# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
+
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
 # define NanReturnUndefined() return
@@ -96,17 +104,6 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanObjectWrapHandle(obj) obj->handle()
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(nan_isolate, parameter, callback)
-# define NanWeakCallback(type, name)                                           \
-    void name(                                                                 \
-    v8::Isolate* isolate,                                                      \
-    v8::Persistent<v8::Object>* pobject,                                       \
-    type data)
-# define NanWeakCallbackInit(type)                                             \
-    v8::Local<v8::Value> object = NanPersistentToLocal(*pobject);              \
-    (void) object
-# define NanReviveWeak(callback)                                               \
-    pobject->MakeWeak(isolate, data, callback)
-
 
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
@@ -184,6 +181,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
 
+# define NAN_WEAK_CALLBACK(type, name) void name(                              \
+                            v8::Persistent<v8::Value> object,                  \
+                            void *data)
+# define NAN_WEAK_CALLBACK_OBJECT object
+# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
+
 # define NanScope() v8::HandleScope scope
 # define NanReturnValue(value) return scope.Close(value)
 # define NanReturnUndefined() return v8::Undefined()
@@ -192,15 +195,6 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanObjectWrapHandle(obj) obj->handle_
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
-# define NanWeakCallback(type, name) void name(                                \
-                            v8::Persistent<v8::Value> pobject,                 \
-                            void *_data)
-# define NanWeakCallbackInit(type)                                             \
-    v8::Local<v8::Value> object = NanPersistentToLocal(pobject);               \
-    (void) object;                                                             \
-    type data = (type) _data
-# define NanReviveWeak(callback)                                               \
-    pobject.MakeWeak(data, callback)
 
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
