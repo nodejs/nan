@@ -107,8 +107,8 @@ class PiWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
 
-    Local&lt;Value&gt; argv[] = {
-        Local&lt;Value&gt;::New(Null())
+    Local<Value> argv[] = {
+        Local<Value>::New(Null())
       , Number::New(estimate)
     };
 
