@@ -1,12 +1,18 @@
 /**********************************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2013 Rod Vagg
+ * Copyright (c) 2013 NAN contributors:
+ *   - Rod Vagg <https://github.com/rvagg>
+ *   - King Koopa <https://github.com/kkoopa>
+ *   - Trevor Norris <https://github.com/trevnorris>
+ *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.1.0 (current Node unstable: 0.11.4)
+ * Version 0.2.0 (current Node unstable: 0.11.4)
  *
  * Changelog:
+ *  * 0.2.0 .... TODO
+ *
  *  * 0.1.0 Jul 21 2013
  *           - Added `NAN_GETTER`, `NAN_SETTER`
  *           - Added `NanThrowError` with single Local<Value> argument
@@ -142,13 +148,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static inline void NanDispose(v8::Persistent<v8::Object> &handle) {
+  template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose(nan_isolate);
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return node::Buffer::New(data, size);
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return node::Buffer::Use(data, size);
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
@@ -248,13 +258,22 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static inline void NanDispose(v8::Persistent<v8::Object> &handle) {
+  template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
      char *data, uint32_t size) {
     return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
+  }
+
+  static inline void FreeData(char *data, void *hint) {
+    delete[] data;
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return v8::Local<v8::Object>::New(
+        node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
   template <class TypeName>
