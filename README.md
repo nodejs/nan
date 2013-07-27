@@ -217,26 +217,31 @@ You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
 <a name="api_nan_property_getter"></a>
 ### NAN_PROPERTY_GETTER(cbname)
 Use `NAN_PROPERTY_GETTER` to declare your V8 accessible property getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
+
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_GETTER`.
 
 <a name="api_nan_property_setter"></a>
 ### NAN_PROPERTY_SETTER(cbname)
 Use `NAN_PROPERTY_SETTER` to declare your V8 accessible property setters. Same as `NAN_PROPERTY_GETTER` but you also get a `Local<Value>` `value` object to work with.
+
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_SETTER`.
 
 <a name="api_nan_property_enumerator"></a>
 ### NAN_PROPERTY_ENUMERATOR(cbname)
 Use `NAN_PROPERTY_ENUMERATOR` to declare your V8 accessible property enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_PROPERTY_GETTER` call.
+
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
 
 <a name="api_nan_property_deleter"></a>
 ### NAN_PROPERTY_DELETER(cbname)
 Use `NAN_PROPERTY_DELETER` to declare your V8 accessible property deleters. Same as `NAN_PROPERTY_GETTER`.
+
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
 
 <a name="api_nan_property_query"></a>
 ### NAN_PROPERTY_QUERY(cbname)
 Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
+
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
 
 
