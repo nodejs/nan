@@ -141,6 +141,8 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
+ * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
+ * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
@@ -247,6 +249,28 @@ NAN_METHOD(Foo::Bar) {
 
   NanReturnValue(v8::String::New("FooBar!"));
 }
+```
+
+<a name="api_nan_get_internal_field_pointer"></a>
+### void * NanGetInternalFieldPointer(v8::Handle<v8::Object>, int)
+
+Gets a pointer to the internal field with at `index` from a V8 `Object` handle.
+
+```c++
+Local<Object> obj;
+...
+NanGetInternalFieldPointer(obj, 0);
+```
+<a name="api_nan_set_internal_field_pointer"></a>
+### void NanSetInternalFieldPointer(v8::Handle<v8::Object>, int, void *)
+
+Sets the value of the internal field at `index` on a V8 `Object` handle.
+
+```c++
+static Persistent<Function> dataWrapperCtor;
+...
+Local<Object> wrapper = NanPersistentToLocal(dataWrapperCtor)->NewInstance();
+NanSetInternalFieldPointer(wrapper, 0, this);
 ```
 
 <a name="api_nan_object_wrap_handle"></a>
