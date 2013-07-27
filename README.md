@@ -107,8 +107,8 @@ class PiWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
 
-    Local<Value> argv[] = {
-        Local<Value>::New(Null())
+    Local&lt;Value&gt; argv[] = {
+        Local&lt;Value&gt;::New(Null())
       , Number::New(estimate)
     };
 
@@ -246,7 +246,7 @@ You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENU
 
 
 <a name="api_nan_return_value"></a>
-### NanReturnValue(v8::Handle<v8::Value>)
+### NanReturnValue(v8::Handle&lt;v8::Value&gt;)
 
 Use `NanReturnValue` when you want to return a value from your V8 accessible method:
 
@@ -287,7 +287,7 @@ NAN_METHOD(Foo::Bar) {
 ```
 
 <a name="api_nan_object_wrap_handle"></a>
-### v8::Local<v8::Object> NanObjectWrapHandle(Object)
+### v8::Local&lt;v8::Object&gt; NanObjectWrapHandle(Object)
 
 When you want to fetch the V8 object handle from a native object you've wrapped with Node's `ObjectWrap`, you should use `NanObjectWrapHandle`:
 
@@ -316,7 +316,7 @@ char* name = NanFromV8String(args[0]);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
-### bool NanBooleanOptionValue(v8::Handle<v8::Value>, v8::Handle<v8::String>[, bool])
+### bool NanBooleanOptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, bool])
 
 When you have an "options" object that you need to fetch properties from, boolean options can be fetched with this pair. They check first if the object exists (`IsEmpty`), then if the object has the given property (`Has`) then they get and convert/coerce the property to a `bool`.
 
@@ -330,7 +330,7 @@ bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanSymbol("bar"), true);
 ```
 
 <a name="api_nan_uint32_option_value"></a>
-### uint32_t NanUInt32OptionValue(v8::Handle<v8::Value>, v8::Handle<v8::String>[, uint32_t])
+### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, uint32_t])
 
 Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Requires all 3 arguments as a default is not optional:
 
@@ -350,7 +350,7 @@ return NanThrowError("you must supply a callback argument");
 Can also handle any custom object you may want to throw.
 
 <a name="api_nan_new_buffer_handle"></a>
-### v8::Local<v8::Object> NanNewBufferHandle(char *, uint32_t), v8::Local<v8::Object> NanNewBufferHandle(uint32_t)
+### v8::Local&lt;v8::Object&gt; NanNewBufferHandle(char *, uint32_t), v8::Local&lt;v8::Object&gt; NanNewBufferHandle(uint32_t)
 
 The `Buffer` API has changed a little in Node 0.11, this helper provides consistent access to `Buffer` creation:
 
@@ -361,7 +361,7 @@ NanNewBufferHandle((char*)value.data(), value.size());
 Can also be used to initialize a `Buffer` with just a `size` argument.
 
 <a name="api_nan_buffer_use"></a>
-### v8::Local<v8::Object> NanBufferUse(char*, uint32_t)
+### v8::Local&lt;v8::Object&gt; NanBufferUse(char*, uint32_t)
 
 `Buffer::New(char*, uint32_t)` previous to 0.11 would make a copy of the data.
 While it was possible to get around this, it required a shim by passing a
@@ -373,12 +373,12 @@ memory automatically when the weak callback is called. Keep this in mind, as
 careless use can lead to "double free or corruption" and other cryptic failures.
 
 <a name="api_nan_has_instance"></a>
-### bool NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)
+### bool NanHasInstance(Persistent&lt;FunctionTemplate&gt;&, Handle&lt;Value&gt;)
 
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_persistent_to_local"></a>
-### v8::Local<Type> NanPersistentToLocal(v8::Persistent<Type>&)
+### v8::Local&lt;Type&gt; NanPersistentToLocal(v8::Persistent&lt;Type&gt;&)
 
 Aside from `FunctionCallbackInfo`, the biggest and most painful change to V8 in Node 0.11 is the many restrictions now placed on `Persistent` handles. They are difficult to assign and difficult to fetch the original value out of.
 
@@ -389,7 +389,7 @@ v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
 ```
 
 <a href="#api_nan_new_context_handle">
-### Local<Context> NanNewContextHandle(ExtensionConfiguration* extensions = NULL, Handle<ObjectTemplate> g_template = Handle<ObjectTemplate>(), Handle<Value> g_object = Handle<Value>())
+### Local&lt;Context&gt; NanNewContextHandle(ExtensionConfiguration* extensions = NULL, Handle&lt;ObjectTemplate&gt; g_template = Handle&lt;ObjectTemplate&gt;(), Handle&lt;Value&gt; g_object = Handle&lt;Value&gt;())
 Creates a new `Local<Context>` handle.
 
 ```c++
@@ -399,7 +399,7 @@ v8::Local<v8::Context> ctx =  NanNewContextHandle(NULL, otmpl);
 ```
 
 <a name="api_nan_dispose"></a>
-### template<class T> void NanDispose(v8::Persistent<T> &)
+### template&lt;class T&gt; void NanDispose(v8::Persistent&lt;T&gt; &)
 
 Use `NanDispose` to dispose a `Persistent` handle.
 
