@@ -138,6 +138,11 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
  * <a href="#api_nan_getter"><b><code>NAN_GETTER</code></b></a>
  * <a href="#api_nan_setter"><b><code>NAN_SETTER</code></b></a>
+ * <a href="#api_nan_property_getter"><b><code>NAN_PROPERTY_GETTER</code></b></a>
+ * <a href="#api_nan_property_setter"><b><code>NAN_PROPERTY_SETTER</code></b></a>
+ * <a href="#api_nan_property_enumerator"><b><code>NAN_PROPERTY_ENUMERATOR</code></b></a>
+ * <a href="#api_nan_property_deleter"><b><code>NAN_PROPERTY_DELETER</code></b></a>
+ * <a href="#api_nan_property_query"><b><code>NAN_PROPERTY_QUERY</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
@@ -149,6 +154,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Local<Value>)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
+ * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
  * <a href="#api_nan_dispose"><b><code>NanDispose</code></b></a>
@@ -207,6 +213,32 @@ You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_GETTER`.
 Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but you also get a `Local<Value>` `value` object to work with.
 
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
+
+<a name="api_nan_property_getter"></a>
+### NAN_PROPERTY_GETTER(cbname)
+Use `NAN_PROPERTY_GETTER` to declare your V8 accessible property getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_GETTER`.
+
+<a name="api_nan_property_setter"></a>
+### NAN_PROPERTY_SETTER(cbname)
+Use `NAN_PROPERTY_SETTER` to declare your V8 accessible property setters. Same as `NAN_PROPERTY_GETTER` but you also get a `Local<Value>` `value` object to work with.
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_SETTER`.
+
+<a name="api_nan_property_enumerator"></a>
+### NAN_PROPERTY_ENUMERATOR(cbname)
+Use `NAN_PROPERTY_ENUMERATOR` to declare your V8 accessible property enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_PROPERTY_GETTER` call.
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
+
+<a name="api_nan_property_deleter"></a>
+### NAN_PROPERTY_DELETER(cbname)
+Use `NAN_PROPERTY_DELETER` to declare your V8 accessible property deleters. Same as `NAN_PROPERTY_GETTER`.
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
+
+<a name="api_nan_property_query"></a>
+### NAN_PROPERTY_QUERY(cbname)
+Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
+You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
+
 
 <a name="api_nan_return_value"></a>
 ### NanReturnValue(v8::Handle<v8::Value>)
@@ -351,8 +383,18 @@ Use `NanPersistentToLocal` to convert a `Persistent` handle back to a `Local` ha
 v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
 ```
 
+<a href="#api_nan_new_context_handle">
+### Local<Context> NanNewContextHandle(ExtensionConfiguration* extensions = NULL, Handle<ObjectTemplate> g_template = Handle<ObjectTemplate>(), Handle<Value> g_object = Handle<Value>())
+Creates a new `Local<Context>` handle.
+
+```c++
+v8::Local<v8::FunctionTemplate> ftmpl = v8::FunctionTemplate::New();
+v8::Local<v8::ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
+v8::Local<v8::Context> ctx =  NanNewContextHandle(NULL, otmpl);
+```
+
 <a name="api_nan_dispose"></a>
-### void NanDispose(v8::Persistent<v8::Object> &)
+### template<class T> void NanDispose(v8::Persistent<T> &)
 
 Use `NanDispose` to dispose a `Persistent` handle.
 
