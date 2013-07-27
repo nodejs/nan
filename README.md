@@ -460,9 +460,19 @@ protected:
 
 `NanAsyncQueueWorker` will run a `NanAsyncWorker` asynchronously via libuv. Both the *execute* and *after_work* steps are taken care of for you&mdash;most of the logic for this is embedded in `NanAsyncWorker`.
 
+### Contributors
+
+NAN is only possible due to the excellent work of the following contributors:
+
+<table><tbody>
+<tr><th align="left">Rod Vagg</th><td><a href="https://github.com/rvagg">GitHub/rvagg</a></td><td><a href="http://twitter.com/rvagg">Twitter/@rvagg</a></td></tr>
+<tr><th align="left">King Koopa</th><td><a href="https://github.com/kkoopa/">GitHub/kkoopa</a></td></tr>
+<tr><th align="left">Trevor Norris</th><td><a href="https://github.com/trevnorris">GitHub/trevnorris</a></td><td><a href="http://twitter.com/trevnorris">Twitter/@trevnorris</a></td></tr>
+</tbody></table>
+
 Licence &amp; copyright
 -----------------------
 
-Copyright (c) 2013 Rod Vagg
+Copyright (c) 2013 Rod Vagg & NAN contributors (listed above).
 
 Native Abstractions for Node.js is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
