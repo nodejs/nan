@@ -207,7 +207,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
   }
 
-  void FreeData(char *data, void *hint) {
+  static inline void FreeData(char *data, void *hint) {
     delete[] data;
   }
 
