@@ -151,12 +151,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return node::Buffer::New(data, size);
   }
 
-  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
-    return node::Buffer::Use(data, size);
-  }
-
   static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
     return node::Buffer::New(size);
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return node::Buffer::Use(data, size);
   }
 
   template <class TypeName>

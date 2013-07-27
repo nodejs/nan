@@ -138,16 +138,18 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
  * <a href="#api_nan_getter"><b><code>NAN_GETTER</code></b></a>
  * <a href="#api_nan_setter"><b><code>NAN_SETTER</code></b></a>
+ * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
+ * <a href="#api_nan_make_weak"><b><code>NanMakeWeak</code></b></a>
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Local<Value>)</code></b></a>
- * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
+ * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
@@ -208,6 +210,22 @@ Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but
 
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
 
+<a name="api_nan_weak_callback"></a>
+### NAN_WEAK_CALLBACK(type, cbname)
+
+Use `NAN_WEAK_CALLBACK` to declare your V8 WeakReference callbacks. There is an object argument accessible through `NAN_WEAK_CALLBACK_OBJECT`. The `type` argument gives the type of the `data` argument, accessible through `NAN_WEAK_CALLBACK_DATA(type)`.
+
+```c++
+static NAN_WEAK_CALLBACK(BufferReference*, WeakCheck) {
+  if (NAN_WEAK_CALLBACK_DATA(BufferReference*)->noLongerNeeded_) {
+    delete NAN_WEAK_CALLBACK_DATA(BufferReference*);
+  } else {
+    // Still in use, revive, prevent GC
+    NanMakeWeak(NAN_WEAK_CALLBACK_OBJECT, NAN_WEAK_CALLBACK_DATA(BufferReference*), &WeakCheck);
+  }
+}
+```
+
 <a name="api_nan_return_value"></a>
 ### NanReturnValue(v8::Handle<v8::Value>)
 
@@ -257,6 +275,11 @@ When you want to fetch the V8 object handle from a native object you've wrapped 
 ```c++
 NanObjectWrapHandle(iterator)->Get(v8::String::NewSymbol("end"))
 ```
+
+<a name="api_nan_make_weak"></a>
+### NanMakeWeak(v8::Persistent<T>, parameter, callback)
+
+Make a persistent reference weak.
 
 <a name="api_nan_symbol"></a>
 ### v8::String NanSymbol(char *)
@@ -313,7 +336,7 @@ return NanThrowError("you must supply a callback argument");
 Can also handle any custom object you may want to throw.
 
 <a name="api_nan_new_buffer_handle"></a>
-### v8::Local<v8::Object> NanNewBufferHandle(char *, uint32_t), v8::Local<v8::Object> NanNewBufferHandle(uint32_t)
+### v8::Local<v8::Object> NanNewBufferHandle(char *, size_t, FreeCallback, void *), v8::Local<v8::Object> NanNewBufferHandle(char *, uint32_t), v8::Local<v8::Object> NanNewBufferHandle(uint32_t)
 
 The `Buffer` API has changed a little in Node 0.11, this helper provides consistent access to `Buffer` creation:
 
@@ -322,6 +345,8 @@ NanNewBufferHandle((char*)value.data(), value.size());
 ```
 
 Can also be used to initialize a `Buffer` with just a `size` argument.
+
+Can also be supplied with a `NAN_WEAK_CALLBACK` and a hint for the garbage collector, when dealing with weak references.
 
 <a name="api_nan_buffer_use"></a>
 ### v8::Local<v8::Object> NanBufferUse(char*, uint32_t)
