@@ -148,6 +148,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Local<Value>)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
+ * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
  * <a href="#api_nan_dispose"><b><code>NanDispose</code></b></a>
@@ -321,6 +322,18 @@ NanNewBufferHandle((char*)value.data(), value.size());
 ```
 
 Can also be used to initialize a `Buffer` with just a `size` argument.
+
+<a name="api_nan_buffer_use"></a>
+### v8::Local<v8::Object> NanBufferUse(char*, uint32_t)
+
+`Buffer::New(char*, uint32_t)` previous to 0.11 would make a copy of the data.
+While it was possible to get around this, it required a shim by passing a
+callback. So the new API `Buffer::Use(char*, uint32_t)` was introduced to remove
+needing to use this shim.
+
+`NanBufferUse` uses the `char*` passed as the backing data, and will free the
+memory automatically when the weak callback is called. Keep this in mind, as
+careless use can lead to "double free or corruption" and other cryptic failures.
 
 <a name="api_nan_has_instance"></a>
 ### bool NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)
