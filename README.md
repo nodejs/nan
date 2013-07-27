@@ -491,7 +491,7 @@ NAN is only possible due to the excellent work of the following contributors:
 
 <table><tbody>
 <tr><th align="left">Rod Vagg</th><td><a href="https://github.com/rvagg">GitHub/rvagg</a></td><td><a href="http://twitter.com/rvagg">Twitter/@rvagg</a></td></tr>
-<tr><th align="left">King Koopa</th><td><a href="https://github.com/kkoopa/">GitHub/kkoopa</a></td></tr>
+<tr><th align="left">Benjamin Byholm</th><td><a href="https://github.com/kkoopa/">GitHub/kkoopa</a></td></tr>
 <tr><th align="left">Trevor Norris</th><td><a href="https://github.com/trevnorris">GitHub/trevnorris</a></td><td><a href="http://twitter.com/trevnorris">Twitter/@trevnorris</a></td></tr>
 </tbody></table>
 

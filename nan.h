@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2013 NAN contributors:
  *   - Rod Vagg <https://github.com/rvagg>
- *   - King Koopa <https://github.com/kkoopa>
+ *   - Benjamin Byholm <https://github.com/kkoopa>
  *   - Trevor Norris <https://github.com/trevnorris>
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
