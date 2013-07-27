@@ -138,25 +138,19 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
  * <a href="#api_nan_getter"><b><code>NAN_GETTER</code></b></a>
  * <a href="#api_nan_setter"><b><code>NAN_SETTER</code></b></a>
- * <a href="#api_nan_property_getter"><b><code>NAN_PROPERTY_GETTER</code></b></a>
- * <a href="#api_nan_property_setter"><b><code>NAN_PROPERTY_SETTER</code></b></a>
- * <a href="#api_nan_property_enumerator"><b><code>NAN_PROPERTY_ENUMERATOR</code></b></a>
- * <a href="#api_nan_property_deleter"><b><code>NAN_PROPERTY_DELETER</code></b></a>
- * <a href="#api_nan_property_query"><b><code>NAN_PROPERTY_QUERY</code></b></a>
+ * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
- * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
- * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
+ * <a href="#api_nan_make_weak"><b><code>NanMakeWeak</code></b></a>
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Local<Value>)</code></b></a>
- * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
+ * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
- * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
  * <a href="#api_nan_dispose"><b><code>NanDispose</code></b></a>
@@ -216,39 +210,24 @@ Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but
 
 You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
 
-<a name="api_nan_property_getter"></a>
-### NAN_PROPERTY_GETTER(cbname)
-Use `NAN_PROPERTY_GETTER` to declare your V8 accessible property getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
+<a name="api_nan_weak_callback"></a>
+### NAN_WEAK_CALLBACK(type, cbname)
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_GETTER`.
+Use `NAN_WEAK_CALLBACK` to declare your V8 WeakReference callbacks. There is an object argument accessible through `NAN_WEAK_CALLBACK_OBJECT`. The `type` argument gives the type of the `data` argument, accessible through `NAN_WEAK_CALLBACK_DATA(type)`.
 
-<a name="api_nan_property_setter"></a>
-### NAN_PROPERTY_SETTER(cbname)
-Use `NAN_PROPERTY_SETTER` to declare your V8 accessible property setters. Same as `NAN_PROPERTY_GETTER` but you also get a `Local<Value>` `value` object to work with.
-
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_SETTER`.
-
-<a name="api_nan_property_enumerator"></a>
-### NAN_PROPERTY_ENUMERATOR(cbname)
-Use `NAN_PROPERTY_ENUMERATOR` to declare your V8 accessible property enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_PROPERTY_GETTER` call.
-
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
-
-<a name="api_nan_property_deleter"></a>
-### NAN_PROPERTY_DELETER(cbname)
-Use `NAN_PROPERTY_DELETER` to declare your V8 accessible property deleters. Same as `NAN_PROPERTY_GETTER`.
-
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
-
-<a name="api_nan_property_query"></a>
-### NAN_PROPERTY_QUERY(cbname)
-Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
-
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
-
+```c++
+static NAN_WEAK_CALLBACK(BufferReference*, WeakCheck) {
+  if (NAN_WEAK_CALLBACK_DATA(BufferReference*)->noLongerNeeded_) {
+    delete NAN_WEAK_CALLBACK_DATA(BufferReference*);
+  } else {
+    // Still in use, revive, prevent GC
+    NanMakeWeak(NAN_WEAK_CALLBACK_OBJECT, NAN_WEAK_CALLBACK_DATA(BufferReference*), &WeakCheck);
+  }
+}
+```
 
 <a name="api_nan_return_value"></a>
-### NanReturnValue(v8::Handle&lt;v8::Value&gt;)
+### NanReturnValue(v8::Handle<v8::Value>)
 
 Use `NanReturnValue` when you want to return a value from your V8 accessible method:
 
@@ -288,36 +267,19 @@ NAN_METHOD(Foo::Bar) {
 }
 ```
 
-<a name="api_nan_get_internal_field_pointer"></a>
-### void * NanGetInternalFieldPointer(v8::Handle<v8::Object>, int)
-
-Gets a pointer to the internal field with at `index` from a V8 `Object` handle.
-
-```c++
-Local<Object> obj;
-...
-NanGetInternalFieldPointer(obj, 0);
-```
-<a name="api_nan_set_internal_field_pointer"></a>
-### void NanSetInternalFieldPointer(v8::Handle<v8::Object>, int, void *)
-
-Sets the value of the internal field at `index` on a V8 `Object` handle.
-
-```c++
-static Persistent<Function> dataWrapperCtor;
-...
-Local<Object> wrapper = NanPersistentToLocal(dataWrapperCtor)->NewInstance();
-NanSetInternalFieldPointer(wrapper, 0, this);
-```
-
 <a name="api_nan_object_wrap_handle"></a>
-### v8::Local&lt;v8::Object&gt; NanObjectWrapHandle(Object)
+### v8::Local<v8::Object> NanObjectWrapHandle(Object)
 
 When you want to fetch the V8 object handle from a native object you've wrapped with Node's `ObjectWrap`, you should use `NanObjectWrapHandle`:
 
 ```c++
 NanObjectWrapHandle(iterator)->Get(v8::String::NewSymbol("end"))
 ```
+
+<a name="api_nan_make_weak"></a>
+### NanMakeWeak(v8::Persistent<T>, parameter, callback)
+
+Make a persistent reference weak.
 
 <a name="api_nan_symbol"></a>
 ### v8::String NanSymbol(char *)
@@ -340,7 +302,7 @@ char* name = NanFromV8String(args[0]);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
-### bool NanBooleanOptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, bool])
+### bool NanBooleanOptionValue(v8::Handle<v8::Value>, v8::Handle<v8::String>[, bool])
 
 When you have an "options" object that you need to fetch properties from, boolean options can be fetched with this pair. They check first if the object exists (`IsEmpty`), then if the object has the given property (`Has`) then they get and convert/coerce the property to a `bool`.
 
@@ -354,7 +316,7 @@ bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanSymbol("bar"), true);
 ```
 
 <a name="api_nan_uint32_option_value"></a>
-### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, uint32_t])
+### uint32_t NanUInt32OptionValue(v8::Handle<v8::Value>, v8::Handle<v8::String>[, uint32_t])
 
 Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Requires all 3 arguments as a default is not optional:
 
@@ -374,7 +336,7 @@ return NanThrowError("you must supply a callback argument");
 Can also handle any custom object you may want to throw.
 
 <a name="api_nan_new_buffer_handle"></a>
-### v8::Local&lt;v8::Object&gt; NanNewBufferHandle(char *, uint32_t), v8::Local&lt;v8::Object&gt; NanNewBufferHandle(uint32_t)
+### v8::Local<v8::Object> NanNewBufferHandle(char *, size_t, FreeCallback, void *), v8::Local<v8::Object> NanNewBufferHandle(char *, uint32_t), v8::Local<v8::Object> NanNewBufferHandle(uint32_t)
 
 The `Buffer` API has changed a little in Node 0.11, this helper provides consistent access to `Buffer` creation:
 
@@ -384,8 +346,10 @@ NanNewBufferHandle((char*)value.data(), value.size());
 
 Can also be used to initialize a `Buffer` with just a `size` argument.
 
+Can also be supplied with a `NAN_WEAK_CALLBACK` and a hint for the garbage collector, when dealing with weak references.
+
 <a name="api_nan_buffer_use"></a>
-### v8::Local&lt;v8::Object&gt; NanBufferUse(char*, uint32_t)
+### v8::Local<v8::Object> NanBufferUse(char*, uint32_t)
 
 `Buffer::New(char*, uint32_t)` previous to 0.11 would make a copy of the data.
 While it was possible to get around this, it required a shim by passing a
@@ -397,12 +361,12 @@ memory automatically when the weak callback is called. Keep this in mind, as
 careless use can lead to "double free or corruption" and other cryptic failures.
 
 <a name="api_nan_has_instance"></a>
-### bool NanHasInstance(Persistent&lt;FunctionTemplate&gt;&, Handle&lt;Value&gt;)
+### bool NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)
 
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_persistent_to_local"></a>
-### v8::Local&lt;Type&gt; NanPersistentToLocal(v8::Persistent&lt;Type&gt;&)
+### v8::Local<Type> NanPersistentToLocal(v8::Persistent<Type>&)
 
 Aside from `FunctionCallbackInfo`, the biggest and most painful change to V8 in Node 0.11 is the many restrictions now placed on `Persistent` handles. They are difficult to assign and difficult to fetch the original value out of.
 
@@ -412,18 +376,8 @@ Use `NanPersistentToLocal` to convert a `Persistent` handle back to a `Local` ha
 v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
 ```
 
-<a href="#api_nan_new_context_handle">
-### Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
-Creates a new `Local<Context>` handle.
-
-```c++
-v8::Local<v8::FunctionTemplate> ftmpl = v8::FunctionTemplate::New();
-v8::Local<v8::ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
-v8::Local<v8::Context> ctx =  NanNewContextHandle(NULL, otmpl);
-```
-
 <a name="api_nan_dispose"></a>
-### template&lt;class T&gt; void NanDispose(v8::Persistent&lt;T&gt; &)
+### void NanDispose(v8::Persistent<v8::Object> &)
 
 Use `NanDispose` to dispose a `Persistent` handle.
 

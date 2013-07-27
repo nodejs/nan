@@ -1,12 +1,18 @@
 /**********************************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2013 Rod Vagg
+ * Copyright (c) 2013 NAN contributors:
+ *   - Rod Vagg <https://github.com/rvagg>
+ *   - King Koopa <https://github.com/kkoopa>
+ *   - Trevor Norris <https://github.com/trevnorris>
+ *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.1.0 (current Node unstable: 0.11.4)
+ * Version 0.2.0 (current Node unstable: 0.11.4)
  *
  * Changelog:
+ *  * 0.2.0 .... TODO
+ *
  *  * 0.1.0 Jul 21 2013
  *           - Added `NAN_GETTER`, `NAN_SETTER`
  *           - Added `NanThrowError` with single Local<Value> argument
@@ -149,6 +155,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return node::Buffer::New(size);
   }
 
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return node::Buffer::Use(data, size);
+  }
+
   template <class TypeName>
   inline v8::Local<TypeName> NanPersistentToLocal(
      const v8::Persistent<TypeName>& persistent) {
@@ -239,6 +249,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
     return v8::Local<v8::Object>::New(node::Buffer::New(size)->handle_);
+  }
+
+  static inline void FreeData(char *data, void *hint) {
+    delete[] data;
+  }
+
+  static inline v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size) {
+    return v8::Local<v8::Object>::New(
+        node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
   template <class TypeName>
