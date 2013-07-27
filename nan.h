@@ -94,7 +94,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
-
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetAlignedPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetAlignedPointerInInternalField(index, value)
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value);
 # define NanReturnUndefined() return;
@@ -173,6 +176,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
 
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetPointerInInternalField(index, value)
 # define NanScope() v8::HandleScope scope
 # define NanReturnValue(value) return scope.Close(value);
 # define NanReturnUndefined() return v8::Undefined();
