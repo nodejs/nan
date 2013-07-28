@@ -370,8 +370,7 @@ class NanCallback {
    handle.Dispose();
   }
 
-  v8::Local<v8::Function> GetFunction () {
-    NanScope();
+  inline v8::Local<v8::Function> GetFunction () {
     return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
         .As<v8::Function>();
   }
