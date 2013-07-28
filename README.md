@@ -411,7 +411,7 @@ Can also be supplied with a `NAN_WEAK_CALLBACK` and a hint for the garbage colle
 <a name="api_nan_buffer_use"></a>
 ### v8::Local&lt;v8::Object&gt; NanBufferUse(char*, uint32_t)
 
-`Buffer::New(char*, uint32_t)` previous to 0.11 would make a copy of the data.
+`Buffer::New(char*, uint32_t)` prior to 0.11 would make a copy of the data.
 While it was possible to get around this, it required a shim by passing a
 callback. So the new API `Buffer::Use(char*, uint32_t)` was introduced to remove
 needing to use this shim.

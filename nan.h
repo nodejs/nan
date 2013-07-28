@@ -8,10 +8,25 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.2.0 (current Node unstable: 0.11.4)
+ * Version 0.2.0-wip (current Node unstable: 0.11.4)
  *
- * Changelog:
+ * ChangeLog:
  *  * 0.2.0 .... work in progress
+ *    - Added NAN_PROPERTY_GETTER, NAN_PROPERTY_SETTER, NAN_PROPERTY_ENUMERATOR,
+ *      NAN_PROPERTY_DELETER, NAN_PROPERTY_QUERY
+ *    - Extracted _NAN_METHOD_ARGS, _NAN_GETTER_ARGS, _NAN_SETTER_ARGS,
+ *      _NAN_PROPERTY_GETTER_ARGS, _NAN_PROPERTY_SETTER_ARGS,
+ *      _NAN_PROPERTY_ENUMERATOR_ARGS, _NAN_PROPERTY_DELETER_ARGS,
+ *      _NAN_PROPERTY_QUERY_ARGS
+ *    - Added NanGetInternalFieldPointer, NanSetInternalFieldPointer
+ *    - Added NAN_WEAK_CALLBACK, NAN_WEAK_CALLBACK_OBJECT,
+ *      NAN_WEAK_CALLBACK_DATA, NanMakeWeak
+ *    - Renamed THROW_ERROR to _NAN_THROW_ERROR
+ *    - Added NanNewBufferHandle(char*, size_t, node::smalloc::FreeCallback, void*)
+ *    - Added NanBufferUse(char*, uint32_t)
+ *    - Added NanNewContextHandle(v8::ExtensionConfiguration*,
+ *        v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::Value>)
+ *    - Fixed broken NanCallback#GetFunction()
  *
  *  * 0.1.0 Jul 21 2013
  *    - Added `NAN_GETTER`, `NAN_SETTER`
