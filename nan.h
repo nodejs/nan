@@ -94,12 +94,41 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_GETTER_ARGS                                             \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_PROPERTY_GETTER(name)                                             \
+    void name(v8::Local<v8::String> property                                   \
+      , _NAN_PROPERTY_GETTER_ARGS)
+# define _NAN_PROPERTY_SETTER_ARGS                                             \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_PROPERTY_SETTER(name)                                             \
+    void name(v8::Local<v8::String> property                                   \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_PROPERTY_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
+    const v8::PropertyCallbackInfo<v8::Array>& args
+# define NAN_PROPERTY_ENUMERATOR(name)                                         \
+    void name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS                                            \
+    const v8::PropertyCallbackInfo<v8::Boolean>& args
+# define NAN_PROPERTY_DELETER(name)                                            \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+      , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS                                              \
+    const v8::PropertyCallbackInfo<v8::Integer>& args
+# define NAN_PROPERTY_QUERY(name)                                              \
+    void name(v8::Local<v8::String> property, _NAN_PROPERTY_QUERY_ARGS)
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetAlignedPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetAlignedPointerInInternalField(index, value)
 
 # define NAN_WEAK_CALLBACK(type, name)                                         \
     void name(                                                                 \
-    v8::Isolate* isolate,                                                      \
-    v8::Persistent<v8::Object>* object,                                        \
-    type data)
+      v8::Isolate* isolate,                                                    \
+      v8::Persistent<v8::Object>* object,                                      \
+      type data)
 # define NAN_WEAK_CALLBACK_OBJECT (*object)
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
@@ -176,6 +205,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return NanPersistentToLocal(function_template)->HasInstance(value);
   }
 
+  static inline v8::Local<v8::Context> NanNewContextHandle(
+    v8::ExtensionConfiguration* extensions = NULL,
+    v8::Handle<v8::ObjectTemplate> g_template = v8::Handle<v8::ObjectTemplate>(),
+    v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()) {
+      return v8::Local<v8::Context>::New(nan_isolate, v8::Context::New(
+          nan_isolate, extensions, g_template, g_object));
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -187,13 +224,39 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_SETTER_ARGS const v8::AccessorInfo &args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
-        v8::Local<v8::String> property                                         \
-      , v8::Local<v8::Value> value                                             \
-      , _NAN_SETTER_ARGS)
+      v8::Local<v8::String> property                                           \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_GETTER_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_GETTER(name)                                             \
+    v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
+    , _NAN_PROPERTY_GETTER_ARGS)
+# define _NAN_PROPERTY_SETTER_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_SETTER(name)                                             \
+    v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_PROPERTY_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_ENUMERATOR(name)                                         \
+    v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_DELETER(name)                                            \
+    v8::Handle<v8::Boolean> name(                                              \
+      v8::Local<v8::String> property                                           \
+    , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS const v8::AccessorInfo& args
+# define NAN_PROPERTY_QUERY(name)                                              \
+    v8::Handle<v8::Integer> name(                                              \
+      v8::Local<v8::String> property                                           \
+    , _NAN_PROPERTY_QUERY_ARGS)
 
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetPointerInInternalField(index, value)
 # define NAN_WEAK_CALLBACK(type, name) void name(                              \
-                            v8::Persistent<v8::Value> object,                  \
-                            void *data)
+                v8::Persistent<v8::Value> object,                              \
+                void *data)
 # define NAN_WEAK_CALLBACK_OBJECT object
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
@@ -239,7 +302,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       size_t length,
       node::Buffer::free_callback callback,
       void *hint) {
-    return v8::Local<v8::Object>::New(node::Buffer::New(data, length, callback, hint)->handle_);
+    return v8::Local<v8::Object>::New(
+        node::Buffer::New(data, length, callback, hint)->handle_);
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
@@ -275,6 +339,19 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         v8::Persistent<v8::FunctionTemplate>& function_template
       , v8::Handle<v8::Value> value) {
     return function_template->HasInstance(value);
+  }
+
+  static inline v8::Local<v8::Context> NanNewContextHandle(
+        v8::ExtensionConfiguration* extensions = NULL
+      , v8::Handle<v8::ObjectTemplate> g_template =
+            v8::Handle<v8::ObjectTemplate>()
+      , v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()
+    ) {
+      v8::Persistent<v8::Context> ctx =
+          v8::Context::New(extensions, g_template, g_object);
+      v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
+      ctx.Dispose();
+      return lctx;
   }
 
 #endif // node version
