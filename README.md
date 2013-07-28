@@ -306,7 +306,7 @@ NAN_METHOD(Foo::Bar) {
 ```
 
 <a name="api_nan_get_internal_field_pointer"></a>
-### void * NanGetInternalFieldPointer(v8::Handle<v8::Object>, int)
+### void * NanGetInternalFieldPointer(v8::Handle&lt;v8::Object&gt;, int)
 
 Gets a pointer to the internal field with at `index` from a V8 `Object` handle.
 
@@ -316,7 +316,7 @@ Local<Object> obj;
 NanGetInternalFieldPointer(obj, 0);
 ```
 <a name="api_nan_set_internal_field_pointer"></a>
-### void NanSetInternalFieldPointer(v8::Handle<v8::Object>, int, void *)
+### void NanSetInternalFieldPointer(v8::Handle&lt;v8::Object&gt;, int, void *)
 
 Sets the value of the internal field at `index` on a V8 `Object` handle.
 
@@ -337,7 +337,7 @@ NanObjectWrapHandle(iterator)->Get(v8::String::NewSymbol("end"))
 ```
 
 <a name="api_nan_make_weak"></a>
-### NanMakeWeak(v8::Persistent<T>, parameter, callback)
+### NanMakeWeak(v8::Persistent&lt;T&gt;, parameter, callback)
 
 Make a persistent reference weak.
 
@@ -353,7 +353,7 @@ if (obj->Has(NanSymbol("foo")))
 ```
 
 <a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(v8::Handle<v8::Value>)
+### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;)
 
 When you want to convert a V8 string to a `char*` use `NanFromV8String`. Just remember that you'll end up with an object that you'll need to `delete[]` at some point:
 
@@ -385,7 +385,7 @@ uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
 ```
 
 <a name="api_nan_throw_error"></a>
-### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local<Value>)
+### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local&lt;Value&gt;)
 
 For throwing `Error`, `TypeError` and `RangeError` objects. You should `return` this call:
 
