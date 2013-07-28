@@ -11,16 +11,16 @@
  * Version 0.2.0 (current Node unstable: 0.11.4)
  *
  * Changelog:
- *  * 0.2.0 .... TODO
+ *  * 0.2.0 .... work in progress
  *
  *  * 0.1.0 Jul 21 2013
- *           - Added `NAN_GETTER`, `NAN_SETTER`
- *           - Added `NanThrowError` with single Local<Value> argument
- *           - Added `NanNewBufferHandle` with single uint32_t argument
- *           - Added `NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)`
- *           - Added `Local<Function> NanCallback#GetFunction()`
- *           - Added `NanCallback#Call(int, Local<Value>[])`
- *           - Deprecated `NanCallback#Run(int, Local<Value>[])` in favour of Call
+ *    - Added `NAN_GETTER`, `NAN_SETTER`
+ *    - Added `NanThrowError` with single Local<Value> argument
+ *    - Added `NanNewBufferHandle` with single uint32_t argument
+ *    - Added `NanHasInstance(Persistent<FunctionTemplate>&, Handle<Value>)`
+ *    - Added `Local<Function> NanCallback#GetFunction()`
+ *    - Added `NanCallback#Call(int, Local<Value>[])`
+ *    - Deprecated `NanCallback#Run(int, Local<Value>[])` in favour of Call
  *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/
