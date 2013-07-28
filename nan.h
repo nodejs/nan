@@ -295,7 +295,8 @@ class NanCallback {
 
   v8::Local<v8::Function> GetFunction () {
     NanScope();
-    return NanPersistentToLocal(handle).As<v8::Function>();
+    return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
+        .As<v8::Function>();
   }
 
   // deprecated
