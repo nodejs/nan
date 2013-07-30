@@ -5,7 +5,7 @@ node_js:
   - 0.11
 branches:
   only:
-    - test
+    - tests
 notifications:
   email:
     - rod@vagg.org
