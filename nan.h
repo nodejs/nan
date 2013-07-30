@@ -88,7 +88,7 @@ static inline uint32_t NanUInt32OptionValue(
 
   return !optionsObj.IsEmpty()
     && optionsObj->Has(opt)
-    && optionsObj->Get(opt)->IsUint32()
+    && optionsObj->Get(opt)->IsNumber()
       ? optionsObj->Get(opt)->Uint32Value()
       : def;
 }
