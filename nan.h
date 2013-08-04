@@ -8,10 +8,10 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.2.0-wip (current Node unstable: 0.11.4)
+ * Version 0.2.0 (current Node unstable: 0.11.4)
  *
  * ChangeLog:
- *  * 0.2.0 .... work in progress
+ *  * 0.2.0 Aug 5 2013
  *    - Added NAN_PROPERTY_GETTER, NAN_PROPERTY_SETTER, NAN_PROPERTY_ENUMERATOR,
  *      NAN_PROPERTY_DELETER, NAN_PROPERTY_QUERY
  *    - Extracted _NAN_METHOD_ARGS, _NAN_GETTER_ARGS, _NAN_SETTER_ARGS,
@@ -27,6 +27,10 @@
  *    - Added NanNewContextHandle(v8::ExtensionConfiguration*,
  *        v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::Value>)
  *    - Fixed broken NanCallback#GetFunction()
+ *    - Added optional encoding and size arguments to NanFromV8String()
+ *    - Added NanGetPointerSafe() and NanSetPointerSafe()
+ *    - Added initial test suite (to be expanded)
+ *    - Allow NanUInt32OptionValue to convert any Number object
  *
  *  * 0.1.0 Jul 21 2013
  *    - Added `NAN_GETTER`, `NAN_SETTER`
