@@ -45,20 +45,28 @@
 
 #include <node.h>
 #include <node_buffer.h>
+#include <string.h>
 
 // some generic helpers
 
-#define NanSymbol(value) v8::String::NewSymbol(value)
-
-static inline char* NanFromV8String(v8::Local<v8::Value> from) {
-  size_t sz_;
-  char* to;
-  v8::Local<v8::String> toStr = from->ToString();
-  sz_ = toStr->Utf8Length();
-  to = new char[sz_ + 1];
-  toStr->WriteUtf8(to, -1, NULL, v8::String::NO_OPTIONS);
-  return to;
+template<class T> static inline bool NanSetPointerSafe(T *var, T val) {
+  if (var) {
+    *var = val;
+    return true;
+  } else {
+    return false;
+  }
 }
+
+template<class T> static inline T NanGetPointerSafe(T *var, T fallback = reinterpret_cast<T>(0)) {
+  if (var) {
+    return *var;
+  } else {
+    return fallback;
+  }
+}
+
+#define NanSymbol(value) v8::String::NewSymbol(value)
 
 static inline bool NanBooleanOptionValue(
       v8::Local<v8::Object> optionsObj
@@ -488,6 +496,221 @@ inline void NanAsyncQueueWorker (NanAsyncWorker* worker) {
     , NanAsyncExecute
     , (uv_after_work_cb)NanAsyncExecuteComplete
   );
+}
+
+//// Base 64 ////
+
+#define _nan_base64_encoded_size(size) ((size + 2 - ((size + 2) % 3)) / 3 * 4)
+
+
+// Doesn't check for padding at the end.  Can be 1-2 bytes over.
+static inline size_t _nan_base64_decoded_size_fast(size_t size) {
+  size_t remainder = size % 4;
+
+  size = (size / 4) * 3;
+  if (remainder) {
+    if (size == 0 && remainder == 1) {
+      // special case: 1-byte input cannot be decoded
+      size = 0;
+    } else {
+      // non-padded input, add 1 or 2 extra bytes
+      size += 1 + (remainder == 3);
+    }
+  }
+
+  return size;
+}
+
+template <typename TypeName>
+static size_t _nan_base64_decoded_size(const TypeName* src, size_t size) {
+  if (size == 0)
+    return 0;
+
+  if (src[size - 1] == '=')
+    size--;
+  if (size > 0 && src[size - 1] == '=')
+    size--;
+
+  return _nan_base64_decoded_size_fast(size);
+}
+
+
+// supports regular and URL-safe base64
+static const int _nan_unbase64_table[] =
+  { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1, -2, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63,
+    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+    -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, 63,
+    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  };
+
+#define _nan_unbase64(x) _nan_unbase64_table[(uint8_t)(x)]
+
+
+template <typename TypeName>
+static size_t _nan_base64_decode(char* buf,
+                     size_t len,
+                     const TypeName* src,
+                     const size_t srcLen) {
+  char a, b, c, d;
+  char* dst = buf;
+  char* dstEnd = buf + len;
+  const TypeName* srcEnd = src + srcLen;
+
+  while (src < srcEnd && dst < dstEnd) {
+    int remaining = srcEnd - src;
+
+    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
+    if (remaining == 0 || *src == '=') break;
+    a = _nan_unbase64(*src++);
+
+    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
+    if (remaining <= 1 || *src == '=') break;
+    b = _nan_unbase64(*src++);
+
+    *dst++ = (a << 2) | ((b & 0x30) >> 4);
+    if (dst == dstEnd) break;
+
+    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
+    if (remaining <= 2 || *src == '=') break;
+    c = _nan_unbase64(*src++);
+
+    *dst++ = ((b & 0x0F) << 4) | ((c & 0x3C) >> 2);
+    if (dst == dstEnd) break;
+
+    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
+    if (remaining <= 3 || *src == '=') break;
+    d = _nan_unbase64(*src++);
+
+    *dst++ = ((c & 0x03) << 6) | (d & 0x3F);
+  }
+
+  return dst - buf;
+}
+
+//// HEX ////
+
+template <typename TypeName>
+unsigned _nan_hex2bin(TypeName c) {
+  if (c >= '0' && c <= '9') return c - '0';
+  if (c >= 'A' && c <= 'F') return 10 + (c - 'A');
+  if (c >= 'a' && c <= 'f') return 10 + (c - 'a');
+  return static_cast<unsigned>(-1);
+}
+
+
+template <typename TypeName>
+static size_t _nan_hex_decode(char* buf,
+                  size_t len,
+                  const TypeName* src,
+                  const size_t srcLen) {
+  size_t i;
+  for (i = 0; i < len && i * 2 + 1 < srcLen; ++i) {
+    unsigned a = _nan_hex2bin(src[i * 2 + 0]);
+    unsigned b = _nan_hex2bin(src[i * 2 + 1]);
+    if (!~a || !~b) return i;
+    buf[i] = a * 16 + b;
+  }
+
+  return i;
+}
+
+static bool _NanGetExternalParts(v8::Handle<v8::Value> val, const char** data, size_t* len) {
+  if (node::Buffer::HasInstance(val)) {
+    *data = node::Buffer::Data(val);
+    *len = node::Buffer::Length(val);
+    return true;
+
+  }
+
+  assert(val->IsString());
+  v8::Local<v8::String> str = v8::Local<v8::String>::New(val.As<v8::String>());
+
+  if (str->IsExternalAscii()) {
+    const v8::String::ExternalAsciiStringResource* ext;
+    ext = str->GetExternalAsciiStringResource();
+    *data = ext->data();
+    *len = ext->length();
+    return true;
+
+  } else if (str->IsExternal()) {
+    const v8::String::ExternalStringResource* ext;
+    ext = str->GetExternalStringResource();
+    *data = reinterpret_cast<const char*>(ext->data());
+    *len = ext->length();
+    return true;
+  }
+
+  return false;
+}
+
+static inline char* NanFromV8String(v8::Local<v8::Value> from, enum node::encoding encoding = node::UTF8, size_t *datalen = NULL) {
+  NanScope();
+
+  size_t sz_;
+  char *data = NULL;
+  size_t len;
+  bool is_extern = _NanGetExternalParts(from, const_cast<const char**>(&data), &len);
+
+  if (is_extern) {
+    NanSetPointerSafe(datalen, len);
+    return data;
+  }
+
+  assert(from->IsString());
+  v8::Local<v8::String> toStr = from.As<v8::String>();
+
+  int flags = v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED;
+
+  char *to;
+  v8::String::AsciiValue value(toStr);
+  switch(encoding) {
+    case node::ASCII:
+    case node::BINARY:
+    case node::BUFFER:
+      sz_ = toStr->Length();
+      to = new char[sz_];
+      #if (NODE_MODULE_VERSION > 0x000B)
+        NanSetPointerSafe<size_t>(datalen, toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
+      #else
+        assert(0 && "not implemented");
+      #endif
+      return to;
+    case node::UTF8:
+      sz_ = toStr->Utf8Length();
+      to = new char[sz_];
+      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to));
+      return to;
+    case node::BASE64:
+      sz_ = _nan_base64_decoded_size(*value, sz_);
+      to = new char[sz_];
+      NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
+      return to;
+    case node::UCS2:
+      sz_ = toStr->Length();
+      to = new char[sz_ * 2];
+      NanSetPointerSafe<size_t>(datalen, toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_, flags));
+      return to;
+    case node::HEX:
+      sz_ = toStr->Length();
+      assert(!(sz_ & 1) && "bad hex data");
+      to = new char[sz_ / 2];
+      NanSetPointerSafe<size_t>(datalen, _nan_hex_decode(to, sz_ / 2, *value, value.length()));
+      return to;
+    default:
+      assert(0 && "unknown encoding");
+  }
 }
 
 #endif
