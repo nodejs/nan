@@ -630,7 +630,7 @@ static size_t _nan_hex_decode(char* buf,
   return i;
 }
 
-static bool _NanGetExternalParts(v8::Handle<v8::Value> val, const char** data, size_t* len) {
+static bool _NanGetExternalParts(v8::Handle<v8::Object> val, const char** data, size_t* len) {
   if (node::Buffer::HasInstance(val)) {
     *data = node::Buffer::Data(val);
     *len = node::Buffer::Length(val);
@@ -659,7 +659,11 @@ static bool _NanGetExternalParts(v8::Handle<v8::Value> val, const char** data, s
   return false;
 }
 
-static inline char* NanFromV8String(v8::Local<v8::Value> from, enum node::encoding encoding = node::UTF8, size_t *datalen = NULL) {
+static inline char* NanFromV8String(
+      v8::Local<v8::Object> from
+    , enum node::encoding encoding = node::UTF8
+    , size_t *datalen = NULL) {
+
   NanScope();
 
   size_t sz_;
@@ -682,15 +686,13 @@ static inline char* NanFromV8String(v8::Local<v8::Value> from, enum node::encodi
   switch(encoding) {
     case node::ASCII:
     case node::BINARY:
-    case node::BUFFER:
-      sz_ = toStr->Length();
-      to = new char[sz_];
-      #if (NODE_MODULE_VERSION > 0x000B)
-        NanSetPointerSafe<size_t>(datalen, toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
-      #else
-        assert(0 && "not implemented");
-      #endif
-      return to;
+    #if (NODE_MODULE_VERSION > 0x000B)
+      case node::BUFFER:
+        sz_ = toStr->Length();
+        to = new char[sz_];
+          NanSetPointerSafe<size_t>(datalen, toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
+        return to;
+    #endif
     case node::UTF8:
       sz_ = toStr->Utf8Length();
       to = new char[sz_];

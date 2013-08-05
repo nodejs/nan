@@ -4,7 +4,7 @@
 NAN_METHOD(ReturnString) {
   NanScope();
 
-  NanReturnValue(v8::String::New(NanFromV8String(args[0].As<v8::String>())));
+  NanReturnValue(v8::String::New(NanFromV8String(args[0].As<v8::Object>())));
 }
 
 void Init (v8::Handle<v8::Object> target) {
