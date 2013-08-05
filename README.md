@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.2.1*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+***Current version: 0.2.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 
@@ -389,7 +389,7 @@ const char *plugh(size_t *outputsize) {
 <a name="api_nan_from_v8_string"></a>
 ### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;[, enum node::encoding, size_t *])
 
-When you want to convert a V8 string to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `node::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. Just remember that you'll end up with an object that you'll need to `delete[]` at some point:
+When you want to convert a V8 string to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `node::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. On versions prior to 0.11, the `node::BINARY` and `node::BUFFER` encodings currently may not work properly yet. do not Just remember that you'll end up with an object that you'll need to `delete[]` at some point:
 
 ```c++
 size_t count;

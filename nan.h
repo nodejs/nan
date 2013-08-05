@@ -8,9 +8,12 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.2.1 (current Node unstable: 0.11.4)
+ * Version 0.2.2 (current Node unstable: 0.11.4)
  *
  * ChangeLog:
+ *  * 0.2.2 Aug 5 2013
+ *    - Fixed usage of undefined variable with node::BASE64 in NanFromV8String()
+ *
  *  * 0.2.1 Aug 5 2013
  *    - Fixed 0.8 breakage, node::BUFFER encoding type not available in 0.8 for
  *      NanFromV8String()
@@ -703,7 +706,7 @@ static inline char* NanFromV8String(
       NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to));
       return to;
     case node::BASE64:
-      sz_ = _nan_base64_decoded_size(*value, sz_);
+      sz_ = _nan_base64_decoded_size(*value, toStr->Length());
       to = new char[sz_];
       NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
       return to;
