@@ -8,9 +8,13 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.2.0 (current Node unstable: 0.11.4)
+ * Version 0.2.1 (current Node unstable: 0.11.4)
  *
  * ChangeLog:
+ *  * 0.2.1 Aug 5 2013
+ *    - Fixed 0.8 breakage, node::BUFFER encoding type not available in 0.8 for
+ *      NanFromV8String()
+ *
  *  * 0.2.0 Aug 5 2013
  *    - Added NAN_PROPERTY_GETTER, NAN_PROPERTY_SETTER, NAN_PROPERTY_ENUMERATOR,
  *      NAN_PROPERTY_DELETER, NAN_PROPERTY_QUERY
