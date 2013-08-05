@@ -415,9 +415,11 @@ bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanSymbol("bar"), true);
 ```
 
 <a name="api_nan_uint32_option_value"></a>
-### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, uint32_t])
+### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;, uint32_t)
 
-Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Requires all 3 arguments as a default is not optional:
+Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Can be any kind of JavaScript `Number` and it will be coerced to an unsigned 32-bit integer.
+
+Requires all 3 arguments as a default is not optional:
 
 ```c++
 uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
