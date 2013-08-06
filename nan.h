@@ -300,7 +300,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnValue(value) return scope.Close(value)
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
-# define NanReturnEmptyString() return v8::String::New()
+# define NanReturnEmptyString() return v8::String::Empty()
 # define NanAssignPersistent(type, handle, obj)                                \
     handle = v8::Persistent<type>::New(obj)
 # define NanObjectWrapHandle(obj) obj->handle_
