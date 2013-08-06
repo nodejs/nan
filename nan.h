@@ -8,7 +8,7 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.2.2 (current Node unstable: 0.11.4)
+ * Version 0.3.0-wip (current Node unstable: 0.11.4)
  *
  * ChangeLog:
  *  * 0.2.2 Aug 5 2013
@@ -169,6 +169,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanScope() v8::HandleScope scope(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
 # define NanReturnUndefined() return
+# define NanReturnNull() return args.GetReturnValue().SetNull()
+# define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 # define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 # define NanMakeWeak(handle, parameter, callback)                              \
@@ -297,6 +299,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanScope() v8::HandleScope scope
 # define NanReturnValue(value) return scope.Close(value)
 # define NanReturnUndefined() return v8::Undefined()
+# define NanReturnNull() return v8::Null()
+# define NanReturnEmptyString() return v8::String::New()
 # define NanAssignPersistent(type, handle, obj)                                \
     handle = v8::Persistent<type>::New(obj)
 # define NanObjectWrapHandle(obj) obj->handle_
