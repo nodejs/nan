@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "0.8"
+  - "0.10"
+  - "0.11"
+notifications:
+  email:
+    - rod@vagg.org
+before_install: "cd test; npm install"
+script: "cd test; npm test"

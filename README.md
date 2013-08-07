@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.2.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+***Current version: 0.2.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 
@@ -152,6 +152,8 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
  * <a href="#api_nan_make_weak"><b><code>NanMakeWeak</code></b></a>
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
+ * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
+ * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
@@ -352,13 +354,50 @@ if (obj->Has(NanSymbol("foo")))
   foo = optionsObj->Get(NanSymbol("foo"))->BooleanValue()
 ```
 
-<a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;)
+<a name="api_nan_get_pointer_safe"></a>
+### Type NanGetPointerSafe(Type *[, Type])
 
-When you want to convert a V8 string to a `char*` use `NanFromV8String`. Just remember that you'll end up with an object that you'll need to `delete[]` at some point:
+A helper for getting values from optional pointers. If the pointer is `NULL`, the function returns the optional default value, which defaults to `0`.  Otherwise, the function returns the value the pointer points to.
 
 ```c++
+char *plugh(uint32_t *optional) {
+  char res[] = "xyzzy";
+  uint32_t param = NanGetPointerSafe<uint32_t>(optional, 0x1337);
+  switch (param) {
+    ...
+  }
+  NanSetPointerSafe<uint32_t>(optional, 0xDEADBEEF);
+}  
+```
+
+<a name="api_nan_set_pointer_safe"></a>
+### bool NanSetPointerSafe(Type *, Type)
+
+A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply return `false`.  Otherwise, the value is assigned to the variable the pointer points to.
+
+```c++
+const char *plugh(size_t *outputsize) {
+  char res[] = "xyzzy";
+  if !(NanSetPointerSafe<size_t>(outputsize, strlen(res) + 1)) {
+    ...
+  }
+
+  ...
+}
+```
+
+<a name="api_nan_from_v8_string"></a>
+### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;[, enum node::encoding, size_t *])
+
+When you want to convert a V8 string to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `node::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. On versions prior to 0.11, the `node::BINARY` and `node::BUFFER` encodings currently may not work properly yet. do not Just remember that you'll end up with an object that you'll need to `delete[]` at some point:
+
+```c++
+size_t count;
 char* name = NanFromV8String(args[0]);
+char* decoded = NanFromV8String(args[1], node::BASE64, &count);
+char param_copy[count];
+memcpy(param_copy, decoded, count);
+delete[] decoded;
 ```
 
 <a name="api_nan_boolean_option_value"></a>
@@ -376,9 +415,11 @@ bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanSymbol("bar"), true);
 ```
 
 <a name="api_nan_uint32_option_value"></a>
-### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, uint32_t])
+### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;, uint32_t)
 
-Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Requires all 3 arguments as a default is not optional:
+Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Can be any kind of JavaScript `Number` and it will be coerced to an unsigned 32-bit integer.
+
+Requires all 3 arguments as a default is not optional:
 
 ```c++
 uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
