@@ -750,9 +750,8 @@ static inline char* NanFromV8String(
     case node::HEX:
       sz_ = toStr->Length();
       assert(!(sz_ & 1) && "bad hex data");
-      to = new char[sz_ / 2 + 1];
+      to = new char[sz_ / 2];
       NanSetPointerSafe<size_t>(datalen, _nan_hex_decode(to, sz_ / 2, *value, value.length()));
-      to[sz_ / 2] = '\0';
       return to;
     default:
       assert(0 && "unknown encoding");
