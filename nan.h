@@ -8,7 +8,7 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.3.0-wip (current Node unstable: 0.11.4)
+ * Version 0.3.0-wip (current Node unstable: 0.11.5)
  *
  * ChangeLog:
  *  * 0.2.2 Aug 5 2013
