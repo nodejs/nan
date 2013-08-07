@@ -696,14 +696,42 @@ static inline char* NanFromV8String(
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
     case node::ASCII:
+#if NODE_MODULE_VERSION < 0x0C
+      sz_ = toStr->Length();
+      to = new char[sz_];
+      NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_, flags));
+      return to;
+#endif
     case node::BINARY:
-    #if (NODE_MODULE_VERSION > 0x000B)
-      case node::BUFFER:
-        sz_ = toStr->Length();
-        to = new char[sz_];
-          NanSetPointerSafe<size_t>(datalen, toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
+    case node::BUFFER:
+      sz_ = toStr->Length();
+      to = new char[sz_];
+#if NODE_MODULE_VERSION < 0x0C
+      // TODO(isaacs): THIS IS AWFUL!!!
+      // AGREE(kkoopa)
+      {
+        uint16_t* twobytebuf = new uint16_t[sz_];
+
+        size_t len = toStr->Write(twobytebuf, 0, sz_, flags);
+
+        for (size_t i = 0; i < sz_ && i < len; i++) {
+          unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
+          to[i] = *b;
+        }
+
+        NanSetPointerSafe<size_t>(datalen, len);
+
+        delete[] twobytebuf;
         return to;
-    #endif
+      }
+#else
+      sz_ = toStr->Length();
+      to = new char[sz_];
+      NanSetPointerSafe<size_t>(
+        datalen,
+        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
+      return to;
+#endif
     case node::UTF8:
       sz_ = toStr->Utf8Length();
       to = new char[sz_];
@@ -722,8 +750,9 @@ static inline char* NanFromV8String(
     case node::HEX:
       sz_ = toStr->Length();
       assert(!(sz_ & 1) && "bad hex data");
-      to = new char[sz_ / 2];
+      to = new char[sz_ / 2 + 1];
       NanSetPointerSafe<size_t>(datalen, _nan_hex_decode(to, sz_ / 2, *value, value.length()));
+      to[sz_ / 2] = '\0';
       return to;
     default:
       assert(0 && "unknown encoding");
