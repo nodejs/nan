@@ -191,9 +191,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::ThrowException(error);
   }
 
-  inline static void NanThrowErrNo(const char *msg, const int errorNumber) {
+  inline static void NanThrowError(const char *msg, const int errorNumber) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
-    v8::Local<v8::Object> obj = err->ToObject();
+    v8::Local<v8::Object> obj = err.As<Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
     NanThrowError(err);
   }
@@ -330,9 +330,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::ThrowException(error);
   }
 
-  inline static v8::Handle<v8::Value> NanThrowErrNo(const char *msg, const int errorNumber) {
+  inline static v8::Handle<v8::Value> NanThrowError(const char *msg, const int errorNumber) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
-    v8::Local<v8::Object> obj = err->ToObject();
+    v8::Local<v8::Object> obj = err.As<Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
     return NanThrowError(err);
   }
