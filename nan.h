@@ -747,10 +747,13 @@ static inline char* NanFromV8String(
       NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
       return to;
     case Nan::UCS2:
-      sz_ = toStr->Length();
-      to = new char[sz_ * 2];
-      NanSetPointerSafe<size_t>(datalen, toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_, flags));
-      return to;
+      {
+        sz_ = toStr->Length();
+        to = new char[sz_ * 2];
+        int bc = toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_, flags) * 2;
+        NanSetPointerSafe<size_t>(datalen, bc);
+        return to;
+      }
     case Nan::HEX:
       sz_ = toStr->Length();
       assert(!(sz_ & 1) && "bad hex data");
