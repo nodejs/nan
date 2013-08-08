@@ -739,7 +739,7 @@ static inline char* NanFromV8String(
     case Nan::UTF8:
       sz_ = toStr->Utf8Length();
       to = new char[sz_];
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to));
+      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to, sz_, NULL, flags));
       return to;
     case Nan::BASE64:
       sz_ = _nan_base64_decoded_size(*value, toStr->Length());

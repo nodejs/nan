@@ -11,7 +11,7 @@ NAN_METHOD(ReturnString) {
   }
 
   char *s = NanFromV8String(args[0].As<v8::Object>(), enc, &bc);
-  NanReturnValue(v8::String::New(s));
+  NanReturnValue(v8::String::New(s, bc));
 }
 
 void Init (v8::Handle<v8::Object> target) {
