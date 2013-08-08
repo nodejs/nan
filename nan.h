@@ -684,9 +684,13 @@ static bool _NanGetExternalParts(v8::Handle<v8::Object> val, const char** data, 
   return false;
 }
 
+namespace Nan {
+  enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
+}
+
 static inline char* NanFromV8String(
       v8::Local<v8::Object> from
-    , enum node::encoding encoding = node::UTF8
+    , enum Nan::Encoding encoding = Nan::UTF8
     , size_t *datalen = NULL) {
 
   NanScope();
@@ -709,15 +713,15 @@ static inline char* NanFromV8String(
   char *to;
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
-    case node::ASCII:
+    case Nan::ASCII:
 #if NODE_MODULE_VERSION < 0x0C
       sz_ = toStr->Length();
       to = new char[sz_];
       NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_, flags));
       return to;
 #endif
-    case node::BINARY:
-    case node::BUFFER:
+    case Nan::BINARY:
+    case Nan::BUFFER:
       sz_ = toStr->Length();
       to = new char[sz_];
 #if NODE_MODULE_VERSION < 0x0C
@@ -746,22 +750,22 @@ static inline char* NanFromV8String(
         toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
       return to;
 #endif
-    case node::UTF8:
+    case Nan::UTF8:
       sz_ = toStr->Utf8Length();
       to = new char[sz_];
       NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to));
       return to;
-    case node::BASE64:
+    case Nan::BASE64:
       sz_ = _nan_base64_decoded_size(*value, toStr->Length());
       to = new char[sz_];
       NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
       return to;
-    case node::UCS2:
+    case Nan::UCS2:
       sz_ = toStr->Length();
       to = new char[sz_ * 2];
       NanSetPointerSafe<size_t>(datalen, toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_, flags));
       return to;
-    case node::HEX:
+    case Nan::HEX:
       sz_ = toStr->Length();
       assert(!(sz_ & 1) && "bad hex data");
       to = new char[sz_ / 2];
