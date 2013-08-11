@@ -567,8 +567,8 @@ public:
   virtual void WorkComplete ();
 
   // You must implement this to do some async work. If there is an
-  // error then set `errmsg` to to a message and the callback will
-  //be passed that string in an Error object
+  // error then allocate `errmsg` to to a message and the callback will
+  // be passed that string in an Error object
   virtual void Execute ();
 
 protected:
