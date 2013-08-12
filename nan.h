@@ -167,6 +167,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
+# define NanLocker() v8::Locker locker(nan_isolate)
+# define NanUnlocker() v8::Unlocker unlocker(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
 # define NanReturnUndefined() return
 # define NanReturnNull() return args.GetReturnValue().SetNull()
@@ -297,6 +299,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
 # define NanScope() v8::HandleScope scope
+# define NanLocker() v8::Locker locker
+# define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value) return scope.Close(value)
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
