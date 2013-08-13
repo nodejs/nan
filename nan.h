@@ -712,6 +712,18 @@ static inline char* NanFromV8String(
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
     case Nan::ASCII:
+#if NODE_MODULE_VERSION < 0x0C
+      sz_ = toStr->Length();
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len && "too small buffer");
+      }
+      NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_ + term_len, flags));
+      return to;
+#endif
+    case Nan::BINARY:
+    case Nan::BUFFER:
       sz_ = toStr->Length();
       if (to == NULL) {
         to = new char[sz_ + term_len];
@@ -719,31 +731,14 @@ static inline char* NanFromV8String(
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
 #if NODE_MODULE_VERSION < 0x0C
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_ + term_len, flags));
-      return to;
-#else
-      NanSetPointerSafe<size_t>(
-        datalen,
-        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_ + term_len, flags));
-      return to;
-#endif
-    case Nan::BINARY:
-    case Nan::BUFFER:
-      sz_ = toStr->Length();
-      if (to == NULL) {
-        to = new char[sz_];
-      } else {
-        assert(buflen >= sz_ && "too small buffer");
-      }
-#if NODE_MODULE_VERSION < 0x0C
       // TODO(isaacs): THIS IS AWFUL!!!
       // AGREE(kkoopa)
       {
-        uint16_t* twobytebuf = new uint16_t[sz_];
+        uint16_t* twobytebuf = new uint16_t[sz_ + term_len];
 
-        size_t len = toStr->Write(twobytebuf, 0, sz_, flags | v8::String::NO_NULL_TERMINATION);
+        size_t len = toStr->Write(twobytebuf, 0, sz_ + term_len, flags);
 
-        for (size_t i = 0; i < sz_ && i < len; i++) {
+        for (size_t i = 0; i < sz_ + term_len && i < len; i++) {
           unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
           to[i] = *b;
         }
@@ -756,7 +751,7 @@ static inline char* NanFromV8String(
 #else
       NanSetPointerSafe<size_t>(
         datalen,
-        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags | v8::String::NO_NULL_TERMINATION));
+        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_ + term_len, flags));
       return to;
 #endif
     case Nan::UTF8:
