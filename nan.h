@@ -308,7 +308,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
 # define NanInitPersistent(type, name, obj)                                    \
-    v8::Persistent<type> name = obj
+    v8::Persistent<type> name = v8::Persistent<type>::New(obj)
 # define NanAssignPersistent(type, handle, obj)                                \
     handle = v8::Persistent<type>::New(obj)
 # define NanObjectWrapHandle(obj) obj->handle_
