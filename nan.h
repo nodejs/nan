@@ -174,6 +174,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 # define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
+# define NanInitPersistent(type, name, obj)                                    \
+    v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(nan_isolate, parameter, callback)
@@ -305,6 +307,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
+# define NanInitPersistent(type, name, obj)                                    \
+    v8::Persistent<type> name = obj
 # define NanAssignPersistent(type, handle, obj)                                \
     handle = v8::Persistent<type>::New(obj)
 # define NanObjectWrapHandle(obj) obj->handle_
