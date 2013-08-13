@@ -719,12 +719,12 @@ static inline char* NanFromV8String(
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
 #if NODE_MODULE_VERSION < 0x0C
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_, flags));
+      NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_ + term_len, flags));
       return to;
 #else
       NanSetPointerSafe<size_t>(
         datalen,
-        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
+        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_ + term_len, flags));
       return to;
 #endif
     case Nan::BINARY:
