@@ -677,11 +677,16 @@ namespace Nan {
 static inline char* NanFromV8String(
       v8::Local<v8::Object> from
     , enum Nan::Encoding encoding = Nan::UTF8
-    , size_t *datalen = NULL) {
+    , size_t *datalen = NULL
+    , char *buf = NULL
+    , size_t buflen = 0
+    , int flags = v8::String::NO_NULL_TERMINATION
+    | v8::String::HINT_MANY_WRITES_EXPECTED) {
 
   NanScope();
 
   size_t sz_;
+  size_t term_len = !(flags & v8::String::NO_NULL_TERMINATION);
   char *data = NULL;
   size_t len;
   bool is_extern = _NanGetExternalParts(from, const_cast<const char**>(&data), &len);
@@ -694,29 +699,41 @@ static inline char* NanFromV8String(
   assert(from->IsString());
   v8::Local<v8::String> toStr = from.As<v8::String>();
 
-  int flags = v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED;
+  char *to = buf;
 
-  char *to;
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
     case Nan::ASCII:
-#if NODE_MODULE_VERSION < 0x0C
       sz_ = toStr->Length();
-      to = new char[sz_];
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len && "too small buffer");
+      }
+#if NODE_MODULE_VERSION < 0x0C
       NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_, flags));
+      return to;
+#else
+      NanSetPointerSafe<size_t>(
+        datalen,
+        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
       return to;
 #endif
     case Nan::BINARY:
     case Nan::BUFFER:
       sz_ = toStr->Length();
-      to = new char[sz_];
+      if (to == NULL) {
+        to = new char[sz_];
+      } else {
+        assert(buflen >= sz_ && "too small buffer");
+      }
 #if NODE_MODULE_VERSION < 0x0C
       // TODO(isaacs): THIS IS AWFUL!!!
       // AGREE(kkoopa)
       {
         uint16_t* twobytebuf = new uint16_t[sz_];
 
-        size_t len = toStr->Write(twobytebuf, 0, sz_, flags);
+        size_t len = toStr->Write(twobytebuf, 0, sz_, flags | v8::String::NO_NULL_TERMINATION);
 
         for (size_t i = 0; i < sz_ && i < len; i++) {
           unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
@@ -729,36 +746,58 @@ static inline char* NanFromV8String(
         return to;
       }
 #else
-      sz_ = toStr->Length();
-      to = new char[sz_];
       NanSetPointerSafe<size_t>(
         datalen,
-        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
+        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags | v8::String::NO_NULL_TERMINATION));
       return to;
 #endif
     case Nan::UTF8:
       sz_ = toStr->Utf8Length();
-      to = new char[sz_];
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to, sz_, NULL, flags));
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len && "too small buffer");
+      }
+      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to, sz_ + term_len, NULL, flags) - term_len);
       return to;
     case Nan::BASE64:
       sz_ = _nan_base64_decoded_size(*value, toStr->Length());
-      to = new char[sz_];
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len);
+      }
       NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
+      if (term_len) {
+        to[sz_] = '\0';
+      }
       return to;
     case Nan::UCS2:
       {
         sz_ = toStr->Length();
-        to = new char[sz_ * 2];
-        int bc = toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_, flags) * 2;
+        if (to == NULL) {
+          to = new char[(sz_ + term_len) * 2];
+        } else {
+          assert(buflen >= (sz_ + term_len) * 2 && "too small buffer");
+        }
+
+        int bc = toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_ + term_len, flags) * 2;
         NanSetPointerSafe<size_t>(datalen, bc);
         return to;
       }
     case Nan::HEX:
       sz_ = toStr->Length();
       assert(!(sz_ & 1) && "bad hex data");
-      to = new char[sz_ / 2];
+      if (to == NULL) {
+        to = new char[sz_ / 2 + term_len];
+      } else {
+        assert(buflen >= sz_ / 2 + term_len && "too small buffer");
+      }
+
       NanSetPointerSafe<size_t>(datalen, _nan_hex_decode(to, sz_ / 2, *value, value.length()));
+      if (term_len) {
+        to[sz_ / 2] = '\0';
+      }
       return to;
     default:
       assert(0 && "unknown encoding");
