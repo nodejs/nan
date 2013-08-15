@@ -31,4 +31,8 @@
         "target_name" : "returnemptystring"
       , "sources"     : [ "cpp/returnemptystring.cpp" ]
     }
+  , {
+        "target_name" : "asyncworker"
+      , "sources"     : [ "cpp/asyncworker.cpp" ]
+    }
 ]}
