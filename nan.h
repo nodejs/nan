@@ -190,7 +190,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
-  inline static void NanThrowError(v8::Local<v8::Value> error) {
+  inline static void NanThrowError(v8::Handle<v8::Value> error) {
     NanScope();
     v8::ThrowException(error);
   }
@@ -326,7 +326,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   inline static v8::Handle<v8::Value> NanThrowError(
-      v8::Local<v8::Value> error) {
+      v8::Handle<v8::Value> error) {
     NanScope();
     return v8::ThrowException(error);
   }
