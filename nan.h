@@ -721,13 +721,12 @@ static inline char* NanFromV8String(
   size_t len;
   bool is_extern = _NanGetExternalParts(from, const_cast<const char**>(&data), &len);
 
-  if (is_extern) {
+  if (is_extern && !term_len) {
     NanSetPointerSafe(datalen, len);
     return data;
   }
 
-  assert(from->IsString());
-  v8::Local<v8::String> toStr = from.As<v8::String>();
+  v8::Local<v8::String> toStr = from->ToString();
 
   char *to = buf;
 
