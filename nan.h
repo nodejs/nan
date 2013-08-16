@@ -458,7 +458,7 @@ class NanCallback {
     v8::TryCatch try_catch;
     callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
     if (try_catch.HasCaught()) {
-     node::FatalException(try_catch);
+      node::FatalException(try_catch);
     }
   }
 
