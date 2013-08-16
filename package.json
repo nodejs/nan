@@ -1,0 +1,15 @@
+{
+  "name": "nan",
+  "version": "0.3.0-wip",
+  "description": "Native Abstractions for Node.js: C++ header for Node 0.8->0.12 compatibility",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rvagg/nan.git"
+  },
+  "contributors": [
+    "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
+    "Benjamin Byholm <bbyholm@abo.fi> (https://github.com/kkoopa/)",
+    "Trevor Norris <trev.norris@gmail.com> (https://github.com/trevnorris)"
+  ],
+  "license": "MIT"
+}
