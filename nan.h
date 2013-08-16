@@ -212,6 +212,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose(nan_isolate);
+    handle.Clear(nan_isolate);
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
@@ -355,6 +356,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose();
+    handle.Clear();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
@@ -419,15 +421,16 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 class NanCallback {
  public:
   NanCallback(const v8::Local<v8::Function> &fn) {
-   NanScope();
-   v8::Local<v8::Object> obj = v8::Object::New();
-   obj->Set(NanSymbol("callback"), fn);
-   NanAssignPersistent(v8::Object, handle, obj);
+    NanScope();
+    v8::Local<v8::Object> obj = v8::Object::New();
+    obj->Set(NanSymbol("callback"), fn);
+    NanAssignPersistent(v8::Object, handle, obj);
   }
 
   ~NanCallback() {
-   if (handle.IsEmpty()) return;
-   handle.Dispose();
+    if (handle.IsEmpty()) return;
+    handle.Dispose();
+    handle.Clear();
   }
 
   inline v8::Local<v8::Function> GetFunction () {
@@ -441,14 +444,15 @@ class NanCallback {
   }
 
   void Call(int argc, v8::Local<v8::Value> argv[]) {
-   NanScope();
-   v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
+    NanScope();
+
+    v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
        Get(NanSymbol("callback")).As<v8::Function>();
-   v8::TryCatch try_catch;
-   callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-   if (try_catch.HasCaught()) {
+    v8::TryCatch try_catch;
+    callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+    if (try_catch.HasCaught()) {
      node::FatalException(try_catch);
-   }
+    }
   }
 
  private:
@@ -463,6 +467,8 @@ public:
   }
 
   virtual ~NanAsyncWorker () {
+    NanScope();
+
     if (!persistentHandle.IsEmpty())
       NanDispose(persistentHandle);
     if (callback)
