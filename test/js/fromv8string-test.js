@@ -10,7 +10,7 @@ test('fromv8string', function (t) {
         HEX    = 5,
         BUFFER = 6;
 
-  t.plan(15);
+  t.plan(16);
   t.type(bindings('fromv8string').r, 'function');
   t.equal(bindings('fromv8string').r('an ascii string', ASCII), 'an ascii string');
   t.equal(bindings('fromv8string').r('an utf8 strïng', UTF8), 'an utf8 strïng');
@@ -19,6 +19,7 @@ test('fromv8string', function (t) {
   t.equal(bindings('fromv8string').r('a binary string', BINARY), 'a binary string');
   t.equal(bindings('fromv8string').r('612068657820737472696E67', HEX), 'a hex string');
   t.equal(bindings('fromv8string').r('a buffer string', BUFFER), 'a buffer string');
+  t.equal(bindings('fromv8string').r(new Buffer('an actual buffer'), BUFFER), 'an actual buffer');
   t.equal(bindings('fromv8string').r('an ascii string', ASCII, 1), 'an ascii string');
   t.equal(bindings('fromv8string').r('an utf8 strïng', UTF8, 1), 'an utf8 strïng');
   t.equal(bindings('fromv8string').r('YSBiYXNlNjQgc3RyaW5n', BASE64, 1), 'a base64 string');
