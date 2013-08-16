@@ -11,6 +11,13 @@
  * Version 0.3.0-wip (current Node unstable: 0.11.5)
  *
  * ChangeLog:
+ *  * 0.3.0-wip UNRELEASED
+ *    - Lots of fixes to NanFromV8String, pulling in features from new Node core
+ *    - Added Nan::Encoding for NanFromV8String to allow BUFFER type in Node 0.8 (instead of node::encoding)
+ *    - Added optional error number argument for NanThrowError()
+ *    - Added NanInitPersistent()
+ *    - Fixed minor leak in NanAsyncWorker when error message
+ *
  *  * 0.2.2 Aug 5 2013
  *    - Fixed usage of undefined variable with node::BASE64 in NanFromV8String()
  *
