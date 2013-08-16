@@ -766,7 +766,7 @@ static inline char* NanFromV8String(
 
         size_t len = toStr->Write(twobytebuf, 0, sz_ + term_len, flags);
 
-        for (size_t i = 0; i < sz_ + term_len && i < len; i++) {
+        for (size_t i = 0; i < sz_ + term_len && i < len + term_len; i++) {
           unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
           to[i] = *b;
         }
