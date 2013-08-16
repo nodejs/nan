@@ -768,9 +768,6 @@ static inline char* NanFromV8String(
       NanSetPointerSafe<size_t>(
         datalen,
         toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_ + term_len, flags));
-      if (term_len) {
-        to[sz_] = '\0';
-      }
       return to;
 #endif
     case Nan::UTF8:
