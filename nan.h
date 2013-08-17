@@ -12,11 +12,17 @@
  *
  * ChangeLog:
  *  * 0.3.0-wip UNRELEASED
+ *    - Made NAN work with NPM
  *    - Lots of fixes to NanFromV8String, pulling in features from new Node core
- *    - Added Nan::Encoding for NanFromV8String to allow BUFFER type in Node 0.8 (instead of node::encoding)
+ *    - Changed node::encoding to Nan::Encoding in NanFromV8String to unify the API
  *    - Added optional error number argument for NanThrowError()
  *    - Added NanInitPersistent()
- *    - Fixed minor leak in NanAsyncWorker when error message
+ *    - Added NanReturnNull() and NanReturnEmptyString()
+ *    - Added NanLocker and NanUnlocker
+ *    - Added missing scopes
+ *    - Made sure to clear disposed Persistent handles
+ *    - Changed NanAsyncWorker to allocate error messages on the heap
+ *    - Changed NanThrowError(Local<Value>) to NanThrowError(Handle<Value>)
  *
  *  * 0.2.2 Aug 5 2013
  *    - Fixed usage of undefined variable with node::BASE64 in NanFromV8String()
@@ -76,7 +82,9 @@ template<class T> static inline bool NanSetPointerSafe(T *var, T val) {
   }
 }
 
-template<class T> static inline T NanGetPointerSafe(T *var, T fallback = reinterpret_cast<T>(0)) {
+template<class T> static inline T NanGetPointerSafe(
+    T *var,
+    T fallback = reinterpret_cast<T>(0)) {
   if (var) {
     return *var;
   } else {
@@ -262,10 +270,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static inline v8::Local<v8::Context> NanNewContextHandle(
     v8::ExtensionConfiguration* extensions = NULL,
-    v8::Handle<v8::ObjectTemplate> g_template = v8::Handle<v8::ObjectTemplate>(),
-    v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()) {
+    v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>(),
+    v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()) {
       return v8::Local<v8::Context>::New(nan_isolate, v8::Context::New(
-          nan_isolate, extensions, g_template, g_object));
+          nan_isolate, extensions, tmpl, obj));
   }
 
 #else
@@ -346,7 +354,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::ThrowException(error);
   }
 
-  inline static v8::Handle<v8::Value> NanThrowError(const char *msg, const int errorNumber) {
+  inline static v8::Handle<v8::Value> NanThrowError(
+      const char *msg,
+      const int errorNumber) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
@@ -412,12 +422,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static inline v8::Local<v8::Context> NanNewContextHandle(
         v8::ExtensionConfiguration* extensions = NULL
-      , v8::Handle<v8::ObjectTemplate> g_template =
+      , v8::Handle<v8::ObjectTemplate> tmpl =
             v8::Handle<v8::ObjectTemplate>()
-      , v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()
+      , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
     ) {
       v8::Persistent<v8::Context> ctx =
-          v8::Context::New(extensions, g_template, g_object);
+          v8::Context::New(extensions, tmpl, obj);
       v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
       ctx.Dispose();
       return lctx;
@@ -678,7 +688,11 @@ static size_t _nan_hex_decode(char* buf,
   return i;
 }
 
-static bool _NanGetExternalParts(v8::Handle<v8::Object> val, const char** data, size_t* len) {
+static bool _NanGetExternalParts(
+      v8::Handle<v8::Object> val
+    , const char** data
+    , size_t* len) {
+
   if (node::Buffer::HasInstance(val)) {
     *data = node::Buffer::Data(val);
     *len = node::Buffer::Length(val);
@@ -726,7 +740,10 @@ static inline char* NanFromV8String(
   size_t term_len = !(flags & v8::String::NO_NULL_TERMINATION);
   char *data = NULL;
   size_t len;
-  bool is_extern = _NanGetExternalParts(from, const_cast<const char**>(&data), &len);
+  bool is_extern = _NanGetExternalParts(
+      from
+    , const_cast<const char**>(&data)
+    , &len);
 
   if (is_extern && !term_len) {
     NanSetPointerSafe(datalen, len);
@@ -747,7 +764,9 @@ static inline char* NanFromV8String(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteAscii(to, 0, sz_ + term_len, flags));
+      NanSetPointerSafe<size_t>(
+          datalen
+        , toStr->WriteAscii(to, 0, sz_ + term_len, flags));
       return to;
 #endif
     case Nan::BINARY:
@@ -779,7 +798,11 @@ static inline char* NanFromV8String(
 #else
       NanSetPointerSafe<size_t>(
         datalen,
-        toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_ + term_len, flags));
+        toStr->WriteOneByte(
+            reinterpret_cast<uint8_t *>(to)
+          , 0
+          , sz_ + term_len
+          , flags));
       return to;
 #endif
     case Nan::UTF8:
@@ -789,7 +812,9 @@ static inline char* NanFromV8String(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to, sz_ + term_len, NULL, flags) - term_len);
+      NanSetPointerSafe<size_t>(
+          datalen
+        , toStr->WriteUtf8(to, sz_ + term_len, NULL, flags) - term_len);
       return to;
     case Nan::BASE64:
       sz_ = _nan_base64_decoded_size(*value, toStr->Length());
@@ -798,7 +823,9 @@ static inline char* NanFromV8String(
       } else {
         assert(buflen >= sz_ + term_len);
       }
-      NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
+      NanSetPointerSafe<size_t>(
+          datalen
+        , _nan_base64_decode(to, sz_, *value, value.length()));
       if (term_len) {
         to[sz_] = '\0';
       }
@@ -812,7 +839,11 @@ static inline char* NanFromV8String(
           assert(buflen >= (sz_ + term_len) * 2 && "too small buffer");
         }
 
-        int bc = toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_ + term_len, flags) * 2;
+        int bc = 2 * toStr->Write(
+            reinterpret_cast<uint16_t *>(to)
+          , 0
+          , sz_ + term_len
+          , flags);
         NanSetPointerSafe<size_t>(datalen, bc);
         return to;
       }
@@ -825,7 +856,9 @@ static inline char* NanFromV8String(
         assert(buflen >= sz_ / 2 + term_len && "too small buffer");
       }
 
-      NanSetPointerSafe<size_t>(datalen, _nan_hex_decode(to, sz_ / 2, *value, value.length()));
+      NanSetPointerSafe<size_t>(
+          datalen
+        , _nan_hex_decode(to, sz_ / 2, *value, value.length()));
       if (term_len) {
         to[sz_ / 2] = '\0';
       }
