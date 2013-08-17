@@ -694,8 +694,8 @@ static bool _NanGetExternalParts(
     , size_t* len) {
 
   if (node::Buffer::HasInstance(val)) {
-    *data = node::Buffer::Data(val);
-    *len = node::Buffer::Length(val);
+    *data = node::Buffer::Data(val.As<v8::Object>());
+    *len = node::Buffer::Length(val.As<v8::Object>());
     return true;
 
   }
