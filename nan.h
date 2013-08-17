@@ -689,7 +689,7 @@ static size_t _nan_hex_decode(char* buf,
 }
 
 static bool _NanGetExternalParts(
-      v8::Handle<v8::Object> val
+      v8::Handle<v8::Value> val
     , const char** data
     , size_t* len) {
 
@@ -726,7 +726,7 @@ namespace Nan {
 }
 
 static inline char* NanFromV8String(
-      v8::Local<v8::Object> from
+      v8::Handle<v8::Value> from
     , enum Nan::Encoding encoding = Nan::UTF8
     , size_t *datalen = NULL
     , char *buf = NULL
