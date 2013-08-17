@@ -183,6 +183,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
  * <a href="#api_nan_dispose"><b><code>NanDispose</code></b></a>
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
+ * <a href="#api_nan_init_persistent"><b><code>NanInitPersistent</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
@@ -582,6 +583,17 @@ v8::Persistent<v8::Object> persistentHandle;
 v8::Local<v8::Object> obj = v8::Object::New();
 obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a v8::Local<v8::String>
 NanAssignPersistent(v8::Object, persistentHandle, obj)
+```
+
+<a name="api_nan_init_persistent"></a>
+### NanInitPersistent(type, name, object)
+
+User `NanInitPersistent` to declare and initialize a new `Persistent` with the supplied object. The assignment operator for `Persistent` is no longer public in Node 0.11, so this macro makes it easier to declare and initializing a new `Persistent`. See <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a> for more information.
+
+```c++
+v8::Local<v8::Object> obj = v8::Object::New();
+obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a v8::Local<v8::String>
+NanInitPersistent(v8::Object, persistentHandle, obj);
 ```
 
 <a name="api_nan_callback"></a>
