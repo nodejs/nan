@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.2.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+***Current version: 0.3.0-wip*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 
@@ -16,8 +16,22 @@ This project also contains some helper utilities that make addon development a b
 <a name="usage"></a>
 ## Usage
 
-Simply copy **[nan.h](https://github.com/rvagg/nan/blob/master/nan.h)** from this repository into your project and load it in your source files with `#include "nan.h"`. The version is listed at the top of the file so be sure to check back here regularly for updates.
-
+Simply add `nan` as a dependency in `package.json`
+```json
+"dependencies" : {
+    ...
+    "nan" : "~0.3.0"
+    ...
+}
+```
+and include `nan.h` in your project by adding `nan` to the included directories
+```python
+"include_dirs" : [
+    ...
+    "<!(node -p -e \"require('path').dirname(require.resolve('nan'))\")"
+    ...
+]
+```
 <a name="example"></a>
 ## Example
 
@@ -146,7 +160,11 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
+ * <a href="#api_nan_return_null"><b><code>NanReturnNull</code></b></a>
+ * <a href="#api_nan_return_empty_string"><b><code>NanReturnEmptyString</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
+ * <a href="#api_nan_locker"><b><code>NanLocker</code></b></a>
+ * <a href="#api_nan_unlocker"><b><code>NanUnlocker</code></b></a>
  * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
@@ -157,7 +175,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
- * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Local<Value>)</code></b></a>
+ * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
  * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
@@ -211,44 +229,44 @@ The introduction of `FunctionCallbackInfo` brings additional complications:
 
 Use `NAN_GETTER` to declare your V8 accessible getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act like the `args` argument to a `NAN_METHOD` call.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_GETTER`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_GETTER`.
 
 <a name="api_nan_setter"></a>
 ### NAN_SETTER(methodname)
 
 Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but you also get a `Local<Value>` `value` object to work with.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
 
 <a name="api_nan_property_getter"></a>
 ### NAN_PROPERTY_GETTER(cbname)
 Use `NAN_PROPERTY_GETTER` to declare your V8 accessible property getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_GETTER`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_GETTER`.
 
 <a name="api_nan_property_setter"></a>
 ### NAN_PROPERTY_SETTER(cbname)
 Use `NAN_PROPERTY_SETTER` to declare your V8 accessible property setters. Same as `NAN_PROPERTY_GETTER` but you also get a `Local<Value>` `value` object to work with.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_SETTER`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_SETTER`.
 
 <a name="api_nan_property_enumerator"></a>
 ### NAN_PROPERTY_ENUMERATOR(cbname)
 Use `NAN_PROPERTY_ENUMERATOR` to declare your V8 accessible property enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_PROPERTY_GETTER` call.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
 
 <a name="api_nan_property_deleter"></a>
 ### NAN_PROPERTY_DELETER(cbname)
 Use `NAN_PROPERTY_DELETER` to declare your V8 accessible property deleters. Same as `NAN_PROPERTY_GETTER`.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_DELETER`.
 
 <a name="api_nan_property_query"></a>
 ### NAN_PROPERTY_QUERY(cbname)
 Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
 
-You can use `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_QUERY`.
 
 <a name="api_nan_weak_callback"></a>
 ### NAN_WEAK_CALLBACK(type, cbname)
@@ -294,6 +312,32 @@ NAN_METHOD(Foo::Baz) {
 }
 ```
 
+<a name="api_nan_return_null"></a>
+### NanReturnNull()
+
+Use `NanReturnNull` when you want to return `Null` from your V8 accessible method:
+
+```c++
+NAN_METHOD(Foo::Baz) {
+  ...
+
+  NanReturnNull();
+}
+```
+
+<a name="api_nan_return_empty_string"></a>
+### NanReturnEmptyString()
+
+Use `NanReturnEmptyString` when you want to return an empty `String` from your V8 accessible method:
+
+```c++
+NAN_METHOD(Foo::Baz) {
+  ...
+
+  NanReturnEmptyString();
+}
+```
+
 <a name="api_nan_scope"></a>
 ### NanScope()
 
@@ -304,6 +348,32 @@ NAN_METHOD(Foo::Bar) {
   NanScope();
 
   NanReturnValue(v8::String::New("FooBar!"));
+}
+```
+
+<a name="api_nan_locker"></a>
+### NanLocker()
+
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanLocker()` necessary, use it in place of `v8::Locker locker`:
+
+```c++
+NAN_METHOD(Foo::Bar) {
+  NanLocker();
+  ...
+  NanUnlocker();
+}
+```
+
+<a name="api_nan_unlocker"></a>
+### NanUnlocker()
+
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanUnlocker()` necessary, use it in place of `v8::Unlocker unlocker`:
+
+```c++
+NAN_METHOD(Foo::Bar) {
+  NanLocker();
+  ...
+  NanUnlocker();
 }
 ```
 
@@ -387,14 +457,15 @@ const char *plugh(size_t *outputsize) {
 ```
 
 <a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;[, enum node::encoding, size_t *])
+### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;[, enum node::encoding, size_t *, char *, size_t, int])
 
-When you want to convert a V8 string to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `node::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. On versions prior to 0.11, the `node::BINARY` and `node::BUFFER` encodings currently may not work properly yet. do not Just remember that you'll end up with an object that you'll need to `delete[]` at some point:
+When you want to convert a V8 string to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `Nan::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `v8::String::WriteOptions`, which default to `v8::String::HINT_MANY_WRITES_EXPECTED | v8::String::NO_NULL_TERMINATION`.
+Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
 
 ```c++
 size_t count;
 char* name = NanFromV8String(args[0]);
-char* decoded = NanFromV8String(args[1], node::BASE64, &count);
+char* decoded = NanFromV8String(args[1], Nan::BASE64, &count, NULL, 0, v8::String::HINT_MANY_WRITES_EXPECTED);
 char param_copy[count];
 memcpy(param_copy, decoded, count);
 delete[] decoded;
@@ -426,7 +497,7 @@ uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
 ```
 
 <a name="api_nan_throw_error"></a>
-### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local&lt;Value&gt;)
+### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local&lt;Value&gt;), NanThrowError(Local&lt;Value&gt;, int)
 
 For throwing `Error`, `TypeError` and `RangeError` objects. You should `return` this call:
 
@@ -434,7 +505,7 @@ For throwing `Error`, `TypeError` and `RangeError` objects. You should `return` 
 return NanThrowError("you must supply a callback argument");
 ```
 
-Can also handle any custom object you may want to throw.
+Can also handle any custom object you may want to throw. If used with the error code argument, it will add the supplied error code to the error object as a property called `code`.
 
 <a name="api_nan_new_buffer_handle"></a>
 ### v8::Local&lt;v8::Object&gt; NanNewBufferHandle(char *, uint32_t), v8::Local&lt;v8::Object&gt; NanNewBufferHandle(uint32_t)
