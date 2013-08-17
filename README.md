@@ -24,7 +24,7 @@ Simply add `nan` as a dependency in `package.json`
     ...
 }
 ```
-and include `nan.h` in your project by adding `nan` to the included directories
+and include `nan.h` in your project by adding `nan` to the included directories in `binding.gyp`
 ```python
 "include_dirs" : [
     ...
