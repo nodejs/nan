@@ -458,7 +458,7 @@ const char *plugh(size_t *outputsize) {
 ```
 
 <a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(Handle&lt;Value&gt;[, enum node::encoding, size_t *, char *, size_t, int])
+### char* NanFromV8String(Handle&lt;Value&gt;[, enum Nan::Encoding, size_t *, char *, size_t, int])
 
 When you want to convert a V8 `String` to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `Nan::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `String::HINT_MANY_WRITES_EXPECTED | String::NO_NULL_TERMINATION`.
 Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
