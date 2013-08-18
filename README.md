@@ -37,7 +37,7 @@ and include `nan.h` in your project by adding `nan` to the included directories 
 
 See **[LevelDOWN](https://github.com/rvagg/node-leveldown/pull/48)** for a full example of **NAN** in use.
 
-or a simpler example, see the **[async pi estimation example](https://github.com/rvagg/nan/tree/master/examples/async_pi_estimate)** in the examples directory for full code an explanation of what this Monte Carlo Pi estimation example does. Below are just some parts of the full example that illustrate the use of **NAN**.
+For a simpler example, see the **[async pi estimation example](https://github.com/rvagg/nan/tree/master/examples/async_pi_estimate)** in the examples directory for full code and an explanation of what this Monte Carlo Pi estimation example does. Below are just some parts of the full example that illustrate the use of **NAN**.
 
 Compare to the current 0.10 version of this example, found in the [node-addon-examples](https://github.com/rvagg/node-addon-examples/tree/master/9_async_work) repository and also a 0.11 version of the same found [here](https://github.com/kkoopa/node-addon-examples/tree/5c01f58fc993377a567812597e54a83af69686d7/9_async_work).
 
@@ -217,10 +217,10 @@ The reason for this macro is because of the method signature change in 0.11:
 
 ```c++
 // 0.10 and below:
-v8::Handle<v8::Value> name(const v8::Arguments& args)
+Handle<Value> name(const Arguments& args)
 
 // 0.11 and above
-void name(const v8::FunctionCallbackInfo<v8::Value>& args)
+void name(const FunctionCallbackInfo<Value>& args)
 ```
 
 The introduction of `FunctionCallbackInfo` brings additional complications:
@@ -286,7 +286,7 @@ static NAN_WEAK_CALLBACK(BufferReference*, WeakCheck) {
 
 ```
 <a name="api_nan_return_value"></a>
-### NanReturnValue(v8::Handle&lt;v8::Value&gt;)
+### NanReturnValue(Handle&lt;Value&gt;)
 
 Use `NanReturnValue` when you want to return a value from your V8 accessible method:
 
@@ -294,7 +294,7 @@ Use `NanReturnValue` when you want to return a value from your V8 accessible met
 NAN_METHOD(Foo::Bar) {
   ...
 
-  NanReturnValue(v8::String::New("FooBar!"));
+  NanReturnValue(String::New("FooBar!"));
 }
 ```
 
@@ -342,20 +342,20 @@ NAN_METHOD(Foo::Baz) {
 <a name="api_nan_scope"></a>
 ### NanScope()
 
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanScope()` necessary, use it in place of `v8::HandleScope scope`:
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanScope()` necessary, use it in place of `HandleScope scope`:
 
 ```c++
 NAN_METHOD(Foo::Bar) {
   NanScope();
 
-  NanReturnValue(v8::String::New("FooBar!"));
+  NanReturnValue(String::New("FooBar!"));
 }
 ```
 
 <a name="api_nan_locker"></a>
 ### NanLocker()
 
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanLocker()` necessary, use it in place of `v8::Locker locker`:
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanLocker()` necessary, use it in place of `Locker locker`:
 
 ```c++
 NAN_METHOD(Foo::Bar) {
@@ -368,7 +368,7 @@ NAN_METHOD(Foo::Bar) {
 <a name="api_nan_unlocker"></a>
 ### NanUnlocker()
 
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanUnlocker()` necessary, use it in place of `v8::Unlocker unlocker`:
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanUnlocker()` necessary, use it in place of `Unlocker unlocker`:
 
 ```c++
 NAN_METHOD(Foo::Bar) {
@@ -379,7 +379,7 @@ NAN_METHOD(Foo::Bar) {
 ```
 
 <a name="api_nan_get_internal_field_pointer"></a>
-### void * NanGetInternalFieldPointer(v8::Handle&lt;v8::Object&gt;, int)
+### void * NanGetInternalFieldPointer(Handle&lt;Object&gt;, int)
 
 Gets a pointer to the internal field with at `index` from a V8 `Object` handle.
 
@@ -389,7 +389,7 @@ Local<Object> obj;
 NanGetInternalFieldPointer(obj, 0);
 ```
 <a name="api_nan_set_internal_field_pointer"></a>
-### void NanSetInternalFieldPointer(v8::Handle&lt;v8::Object&gt;, int, void *)
+### void NanSetInternalFieldPointer(Handle&lt;Object&gt;, int, void *)
 
 Sets the value of the internal field at `index` on a V8 `Object` handle.
 
@@ -401,23 +401,23 @@ NanSetInternalFieldPointer(wrapper, 0, this);
 ```
 
 <a name="api_nan_object_wrap_handle"></a>
-### v8::Local&lt;v8::Object&gt; NanObjectWrapHandle(Object)
+### Local&lt;Object&gt; NanObjectWrapHandle(Object)
 
 When you want to fetch the V8 object handle from a native object you've wrapped with Node's `ObjectWrap`, you should use `NanObjectWrapHandle`:
 
 ```c++
-NanObjectWrapHandle(iterator)->Get(v8::String::NewSymbol("end"))
+NanObjectWrapHandle(iterator)->Get(String::NewSymbol("end"))
 ```
 
 <a name="api_nan_make_weak"></a>
-### NanMakeWeak(v8::Persistent&lt;T&gt;, parameter, callback)
+### NanMakeWeak(Persistent&lt;T&gt;, parameter, callback)
 
 Make a persistent reference weak.
 
 <a name="api_nan_symbol"></a>
-### v8::String NanSymbol(char *)
+### String NanSymbol(char *)
 
-This isn't strictly about compatibility, it's just an easier way to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.
+This isn't strictly about compatibility, it's just an easier way to create string symbol objects (i.e. `String::NewSymbol(x)`), for getting and setting object properties, or names of objects.
 
 ```c++
 bool foo = false;
@@ -458,22 +458,22 @@ const char *plugh(size_t *outputsize) {
 ```
 
 <a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(v8::Handle&lt;v8::Value&gt;[, enum node::encoding, size_t *, char *, size_t, int])
+### char* NanFromV8String(Handle&lt;Value&gt;[, enum node::encoding, size_t *, char *, size_t, int])
 
-When you want to convert a V8 string to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `Nan::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `v8::String::WriteOptions`, which default to `v8::String::HINT_MANY_WRITES_EXPECTED | v8::String::NO_NULL_TERMINATION`.
+When you want to convert a V8 `String` to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `Nan::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `String::HINT_MANY_WRITES_EXPECTED | String::NO_NULL_TERMINATION`.
 Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
 
 ```c++
 size_t count;
 char* name = NanFromV8String(args[0]);
-char* decoded = NanFromV8String(args[1], Nan::BASE64, &count, NULL, 0, v8::String::HINT_MANY_WRITES_EXPECTED);
+char* decoded = NanFromV8String(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
 char param_copy[count];
 memcpy(param_copy, decoded, count);
 delete[] decoded;
 ```
 
 <a name="api_nan_boolean_option_value"></a>
-### bool NanBooleanOptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;[, bool])
+### bool NanBooleanOptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;[, bool])
 
 When you have an "options" object that you need to fetch properties from, boolean options can be fetched with this pair. They check first if the object exists (`IsEmpty`), then if the object has the given property (`Has`) then they get and convert/coerce the property to a `bool`.
 
@@ -487,7 +487,7 @@ bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanSymbol("bar"), true);
 ```
 
 <a name="api_nan_uint32_option_value"></a>
-### uint32_t NanUInt32OptionValue(v8::Handle&lt;v8::Value&gt;, v8::Handle&lt;v8::String&gt;, uint32_t)
+### uint32_t NanUInt32OptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;, uint32_t)
 
 Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Can be any kind of JavaScript `Number` and it will be coerced to an unsigned 32-bit integer.
 
@@ -509,7 +509,7 @@ return NanThrowError("you must supply a callback argument");
 Can also handle any custom object you may want to throw. If used with the error code argument, it will add the supplied error code to the error object as a property called `code`.
 
 <a name="api_nan_new_buffer_handle"></a>
-### v8::Local&lt;v8::Object&gt; NanNewBufferHandle(char *, uint32_t), v8::Local&lt;v8::Object&gt; NanNewBufferHandle(uint32_t)
+### Local&lt;Object&gt; NanNewBufferHandle(char *, uint32_t), Local&lt;Object&gt; NanNewBufferHandle(uint32_t)
 
 The `Buffer` API has changed a little in Node 0.11, this helper provides consistent access to `Buffer` creation:
 
@@ -522,7 +522,7 @@ Can also be used to initialize a `Buffer` with just a `size` argument.
 Can also be supplied with a `NAN_WEAK_CALLBACK` and a hint for the garbage collector, when dealing with weak references.
 
 <a name="api_nan_buffer_use"></a>
-### v8::Local&lt;v8::Object&gt; NanBufferUse(char*, uint32_t)
+### Local&lt;Object&gt; NanBufferUse(char*, uint32_t)
 
 `Buffer::New(char*, uint32_t)` prior to 0.11 would make a copy of the data.
 While it was possible to get around this, it required a shim by passing a
@@ -539,14 +539,14 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_persistent_to_local"></a>
-### v8::Local&lt;Type&gt; NanPersistentToLocal(v8::Persistent&lt;Type&gt;&)
+### Local&lt;Type&gt; NanPersistentToLocal(Persistent&lt;Type&gt;&)
 
 Aside from `FunctionCallbackInfo`, the biggest and most painful change to V8 in Node 0.11 is the many restrictions now placed on `Persistent` handles. They are difficult to assign and difficult to fetch the original value out of.
 
 Use `NanPersistentToLocal` to convert a `Persistent` handle back to a `Local` handle.
 
 ```c++
-v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
+Local<Object> handle = NanPersistentToLocal(persistentHandle);
 ```
 
 <a href="#api_nan_new_context_handle">
@@ -554,13 +554,13 @@ v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
 Creates a new `Local<Context>` handle.
 
 ```c++
-v8::Local<v8::FunctionTemplate> ftmpl = v8::FunctionTemplate::New();
-v8::Local<v8::ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
-v8::Local<v8::Context> ctx =  NanNewContextHandle(NULL, otmpl);
+Local<FunctionTemplate> ftmpl = FunctionTemplate::New();
+Local<ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
+Local<Context> ctx =  NanNewContextHandle(NULL, otmpl);
 ```
 
 <a name="api_nan_dispose"></a>
-### template&lt;class T&gt; void NanDispose(v8::Persistent&lt;T&gt; &)
+### void NanDispose(Persistent&lt;T&gt; &)
 
 Use `NanDispose` to dispose a `Persistent` handle.
 
@@ -573,16 +573,16 @@ NanDispose(persistentHandle);
 
 Use `NanAssignPersistent` to assign a non-`Persistent` handle to a `Persistent` one. You can no longer just declare a `Persistent` handle and assign directly to it later, you have to `Reset` it in Node 0.11, so this makes it easier.
 
-In general it is now better to place anything you want to protect from V8's garbage collector as properties of a generic `v8:Object` and then assign that to a `Persistent`. This works in older versions of Node also if you use `NanAssignPersistent`:
+In general it is now better to place anything you want to protect from V8's garbage collector as properties of a generic `Object` and then assign that to a `Persistent`. This works in older versions of Node also if you use `NanAssignPersistent`:
 
 ```c++
-v8::Persistent<v8::Object> persistentHandle;
+Persistent<Object> persistentHandle;
 
 ...
 
-v8::Local<v8::Object> obj = v8::Object::New();
-obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a v8::Local<v8::String>
-NanAssignPersistent(v8::Object, persistentHandle, obj)
+Local<Object> obj = Object::New();
+obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a Local<String>
+NanAssignPersistent(Object, persistentHandle, obj)
 ```
 
 <a name="api_nan_init_persistent"></a>
@@ -591,18 +591,18 @@ NanAssignPersistent(v8::Object, persistentHandle, obj)
 User `NanInitPersistent` to declare and initialize a new `Persistent` with the supplied object. The assignment operator for `Persistent` is no longer public in Node 0.11, so this macro makes it easier to declare and initializing a new `Persistent`. See <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a> for more information.
 
 ```c++
-v8::Local<v8::Object> obj = v8::Object::New();
-obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a v8::Local<v8::String>
-NanInitPersistent(v8::Object, persistentHandle, obj);
+Local<Object> obj = Object::New();
+obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a Local<String>
+NanInitPersistent(Object, persistentHandle, obj);
 ```
 
 <a name="api_nan_callback"></a>
 ### NanCallback
 
-Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `v8::Local<v8::Function>` handles is annoyingly tricky. `NanCallback` makes it easier by taking your `Local` handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Call()` method to fetch and execute the callback `Function`.
+Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `Local<Function>` handles is annoyingly tricky. `NanCallback` makes it easier by taking your `Local` handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Call()` method to fetch and execute the callback `Function`.
 
 ```c++
-v8::Local<v8::Function> callbackHandle = callback = args[0].As<v8::Function>();
+Local<Function> callbackHandle = callback = args[0].As<Function>();
 NanCallback *callback = new NanCallback(callbackHandle);
 // pass `callback` around and it's safe from GC until you:
 delete callback;
@@ -615,15 +615,15 @@ You can execute the callback like so:
 callback->Call(0, NULL);
 
 // an error argument:
-v8::Local<v8::Value> argv[] = {
-  v8::Exception::Error(v8::String::New("fail!"))
+Local<Value> argv[] = {
+  Exception::Error(String::New("fail!"))
 };
 callback->Call(1, argv);
 
 // a success argument:
-v8::Local<v8::Value> argv[] = {
-  v8::Local<v8::Value>::New(v8::Null()),
-  v8::String::New("w00t!")
+Local<Value> argv[] = {
+  Local<Value>::New(Null()),
+  String::New("w00t!")
 };
 callback->Call(2, argv);
 ```
@@ -659,10 +659,10 @@ protected:
   const char *errmsg;
 
   // Save a V8 object in a Persistent handle to protect it from GC
-  void SavePersistent(const char *key, v8::Local<v8::Object> &obj);
+  void SavePersistent(const char *key, Local<Object> &obj);
 
   // Fetch a stored V8 object (don't call from within `Execute()`)
-  v8::Local<v8::Object> GetFromPersistent(const char *key);
+  Local<Object> GetFromPersistent(const char *key);
 
   // Default implementation calls the callback function with no arguments.
   // Override this to return meaningful data
