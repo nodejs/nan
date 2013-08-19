@@ -8,10 +8,10 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.3.0-wip (current Node unstable: 0.11.5)
+ * Version 0.3.0 (current Node unstable: 0.11.5, Node stable: 0.10.16)
  *
  * ChangeLog:
- *  * 0.3.0-wip UNRELEASED
+ *  * 0.3.0
  *    - Made NAN work with NPM
  *    - Lots of fixes to NanFromV8String, pulling in features from new Node core
  *    - Changed node::encoding to Nan::Encoding in NanFromV8String to unify the API
@@ -23,6 +23,7 @@
  *    - Made sure to clear disposed Persistent handles
  *    - Changed NanAsyncWorker to allocate error messages on the heap
  *    - Changed NanThrowError(Local<Value>) to NanThrowError(Handle<Value>)
+ *    - Fixed leak in NanAsyncWorker when errmsg is used
  *
  *  * 0.2.2 Aug 5 2013
  *    - Fixed usage of undefined variable with node::BASE64 in NanFromV8String()
