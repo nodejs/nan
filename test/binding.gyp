@@ -16,6 +16,22 @@
       , "sources"     : [ "cpp/multifile1.cpp", "cpp/multifile2.cpp" ]
     }
   , {
+        "target_name" : "returnvalue"
+      , "sources"     : [ "cpp/returnvalue.cpp" ]
+    }
+  , {
+        "target_name" : "returnundefined"
+      , "sources"     : [ "cpp/returnundefined.cpp" ]
+    }
+  , {
+        "target_name" : "returnnull"
+      , "sources"     : [ "cpp/returnnull.cpp" ]
+    }
+  , {
+        "target_name" : "returnemptystring"
+      , "sources"     : [ "cpp/returnemptystring.cpp" ]
+    }
+  , {
         "target_name" : "asyncworker"
       , "sources"     : [ "cpp/asyncworker.cpp" ]
     }

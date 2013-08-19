@@ -1,9 +1,9 @@
 const test     = require('tap').test
     , bindings = require('bindings')
-    , xtend    = require('xtend')
+    , xtend    = require('xtend');
 
 test('optionvalues', function (t) {
-  t.plan(2)
+  t.plan(2);
   var obj = {
           'true'  : true
         , 'false' : false
@@ -16,9 +16,9 @@ test('optionvalues', function (t) {
         , f  : 200   // truncate
         , di : 111
       })
-    , actobj
+    , actobj;
 
-  t.type(bindings('optionvalues').o, 'function')
-  actobj = bindings('optionvalues').o(obj)
-  t.deepEqual(actobj, expobj)
-})
+  t.type(bindings('optionvalues').o, 'function');
+  actobj = bindings('optionvalues').o(obj);
+  t.deepEqual(actobj, expobj);
+});

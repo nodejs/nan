@@ -8,9 +8,22 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.2.2 (current Node unstable: 0.11.4)
+ * Version 0.3.0-wip (current Node unstable: 0.11.5)
  *
  * ChangeLog:
+ *  * 0.3.0-wip UNRELEASED
+ *    - Made NAN work with NPM
+ *    - Lots of fixes to NanFromV8String, pulling in features from new Node core
+ *    - Changed node::encoding to Nan::Encoding in NanFromV8String to unify the API
+ *    - Added optional error number argument for NanThrowError()
+ *    - Added NanInitPersistent()
+ *    - Added NanReturnNull() and NanReturnEmptyString()
+ *    - Added NanLocker and NanUnlocker
+ *    - Added missing scopes
+ *    - Made sure to clear disposed Persistent handles
+ *    - Changed NanAsyncWorker to allocate error messages on the heap
+ *    - Changed NanThrowError(Local<Value>) to NanThrowError(Handle<Value>)
+ *
  *  * 0.2.2 Aug 5 2013
  *    - Fixed usage of undefined variable with node::BASE64 in NanFromV8String()
  *
@@ -69,7 +82,9 @@ template<class T> static inline bool NanSetPointerSafe(T *var, T val) {
   }
 }
 
-template<class T> static inline T NanGetPointerSafe(T *var, T fallback = reinterpret_cast<T>(0)) {
+template<class T> static inline T NanGetPointerSafe(
+    T *var,
+    T fallback = reinterpret_cast<T>(0)) {
   if (var) {
     return *var;
   } else {
@@ -167,9 +182,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
+# define NanLocker() v8::Locker locker(nan_isolate)
+# define NanUnlocker() v8::Unlocker unlocker(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
 # define NanReturnUndefined() return
+# define NanReturnNull() return args.GetReturnValue().SetNull()
+# define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 # define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
+# define NanInitPersistent(type, name, obj)                                    \
+    v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(nan_isolate, parameter, callback)
@@ -189,6 +210,13 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::ThrowException(error);
   }
 
+  inline static void NanThrowError(const char *msg, const int errorNumber) {
+    v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
+    v8::Local<v8::Object> obj = err.As<v8::Object>();
+    obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
+    NanThrowError(err);
+  }
+
   inline static void NanThrowTypeError(const char* errmsg) {
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
@@ -199,6 +227,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose(nan_isolate);
+    handle.Clear();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
@@ -241,10 +270,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static inline v8::Local<v8::Context> NanNewContextHandle(
     v8::ExtensionConfiguration* extensions = NULL,
-    v8::Handle<v8::ObjectTemplate> g_template = v8::Handle<v8::ObjectTemplate>(),
-    v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()) {
+    v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>(),
+    v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()) {
       return v8::Local<v8::Context>::New(nan_isolate, v8::Context::New(
-          nan_isolate, extensions, g_template, g_object));
+          nan_isolate, extensions, tmpl, obj));
   }
 
 #else
@@ -295,8 +324,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
 # define NanScope() v8::HandleScope scope
+# define NanLocker() v8::Locker locker
+# define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value) return scope.Close(value)
 # define NanReturnUndefined() return v8::Undefined()
+# define NanReturnNull() return v8::Null()
+# define NanReturnEmptyString() return v8::String::Empty()
+# define NanInitPersistent(type, name, obj)                                    \
+    v8::Persistent<type> name = v8::Persistent<type>::New(obj)
 # define NanAssignPersistent(type, handle, obj)                                \
     handle = v8::Persistent<type>::New(obj)
 # define NanObjectWrapHandle(obj) obj->handle_
@@ -319,6 +354,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::ThrowException(error);
   }
 
+  inline static v8::Handle<v8::Value> NanThrowError(
+      const char *msg,
+      const int errorNumber) {
+    v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
+    v8::Local<v8::Object> obj = err.As<v8::Object>();
+    obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
+    return NanThrowError(err);
+  }
+
   inline static v8::Handle<v8::Value> NanThrowTypeError(const char* errmsg) {
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
@@ -329,6 +373,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   template<class T> static inline void NanDispose(v8::Persistent<T> &handle) {
     handle.Dispose();
+    handle.Clear();
   }
 
   static inline v8::Local<v8::Object> NanNewBufferHandle (
@@ -377,12 +422,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static inline v8::Local<v8::Context> NanNewContextHandle(
         v8::ExtensionConfiguration* extensions = NULL
-      , v8::Handle<v8::ObjectTemplate> g_template =
+      , v8::Handle<v8::ObjectTemplate> tmpl =
             v8::Handle<v8::ObjectTemplate>()
-      , v8::Handle<v8::Value> g_object = v8::Handle<v8::Value>()
+      , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
     ) {
       v8::Persistent<v8::Context> ctx =
-          v8::Context::New(extensions, g_template, g_object);
+          v8::Context::New(extensions, tmpl, obj);
       v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
       ctx.Dispose();
       return lctx;
@@ -393,15 +438,16 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 class NanCallback {
  public:
   NanCallback(const v8::Local<v8::Function> &fn) {
-   NanScope();
-   v8::Local<v8::Object> obj = v8::Object::New();
-   obj->Set(NanSymbol("callback"), fn);
-   NanAssignPersistent(v8::Object, handle, obj);
+    NanScope();
+    v8::Local<v8::Object> obj = v8::Object::New();
+    obj->Set(NanSymbol("callback"), fn);
+    NanAssignPersistent(v8::Object, handle, obj);
   }
 
   ~NanCallback() {
-   if (handle.IsEmpty()) return;
-   handle.Dispose();
+    if (handle.IsEmpty()) return;
+    handle.Dispose();
+    handle.Clear();
   }
 
   inline v8::Local<v8::Function> GetFunction () {
@@ -415,14 +461,15 @@ class NanCallback {
   }
 
   void Call(int argc, v8::Local<v8::Value> argv[]) {
-   NanScope();
-   v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
+    NanScope();
+
+    v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
        Get(NanSymbol("callback")).As<v8::Function>();
-   v8::TryCatch try_catch;
-   callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-   if (try_catch.HasCaught()) {
-     node::FatalException(try_catch);
-   }
+    v8::TryCatch try_catch;
+    callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+    if (try_catch.HasCaught()) {
+      node::FatalException(try_catch);
+    }
   }
 
  private:
@@ -437,6 +484,8 @@ public:
   }
 
   virtual ~NanAsyncWorker () {
+    NanScope();
+
     if (!persistentHandle.IsEmpty())
       NanDispose(persistentHandle);
     if (callback)
@@ -639,10 +688,14 @@ static size_t _nan_hex_decode(char* buf,
   return i;
 }
 
-static bool _NanGetExternalParts(v8::Handle<v8::Object> val, const char** data, size_t* len) {
+static bool _NanGetExternalParts(
+      v8::Handle<v8::Value> val
+    , const char** data
+    , size_t* len) {
+
   if (node::Buffer::HasInstance(val)) {
-    *data = node::Buffer::Data(val);
-    *len = node::Buffer::Length(val);
+    *data = node::Buffer::Data(val.As<v8::Object>());
+    *len = node::Buffer::Length(val.As<v8::Object>());
     return true;
 
   }
@@ -668,60 +721,147 @@ static bool _NanGetExternalParts(v8::Handle<v8::Object> val, const char** data, 
   return false;
 }
 
+namespace Nan {
+  enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
+}
+
 static inline char* NanFromV8String(
-      v8::Local<v8::Object> from
-    , enum node::encoding encoding = node::UTF8
-    , size_t *datalen = NULL) {
+      v8::Handle<v8::Value> from
+    , enum Nan::Encoding encoding = Nan::UTF8
+    , size_t *datalen = NULL
+    , char *buf = NULL
+    , size_t buflen = 0
+    , int flags = v8::String::NO_NULL_TERMINATION
+    | v8::String::HINT_MANY_WRITES_EXPECTED) {
 
   NanScope();
 
   size_t sz_;
+  size_t term_len = !(flags & v8::String::NO_NULL_TERMINATION);
   char *data = NULL;
   size_t len;
-  bool is_extern = _NanGetExternalParts(from, const_cast<const char**>(&data), &len);
+  bool is_extern = _NanGetExternalParts(
+      from
+    , const_cast<const char**>(&data)
+    , &len);
 
-  if (is_extern) {
+  if (is_extern && !term_len) {
     NanSetPointerSafe(datalen, len);
     return data;
   }
 
-  assert(from->IsString());
-  v8::Local<v8::String> toStr = from.As<v8::String>();
+  v8::Local<v8::String> toStr = from->ToString();
 
-  int flags = v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED;
+  char *to = buf;
 
-  char *to;
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
-    case node::ASCII:
-    case node::BINARY:
-    #if (NODE_MODULE_VERSION > 0x000B)
-      case node::BUFFER:
-        sz_ = toStr->Length();
-        to = new char[sz_];
-          NanSetPointerSafe<size_t>(datalen, toStr->WriteOneByte(reinterpret_cast<uint8_t *>(to), 0, sz_, flags));
-        return to;
-    #endif
-    case node::UTF8:
-      sz_ = toStr->Utf8Length();
-      to = new char[sz_];
-      NanSetPointerSafe<size_t>(datalen, toStr->WriteUtf8(to));
-      return to;
-    case node::BASE64:
-      sz_ = _nan_base64_decoded_size(*value, toStr->Length());
-      to = new char[sz_];
-      NanSetPointerSafe<size_t>(datalen, _nan_base64_decode(to, sz_, *value, value.length()));
-      return to;
-    case node::UCS2:
+    case Nan::ASCII:
+#if NODE_MODULE_VERSION < 0x0C
       sz_ = toStr->Length();
-      to = new char[sz_ * 2];
-      NanSetPointerSafe<size_t>(datalen, toStr->Write(reinterpret_cast<uint16_t *>(to), 0, sz_, flags));
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len && "too small buffer");
+      }
+      NanSetPointerSafe<size_t>(
+          datalen
+        , toStr->WriteAscii(to, 0, sz_ + term_len, flags));
       return to;
-    case node::HEX:
+#endif
+    case Nan::BINARY:
+    case Nan::BUFFER:
+      sz_ = toStr->Length();
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len && "too small buffer");
+      }
+#if NODE_MODULE_VERSION < 0x0C
+      // TODO(isaacs): THIS IS AWFUL!!!
+      // AGREE(kkoopa)
+      {
+        uint16_t* twobytebuf = new uint16_t[sz_ + term_len];
+
+        size_t len = toStr->Write(twobytebuf, 0, sz_ + term_len, flags);
+
+        for (size_t i = 0; i < sz_ + term_len && i < len + term_len; i++) {
+          unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
+          to[i] = *b;
+        }
+
+        NanSetPointerSafe<size_t>(datalen, len);
+
+        delete[] twobytebuf;
+        return to;
+      }
+#else
+      NanSetPointerSafe<size_t>(
+        datalen,
+        toStr->WriteOneByte(
+            reinterpret_cast<uint8_t *>(to)
+          , 0
+          , sz_ + term_len
+          , flags));
+      return to;
+#endif
+    case Nan::UTF8:
+      sz_ = toStr->Utf8Length();
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len && "too small buffer");
+      }
+      NanSetPointerSafe<size_t>(
+          datalen
+        , toStr->WriteUtf8(to, sz_ + term_len, NULL, flags) - term_len);
+      return to;
+    case Nan::BASE64:
+      sz_ = _nan_base64_decoded_size(*value, toStr->Length());
+      if (to == NULL) {
+        to = new char[sz_ + term_len];
+      } else {
+        assert(buflen >= sz_ + term_len);
+      }
+      NanSetPointerSafe<size_t>(
+          datalen
+        , _nan_base64_decode(to, sz_, *value, value.length()));
+      if (term_len) {
+        to[sz_] = '\0';
+      }
+      return to;
+    case Nan::UCS2:
+      {
+        sz_ = toStr->Length();
+        if (to == NULL) {
+          to = new char[(sz_ + term_len) * 2];
+        } else {
+          assert(buflen >= (sz_ + term_len) * 2 && "too small buffer");
+        }
+
+        int bc = 2 * toStr->Write(
+            reinterpret_cast<uint16_t *>(to)
+          , 0
+          , sz_ + term_len
+          , flags);
+        NanSetPointerSafe<size_t>(datalen, bc);
+        return to;
+      }
+    case Nan::HEX:
       sz_ = toStr->Length();
       assert(!(sz_ & 1) && "bad hex data");
-      to = new char[sz_ / 2];
-      NanSetPointerSafe<size_t>(datalen, _nan_hex_decode(to, sz_ / 2, *value, value.length()));
+      if (to == NULL) {
+        to = new char[sz_ / 2 + term_len];
+      } else {
+        assert(buflen >= sz_ / 2 + term_len && "too small buffer");
+      }
+
+      NanSetPointerSafe<size_t>(
+          datalen
+        , _nan_hex_decode(to, sz_ / 2, *value, value.length()));
+      if (term_len) {
+        to[sz_ / 2] = '\0';
+      }
       return to;
     default:
       assert(0 && "unknown encoding");
