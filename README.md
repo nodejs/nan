@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.3.0-wip*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+***Current version: 0.3.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 
@@ -16,22 +16,28 @@ This project also contains some helper utilities that make addon development a b
 <a name="usage"></a>
 ## Usage
 
-Simply add `nan` as a dependency in `package.json`
-```json
-"dependencies" : {
+Simply add **NAN** as a dependency in the *package.json* of your Node addon:
+
+```js
+"dependencies": {
     ...
     "nan" : "~0.3.0"
     ...
 }
 ```
-and include `nan.h` in your project by adding `nan` to the included directories in `binding.gyp`
-```python
+
+Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include "nan.h"` in your *.cpp*:
+
+```js
 "include_dirs" : [
     ...
     "<!(node -p -e \"require('path').dirname(require.resolve('nan'))\")"
     ...
 ]
 ```
+
+This works like a `-I<path-to-NAN>` when compiling your addon.
+
 <a name="example"></a>
 ## Example
 
