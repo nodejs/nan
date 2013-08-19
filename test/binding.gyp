@@ -15,4 +15,8 @@
         "target_name" : "multifile"
       , "sources"     : [ "cpp/multifile1.cpp", "cpp/multifile2.cpp" ]
     }
+  , {
+        "target_name" : "asyncworker"
+      , "sources"     : [ "cpp/asyncworker.cpp" ]
+    }
 ]}
