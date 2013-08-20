@@ -867,6 +867,7 @@ static inline char* NanFromV8String(
     default:
       assert(0 && "unknown encoding");
   }
+  return to;
 }
 
 #endif
