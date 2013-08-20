@@ -11,7 +11,10 @@
  * Version 0.3.0 (current Node unstable: 0.11.5, Node stable: 0.10.16)
  *
  * ChangeLog:
- *  * 0.3.0
+ *  * 0.3.1 Aug 20 2013
+ *    - fix "not all control paths return a value" compile warning on some platforms
+ *
+ *  * 0.3.0 Aug 19 2013
  *    - Made NAN work with NPM
  *    - Lots of fixes to NanFromV8String, pulling in features from new Node core
  *    - Changed node::encoding to Nan::Encoding in NanFromV8String to unify the API
