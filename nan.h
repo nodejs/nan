@@ -629,13 +629,13 @@ static size_t _nan_base64_decode(char* buf,
                      size_t len,
                      const TypeName* src,
                      const size_t srcLen) {
-  char a, b, c, d;
   char* dst = buf;
   char* dstEnd = buf + len;
   const TypeName* srcEnd = src + srcLen;
 
   while (src < srcEnd && dst < dstEnd) {
     int remaining = srcEnd - src;
+    char a, b, c, d;
 
     while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
     if (remaining == 0 || *src == '=') break;
