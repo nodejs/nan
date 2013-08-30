@@ -519,11 +519,15 @@ protected:
   const char *errmsg;
 
   void SavePersistent(const char *key, v8::Local<v8::Object> &obj) {
+    NanScope();
+
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
     handle->Set(NanSymbol(key), obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) {
+    NanScope();
+
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
     return handle->Get(NanSymbol(key)).As<v8::Object>();
   }
