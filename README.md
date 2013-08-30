@@ -3,7 +3,9 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.3.1*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+***Current version: 0.3.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+
+[![NPM](https://nodei.co/npm/nan.png?downloads=true&stars=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 

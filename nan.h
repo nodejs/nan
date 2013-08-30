@@ -8,9 +8,13 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.3.0 (current Node unstable: 0.11.5, Node stable: 0.10.16)
+ * Version 0.3.2 (current Node unstable: 0.11.6, Node stable: 0.10.17)
  *
  * ChangeLog:
+ *  * 0.3.2 Aug 30 2013
+ *    - Fix missing scope declaration in GetFromPersistent() and SaveToPersistent
+ *      in NanAsyncWorker
+ *
  *  * 0.3.1 Aug 20 2013
  *    - fix "not all control paths return a value" compile warning on some platforms
  *
@@ -519,11 +523,15 @@ protected:
   const char *errmsg;
 
   void SavePersistent(const char *key, v8::Local<v8::Object> &obj) {
+    NanScope();
+
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
     handle->Set(NanSymbol(key), obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) {
+    NanScope();
+
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
     return handle->Get(NanSymbol(key)).As<v8::Object>();
   }
