@@ -8,9 +8,14 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.3.2 (current Node unstable: 0.11.6, Node stable: 0.10.17)
+ * Version 0.4.0 (current Node unstable: 0.11.6, Node stable: 0.10.17)
  *
  * ChangeLog:
+ *  * 0.4.0 Unreleased
+ *    - Added NAN_INLINE and NAN_DEPRECATED and made use of them
+ *    - Added NanError, NanTypeError and NanRangeError
+ *    - Cleaned up code
+ *
  *  * 0.3.2 Aug 30 2013
  *    - Fix missing scope declaration in GetFromPersistent() and SaveToPersistent
  *      in NanAsyncWorker
@@ -220,11 +225,18 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(nan_isolate, parameter, callback)
 
+# define _NAN_ERROR(fun, errmsg)                                               \
+    fun(v8::String::New(errmsg))
+
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
       NanScope();                                                              \
-      v8::ThrowException(fun(v8::String::New(errmsg)));                        \
+      v8::ThrowException(_NAN_ERROR(fun, errmsg));                             \
     } while (0);
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
+   return  _NAN_ERROR(v8::Exception::Error, errmsg);
+  }
 
   static NAN_INLINE(void NanThrowError(const char* errmsg)) {
     _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
@@ -235,15 +247,31 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::ThrowException(error);
   }
 
-  static NAN_INLINE(void NanThrowError(const char *msg, const int errorNumber)) {
+  static NAN_INLINE(v8::Handle<v8::Value> NanError(
+      const char *msg,
+      const int errorNumber)) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
-    NanThrowError(err);
+    return err;
+  }
+
+  static NAN_INLINE(void NanThrowError(
+      const char *msg,
+      const int errorNumber)) {
+    NanThrowError(NanError(msg, errorNumber));
+  }
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanTypeError(const char* errmsg)) {
+    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   static NAN_INLINE(void NanThrowTypeError(const char* errmsg)) {
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
+  }
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanRangeError(const char* errmsg)) {
+    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   static NAN_INLINE(void NanThrowRangeError(const char* errmsg)) {
@@ -363,11 +391,18 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
 
+# define _NAN_ERROR(fun, errmsg)                                               \
+    fun(v8::String::New(errmsg))
+
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
       NanScope();                                                              \
-      return v8::ThrowException(fun(v8::String::New(errmsg)));                 \
+      return v8::ThrowException(_NAN_ERROR(fun, errmsg));                      \
     } while (0);
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
+   return  _NAN_ERROR(v8::Exception::Error, errmsg);
+  }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(const char* errmsg)) {
     _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
@@ -379,17 +414,31 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::ThrowException(error);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(
+  static NAN_INLINE(v8::Handle<v8::Value> NanError(
       const char *msg,
       const int errorNumber)) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
-    return NanThrowError(err);
+    return err;
+  }
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(
+      const char *msg,
+      const int errorNumber)) {
+    return NanThrowError(NanError(msg, errorNumber));
+  }
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanTypeError(const char* errmsg)) {
+    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanThrowTypeError(const char* errmsg)) {
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
+  }
+
+  static NAN_INLINE(v8::Handle<v8::Value> NanRangeError(const char* errmsg)) {
+    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanThrowRangeError(const char* errmsg)) {
