@@ -19,12 +19,11 @@ double Estimate (int points) {
   int inside = 0;
   // unique seed for each run, for threaded use
   unsigned int seed = rand();
-  double x, y;
 
   while (i-- > 0) {
     // rand_r() is used to avoid thread locking
-    x = rand_r(&seed) / (double)RAND_MAX;
-    y = rand_r(&seed) / (double)RAND_MAX;
+    double x = rand_r(&seed) / (double)RAND_MAX;
+    double y = rand_r(&seed) / (double)RAND_MAX;
 
     // x & y and now values between 0 and 1
     // now do a pythagorean diagonal calculation
