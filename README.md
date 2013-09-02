@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making addon development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.3.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
+***Current version: 0.4.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for changelog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true&stars=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -23,7 +23,7 @@ Simply add **NAN** as a dependency in the *package.json* of your Node addon:
 ```js
 "dependencies": {
     ...
-    "nan" : "~0.3.1"
+    "nan" : "~0.4.0"
     ...
 }
 ```
@@ -166,6 +166,8 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_property_deleter"><b><code>NAN_PROPERTY_DELETER</code></b></a>
  * <a href="#api_nan_property_query"><b><code>NAN_PROPERTY_QUERY</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
+ * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
+ * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_return_null"><b><code>NanReturnNull</code></b></a>
@@ -183,6 +185,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
+ * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanTypeError</code></b>, <b><code>NanRangeError</code></b></a>
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
@@ -291,8 +294,28 @@ static NAN_WEAK_CALLBACK(BufferReference*, WeakCheck) {
     NanMakeWeak(NAN_WEAK_CALLBACK_OBJECT, NAN_WEAK_CALLBACK_DATA(BufferReference*), &WeakCheck);
   }
 }
-
 ```
+
+<a name="api_nan_deprecated"></a>
+### NAN_DEPRECATED(declarator)
+Declares a function as deprecated. Identical to `V8_DEPRECATED`.
+
+```c++
+static NAN_DEPRECATED(NAN_METHOD(foo)) {
+  ...
+}
+```
+
+<a name="api_nan_inline"></a>
+### NAN_INLINE(declarator)
+Inlines a function. Identical to `V8_INLINE`.
+
+```c++
+static NAN_INLINE(int foo(int bar)) {
+  ...
+}
+```
+
 <a name="api_nan_return_value"></a>
 ### NanReturnValue(Handle&lt;Value&gt;)
 
@@ -503,6 +526,15 @@ Requires all 3 arguments as a default is not optional:
 
 ```c++
 uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
+```
+
+<a name="api_nan_error"></a>
+### NanError(message), NanTypeError(message), NanRangeError(message)
+
+For making `Error`, `TypeError` and `RangeError` objects.
+
+```c++
+Local<Value> res = NanError("you must supply a callback argument");
 ```
 
 <a name="api_nan_throw_error"></a>

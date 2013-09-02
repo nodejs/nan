@@ -8,7 +8,7 @@ using namespace v8;
 class PiWorker : public NanAsyncWorker {
  public:
   PiWorker(NanCallback *callback, int points)
-    : NanAsyncWorker(callback), points(points) {}
+    : NanAsyncWorker(callback), points(points), estimate(0) {}
   ~PiWorker() {}
 
   // Executed inside the worker-thread.
