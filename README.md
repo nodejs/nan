@@ -534,7 +534,7 @@ uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
 For making `Error`, `TypeError` and `RangeError` objects.
 
 ```c++
-NanError("you must supply a callback argument");
+Local<Value> res = NanError("you must supply a callback argument");
 ```
 
 <a name="api_nan_throw_error"></a>
