@@ -11,7 +11,7 @@
  * Version 0.4.0 (current Node unstable: 0.11.6, Node stable: 0.10.17)
  *
  * ChangeLog:
- *  * 0.4.0 Unreleased
+ *  * 0.4.0 Sep 2 2013
  *    - Added NAN_INLINE and NAN_DEPRECATED and made use of them
  *    - Added NanError, NanTypeError and NanRangeError
  *    - Cleaned up code

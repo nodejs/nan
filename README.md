@@ -732,6 +732,6 @@ NAN is only possible due to the excellent work of the following contributors:
 Licence &amp; copyright
 -----------------------
 
-Copyright (c) 2013 Rod Vagg & NAN contributors (listed above).
+Copyright (c) 2013 NAN contributors (listed above).
 
 Native Abstractions for Node.js is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
