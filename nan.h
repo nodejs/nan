@@ -80,6 +80,7 @@
 #ifndef NAN_H
 #define NAN_H
 
+#include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
 #include <string.h>
