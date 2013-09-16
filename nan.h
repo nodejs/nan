@@ -8,9 +8,12 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.4.0 (current Node unstable: 0.11.6, Node stable: 0.10.17)
+ * Version 0.4.1 (current Node unstable: 0.11.7, Node stable: 0.10.18)
  *
  * ChangeLog:
+ *  * 0.4.1 Sep 16 2013
+ *    - Added explicit `#include <uv.h>` as it was removed from node.h for v0.11.8
+ *
  *  * 0.4.0 Sep 2 2013
  *    - Added NAN_INLINE and NAN_DEPRECATED and made use of them
  *    - Added NanError, NanTypeError and NanRangeError
