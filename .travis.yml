@@ -8,3 +8,4 @@ notifications:
     - rod@vagg.org
 before_install: "cd test; npm install"
 script: "cd test; npm test"
+
