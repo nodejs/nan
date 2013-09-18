@@ -32,9 +32,7 @@ Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include 
 
 ```js
 "include_dirs" : [
-    ...
-    "<!(node -p -e \"require('path').dirname(require.resolve('nan'))\")"
-    ...
+    "<!(node -p -e \"require('path').relative('.', require('path').dirname(require.resolve('nan')))\")"
 ]
 ```
 
