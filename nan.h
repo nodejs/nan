@@ -283,7 +283,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   template<class T> static NAN_INLINE(void NanDispose(v8::Persistent<T> &handle)) {
-    handle.Dispose(nan_isolate);
+    handle.Reset();
     handle.Clear();
   }
 
