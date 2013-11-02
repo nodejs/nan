@@ -11,6 +11,9 @@
  * Version 0.4.2 (current Node unstable: 0.11.8, Node stable: 0.10.21)
  *
  * ChangeLog:
+ *  * 0.4.3 Nov 2 2013
+ *    - Include node_object_wrap.h, removed from node.h for Node 0.11.8.
+ *
  *  * 0.4.2 Nov 2 2013
  *    - Handle deprecation of v8::Persistent::Dispose(v8::Isolate* isolate)) for
  *      Node 0.11.8 release.
@@ -91,6 +94,7 @@
 #include <node.h>
 #include <node_buffer.h>
 #include <node_version.h>
+#include <node_object_wrap.h>
 #include <string.h>
 
 #if defined(__GNUC__) && !defined(DEBUG)
