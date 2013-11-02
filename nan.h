@@ -11,6 +11,9 @@
  * Version 0.4.2 (current Node unstable: 0.11.8, Node stable: 0.10.21)
  *
  * ChangeLog:
+ *  * 0.4.4 Nov 2 2013
+ *    - Isolate argument from v8::Persistent::MakeWeak removed for 0.11.8+
+ *
  *  * 0.4.3 Nov 2 2013
  *    - Include node_object_wrap.h, removed from node.h for Node 0.11.8.
  *
@@ -235,8 +238,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanInitPersistent(type, name, obj)                                    \
     v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
+
+//TODO: remove <0.11.8 support when 0.12 is released
+#if NODE_VERSION_AT_LEAST(0, 11, 8)
+# define NanMakeWeak(handle, parameter, callback)                              \
+    handle.MakeWeak(parameter, callback)
+#else
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(nan_isolate, parameter, callback)
+#endif
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))
