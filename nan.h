@@ -86,6 +86,7 @@
 #include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
+#include <node_version.h>
 #include <string.h>
 
 #if defined(__GNUC__) && !defined(DEBUG)
@@ -283,7 +284,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   template<class T> static NAN_INLINE(void NanDispose(v8::Persistent<T> &handle)) {
+//TODO: remove <0.11.8 support when 0.12 is released
+#if NODE_VERSION_AT_LEAST(0, 11, 8)
+    handle.Reset();
+#else
     handle.Dispose(nan_isolate);
+#endif
     handle.Clear();
   }
 
