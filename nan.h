@@ -8,9 +8,13 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.4.1 (current Node unstable: 0.11.7, Node stable: 0.10.18)
+ * Version 0.4.2 (current Node unstable: 0.11.8, Node stable: 0.10.21)
  *
  * ChangeLog:
+ *  * 0.4.2 Nov 2 2013
+ *    - Handle deprecation of v8::Persistent::Dispose(v8::Isolate* isolate)) for
+ *      Node 0.11.8 release.
+ *
  *  * 0.4.1 Sep 16 2013
  *    - Added explicit `#include <uv.h>` as it was removed from node.h for v0.11.8
  *
