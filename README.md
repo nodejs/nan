@@ -163,6 +163,11 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_property_enumerator"><b><code>NAN_PROPERTY_ENUMERATOR</code></b></a>
  * <a href="#api_nan_property_deleter"><b><code>NAN_PROPERTY_DELETER</code></b></a>
  * <a href="#api_nan_property_query"><b><code>NAN_PROPERTY_QUERY</code></b></a>
+ * <a href="#api_nan_index_getter"><b><code>NAN_INDEX_GETTER</code></b></a>
+ * <a href="#api_nan_index_setter"><b><code>NAN_INDEX_SETTER</code></b></a>
+ * <a href="#api_nan_index_enumerator"><b><code>NAN_INDEX_ENUMERATOR</code></b></a>
+ * <a href="#api_nan_index_deleter"><b><code>NAN_INDEX_DELETER</code></b></a>
+ * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
@@ -277,6 +282,36 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
 
 You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_QUERY`.
+
+<a name="api_nan_index_getter"></a>
+### NAN_INDEX_GETTER(cbname)
+Use `NAN_INDEX_GETTER` to declare your V8 accessible index getters. You get a `uint32_t` `index` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_GETTER`.
+
+<a name="api_nan_index_setter"></a>
+### NAN_INDEX_SETTER(cbname)
+Use `NAN_INDEX_SETTER` to declare your V8 accessible index setters. Same as `NAN_INDEX_GETTER` but you also get a `Local<Value>` `value` object to work with.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_SETTER`.
+
+<a name="api_nan_index_enumerator"></a>
+### NAN_INDEX_ENUMERATOR(cbname)
+Use `NAN_INDEX_ENUMERATOR` to declare your V8 accessible index enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_INDEX_GETTER` call.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_ENUMERATOR`.
+
+<a name="api_nan_index_deleter"></a>
+### NAN_INDEX_DELETER(cbname)
+Use `NAN_INDEX_DELETER` to declare your V8 accessible index deleters. Same as `NAN_INDEX_GETTER`.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_DELETER`.
+
+<a name="api_nan_index_query"></a>
+### NAN_INDEX_QUERY(cbname)
+Use `NAN_INDEX_QUERY` to declare your V8 accessible index queries. Same as `NAN_INDEX_GETTER`.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_QUERY`.
 
 <a name="api_nan_weak_callback"></a>
 ### NAN_WEAK_CALLBACK(type, cbname)
