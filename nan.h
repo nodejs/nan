@@ -11,6 +11,10 @@
  * Version 0.4.2 (current Node unstable: 0.11.8, Node stable: 0.10.21)
  *
  * ChangeLog:
+ *  * 0.5.0 (WORK IN PROGRESS)
+ *    - New, much simpler, "include_dirs" for binding.gyp
+ *    - Added full range of NAN_INDEX_* macros to match NAN_PROPERTY_* macros
+ *
  *  * 0.4.4 Nov 2 2013
  *    - Isolate argument from v8::Persistent::MakeWeak removed for 0.11.8+
  *
