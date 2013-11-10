@@ -20,12 +20,8 @@ This project also contains some helper utilities that make addon development a b
 
 Simply add **NAN** as a dependency in the *package.json* of your Node addon:
 
-```js
-"dependencies": {
-    ...
-    "nan" : "~0.4.4"
-    ...
-}
+``` bash
+$ npm install --save nan
 ```
 
 Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include "nan.h"` in your *.cpp*:
