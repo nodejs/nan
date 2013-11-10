@@ -2,7 +2,7 @@
   "name": "nan",
   "version": "0.4.4",
   "description": "Native Abstractions for Node.js: C++ header for Node 0.8->0.12 compatibility",
-  "main": ".index.js",
+  "main": "include_dirs.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/rvagg/nan.git"
