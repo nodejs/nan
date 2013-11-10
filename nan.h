@@ -214,6 +214,33 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     const v8::PropertyCallbackInfo<v8::Integer>& args
 # define NAN_PROPERTY_QUERY(name)                                              \
     void name(v8::Local<v8::String> property, _NAN_PROPERTY_QUERY_ARGS)
+
+# define _NAN_INDEX_GETTER_ARGS                                                \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_INDEX_GETTER(name)                                                \
+    void name(uint32_t index                                                   \
+      , _NAN_INDEX_GETTER_ARGS)
+# define _NAN_INDEX_SETTER_ARGS                                                \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_INDEX_SETTER(name)                                                \
+    void name(uint32_t index                                                   \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_INDEX_SETTER_ARGS)
+# define _NAN_INDEX_ENUMERATOR_ARGS                                            \
+    const v8::PropertyCallbackInfo<v8::Array>& args
+# define NAN_INDEX_ENUMERATOR(name)                                            \
+    void name(_NAN_INDEX_ENUMERATOR_ARGS)
+# define _NAN_INDEX_DELETER_ARGS                                               \
+    const v8::PropertyCallbackInfo<v8::Boolean>& args
+# define NAN_INDEX_DELETER(name)                                               \
+    void name(                                                                 \
+        uint32_t index                                                         \
+      , _NAN_INDEX_DELETER_ARGS)
+# define _NAN_INDEX_QUERY_ARGS                                                 \
+    const v8::PropertyCallbackInfo<v8::Integer>& args
+# define NAN_INDEX_QUERY(name)                                                 \
+    void name(uint32_t index, _NAN_INDEX_QUERY_ARGS)
+
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetAlignedPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
@@ -393,6 +420,29 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::Handle<v8::Integer> name(                                              \
       v8::Local<v8::String> property                                           \
     , _NAN_PROPERTY_QUERY_ARGS)
+
+# define _NAN_INDEX_GETTER_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_GETTER(name)                                                \
+    v8::Handle<v8::Value> name(uint32_t index                                  \
+    , _NAN_INDEX_GETTER_ARGS)
+# define _NAN_INDEX_SETTER_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_SETTER(name)                                                \
+    v8::Handle<v8::Value> name(uint32_t index                                  \
+    , v8::Local<v8::Value> value                                               \
+    , _NAN_INDEX_SETTER_ARGS)
+# define _NAN_INDEX_ENUMERATOR_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_ENUMERATOR(name)                                            \
+    v8::Handle<v8::Array> name(_NAN_INDEX_ENUMERATOR_ARGS)
+# define _NAN_INDEX_DELETER_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_DELETER(name)                                               \
+    v8::Handle<v8::Boolean> name(                                              \
+      uint32_t index                                                           \
+    , _NAN_INDEX_DELETER_ARGS)
+# define _NAN_INDEX_QUERY_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_QUERY(name)                                                 \
+    v8::Handle<v8::Integer> name(                                              \
+      uint32_t index                                                           \
+    , _NAN_INDEX_QUERY_ARGS)
 
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetPointerFromInternalField(index)
