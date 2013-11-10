@@ -1,5 +1,5 @@
 #include <node.h>
-#include "../../nan.h"
+#include "nan.h"
 #include "multifile2.h"
 
 void Init (v8::Handle<v8::Object> target) {

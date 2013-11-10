@@ -1,5 +1,5 @@
 #include <node.h>
-#include "../../nan.h"
+#include "nan.h"
 
 NAN_METHOD(ReturnNull) {
   NanScope();

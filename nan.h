@@ -11,6 +11,10 @@
  * Version 0.4.2 (current Node unstable: 0.11.8, Node stable: 0.10.21)
  *
  * ChangeLog:
+ *  * 0.5.0 (WORK IN PROGRESS)
+ *    - New, much simpler, "include_dirs" for binding.gyp
+ *    - Added full range of NAN_INDEX_* macros to match NAN_PROPERTY_* macros
+ *
  *  * 0.4.4 Nov 2 2013
  *    - Isolate argument from v8::Persistent::MakeWeak removed for 0.11.8+
  *
@@ -101,25 +105,27 @@
 #include <string.h>
 
 #if defined(__GNUC__) && !defined(DEBUG)
-#define NAN_INLINE(declarator) inline __attribute__((always_inline)) declarator
+# define NAN_INLINE(declarator) inline __attribute__((always_inline)) declarator
 #elif defined(_MSC_VER) && !defined(DEBUG)
-#define NAN_INLINE(declarator) __forceinline declarator
+# define NAN_INLINE(declarator) __forceinline declarator
 #else
-#define NAN_INLINE(declarator) inline declarator
+# define NAN_INLINE(declarator) inline declarator
 #endif
 
 #if defined(__GNUC__) && !V8_DISABLE_DEPRECATIONS
-#define NAN_DEPRECATED(declarator) declarator __attribute__ ((deprecated))
+# define NAN_DEPRECATED(declarator) declarator __attribute__ ((deprecated))
 #elif defined(_MSC_VER) && !V8_DISABLE_DEPRECATIONS
-#define NAN_DEPRECATED(declarator) __declspec(deprecated) declarator
+# define NAN_DEPRECATED(declarator) __declspec(deprecated) declarator
 #else
-#define NAN_DEPRECATED(declarator) declarator
+# define NAN_DEPRECATED(declarator) declarator
 #endif
-
 
 // some generic helpers
 
-template<class T> static NAN_INLINE(bool NanSetPointerSafe(T *var, T val)) {
+template<class T> static NAN_INLINE(bool NanSetPointerSafe(
+    T *var
+  , T val
+)) {
   if (var) {
     *var = val;
     return true;
@@ -129,8 +135,9 @@ template<class T> static NAN_INLINE(bool NanSetPointerSafe(T *var, T val)) {
 }
 
 template<class T> static NAN_INLINE(T NanGetPointerSafe(
-    T *var,
-    T fallback = reinterpret_cast<T>(0))) {
+    T *var
+  , T fallback = reinterpret_cast<T>(0)
+)) {
   if (var) {
     return *var;
   } else {
@@ -141,9 +148,9 @@ template<class T> static NAN_INLINE(T NanGetPointerSafe(
 #define NanSymbol(value) v8::String::NewSymbol(value)
 
 static NAN_INLINE(bool NanBooleanOptionValue(
-      v8::Local<v8::Object> optionsObj
-    , v8::Handle<v8::String> opt, bool def)) {
-
+    v8::Local<v8::Object> optionsObj
+  , v8::Handle<v8::String> opt, bool def
+)) {
   if (def) {
     return optionsObj.IsEmpty()
       || !optionsObj->Has(opt)
@@ -156,16 +163,17 @@ static NAN_INLINE(bool NanBooleanOptionValue(
 }
 
 static NAN_INLINE(bool NanBooleanOptionValue(
-      v8::Local<v8::Object> optionsObj
-    , v8::Handle<v8::String> opt)) {
+    v8::Local<v8::Object> optionsObj
+  , v8::Handle<v8::String> opt
+)) {
   return NanBooleanOptionValue(optionsObj, opt, false);
 }
 
 static NAN_INLINE(uint32_t NanUInt32OptionValue(
-      v8::Local<v8::Object> optionsObj
-    , v8::Handle<v8::String> opt
-    , uint32_t def)) {
-
+    v8::Local<v8::Object> optionsObj
+  , v8::Handle<v8::String> opt
+  , uint32_t def
+)) {
   return !optionsObj.IsEmpty()
     && optionsObj->Has(opt)
     && optionsObj->Get(opt)->IsNumber()
@@ -197,9 +205,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
     const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_PROPERTY_SETTER(name)                                             \
-    void name(v8::Local<v8::String> property                                   \
-    , v8::Local<v8::Value> value                                               \
-    , _NAN_PROPERTY_SETTER_ARGS)
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
+      , v8::Local<v8::Value> value                                             \
+      , _NAN_PROPERTY_SETTER_ARGS)
 # define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
     const v8::PropertyCallbackInfo<v8::Array>& args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
@@ -214,6 +223,33 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     const v8::PropertyCallbackInfo<v8::Integer>& args
 # define NAN_PROPERTY_QUERY(name)                                              \
     void name(v8::Local<v8::String> property, _NAN_PROPERTY_QUERY_ARGS)
+
+# define _NAN_INDEX_GETTER_ARGS                                                \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_INDEX_GETTER(name)                                                \
+    void name(uint32_t index, _NAN_INDEX_GETTER_ARGS)
+# define _NAN_INDEX_SETTER_ARGS                                                \
+    const v8::PropertyCallbackInfo<v8::Value>& args
+# define NAN_INDEX_SETTER(name)                                                \
+    void name(                                                                 \
+        uint32_t index                                                         \
+      , v8::Local<v8::Value> value                                             \
+      , _NAN_INDEX_SETTER_ARGS)
+# define _NAN_INDEX_ENUMERATOR_ARGS                                            \
+    const v8::PropertyCallbackInfo<v8::Array>& args
+# define NAN_INDEX_ENUMERATOR(name)                                            \
+    void name(_NAN_INDEX_ENUMERATOR_ARGS)
+# define _NAN_INDEX_DELETER_ARGS                                               \
+    const v8::PropertyCallbackInfo<v8::Boolean>& args
+# define NAN_INDEX_DELETER(name)                                               \
+    void name(                                                                 \
+        uint32_t index                                                         \
+      , _NAN_INDEX_DELETER_ARGS)
+# define _NAN_INDEX_QUERY_ARGS                                                 \
+    const v8::PropertyCallbackInfo<v8::Integer>& args
+# define NAN_INDEX_QUERY(name)                                                 \
+    void name(uint32_t index, _NAN_INDEX_QUERY_ARGS)
+
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetAlignedPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
@@ -221,9 +257,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
 # define NAN_WEAK_CALLBACK(type, name)                                         \
     void name(                                                                 \
-      v8::Isolate* isolate,                                                    \
-      v8::Persistent<v8::Object>* object,                                      \
-      type data)
+        v8::Isolate* isolate                                                   \
+      , v8::Persistent<v8::Object>* object                                    \
+      , type data)
 # define NAN_WEAK_CALLBACK_OBJECT (*object)
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
@@ -248,8 +284,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     handle.MakeWeak(nan_isolate, parameter, callback)
 #endif
 
-# define _NAN_ERROR(fun, errmsg)                                               \
-    fun(v8::String::New(errmsg))
+# define _NAN_ERROR(fun, errmsg) fun(v8::String::New(errmsg))
 
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
@@ -258,7 +293,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     } while (0);
 
   static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
-   return  _NAN_ERROR(v8::Exception::Error, errmsg);
+    return  _NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
   static NAN_INLINE(void NanThrowError(const char* errmsg)) {
@@ -271,8 +306,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanError(
-      const char *msg,
-      const int errorNumber)) {
+      const char *msg
+    , const int errorNumber
+  )) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
@@ -280,8 +316,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(void NanThrowError(
-      const char *msg,
-      const int errorNumber)) {
+      const char *msg
+    , const int errorNumber
+  )) {
     NanThrowError(NanError(msg, errorNumber));
   }
 
@@ -301,7 +338,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  template<class T> static NAN_INLINE(void NanDispose(v8::Persistent<T> &handle)) {
+  template<class T> static NAN_INLINE(void NanDispose(
+      v8::Persistent<T> &handle
+  )) {
+
 //TODO: remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
     handle.Reset();
@@ -312,15 +352,18 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-      char *data,
-      size_t length,
-      node::smalloc::FreeCallback callback,
-      void *hint)) {
+      char *data
+    , size_t length
+    , node::smalloc::FreeCallback callback
+    , void *hint
+  )) {
     return node::Buffer::New(data, length, callback, hint);
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-     char *data, uint32_t size)) {
+      char *data
+    , uint32_t size
+  )) {
     return node::Buffer::New(data, size);
   }
 
@@ -328,13 +371,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return node::Buffer::New(size);
   }
 
-  static NAN_INLINE(v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size)) {
+  static NAN_INLINE(v8::Local<v8::Object> NanBufferUse(
+      char* data
+    , uint32_t size
+  )) {
     return node::Buffer::Use(data, size);
   }
 
   template <class TypeName>
   static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
-     const v8::Persistent<TypeName>& persistent)) {
+     const v8::Persistent<TypeName>& persistent
+  )) {
     if (persistent.IsWeak()) {
      return v8::Local<TypeName>::New(nan_isolate, persistent);
     } else {
@@ -344,17 +391,21 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(bool NanHasInstance(
-        v8::Persistent<v8::FunctionTemplate>& function_template
-      , v8::Handle<v8::Value> value)) {
+      v8::Persistent<v8::FunctionTemplate>& function_template
+    , v8::Handle<v8::Value> value
+  )) {
     return NanPersistentToLocal(function_template)->HasInstance(value);
   }
 
   static NAN_INLINE(v8::Local<v8::Context> NanNewContextHandle(
-    v8::ExtensionConfiguration* extensions = NULL,
-    v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>(),
-    v8::Handle<v8::Value> obj = v8::Handle<v8::Value>())) {
-      return v8::Local<v8::Context>::New(nan_isolate, v8::Context::New(
-          nan_isolate, extensions, tmpl, obj));
+      v8::ExtensionConfiguration* extensions = NULL
+    , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
+    , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
+  )) {
+    return v8::Local<v8::Context>::New(
+        nan_isolate
+      , v8::Context::New(nan_isolate, extensions, tmpl, obj)
+    );
   }
 
 #else
@@ -368,39 +419,67 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_SETTER_ARGS const v8::AccessorInfo &args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
-      v8::Local<v8::String> property                                           \
-    , v8::Local<v8::Value> value                                               \
-    , _NAN_SETTER_ARGS)
+        v8::Local<v8::String> property                                         \
+      , v8::Local<v8::Value> value                                             \
+      , _NAN_SETTER_ARGS)
 # define _NAN_PROPERTY_GETTER_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_GETTER(name)                                             \
-    v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
-    , _NAN_PROPERTY_GETTER_ARGS)
+    v8::Handle<v8::Value> name(                                                \
+        v8::Local<v8::String> property                                         \
+      , _NAN_PROPERTY_GETTER_ARGS)
 # define _NAN_PROPERTY_SETTER_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_SETTER(name)                                             \
-    v8::Handle<v8::Value> name(v8::Local<v8::String> property                  \
-    , v8::Local<v8::Value> value                                               \
-    , _NAN_PROPERTY_SETTER_ARGS)
+    v8::Handle<v8::Value> name(                                                \
+        v8::Local<v8::String> property                                         \
+      , v8::Local<v8::Value> value                                             \
+      , _NAN_PROPERTY_SETTER_ARGS)
 # define _NAN_PROPERTY_ENUMERATOR_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
     v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_ARGS)
 # define _NAN_PROPERTY_DELETER_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_DELETER(name)                                            \
     v8::Handle<v8::Boolean> name(                                              \
-      v8::Local<v8::String> property                                           \
-    , _NAN_PROPERTY_DELETER_ARGS)
+        v8::Local<v8::String> property                                         \
+      , _NAN_PROPERTY_DELETER_ARGS)
 # define _NAN_PROPERTY_QUERY_ARGS const v8::AccessorInfo& args
 # define NAN_PROPERTY_QUERY(name)                                              \
     v8::Handle<v8::Integer> name(                                              \
-      v8::Local<v8::String> property                                           \
-    , _NAN_PROPERTY_QUERY_ARGS)
+        v8::Local<v8::String> property                                         \
+      , _NAN_PROPERTY_QUERY_ARGS)
+
+# define _NAN_INDEX_GETTER_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_GETTER(name)                                                \
+    v8::Handle<v8::Value> name(                                                \
+        uint32_t index                                                         \
+      , _NAN_INDEX_GETTER_ARGS)
+# define _NAN_INDEX_SETTER_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_SETTER(name)                                                \
+    v8::Handle<v8::Value> name(                                                \
+        uint32_t index                                                         \
+      , v8::Local<v8::Value> value                                             \
+      , _NAN_INDEX_SETTER_ARGS)
+# define _NAN_INDEX_ENUMERATOR_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_ENUMERATOR(name)                                            \
+    v8::Handle<v8::Array> name(_NAN_INDEX_ENUMERATOR_ARGS)
+# define _NAN_INDEX_DELETER_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_DELETER(name)                                               \
+    v8::Handle<v8::Boolean> name(                                              \
+        uint32_t index                                                         \
+      , _NAN_INDEX_DELETER_ARGS)
+# define _NAN_INDEX_QUERY_ARGS const v8::AccessorInfo& args
+# define NAN_INDEX_QUERY(name)                                                 \
+    v8::Handle<v8::Integer> name(                                              \
+        uint32_t index                                                         \
+      , _NAN_INDEX_QUERY_ARGS)
 
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
     object->SetPointerInInternalField(index, value)
-# define NAN_WEAK_CALLBACK(type, name) void name(                              \
-                v8::Persistent<v8::Value> object,                              \
-                void *data)
+# define NAN_WEAK_CALLBACK(type, name)                                         \
+    void name(                                                                 \
+        v8::Persistent<v8::Value> object                                       \
+      , void *data)
 # define NAN_WEAK_CALLBACK_OBJECT object
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
@@ -429,7 +508,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     } while (0);
 
   static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
-   return  _NAN_ERROR(v8::Exception::Error, errmsg);
+    return _NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(const char* errmsg)) {
@@ -437,14 +516,16 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(
-      v8::Handle<v8::Value> error)) {
+      v8::Handle<v8::Value> error
+  )) {
     NanScope();
     return v8::ThrowException(error);
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanError(
-      const char *msg,
-      const int errorNumber)) {
+      const char *msg
+    , const int errorNumber
+  )) {
     v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
     obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
@@ -452,8 +533,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(
-      const char *msg,
-      const int errorNumber)) {
+      const char *msg
+    , const int errorNumber
+  )) {
     return NanThrowError(NanError(msg, errorNumber));
   }
 
@@ -461,34 +543,45 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return _NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowTypeError(const char* errmsg)) {
+  static NAN_INLINE(v8::Handle<v8::Value> NanThrowTypeError(
+      const char* errmsg
+  )) {
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanRangeError(const char* errmsg)) {
+  static NAN_INLINE(v8::Handle<v8::Value> NanRangeError(
+      const char* errmsg
+  )) {
     return _NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowRangeError(const char* errmsg)) {
+  static NAN_INLINE(v8::Handle<v8::Value> NanThrowRangeError(
+      const char* errmsg
+  )) {
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  template<class T> static NAN_INLINE(void NanDispose(v8::Persistent<T> &handle)) {
+  template<class T> static NAN_INLINE(void NanDispose(
+      v8::Persistent<T> &handle
+  )) {
     handle.Dispose();
     handle.Clear();
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-      char *data,
-      size_t length,
-      node::Buffer::free_callback callback,
-      void *hint)) {
+      char *data
+    , size_t length
+    , node::Buffer::free_callback callback
+    , void *hint
+  )) {
     return v8::Local<v8::Object>::New(
         node::Buffer::New(data, length, callback, hint)->handle_);
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-     char *data, uint32_t size)) {
+      char *data
+    , uint32_t size
+  )) {
     return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
   }
 
@@ -500,14 +593,18 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     delete[] data;
   }
 
-  static NAN_INLINE(v8::Local<v8::Object> NanBufferUse(char* data, uint32_t size)) {
+  static NAN_INLINE(v8::Local<v8::Object> NanBufferUse(
+      char* data
+    , uint32_t size
+  )) {
     return v8::Local<v8::Object>::New(
         node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
   template <class TypeName>
   static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
-     const v8::Persistent<TypeName>& persistent)) {
+     const v8::Persistent<TypeName>& persistent
+  )) {
     if (persistent.IsWeak()) {
      return v8::Local<TypeName>::New(persistent);
     } else {
@@ -517,22 +614,21 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(bool NanHasInstance(
-        v8::Persistent<v8::FunctionTemplate>& function_template
-      , v8::Handle<v8::Value> value)) {
+      v8::Persistent<v8::FunctionTemplate>& function_template
+    , v8::Handle<v8::Value> value
+  )) {
     return function_template->HasInstance(value);
   }
 
   static NAN_INLINE(v8::Local<v8::Context> NanNewContextHandle(
-        v8::ExtensionConfiguration* extensions = NULL
-      , v8::Handle<v8::ObjectTemplate> tmpl =
-            v8::Handle<v8::ObjectTemplate>()
-      , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
-    )) {
-      v8::Persistent<v8::Context> ctx =
-          v8::Context::New(extensions, tmpl, obj);
-      v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
-      ctx.Dispose();
-      return lctx;
+      v8::ExtensionConfiguration* extensions = NULL
+    , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
+    , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
+  )) {
+    v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
+    v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
+    ctx.Dispose();
+    return lctx;
   }
 
 #endif // node version
@@ -670,7 +766,6 @@ NAN_INLINE(void NanAsyncQueueWorker (NanAsyncWorker* worker)) {
 
 #define _nan_base64_encoded_size(size) ((size + 2 - ((size + 2) % 3)) / 3 * 4)
 
-
 // Doesn't check for padding at the end.  Can be 1-2 bytes over.
 static NAN_INLINE(size_t _nan_base64_decoded_size_fast(size_t size)) {
   size_t remainder = size % 4;
@@ -690,7 +785,10 @@ static NAN_INLINE(size_t _nan_base64_decoded_size_fast(size_t size)) {
 }
 
 template <typename TypeName>
-static NAN_INLINE(size_t _nan_base64_decoded_size(const TypeName* src, size_t size)) {
+static NAN_INLINE(size_t _nan_base64_decoded_size(
+    const TypeName* src
+  , size_t size
+)) {
   if (size == 0)
     return 0;
 
@@ -702,35 +800,34 @@ static NAN_INLINE(size_t _nan_base64_decoded_size(const TypeName* src, size_t si
   return _nan_base64_decoded_size_fast(size);
 }
 
-
 // supports regular and URL-safe base64
-static const int _nan_unbase64_table[] =
-  { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1, -2, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
-    -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, 63,
-    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  };
+static const int _nan_unbase64_table[] = {
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1, -2, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63
+  , 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1
+  , -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14
+  , 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, 63
+  , -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+  , 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+};
 
 #define _nan_unbase64(x) _nan_unbase64_table[(uint8_t)(x)]
 
-
-template <typename TypeName>
-static size_t _nan_base64_decode(char* buf,
-                     size_t len,
-                     const TypeName* src,
-                     const size_t srcLen) {
+template <typename TypeName> static size_t _nan_base64_decode(
+    char* buf
+  , size_t len
+  , const TypeName* src
+  , const size_t srcLen
+) {
   char* dst = buf;
   char* dstEnd = buf + len;
   const TypeName* srcEnd = src + srcLen;
@@ -769,20 +866,19 @@ static size_t _nan_base64_decode(char* buf,
 
 //// HEX ////
 
-template <typename TypeName>
-unsigned _nan_hex2bin(TypeName c) {
+template <typename TypeName> unsigned _nan_hex2bin(TypeName c) {
   if (c >= '0' && c <= '9') return c - '0';
   if (c >= 'A' && c <= 'F') return 10 + (c - 'A');
   if (c >= 'a' && c <= 'f') return 10 + (c - 'a');
   return static_cast<unsigned>(-1);
 }
 
-
-template <typename TypeName>
-static size_t _nan_hex_decode(char* buf,
-                  size_t len,
-                  const TypeName* src,
-                  const size_t srcLen) {
+template <typename TypeName> static size_t _nan_hex_decode(
+    char* buf
+  , size_t len
+  , const TypeName* src
+  , const size_t srcLen
+) {
   size_t i;
   for (i = 0; i < len && i * 2 + 1 < srcLen; ++i) {
     unsigned a = _nan_hex2bin(src[i * 2 + 0]);
@@ -795,19 +891,19 @@ static size_t _nan_hex_decode(char* buf,
 }
 
 static bool _NanGetExternalParts(
-      v8::Handle<v8::Value> val
-    , const char** data
-    , size_t* len) {
-
+    v8::Handle<v8::Value> val
+  , const char** data
+  , size_t* len
+) {
   if (node::Buffer::HasInstance(val)) {
     *data = node::Buffer::Data(val.As<v8::Object>());
     *len = node::Buffer::Length(val.As<v8::Object>());
     return true;
-
   }
 
   assert(val->IsString());
-  v8::Local<v8::String> str = v8::Local<v8::String>::New(val.As<v8::String>());
+  v8::Local<v8::String> str =
+      v8::Local<v8::String>::New(val.As<v8::String>());
 
   if (str->IsExternalAscii()) {
     const v8::String::ExternalAsciiStringResource* ext;
@@ -832,14 +928,14 @@ namespace Nan {
 }
 
 static NAN_INLINE(char* NanFromV8String(
-      v8::Handle<v8::Value> from
-    , enum Nan::Encoding encoding = Nan::UTF8
-    , size_t *datalen = NULL
-    , char *buf = NULL
-    , size_t buflen = 0
-    , int flags = v8::String::NO_NULL_TERMINATION
-    | v8::String::HINT_MANY_WRITES_EXPECTED)) {
-
+    v8::Handle<v8::Value> from
+  , enum Nan::Encoding encoding = Nan::UTF8
+  , size_t *datalen = NULL
+  , char *buf = NULL
+  , size_t buflen = 0
+  , int flags =
+        v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED
+)) {
   NanScope();
 
   size_t sz_;

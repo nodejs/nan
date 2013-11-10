@@ -20,19 +20,15 @@ This project also contains some helper utilities that make addon development a b
 
 Simply add **NAN** as a dependency in the *package.json* of your Node addon:
 
-```js
-"dependencies": {
-    ...
-    "nan" : "~0.4.4"
-    ...
-}
+``` bash
+$ npm install --save nan
 ```
 
-Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include "nan.h"` in your *.cpp*:
+Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include "nan.h"` in your *.cpp* files:
 
-```js
+``` python
 "include_dirs" : [
-    "<!(node -p -e \"require('path').relative('.', require('path').dirname(require.resolve('nan')))\")"
+    "<!(node -e \"require('nan')\")"
 ]
 ```
 
@@ -163,6 +159,11 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_property_enumerator"><b><code>NAN_PROPERTY_ENUMERATOR</code></b></a>
  * <a href="#api_nan_property_deleter"><b><code>NAN_PROPERTY_DELETER</code></b></a>
  * <a href="#api_nan_property_query"><b><code>NAN_PROPERTY_QUERY</code></b></a>
+ * <a href="#api_nan_index_getter"><b><code>NAN_INDEX_GETTER</code></b></a>
+ * <a href="#api_nan_index_setter"><b><code>NAN_INDEX_SETTER</code></b></a>
+ * <a href="#api_nan_index_enumerator"><b><code>NAN_INDEX_ENUMERATOR</code></b></a>
+ * <a href="#api_nan_index_deleter"><b><code>NAN_INDEX_DELETER</code></b></a>
+ * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
@@ -277,6 +278,36 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
 
 You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_QUERY`.
+
+<a name="api_nan_index_getter"></a>
+### NAN_INDEX_GETTER(cbname)
+Use `NAN_INDEX_GETTER` to declare your V8 accessible index getters. You get a `uint32_t` `index` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_GETTER`.
+
+<a name="api_nan_index_setter"></a>
+### NAN_INDEX_SETTER(cbname)
+Use `NAN_INDEX_SETTER` to declare your V8 accessible index setters. Same as `NAN_INDEX_GETTER` but you also get a `Local<Value>` `value` object to work with.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_SETTER`.
+
+<a name="api_nan_index_enumerator"></a>
+### NAN_INDEX_ENUMERATOR(cbname)
+Use `NAN_INDEX_ENUMERATOR` to declare your V8 accessible index enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_INDEX_GETTER` call.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_ENUMERATOR`.
+
+<a name="api_nan_index_deleter"></a>
+### NAN_INDEX_DELETER(cbname)
+Use `NAN_INDEX_DELETER` to declare your V8 accessible index deleters. Same as `NAN_INDEX_GETTER`.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_DELETER`.
+
+<a name="api_nan_index_query"></a>
+### NAN_INDEX_QUERY(cbname)
+Use `NAN_INDEX_QUERY` to declare your V8 accessible index queries. Same as `NAN_INDEX_GETTER`.
+
+You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_QUERY`.
 
 <a name="api_nan_weak_callback"></a>
 ### NAN_WEAK_CALLBACK(type, cbname)
@@ -725,6 +756,7 @@ NAN is only possible due to the excellent work of the following contributors:
 <tr><th align="left">Rod Vagg</th><td><a href="https://github.com/rvagg">GitHub/rvagg</a></td><td><a href="http://twitter.com/rvagg">Twitter/@rvagg</a></td></tr>
 <tr><th align="left">Benjamin Byholm</th><td><a href="https://github.com/kkoopa/">GitHub/kkoopa</a></td></tr>
 <tr><th align="left">Trevor Norris</th><td><a href="https://github.com/trevnorris">GitHub/trevnorris</a></td><td><a href="http://twitter.com/trevnorris">Twitter/@trevnorris</a></td></tr>
+<tr><th align="left">Nathan Rajlich</th><td><a href="https://github.com/TooTallNate">GitHub/TooTallNate</a></td><td><a href="http://twitter.com/TooTallNate">Twitter/@TooTallNate</a></td></tr>
 </tbody></table>
 
 Licence &amp; copyright
