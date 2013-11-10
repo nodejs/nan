@@ -353,8 +353,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
       char *data
-    , size_t length,
-    , node::smalloc::FreeCallback callback,
+    , size_t length
+    , node::smalloc::FreeCallback callback
     , void *hint
   )) {
     return node::Buffer::New(data, length, callback, hint);
