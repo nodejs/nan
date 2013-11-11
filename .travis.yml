@@ -1,11 +1,28 @@
 language: node_js
+env:
+  - NODE_VERSION="0.8"
+  - NODE_VERSION="0.10.17"
+  - NODE_VERSION="0.10.18"
+  - NODE_VERSION="0.10.19"
+  - NODE_VERSION="0.10.20"
+  - NODE_VERSION="0.10.21"
+  - NODE_VERSION="0.11.4"
+  - NODE_VERSION="0.11.5"
+  - NODE_VERSION="0.11.6"
+# buggy npm - NODE_VERSION="0.11.7"
+# buggy npm - NODE_VERSION="0.11.8"
 node_js:
-  - "0.8"
   - "0.10"
-  - "0.11"
 notifications:
   email:
     - rod@vagg.org
-before_install: "cd test; npm install"
-script: "cd test; npm test"
-
+before_install:
+  - rm -rf ~/.nvm
+  - curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+  - source ~/.nvm/nvm.sh
+  - nvm install $NODE_VERSION
+  - node --version
+  - npm --version
+  - cd test
+  - npm install
+script: npm test
