@@ -663,12 +663,13 @@ class NanCallback {
     NanScope();
 
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
-       Get(NanSymbol("callback")).As<v8::Function>();
-    v8::TryCatch try_catch;
-    callback->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-    if (try_catch.HasCaught()) {
-      node::FatalException(try_catch);
-    }
+        Get(NanSymbol("callback")).As<v8::Function>();
+    node::MakeCallback(
+        v8::Context::GetCurrent()->Global()
+      , callback
+      , argc
+      , argv
+    );
   }
 
  private:
