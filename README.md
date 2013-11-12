@@ -671,7 +671,7 @@ NanInitPersistent(Object, persistentHandle, obj);
 Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `Local<Function>` handles is annoyingly tricky. `NanCallback` makes it easier by taking your `Local` handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Call()` method to fetch and execute the callback `Function`.
 
 ```c++
-Local<Function> callbackHandle = callback = args[0].As<Function>();
+Local<Function> callbackHandle = args[0].As<Function>();
 NanCallback *callback = new NanCallback(callbackHandle);
 // pass `callback` around and it's safe from GC until you:
 delete callback;
