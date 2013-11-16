@@ -908,7 +908,7 @@ static bool _NanGetExternalParts(
 
   assert(val->IsString());
   v8::Local<v8::String> str =
-    v8::Local<v8::String>::New(v8::Isolate::GetCurrent();,val.As<v8::String>());
+    v8::Local<v8::String>::New(v8::Isolate::GetCurrent(),val.As<v8::String>());
 
   if (str->IsExternalAscii()) {
     const v8::String::ExternalAsciiStringResource* ext;
