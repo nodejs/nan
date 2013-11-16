@@ -11,6 +11,9 @@
  * Version 0.5.1 (current Node unstable: 0.11.8, Node stable: 0.10.21)
  *
  * ChangeLog:
+ *  * 0.5.2 (WIP)
+ *    - Convert SavePersistent and GetFromPersistent in NanAsyncWorker from protected and public
+ *
  *  * 0.5.1 Nov 12 2013
  *    - Use node::MakeCallback() instead of direct v8::Function::Call()
  *
@@ -708,15 +711,6 @@ public:
     callback = NULL;
   }
 
-  virtual void Execute () =0;
-
-  uv_work_t request;
-
-protected:
-  v8::Persistent<v8::Object> persistentHandle;
-  NanCallback *callback;
-  const char *errmsg;
-
   void SavePersistent(const char *key, v8::Local<v8::Object> &obj) {
     NanScope();
 
@@ -730,6 +724,15 @@ protected:
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
     return handle->Get(NanSymbol(key)).As<v8::Object>();
   }
+
+  virtual void Execute () =0;
+
+  uv_work_t request;
+
+protected:
+  v8::Persistent<v8::Object> persistentHandle;
+  NanCallback *callback;
+  const char *errmsg;
 
   virtual void HandleOKCallback () {
     NanScope();
