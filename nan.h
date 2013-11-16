@@ -306,7 +306,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   template<class T> static NAN_INLINE(v8::Local<T> NanNewLocal(
       v8::Handle<T> val
   )) {
+//TODO: remove <0.11.9 support when 0.12 is released
+#if NODE_VERSION_AT_LEAST(0, 11, 9)
     return v8::Local<T>::New(nan_isolate, val);
+#else
+    return v8::Local<T>::New(val);
+#endif
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
