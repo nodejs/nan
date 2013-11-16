@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.5.1*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
+***Current version: 0.5.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true&stars=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -723,15 +723,15 @@ public:
   // be passed that string in an Error object
   virtual void Execute ();
 
-protected:
-  // Set this if there is an error, otherwise it's NULL
-  const char *errmsg;
-
   // Save a V8 object in a Persistent handle to protect it from GC
   void SavePersistent(const char *key, Local<Object> &obj);
 
   // Fetch a stored V8 object (don't call from within `Execute()`)
   Local<Object> GetFromPersistent(const char *key);
+
+protected:
+  // Set this if there is an error, otherwise it's NULL
+  const char *errmsg;
 
   // Default implementation calls the callback function with no arguments.
   // Override this to return meaningful data

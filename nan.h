@@ -8,10 +8,10 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.5.1 (current Node unstable: 0.11.8, Node stable: 0.10.21)
+ * Version 0.5.1 (current Node unstable: 0.11.8, Node stable: 0.10.22)
  *
  * ChangeLog:
- *  * 0.5.2 (WIP)
+ *  * 0.5.2 Nov 16 2013
  *    - Convert SavePersistent and GetFromPersistent in NanAsyncWorker from protected and public
  *
  *  * 0.5.1 Nov 12 2013
