@@ -25,6 +25,10 @@ The version of V8 that's shipping with Node 0.11.9+ has changed the signature fo
 
 For example, if you wanted to return a `null` on a callback you will have to change the argument from `v8::Local<v8::Value>::New(v8::Null())` to `NanNewLocal<v8::Value>(v8::Null())`.
 
+### Nov-2013: Change to binding.gyp `"include_dirs"` for NAN
+
+Inclusion of NAN in a project's binding.gyp is now greatly simplified. You can now just use `"<!(node -e \"require('nan')\")"` in your `"include_dirs"`, see example below.
+
 <a name="usage"></a>
 ## Usage
 
