@@ -11,6 +11,10 @@
  * Version 0.5.1 (current Node unstable: 0.11.8, Node stable: 0.10.22)
  *
  * ChangeLog:
+ *  * 0.6.0 (WIP)
+ *    - Introduce NanNewLocal<T>(v8::Handle<T> value) for use in place of
+ *      v8::Local<T>::New(...) since v8 started requiring isolate in Node 0.11.9
+ *
  *  * 0.5.2 Nov 16 2013
  *    - Convert SavePersistent and GetFromPersistent in NanAsyncWorker from protected and public
  *
@@ -299,6 +303,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       v8::ThrowException(_NAN_ERROR(fun, errmsg));                             \
     } while (0);
 
+  template<class T> static NAN_INLINE(v8::Local<T> NanNewLocal(
+      v8::Handle<T> val
+  )) {
+//TODO: remove <0.11.9 support when 0.12 is released
+#if NODE_VERSION_AT_LEAST(0, 11, 9)
+    return v8::Local<T>::New(nan_isolate, val);
+#else
+    return v8::Local<T>::New(val);
+#endif
+  }
+
   static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
     return  _NAN_ERROR(v8::Exception::Error, errmsg);
   }
@@ -514,6 +529,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       return v8::ThrowException(_NAN_ERROR(fun, errmsg));                      \
     } while (0);
 
+  template<class T> static NAN_INLINE(v8::Local<T> NanNewLocal(
+      v8::Handle<T> val
+  )) {
+    return v8::Local<T>::New(val);
+  }
+
   static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
     return _NAN_ERROR(v8::Exception::Error, errmsg);
   }
@@ -581,7 +602,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     , node::Buffer::free_callback callback
     , void *hint
   )) {
-    return v8::Local<v8::Object>::New(
+    return NanNewLocal<v8::Object>(
         node::Buffer::New(data, length, callback, hint)->handle_);
   }
 
@@ -589,11 +610,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       char *data
     , uint32_t size
   )) {
-    return v8::Local<v8::Object>::New(node::Buffer::New(data, size)->handle_);
+    return NanNewLocal<v8::Object>(node::Buffer::New(data, size)->handle_);
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (uint32_t size)) {
-    return v8::Local<v8::Object>::New(node::Buffer::New(size)->handle_);
+    return NanNewLocal<v8::Object>(node::Buffer::New(size)->handle_);
   }
 
   static NAN_INLINE(void FreeData(char *data, void *hint)) {
@@ -604,7 +625,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       char* data
     , uint32_t size
   )) {
-    return v8::Local<v8::Object>::New(
+    return NanNewLocal<v8::Object>(
         node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
@@ -613,7 +634,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
      const v8::Persistent<TypeName>& persistent
   )) {
     if (persistent.IsWeak()) {
-     return v8::Local<TypeName>::New(persistent);
+     return NanNewLocal<TypeName>(persistent);
     } else {
      return *reinterpret_cast<v8::Local<TypeName>*>(
          const_cast<v8::Persistent<TypeName>*>(&persistent));
@@ -633,7 +654,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
   )) {
     v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
-    v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
+    v8::Local<v8::Context> lctx = NanNewLocal<v8::Context>(ctx);
     ctx.Dispose();
     return lctx;
   }
@@ -910,8 +931,7 @@ static bool _NanGetExternalParts(
   }
 
   assert(val->IsString());
-  v8::Local<v8::String> str =
-      v8::Local<v8::String>::New(val.As<v8::String>());
+  v8::Local<v8::String> str = NanNewLocal(val.As<v8::String>());
 
   if (str->IsExternalAscii()) {
     const v8::String::ExternalAsciiStringResource* ext;
