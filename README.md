@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.5.2*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
+***Current version: 0.6.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -21,7 +21,7 @@ This project also contains some helper utilities that make addon development a b
 
 ### Nov-2013: Node 0.11.9+ breaking V8 change
 
-The version of V8 that's shipping with Node 0.11.9+ has changed the signature for new `Local`s to: `v8::Local<T>::New(isolate, value)`, i.e. introducing the `isolate` argument and therefore breaking all new `Local` declarations for previous versions. NAN 0.6+ now includes a `NanNewLocal(value)` that can be used in place to work around this incompatibility and maintain compatibility with 0.8->0.11.9+ (minus a few early 0.11 releases).
+The version of V8 that's shipping with Node 0.11.9+ has changed the signature for new `Local`s to: `v8::Local<T>::New(isolate, value)`, i.e. introducing the `isolate` argument and therefore breaking all new `Local` declarations for previous versions. NAN 0.6+ now includes a `NanNewLocal<T>(value)` that can be used in place to work around this incompatibility and maintain compatibility with 0.8->0.11.9+ (minus a few early 0.11 releases).
 
 For example, if you wanted to return a `null` on a callback you will have to change the argument from `v8::Local<v8::Value>::New(v8::Null())` to `NanNewLocal<v8::Value>(v8::Null())`.
 
@@ -181,6 +181,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
+ * <a href="#api_nan_new_local"><b><code>NanNewLocal</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_return_null"><b><code>NanReturnNull</code></b></a>
@@ -357,6 +358,16 @@ Inlines a function. Identical to `V8_INLINE`.
 static NAN_INLINE(int foo(int bar)) {
   ...
 }
+```
+
+<a name="api_nan_new_local"></a>
+### NanNewLocal&lt;T&gt;(Handle&lt;Value&gt;)
+
+Use `NanNewLocal` in place of `v8::Local<T>::New(...)` as this function
+requires an `isolate` argument in recent versions of V8 but not in older versions.
+
+```c++
+NanNewLocal<v8::Value>(v8::Null())
 ```
 
 <a name="api_nan_return_value"></a>

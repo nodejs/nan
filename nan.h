@@ -8,10 +8,10 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.5.1 (current Node unstable: 0.11.8, Node stable: 0.10.22)
+ * Version 0.6.0 (current Node unstable: 0.11.9, Node stable: 0.10.22)
  *
  * ChangeLog:
- *  * 0.6.0 (WIP)
+ *  * 0.6.0 Nov 21 2013
  *    - Introduce NanNewLocal<T>(v8::Handle<T> value) for use in place of
  *      v8::Local<T>::New(...) since v8 started requiring isolate in Node 0.11.9
  *
