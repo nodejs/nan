@@ -663,17 +663,28 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
 class NanCallback {
  public:
+  NanCallback() {
+    NanScope();
+    v8::Local<v8::Object> obj = v8::Object::New();
+    NanAssignPersistent(v8::Object, handle, obj);
+  }
+
   NanCallback(const v8::Local<v8::Function> &fn) {
     NanScope();
     v8::Local<v8::Object> obj = v8::Object::New();
-    obj->Set(NanSymbol("callback"), fn);
     NanAssignPersistent(v8::Object, handle, obj);
+    SetFunction(fn);
   }
 
   ~NanCallback() {
     if (handle.IsEmpty()) return;
     handle.Dispose();
     handle.Clear();
+  }
+
+  NAN_INLINE(void SetFunction(const v8::Local<v8::Function> &fn)) {
+    NanScope();
+    NanPersistentToLocal(handle)->Set(NanSymbol("callback"), fn);
   }
 
   NAN_INLINE(v8::Local<v8::Function> GetFunction ()) {
