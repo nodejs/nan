@@ -671,7 +671,7 @@ class NanCallback {
     NanAssignPersistent(v8::Object, handle, obj);
   }
 
-  NanCallback(const v8::Local<v8::Function> &fn) {
+  NanCallback(const v8::Handle<v8::Function> &fn) {
     NanScope();
     v8::Local<v8::Object> obj = v8::Object::New();
     NanAssignPersistent(v8::Object, handle, obj);
@@ -684,7 +684,7 @@ class NanCallback {
     handle.Clear();
   }
 
-  NAN_INLINE(void SetFunction(const v8::Local<v8::Function> &fn)) {
+  NAN_INLINE(void SetFunction(const v8::Handle<v8::Function> &fn)) {
     NanScope();
     NanPersistentToLocal(handle)->Set(NanSymbol("callback"), fn);
   }
@@ -695,11 +695,11 @@ class NanCallback {
   }
 
   // deprecated
-  NAN_DEPRECATED(void Run(int argc, v8::Local<v8::Value> argv[])) {
+  NAN_DEPRECATED(void Run(int argc, v8::Handle<v8::Value> argv[])) {
     Call(argc, argv);
   }
 
-  void Call(int argc, v8::Local<v8::Value> argv[]) {
+  void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
 
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
