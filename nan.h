@@ -197,7 +197,8 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 
 static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
-# define _NAN_METHOD_ARGS const v8::FunctionCallbackInfo<v8::Value>& args
+# define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
+# define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define NAN_METHOD(name) void name(_NAN_METHOD_ARGS)
 # define _NAN_GETTER_ARGS const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_GETTER(name)                                                      \
@@ -433,7 +434,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 #else
 // Node 0.8 and 0.10
 
-# define _NAN_METHOD_ARGS const v8::Arguments& args
+# define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
+# define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define NAN_METHOD(name) v8::Handle<v8::Value> name(_NAN_METHOD_ARGS)
 # define _NAN_GETTER_ARGS const v8::AccessorInfo &args
 # define NAN_GETTER(name)                                                      \
