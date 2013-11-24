@@ -10,6 +10,7 @@
   "dependencies": {
     "tap": "~0.4.3",
     "bindings": "~1.1.1",
-    "xtend": "~2.1.1"
+    "xtend": "~2.1.1",
+    "node-gyp": "~0.12.1"
   }
 }
