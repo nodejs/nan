@@ -262,8 +262,6 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 
 Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but you also get a `Local<Value>` `value` object to work with.
 
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_SETTER`.
-
 <a name="api_nan_property_getter"></a>
 ### NAN_PROPERTY_GETTER(cbname)
 Use `NAN_PROPERTY_GETTER` to declare your V8 accessible property getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
@@ -273,8 +271,6 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 <a name="api_nan_property_setter"></a>
 ### NAN_PROPERTY_SETTER(cbname)
 Use `NAN_PROPERTY_SETTER` to declare your V8 accessible property setters. Same as `NAN_PROPERTY_GETTER` but you also get a `Local<Value>` `value` object to work with.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_SETTER`.
 
 <a name="api_nan_property_enumerator"></a>
 ### NAN_PROPERTY_ENUMERATOR(cbname)
@@ -303,8 +299,6 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 <a name="api_nan_index_setter"></a>
 ### NAN_INDEX_SETTER(cbname)
 Use `NAN_INDEX_SETTER` to declare your V8 accessible index setters. Same as `NAN_INDEX_GETTER` but you also get a `Local<Value>` `value` object to work with.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_SETTER`.
 
 <a name="api_nan_index_enumerator"></a>
 ### NAN_INDEX_ENUMERATOR(cbname)
