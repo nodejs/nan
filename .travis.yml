@@ -3,12 +3,12 @@ env:
   - NODE_VERSION="0.8"
   - NODE_VERSION="0.10.17"
   - NODE_VERSION="0.10.18"
-  - NODE_VERSION="0.10.19"
   - NODE_VERSION="0.10.20"
   - NODE_VERSION="0.10.21"
   - NODE_VERSION="0.11.4"
   - NODE_VERSION="0.11.5"
   - NODE_VERSION="0.11.6"
+  - NODE_VERSION="0.11.9"
 # buggy npm - NODE_VERSION="0.11.7"
 # buggy npm - NODE_VERSION="0.11.8"
 node_js:
