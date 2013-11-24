@@ -6,6 +6,8 @@ const test     = require('tap').test
 // more than once in project files
 test('multifile', function (t) {
   t.plan(2);
-  t.type(bindings('multifile').r, 'function');
-  t.equal(bindings('multifile').r('a string value'), 'a string value');
+
+  var r = bindings('multifile').r
+  t.type(r, 'function');
+  t.equal(r('a string value'), 'a string value');
 });
