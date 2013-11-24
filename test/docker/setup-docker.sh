@@ -7,7 +7,7 @@
 __dirname="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # For `make -j X`
-BUILD_THREADS=6
+BUILD_THREADS=`grep '^processor\s*\:\s*[0-9][0-9]*$' /proc/cpuinfo | wc -l`
 
 # The versions of Node to test, edit the node_versions.list file to change
 # NOTE: to re-make "master" just `sudo docker rmi node_dev-master` and run
