@@ -214,7 +214,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     void name(v8::Local<v8::String> property                                   \
       , _NAN_PROPERTY_GETTER_ARGS)
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
-    const v8::PropertyCallbackInfo<v8::Value>& args
+    const v8::PropertyCallbackInfo<void>& args
 # define NAN_PROPERTY_SETTER(name)                                             \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
@@ -240,7 +240,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_INDEX_GETTER(name)                                                \
     void name(uint32_t index, _NAN_INDEX_GETTER_ARGS)
 # define _NAN_INDEX_SETTER_ARGS                                                \
-    const v8::PropertyCallbackInfo<v8::Value>& args
+    const v8::PropertyCallbackInfo<void>& args
 # define NAN_INDEX_SETTER(name)                                                \
     void name(                                                                 \
         uint32_t index                                                         \
