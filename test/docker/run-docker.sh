@@ -8,7 +8,7 @@ __dirname="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # How many tests can we run at once without making the computer grind to a halt
 # or causing other unwanted resource problems:
-SIMULTANEOUS=4
+SIMULTANEOUS=`grep '^processor\s*\:\s*[0-9][0-9]*$' /proc/cpuinfo | wc -l`
 
 # The versions of Node to test, this assumes that we have a Docker image
 # set up with the name "node_dev-<version>"
