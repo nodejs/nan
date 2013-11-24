@@ -22,7 +22,7 @@ test_node() {
 
   # Run test in a Docker container
   docker run -v ${__dirname}/../../:/nan-src/:ro node_dev-$NV /bin/bash -c " \
-    rsync -aAXx --delete /nan-src/ /nan/ --exclude .git --progress; \
+    rsync -aAXx --delete /nan-src/ /nan/ --exclude .git; \
     cd /nan/test/; \
     npm install; \
     node_modules/.bin/node-gyp --nodedir /usr/src/node/ rebuild; \
