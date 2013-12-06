@@ -703,6 +703,7 @@ class NanCallback {
   void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
 
+#if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
     node::MakeCallback(
@@ -711,6 +712,9 @@ class NanCallback {
       , argc
       , argv
     );
+#else
+    node::MakeCallback(handle, "callback", argc, argv);
+#endif
   }
 
  private:
