@@ -8,9 +8,14 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.6.0 (current Node unstable: 0.11.9, Node stable: 0.10.22)
+ * Version 0.7.0 (current Node unstable: 0.11.9, Node stable: 0.10.22)
  *
  * ChangeLog:
+ *  * 0.7.0 (WORK IN PROGRESS)
+ *    - New no-arg form of NanCallback() constructor.
+ *    - NanCallback#Call takes Handle rather than Local
+ *    - Removed deprecated NanCallback#Run method, use NanCallback#Call instead
+ *
  *  * 0.6.0 Nov 21 2013
  *    - Introduce NanNewLocal<T>(v8::Handle<T> value) for use in place of
  *      v8::Local<T>::New(...) since v8 started requiring isolate in Node 0.11.9
@@ -693,11 +698,6 @@ class NanCallback {
   NAN_INLINE(v8::Local<v8::Function> GetFunction ()) {
     return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
         .As<v8::Function>();
-  }
-
-  // deprecated
-  NAN_DEPRECATED(void Run(int argc, v8::Handle<v8::Value> argv[])) {
-    Call(argc, argv);
   }
 
   void Call(int argc, v8::Handle<v8::Value> argv[]) {
