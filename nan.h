@@ -211,7 +211,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_PROPERTY_GETTER_ARGS                                             \
     const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_PROPERTY_GETTER(name)                                             \
-    void name(v8::Local<v8::String> property                                   \
+    void name(                                                                 \
+        v8::Local<v8::String> property                                         \
       , _NAN_PROPERTY_GETTER_ARGS)
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
     const v8::PropertyCallbackInfo<v8::Value>& args
