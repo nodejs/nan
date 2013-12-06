@@ -197,7 +197,8 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 
 static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
-# define _NAN_METHOD_ARGS const v8::FunctionCallbackInfo<v8::Value>& args
+# define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
+# define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define NAN_METHOD(name) void name(_NAN_METHOD_ARGS)
 # define _NAN_GETTER_ARGS const v8::PropertyCallbackInfo<v8::Value>& args
 # define NAN_GETTER(name)                                                      \
@@ -434,7 +435,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 #else
 // Node 0.8 and 0.10
 
-# define _NAN_METHOD_ARGS const v8::Arguments& args
+# define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
+# define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define NAN_METHOD(name) v8::Handle<v8::Value> name(_NAN_METHOD_ARGS)
 # define _NAN_GETTER_ARGS const v8::AccessorInfo &args
 # define NAN_GETTER(name)                                                      \
@@ -664,11 +666,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
 class NanCallback {
  public:
-  NanCallback(const v8::Local<v8::Function> &fn) {
+  NanCallback() {
     NanScope();
     v8::Local<v8::Object> obj = v8::Object::New();
-    obj->Set(NanSymbol("callback"), fn);
     NanAssignPersistent(v8::Object, handle, obj);
+  }
+
+  NanCallback(const v8::Handle<v8::Function> &fn) {
+    NanScope();
+    v8::Local<v8::Object> obj = v8::Object::New();
+    NanAssignPersistent(v8::Object, handle, obj);
+    SetFunction(fn);
   }
 
   ~NanCallback() {
@@ -677,17 +685,22 @@ class NanCallback {
     handle.Clear();
   }
 
+  NAN_INLINE(void SetFunction(const v8::Handle<v8::Function> &fn)) {
+    NanScope();
+    NanPersistentToLocal(handle)->Set(NanSymbol("callback"), fn);
+  }
+
   NAN_INLINE(v8::Local<v8::Function> GetFunction ()) {
     return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
         .As<v8::Function>();
   }
 
   // deprecated
-  NAN_DEPRECATED(void Run(int argc, v8::Local<v8::Value> argv[])) {
+  NAN_DEPRECATED(void Run(int argc, v8::Handle<v8::Value> argv[])) {
     Call(argc, argv);
   }
 
-  void Call(int argc, v8::Local<v8::Value> argv[]) {
+  void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
 
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
