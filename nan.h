@@ -205,66 +205,88 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define NAN_METHOD(name) void name(_NAN_METHOD_ARGS)
-# define _NAN_GETTER_ARGS const v8::PropertyCallbackInfo<v8::Value>& args
+# define _NAN_GETTER_ARGS_TYPE const v8::PropertyCallbackInfo<v8::Value>&
+# define _NAN_GETTER_ARGS _NAN_GETTER_ARGS_TYPE args
 # define NAN_GETTER(name)                                                      \
     void name(v8::Local<v8::String> property, _NAN_GETTER_ARGS)
-# define _NAN_SETTER_ARGS const v8::PropertyCallbackInfo<void>& args
+# define _NAN_SETTER_ARGS_TYPE const v8::PropertyCallbackInfo<void>&
+# define _NAN_SETTER_ARGS _NAN_SETTER_ARGS_TYPE args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
+# define _NAN_PROPERTY_GETTER_ARGS_TYPE                                        \
+    const v8::PropertyCallbackInfo<v8::Value>&
 # define _NAN_PROPERTY_GETTER_ARGS                                             \
-    const v8::PropertyCallbackInfo<v8::Value>& args
+    _NAN_PROPERTY_GETTER_ARGS_TYPE args
 # define NAN_PROPERTY_GETTER(name)                                             \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , _NAN_PROPERTY_GETTER_ARGS)
+# define _NAN_PROPERTY_SETTER_ARGS_TYPE                                        \
+    const v8::PropertyCallbackInfo<v8::Value>&
 # define _NAN_PROPERTY_SETTER_ARGS                                             \
-    const v8::PropertyCallbackInfo<v8::Value>& args
+    _NAN_PROPERTY_SETTER_ARGS_TYPE args
 # define NAN_PROPERTY_SETTER(name)                                             \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_PROPERTY_SETTER_ARGS)
+# define _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE                                    \
+    const v8::PropertyCallbackInfo<v8::Array>&
 # define _NAN_PROPERTY_ENUMERATOR_ARGS                                         \
-    const v8::PropertyCallbackInfo<v8::Array>& args
+    _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
     void name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+# define _NAN_PROPERTY_DELETER_ARGS_TYPE                                       \
+    const v8::PropertyCallbackInfo<v8::Boolean>&
 # define _NAN_PROPERTY_DELETER_ARGS                                            \
-    const v8::PropertyCallbackInfo<v8::Boolean>& args
+    _NAN_PROPERTY_DELETER_ARGS_TYPE args
 # define NAN_PROPERTY_DELETER(name)                                            \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , _NAN_PROPERTY_DELETER_ARGS)
+# define _NAN_PROPERTY_QUERY_ARGS_TYPE                                         \
+    const v8::PropertyCallbackInfo<v8::Integer>&
 # define _NAN_PROPERTY_QUERY_ARGS                                              \
-    const v8::PropertyCallbackInfo<v8::Integer>& args
+    _NAN_PROPERTY_QUERY_ARGS_TYPE args
 # define NAN_PROPERTY_QUERY(name)                                              \
     void name(v8::Local<v8::String> property, _NAN_PROPERTY_QUERY_ARGS)
 
+# define _NAN_INDEX_GETTER_ARGS_TYPE                                           \
+    const v8::PropertyCallbackInfo<v8::Value>&
 # define _NAN_INDEX_GETTER_ARGS                                                \
-    const v8::PropertyCallbackInfo<v8::Value>& args
+    _NAN_INDEX_GETTER_ARGS_TYPE args
 # define NAN_INDEX_GETTER(name)                                                \
     void name(uint32_t index, _NAN_INDEX_GETTER_ARGS)
+# define _NAN_INDEX_SETTER_ARGS_TYPE                                           \
+    const v8::PropertyCallbackInfo<v8::Value>&
 # define _NAN_INDEX_SETTER_ARGS                                                \
-    const v8::PropertyCallbackInfo<v8::Value>& args
+    _NAN_INDEX_SETTER_ARGS_TYPE args
 # define NAN_INDEX_SETTER(name)                                                \
     void name(                                                                 \
         uint32_t index                                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_INDEX_SETTER_ARGS)
+# define _NAN_INDEX_ENUMERATOR_ARGS_TYPE                                       \
+    const v8::PropertyCallbackInfo<v8::Array>&
 # define _NAN_INDEX_ENUMERATOR_ARGS                                            \
-    const v8::PropertyCallbackInfo<v8::Array>& args
+    _NAN_INDEX_ENUMERATOR_ARGS_TYPE args
 # define NAN_INDEX_ENUMERATOR(name)                                            \
     void name(_NAN_INDEX_ENUMERATOR_ARGS)
+# define _NAN_INDEX_DELETER_ARGS_TYPE                                          \
+    const v8::PropertyCallbackInfo<v8::Boolean>&
 # define _NAN_INDEX_DELETER_ARGS                                               \
-    const v8::PropertyCallbackInfo<v8::Boolean>& args
+    _NAN_INDEX_DELETER_ARGS_TYPE args
 # define NAN_INDEX_DELETER(name)                                               \
     void name(                                                                 \
         uint32_t index                                                         \
       , _NAN_INDEX_DELETER_ARGS)
+# define _NAN_INDEX_QUERY_ARGS_TYPE                                            \
+    const v8::PropertyCallbackInfo<v8::Integer>&
 # define _NAN_INDEX_QUERY_ARGS                                                 \
-    const v8::PropertyCallbackInfo<v8::Integer>& args
+    _NAN_INDEX_QUERY_ARGS_TYPE args
 # define NAN_INDEX_QUERY(name)                                                 \
     void name(uint32_t index, _NAN_INDEX_QUERY_ARGS)
 
@@ -276,7 +298,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NAN_WEAK_CALLBACK(type, name)                                         \
     void name(                                                                 \
         v8::Isolate* isolate                                                   \
-      , v8::Persistent<v8::Object>* object                                    \
+      , v8::Persistent<v8::Object>* object                                     \
       , type data)
 # define NAN_WEAK_CALLBACK_OBJECT (*object)
 # define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
@@ -443,60 +465,71 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define NAN_METHOD(name) v8::Handle<v8::Value> name(_NAN_METHOD_ARGS)
-# define _NAN_GETTER_ARGS const v8::AccessorInfo &args
+# define _NAN_GETTER_ARGS_TYPE const v8::AccessorInfo &
+# define _NAN_GETTER_ARGS _NAN_GETTER_ARGS_TYPE args
 # define NAN_GETTER(name)                                                      \
     v8::Handle<v8::Value> name(v8::Local<v8::String> property, _NAN_GETTER_ARGS)
-# define _NAN_SETTER_ARGS const v8::AccessorInfo &args
+# define _NAN_SETTER_ARGS_TYPE const v8::AccessorInfo &
+# define _NAN_SETTER_ARGS _NAN_SETTER_ARGS_TYPE args
 # define NAN_SETTER(name)                                                      \
     void name(                                                                 \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_SETTER_ARGS)
-# define _NAN_PROPERTY_GETTER_ARGS const v8::AccessorInfo& args
+# define _NAN_PROPERTY_GETTER_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_PROPERTY_GETTER_ARGS _NAN_PROPERTY_GETTER_ARGS_TYPE args
 # define NAN_PROPERTY_GETTER(name)                                             \
     v8::Handle<v8::Value> name(                                                \
         v8::Local<v8::String> property                                         \
       , _NAN_PROPERTY_GETTER_ARGS)
-# define _NAN_PROPERTY_SETTER_ARGS const v8::AccessorInfo& args
+# define _NAN_PROPERTY_SETTER_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_PROPERTY_SETTER_ARGS _NAN_PROPERTY_SETTER_ARGS_TYPE args
 # define NAN_PROPERTY_SETTER(name)                                             \
     v8::Handle<v8::Value> name(                                                \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_PROPERTY_SETTER_ARGS)
-# define _NAN_PROPERTY_ENUMERATOR_ARGS const v8::AccessorInfo& args
+# define _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_PROPERTY_ENUMERATOR_ARGS _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE args
 # define NAN_PROPERTY_ENUMERATOR(name)                                         \
     v8::Handle<v8::Array> name(_NAN_PROPERTY_ENUMERATOR_ARGS)
-# define _NAN_PROPERTY_DELETER_ARGS const v8::AccessorInfo& args
+# define _NAN_PROPERTY_DELETER_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_PROPERTY_DELETER_ARGS _NAN_PROPERTY_DELETER_ARGS_TYPE args
 # define NAN_PROPERTY_DELETER(name)                                            \
     v8::Handle<v8::Boolean> name(                                              \
         v8::Local<v8::String> property                                         \
       , _NAN_PROPERTY_DELETER_ARGS)
-# define _NAN_PROPERTY_QUERY_ARGS const v8::AccessorInfo& args
+# define _NAN_PROPERTY_QUERY_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_PROPERTY_QUERY_ARGS _NAN_PROPERTY_QUERY_ARGS_TYPE args
 # define NAN_PROPERTY_QUERY(name)                                              \
     v8::Handle<v8::Integer> name(                                              \
         v8::Local<v8::String> property                                         \
       , _NAN_PROPERTY_QUERY_ARGS)
-
-# define _NAN_INDEX_GETTER_ARGS const v8::AccessorInfo& args
+# define _NAN_INDEX_GETTER_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_INDEX_GETTER_ARGS _NAN_INDEX_GETTER_ARGS_TYPE args
 # define NAN_INDEX_GETTER(name)                                                \
     v8::Handle<v8::Value> name(                                                \
         uint32_t index                                                         \
       , _NAN_INDEX_GETTER_ARGS)
-# define _NAN_INDEX_SETTER_ARGS const v8::AccessorInfo& args
+# define _NAN_INDEX_SETTER_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_INDEX_SETTER_ARGS _NAN_INDEX_SETTER_ARGS_TYPE args
 # define NAN_INDEX_SETTER(name)                                                \
     v8::Handle<v8::Value> name(                                                \
         uint32_t index                                                         \
       , v8::Local<v8::Value> value                                             \
       , _NAN_INDEX_SETTER_ARGS)
-# define _NAN_INDEX_ENUMERATOR_ARGS const v8::AccessorInfo& args
+# define _NAN_INDEX_ENUMERATOR_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_INDEX_ENUMERATOR_ARGS _NAN_INDEX_ENUMERATOR_ARGS_TYPE args
 # define NAN_INDEX_ENUMERATOR(name)                                            \
     v8::Handle<v8::Array> name(_NAN_INDEX_ENUMERATOR_ARGS)
-# define _NAN_INDEX_DELETER_ARGS const v8::AccessorInfo& args
+# define _NAN_INDEX_DELETER_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_INDEX_DELETER_ARGS _NAN_INDEX_DELETER_ARGS_TYPE args
 # define NAN_INDEX_DELETER(name)                                               \
     v8::Handle<v8::Boolean> name(                                              \
         uint32_t index                                                         \
       , _NAN_INDEX_DELETER_ARGS)
-# define _NAN_INDEX_QUERY_ARGS const v8::AccessorInfo& args
+# define _NAN_INDEX_QUERY_ARGS_TYPE const v8::AccessorInfo&
+# define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define NAN_INDEX_QUERY(name)                                                 \
     v8::Handle<v8::Integer> name(                                              \
         uint32_t index                                                         \
