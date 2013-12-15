@@ -973,7 +973,7 @@ namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 }
 
-static NAN_INLINE(char* NanStringBuf(
+static NAN_INLINE(void* NanRawString(
     v8::Handle<v8::Value> from
   , enum Nan::Encoding encoding
   , size_t *datalen
@@ -1125,7 +1125,7 @@ static NAN_INLINE(char* NanFromV8String(
   , int flags =
         v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED
 )) {
-    return NanStringBuf(from, encoding, datalen, buf, buflen, flags);
+    return (char *) NanRawString(from, encoding, datalen, buf, buflen, flags);
 }
 
 static NAN_INLINE(char* NanCString(
@@ -1135,7 +1135,7 @@ static NAN_INLINE(char* NanCString(
   , size_t buflen = 0
   , int flags = v8::String::NO_OPTIONS
 )) {
-    return NanStringBuf(from, Nan::UTF8, datalen, buf, buflen, flags);
+    return (char *) NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags);
 }
 
 #endif

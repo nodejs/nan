@@ -196,7 +196,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
  * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
  * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
- * <a href="#api_nan_string_buf"><b><code>NanStringBuf</code></b></a>
+ * <a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a>
  * <a href="#api_nan_c_string"><b><code>NanCString</code></b></a>
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
@@ -538,15 +538,15 @@ const char *plugh(size_t *outputsize) {
 }
 ```
 
-<a name="api_nan_string_buf"></a>
-### char* NanStringBuf(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, char *, size_t, int)
+<a name="api_nan_raw_string"></a>
+### void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, char *, size_t, int)
 
-When you want to convert a V8 `String` to a `char*` buffer, use `NanStringBuf`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
+When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
 Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
 
 ```c++
 size_t count;
-char* decoded = NanStringBuf(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
+void* decoded = NanRawString(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
 char param_copy[count];
 memcpy(param_copy, decoded, count);
 delete[] decoded;
