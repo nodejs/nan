@@ -713,7 +713,7 @@ NanInitPersistent(Object, persistentHandle, obj);
 <a name="api_nan_callback"></a>
 ### NanCallback
 
-Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `Local<Function>` handles is annoyingly tricky. `NanCallback` makes it easier by taking your `Local` handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Call()` method to fetch and execute the callback `Function`.
+Because of the difficulties imposed by the changes to `Persistent` handles in V8 in Node 0.11, creating `Persistent` versions of your `Handle<Function>` is annoyingly tricky. `NanCallback` makes it easier by taking your handle, making it persistent until the `NanCallback` is deleted and even providing a handy `Call()` method to fetch and execute the callback `Function`.
 
 ```c++
 Local<Function> callbackHandle = args[0].As<Function>();
@@ -729,20 +729,24 @@ You can execute the callback like so:
 callback->Call(0, NULL);
 
 // an error argument:
-Local<Value> argv[] = {
+Handle<Value> argv[] = {
   Exception::Error(String::New("fail!"))
 };
 callback->Call(1, argv);
 
 // a success argument:
-Local<Value> argv[] = {
-  Local<Value>::New(Null()),
+Handle<Value> argv[] = {
+  Null(),
   String::New("w00t!")
 };
 callback->Call(2, argv);
 ```
 
-`NanCallback` also has a `Local<Function> GetCallback()` method that you can use to fetch a local handle to the underlying callback function if you need it.
+`NanCallback` also has a `Local<Function> GetCallback()` method that you can use
+to fetch a local handle to the underlying callback function, as well  as a
+`void SetFunction(Handle<Function>)` for setting the callback on the
+`NanCallback`.  Additionally a generic constructor is available for using
+`NanCallback` without performing heap allocations.
 
 <a name="api_nan_async_worker"></a>
 ### NanAsyncWorker
