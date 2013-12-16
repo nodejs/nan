@@ -539,7 +539,7 @@ const char *plugh(size_t *outputsize) {
 ```
 
 <a name="api_nan_raw_string"></a>
-### void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, char *, size_t, int)
+### void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)
 
 When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
 Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
@@ -555,7 +555,7 @@ delete[] decoded;
 <a name="api_nan_c_string"></a>
 ### char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])
 
-When you want to convert a V8 `String` to a zero-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
+When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
 Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
 
 ```c++
@@ -566,8 +566,7 @@ char* name = NanCString(args[0], &count);
 <a name="api_nan_from_v8_string"></a>
 ### char* NanFromV8String(Handle&lt;Value&gt;[, enum Nan::Encoding, size_t *, char *, size_t, int])
 
-When you want to convert a V8 `String` to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `Nan::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `String::HINT_MANY_WRITES_EXPECTED | String::NO_NULL_TERMINATION`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
+A convenience function that uses `NanRawString()` to convert a V8 `String` to a `char*`. Defaults to UTF8 encoding and no null-termination.
 
 ```c++
 size_t count;
