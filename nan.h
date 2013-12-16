@@ -8,13 +8,18 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.7.0 (current Node unstable: 0.11.9, Node stable: 0.10.22)
+ * Version 0.7.0 (current Node unstable: 0.11.9, Node stable: 0.10.23)
  *
  * ChangeLog:
- *  * 0.7.0 (WORK IN PROGRESS)
+ *  * 0.7.0 Dec 17 2013
  *    - New no-arg form of NanCallback() constructor.
  *    - NanCallback#Call takes Handle rather than Local
  *    - Removed deprecated NanCallback#Run method, use NanCallback#Call instead
+ *    - Split off _NAN_*_ARGS_TYPE from _NAN_*_ARGS
+ *    - Restore (unofficial) Node 0.6 compatibility at NanCallback#Call()
+ *    - Introduce NanRawString() for char* (or appropriate void*) from v8::String
+ *      (replacement for NanFromV8String)
+ *    - Introduce NanCString() for null-terminated char* from v8::String
  *
  *  * 0.6.0 Nov 21 2013
  *    - Introduce NanNewLocal<T>(v8::Handle<T> value) for use in place of
@@ -1010,7 +1015,7 @@ static NAN_INLINE(void* NanRawString(
     v8::Handle<v8::Value> from
   , enum Nan::Encoding encoding
   , size_t *datalen
-  , char *buf
+  , void *buf
   , size_t buflen
   , int flags
 )) {
@@ -1032,7 +1037,7 @@ static NAN_INLINE(void* NanRawString(
 
   v8::Local<v8::String> toStr = from->ToString();
 
-  char *to = buf;
+  char *to = (char*)buf;
 
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
