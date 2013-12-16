@@ -48,7 +48,7 @@ NAN_METHOD(CompareCStringToBuffer) {
     NanReturnUndefined();
   }
 
-  if (expectedChars[expectedLen] != '\0') {
+  if (actualChars[expectedLen] != '\0') {
     NanThrowError(v8::String::New("should be null-terminated"));
     NanReturnUndefined();
   }    
@@ -78,10 +78,11 @@ NAN_METHOD(CompareRawStringToBuffer) {
     NanReturnUndefined();
   }
 
-  if (expectedChars[expectedLen] == '\0') {
+  /* this is silly, it could easily be a virgin, zeroed buffer we're inspecting
+  if (actualChars[expectedLen] == '\0') {
     NanThrowError(v8::String::New("should not be null-terminated"));
     NanReturnUndefined();
-  }    
+  }*/
 
   if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
     NanThrowError(v8::String::New("actual chars != expected chars"));
