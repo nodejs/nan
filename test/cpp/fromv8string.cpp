@@ -23,10 +23,105 @@ NAN_METHOD(ReturnString) {
   }
 }
 
+NAN_METHOD(ReturnCString) {
+  NanScope();
+
+  size_t bc;
+  char *s = NanCString(args[0].As<v8::Object>(), &bc);
+  v8::Local<v8::String> str = v8::String::New(s);
+  delete[] s;
+
+  NanReturnValue(str);
+}
+
+NAN_METHOD(CompareCStringToBuffer) {
+  NanScope();
+
+  size_t expectedLen = node::Buffer::Length(args[1]->ToObject());
+  char* expectedChars = node::Buffer::Data(args[1]->ToObject());
+
+  size_t actualLen;
+  char* actualChars = NanCString(args[0], &actualLen);
+
+  if (actualLen != expectedLen) {
+    NanThrowError(v8::String::New("actual length != expected length"));
+    NanReturnUndefined();
+  }
+
+  if (expectedChars[expectedLen] != '\0') {
+    NanThrowError(v8::String::New("should be null-terminated"));
+    NanReturnUndefined();
+  }    
+
+  if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
+    NanThrowError(v8::String::New("actual chars != expected chars"));
+    NanReturnUndefined();
+  }
+
+  NanReturnValue(v8::Boolean::New(true));
+}
+
+NAN_METHOD(CompareRawStringToBuffer) {
+  NanScope();
+
+  size_t expectedLen = node::Buffer::Length(args[1]->ToObject());
+  char* expectedChars = node::Buffer::Data(args[1]->ToObject());
+
+  size_t actualLen;
+  char* decoded = (char*)NanRawString(args[0], Nan::BASE64, &actualLen, NULL, 0, v8::String::HINT_MANY_WRITES_EXPECTED);
+  char actualChars[actualLen];
+  memcpy(actualChars, decoded, actualLen);
+  delete[] decoded;
+
+  if (actualLen != expectedLen) {
+    NanThrowError(v8::String::New("actual length != expected length"));
+    NanReturnUndefined();
+  }
+
+  if (expectedChars[expectedLen] == '\0') {
+    NanThrowError(v8::String::New("should not be null-terminated"));
+    NanReturnUndefined();
+  }    
+
+  if (strncmp(actualChars, expectedChars, expectedLen) != '\0') {
+    NanThrowError(v8::String::New("actual chars != expected chars"));
+    NanReturnUndefined();
+  }
+
+  NanReturnValue(v8::Boolean::New(true));
+}
+
+v8::Persistent<v8::FunctionTemplate> returnString_persistent;
+v8::Persistent<v8::FunctionTemplate> returnCString_persistent;
+v8::Persistent<v8::FunctionTemplate> compareCStringToBuffer_persistent;
+v8::Persistent<v8::FunctionTemplate> compareRawStringToBuffer_persistent;
+
 void Init (v8::Handle<v8::Object> target) {
+  NanScope();
+
+  v8::Local<v8::FunctionTemplate> returnString = v8::FunctionTemplate::New(ReturnString);
+  NanAssignPersistent(v8::FunctionTemplate, returnString_persistent, returnString);
   target->Set(
-      NanSymbol("r")
-    , v8::FunctionTemplate::New(ReturnString)->GetFunction()
+      NanSymbol("returnString")
+    , returnString->GetFunction()
+  );
+  v8::Local<v8::FunctionTemplate> returnCString = v8::FunctionTemplate::New(ReturnCString);
+  NanAssignPersistent(v8::FunctionTemplate, returnCString_persistent, returnCString);
+  target->Set(
+      NanSymbol("returnCString")
+    , returnCString->GetFunction()
+  );
+  v8::Local<v8::FunctionTemplate> compareCStringToBuffer = v8::FunctionTemplate::New(CompareCStringToBuffer);
+  NanAssignPersistent(v8::FunctionTemplate, compareCStringToBuffer_persistent, compareCStringToBuffer);
+  target->Set(
+      NanSymbol("compareCStringToBuffer")
+    , compareCStringToBuffer->GetFunction()
+  );
+  v8::Local<v8::FunctionTemplate> compareRawStringToBuffer = v8::FunctionTemplate::New(CompareRawStringToBuffer);
+  NanAssignPersistent(v8::FunctionTemplate, compareRawStringToBuffer_persistent, compareRawStringToBuffer);
+  target->Set(
+      NanSymbol("compareRawStringToBuffer")
+    , compareRawStringToBuffer->GetFunction()
   );
 }
 

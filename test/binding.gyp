@@ -16,14 +16,6 @@
         ]
     }
   , {
-        "target_name" : "cstring"
-      , "sources"     : [ "cpp/cstring.cpp" ]
-      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
-      , "include_dirs": [
-            "<!(node -e \"require('..')\")"
-        ]
-    }
-  , {
         "target_name" : "optionvalues"
       , "sources"     : [ "cpp/optionvalues.cpp" ]
       , "cflags"      : [ "-Wno-unused-local-typedefs" ]
