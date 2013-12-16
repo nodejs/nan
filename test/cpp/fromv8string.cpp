@@ -83,7 +83,7 @@ NAN_METHOD(CompareRawStringToBuffer) {
     NanReturnUndefined();
   }    
 
-  if (strncmp(actualChars, expectedChars, expectedLen) != '\0') {
+  if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
     NanThrowError(v8::String::New("actual chars != expected chars"));
     NanReturnUndefined();
   }
