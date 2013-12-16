@@ -1,6 +1,6 @@
 {
   "name": "nan",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Native Abstractions for Node.js: C++ header for Node 0.8->0.12 compatibility",
   "main": "include_dirs.js",
   "repository": {
@@ -11,7 +11,8 @@
     "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
     "Benjamin Byholm <bbyholm@abo.fi> (https://github.com/kkoopa/)",
     "Trevor Norris <trev.norris@gmail.com> (https://github.com/trevnorris)",
-    "Nathan Rajlich <nathan@tootallnate.net> (https://github.com/TooTallNate)"
+    "Nathan Rajlich <nathan@tootallnate.net> (https://github.com/TooTallNate)",
+    "Brett Lawson <brett19@gmail.com> (https://github.com/brett19)"
   ],
   "license": "MIT"
 }

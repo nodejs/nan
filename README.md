@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.6.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
+***Current version: 0.7.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -18,6 +18,10 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Dec-2013: NanCString and NanRawString
+
+Two new functions have been introduced to replace the functionality that's been provided by `NanFromV8String` until now. NanCString has sensible defaults so it's super easy to fetch a null-terminated c-style string out of a `v8::String`. `NanFromV8String` is still around and has defaults that allow you to pass a single handle to fetch a `char*` while `NanRawString` requires a little more attention to arguments.
 
 ### Nov-2013: Node 0.11.9+ breaking V8 change
 
@@ -196,6 +200,8 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
  * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
  * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
+ * <a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a>
+ * <a href="#api_nan_c_string"><b><code>NanCString</code></b></a>
  * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
@@ -536,19 +542,39 @@ const char *plugh(size_t *outputsize) {
 }
 ```
 
-<a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(Handle&lt;Value&gt;[, enum Nan::Encoding, size_t *, char *, size_t, int])
+<a name="api_nan_raw_string"></a>
+### void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)
 
-When you want to convert a V8 `String` to a `char*` use `NanFromV8String`. It is possible to define an encoding that defaults to `Nan::UTF8` as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `String::HINT_MANY_WRITES_EXPECTED | String::NO_NULL_TERMINATION`.
+When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
 Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
 
 ```c++
 size_t count;
-char* name = NanFromV8String(args[0]);
-char* decoded = NanFromV8String(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
+void* decoded = NanRawString(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
 char param_copy[count];
 memcpy(param_copy, decoded, count);
 delete[] decoded;
+```
+
+<a name="api_nan_c_string"></a>
+### char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])
+
+When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
+Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
+
+```c++
+size_t count;
+char* name = NanCString(args[0], &count);
+```
+
+<a name="api_nan_from_v8_string"></a>
+### char* NanFromV8String(Handle&lt;Value&gt;[, enum Nan::Encoding, size_t *, char *, size_t, int])
+
+A convenience function that uses `NanRawString()` to convert a V8 `String` to a `char*`. Defaults to UTF8 encoding and no null-termination.
+
+```c++
+size_t count;
+char* name = NanFromV8String(args[0]);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
@@ -776,6 +802,7 @@ NAN is only possible due to the excellent work of the following contributors:
 <tr><th align="left">Benjamin Byholm</th><td><a href="https://github.com/kkoopa/">GitHub/kkoopa</a></td></tr>
 <tr><th align="left">Trevor Norris</th><td><a href="https://github.com/trevnorris">GitHub/trevnorris</a></td><td><a href="http://twitter.com/trevnorris">Twitter/@trevnorris</a></td></tr>
 <tr><th align="left">Nathan Rajlich</th><td><a href="https://github.com/TooTallNate">GitHub/TooTallNate</a></td><td><a href="http://twitter.com/TooTallNate">Twitter/@TooTallNate</a></td></tr>
+<tr><th align="left">Brett Lawson</th><td><a href="https://github.com/brett19">GitHub/brett19</a></td><td><a href="http://twitter.com/brett19x">Twitter/@brett19x</a></td></tr>
 </tbody></table>
 
 Licence &amp; copyright
