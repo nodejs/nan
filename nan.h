@@ -1006,14 +1006,13 @@ namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 }
 
-static NAN_INLINE(char* NanFromV8String(
+static NAN_INLINE(void* NanRawString(
     v8::Handle<v8::Value> from
-  , enum Nan::Encoding encoding = Nan::UTF8
-  , size_t *datalen = NULL
-  , char *buf = NULL
-  , size_t buflen = 0
-  , int flags =
-        v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED
+  , enum Nan::Encoding encoding
+  , size_t *datalen
+  , char *buf
+  , size_t buflen
+  , int flags
 )) {
   NanScope();
 
@@ -1148,6 +1147,28 @@ static NAN_INLINE(char* NanFromV8String(
       assert(0 && "unknown encoding");
   }
   return to;
+}
+
+static NAN_INLINE(char* NanFromV8String(
+    v8::Handle<v8::Value> from
+  , enum Nan::Encoding encoding = Nan::UTF8
+  , size_t *datalen = NULL
+  , char *buf = NULL
+  , size_t buflen = 0
+  , int flags =
+        v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED
+)) {
+    return (char *) NanRawString(from, encoding, datalen, buf, buflen, flags);
+}
+
+static NAN_INLINE(char* NanCString(
+    v8::Handle<v8::Value> from
+  , size_t *datalen
+  , char *buf = NULL
+  , size_t buflen = 0
+  , int flags = v8::String::NO_OPTIONS
+)) {
+    return (char *) NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags);
 }
 
 #endif
