@@ -1010,7 +1010,7 @@ static NAN_INLINE(void* NanRawString(
     v8::Handle<v8::Value> from
   , enum Nan::Encoding encoding
   , size_t *datalen
-  , char *buf
+  , void *buf
   , size_t buflen
   , int flags
 )) {
@@ -1032,7 +1032,7 @@ static NAN_INLINE(void* NanRawString(
 
   v8::Local<v8::String> toStr = from->ToString();
 
-  char *to = buf;
+  char *to = (char *) buf;
 
   v8::String::AsciiValue value(toStr);
   switch(encoding) {
