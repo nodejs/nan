@@ -5,7 +5,8 @@ static NanUnsafePersistent<v8::String> unsafePersistentTest1;
 NAN_METHOD(Save1) {
   NanScope();
 
-  unsafePersistentTest1 = NanUnsafePersistent<v8::String>(args[0].As<v8::String>());
+  NanAssignUnsafePersistent(
+      v8::String, unsafePersistentTest1, args[0].As<v8::String>());
 
   NanReturnUndefined();
 }
@@ -19,7 +20,7 @@ NAN_METHOD(Get1) {
 NAN_METHOD(Dispose1) {
   NanScope();
 
-  unsafePersistentTest1.Dispose();
+  NanDispose(unsafePersistentTest1);
 
   NanReturnUndefined();
 }

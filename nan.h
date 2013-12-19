@@ -358,6 +358,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     TypeName* value;
   };
 
+# define NanInitUnsafePersistent(type, name, obj)                              \
+  NanUnsafePersistent<type> name(obj)
+# define NanAssignUnsafePersistent(type, handle, obj)                          \
+  handle = NanUnsafePersistent<type>(obj)
+
 //TODO: remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
 # define NanMakeWeak(handle, parameter, callback)                              \
@@ -442,6 +447,13 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 #else
     handle.Dispose(nan_isolate);
 #endif
+    handle.Clear();
+  }
+
+  template<class T> static NAN_INLINE(void NanDispose(
+      NanUnsafePersistent<T> &handle
+  )) {
+    handle.Dispose();
     handle.Clear();
   }
 
@@ -611,7 +623,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
 
-  typedef v8::Persistent NanUnsafePersistent;
+# define NanUnsafePersistent v8::Persistent
+# define NanInitUnsafePersistent NanInitPersistent
+# define NanAssignUnsafePersistent NanAssignPersistent
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))

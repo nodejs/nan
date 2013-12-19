@@ -807,11 +807,11 @@ Here is an example of how you could use it:
 
 ```c++
 Local<Object> obj = Object::New();
-
 std::map<int, NanUnsafePersistent<v8::Object> > map;
-map[1] = NanUnsafePersistent<v8::Object>(obj);
 
-map[1].Dispose();
+NanAssignUnsafePersistent(Object, map[1], obj);
+
+NanDispose(map[1]);
 map.erase(1);
 ```
 
