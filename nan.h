@@ -5,6 +5,7 @@
  *   - Rod Vagg <https://github.com/rvagg>
  *   - Benjamin Byholm <https://github.com/kkoopa>
  *   - Trevor Norris <https://github.com/trevnorris>
+ *   - Cheng Zhao <https://github.com/zcbenz>
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
