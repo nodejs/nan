@@ -320,6 +320,43 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 
+  template<typename TypeName> class NanUnsafePersistent {
+   public:
+    NanUnsafePersistent() : value(0) { }
+    explicit NanUnsafePersistent(v8::Persistent<TypeName>* handle) {
+      value = handle->ClearAndLeak();
+    }
+    explicit NanUnsafePersistent(const v8::Local<TypeName>& handle) {
+      v8::Persistent<TypeName> persistent(nan_isolate, handle);
+      value = persistent.ClearAndLeak();
+    }
+
+    NAN_INLINE(v8::Persistent<TypeName>* persistent()) {
+      v8::Persistent<TypeName>* handle = reinterpret_cast<v8::Persistent<TypeName>*>(&value);
+      return handle;
+    }
+
+    NAN_INLINE(void Dispose()) {
+      persistent()->Reset();
+      value = 0;
+    }
+
+    NAN_INLINE(void Clear()) {
+      value = 0;
+    }
+
+    NAN_INLINE(v8::Local<TypeName> NewLocal()) {
+      return v8::Local<TypeName>::New(nan_isolate, *persistent());
+    }
+
+    NAN_INLINE(bool IsEmpty() const) {
+      return value;
+    }
+
+   private:
+    TypeName* value;
+  };
+
 //TODO: remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
 # define NanMakeWeak(handle, parameter, callback)                              \
@@ -446,6 +483,13 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     }
   }
 
+  template <class TypeName>
+  static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
+     const NanUnsafePersistent<TypeName>& persistent
+  )) {
+    return const_cast<NanUnsafePersistent<TypeName>&>(persistent).NewLocal();
+  }
+
   static NAN_INLINE(bool NanHasInstance(
       v8::Persistent<v8::FunctionTemplate>& function_template
     , v8::Handle<v8::Value> value
@@ -565,6 +609,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanObjectWrapHandle(obj) obj->handle_
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
+
+  typedef v8::Persistent NanUnsafePersistent;
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))
