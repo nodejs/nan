@@ -184,7 +184,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
- * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
+ * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
  * <a href="#api_nan_new_local"><b><code>NanNewLocal</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
@@ -218,6 +218,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
+ * <a href="#api_nan_unsafe_persistent"><b><code>NanUnsafePersistent</code></b></a>
 
 <a name="api_nan_method"></a>
 ### NAN_METHOD(methodname)
@@ -796,6 +797,23 @@ protected:
 ### NanAsyncQueueWorker(NanAsyncWorker *)
 
 `NanAsyncQueueWorker` will run a `NanAsyncWorker` asynchronously via libuv. Both the *execute* and *after_work* steps are taken care of for you&mdash;most of the logic for this is embedded in `NanAsyncWorker`.
+
+<a name="api_nan_unsafe_persistent"></a>
+### NanUnsafePersistent
+
+`NanUnsafePersistent` is just like the `v8::Persistent` in node <= v0.10.x, which can be copied and assigned between each other. It's very useful when you are storing persistent handles in STL containers.
+
+Here is an example of how you could use it:
+
+```c++
+Local<Object> obj = Object::New();
+
+std::map<int, NanUnsafePersistent<v8::Object> > map;
+map[1] = NanUnsafePersistent<v8::Object>(obj);
+
+map[1].Dispose();
+map.erase(1);
+```
 
 ### Contributors
 
