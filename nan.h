@@ -338,7 +338,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     }
 
     NAN_INLINE(void Dispose()) {
+#if NODE_VERSION_AT_LEAST(0, 11, 8)
       persistent()->Reset();
+#else
+      persistent()->Dispose(nan_isolate);
+#endif
       value = 0;
     }
 
