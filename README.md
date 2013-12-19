@@ -31,7 +31,7 @@ For example, if you wanted to return a `null` on a callback you will have to cha
 
 ### Nov-2013: Change to binding.gyp `"include_dirs"` for NAN
 
-Inclusion of NAN in a project's binding.gyp is now greatly simplified. You can now just use `"<!(node -e \"require('nan')\")"` in your `"include_dirs"`, see example below.
+Inclusion of NAN in a project's binding.gyp is now greatly simplified. You can now just use `"<!(node -e \"require('nan')\")"` in your `"include_dirs"`, see example below (note Windows needs the quoting around `require` to be just right: `"require('nan')"` with appropriate `\` escaping).
 
 <a name="usage"></a>
 ## Usage
