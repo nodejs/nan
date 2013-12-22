@@ -321,6 +321,19 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 
+  template<class T> static NAN_INLINE(void NanDispose(
+      v8::Persistent<T> &handle
+  )) {
+
+//TODO: remove <0.11.8 support when 0.12 is released
+#if NODE_VERSION_AT_LEAST(0, 11, 8)
+    handle.Reset();
+#else
+    handle.Dispose(nan_isolate);
+#endif
+    handle.Clear();
+  }
+
   template<typename TypeName> class NanUnsafePersistent {
    public:
     NanUnsafePersistent() : value(0) { }
@@ -338,11 +351,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     }
 
     NAN_INLINE(void Dispose()) {
-#if NODE_VERSION_AT_LEAST(0, 11, 8)
-      persistent()->Reset();
-#else
-      persistent()->Dispose(nan_isolate);
-#endif
+      NanDispose(*persistent());
       value = 0;
     }
 
@@ -366,6 +375,13 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   NanUnsafePersistent<type> name(obj)
 # define NanAssignUnsafePersistent(type, handle, obj)                          \
   handle = NanUnsafePersistent<type>(obj)
+
+  template<class T> static NAN_INLINE(void NanDispose(
+      NanUnsafePersistent<T> &handle
+  )) {
+    handle.Dispose();
+    handle.Clear();
+  }
 
 //TODO: remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
@@ -439,26 +455,6 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
   static NAN_INLINE(void NanThrowRangeError(const char* errmsg)) {
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
-  }
-
-  template<class T> static NAN_INLINE(void NanDispose(
-      v8::Persistent<T> &handle
-  )) {
-
-//TODO: remove <0.11.8 support when 0.12 is released
-#if NODE_VERSION_AT_LEAST(0, 11, 8)
-    handle.Reset();
-#else
-    handle.Dispose(nan_isolate);
-#endif
-    handle.Clear();
-  }
-
-  template<class T> static NAN_INLINE(void NanDispose(
-      NanUnsafePersistent<T> &handle
-  )) {
-    handle.Dispose();
-    handle.Clear();
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
