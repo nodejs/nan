@@ -212,7 +212,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
- * <a href="#api_nan_dispose"><b><code>NanDispose</code></b></a>
+ * <a href="#api_nan_dispose_persistent"><b><code>NanDisposePersistent</code></b></a>
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
  * <a href="#api_nan_init_persistent"><b><code>NanInitPersistent</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
@@ -673,13 +673,13 @@ Local<ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
 Local<Context> ctx =  NanNewContextHandle(NULL, otmpl);
 ```
 
-<a name="api_nan_dispose"></a>
-### void NanDispose(Persistent&lt;T&gt; &)
+<a name="api_nan_dispose_persistent"></a>
+### void NanDisposePersistent(Persistent&lt;T&gt; &)
 
-Use `NanDispose` to dispose a `Persistent` handle.
+Use `NanDisposePersistent` to dispose a `Persistent` handle.
 
 ```c++
-NanDispose(persistentHandle);
+NanDisposePersistent(persistentHandle);
 ```
 
 <a name="api_nan_assign_persistent"></a>

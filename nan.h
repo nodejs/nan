@@ -134,7 +134,7 @@
 #endif
 
 #if defined(__GNUC__) && !V8_DISABLE_DEPRECATIONS
-# define NAN_DEPRECATED(declarator) declarator __attribute__ ((deprecated))
+# define NAN_DEPRECATED(declarator) __attribute__((deprecated)) declarator
 #elif defined(_MSC_VER) && !V8_DISABLE_DEPRECATIONS
 # define NAN_DEPRECATED(declarator) __declspec(deprecated) declarator
 #else
@@ -394,17 +394,23 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  template<class T> static NAN_INLINE(void NanDispose(
+  template<class T> static NAN_INLINE(void NanDisposePersistent(
       v8::Persistent<T> &handle
   )) {
 
 //TODO: remove <0.11.8 support when 0.12 is released
-#if NODE_VERSION_AT_LEAST(0, 11, 8)
+# if NODE_VERSION_AT_LEAST(0, 11, 8)
     handle.Reset();
-#else
+# else
     handle.Dispose(nan_isolate);
-#endif
+# endif
     handle.Clear();
+  }
+
+  template<class T> static NAN_DEPRECATED(void NanDispose(
+      v8::Persistent<T> &handle
+  )) {
+    NanDisposePersistent(handle);
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
@@ -635,11 +641,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  template<class T> static NAN_INLINE(void NanDispose(
+  template<class T> static NAN_INLINE(void NanDisposePersistent(
       v8::Persistent<T> &handle
   )) {
     handle.Dispose();
     handle.Clear();
+  }
+
+  template<class T> static NAN_DEPRECATED(void NanDispose(
+      v8::Persistent<T> &handle
+  )) {
+    NanDisposePersistent(handle);
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
@@ -770,7 +782,7 @@ public:
     NanScope();
 
     if (!persistentHandle.IsEmpty())
-      NanDispose(persistentHandle);
+      NanDisposePersistent(persistentHandle);
     if (callback)
       delete callback;
     if (errmsg)
