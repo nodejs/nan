@@ -184,7 +184,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
- * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
+ * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
  * <a href="#api_nan_new_local"><b><code>NanNewLocal</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
@@ -218,6 +218,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
+ * <a href="#api_nan_unsafe_persistent"><b><code>NanUnsafePersistent</code></b></a>
 
 <a name="api_nan_method"></a>
 ### NAN_METHOD(methodname)
@@ -797,6 +798,31 @@ protected:
 
 `NanAsyncQueueWorker` will run a `NanAsyncWorker` asynchronously via libuv. Both the *execute* and *after_work* steps are taken care of for you&mdash;most of the logic for this is embedded in `NanAsyncWorker`.
 
+<a name="api_nan_unsafe_persistent"></a>
+### NanUnsafePersistent
+
+From node v0.11.x, the `v8::Persistent` had became un-copiable and un-assignable, this was on purpose because copying persistent handles is dangerous:
+
+* If the original handle was weak, the new handle can become invalid even during an V8 API call.
+* It's easy to get the semantics wrong, e.g., copying a handle, doing operations on the original one (Dispose, MakeWeak etc) would make the copy affected too.
+
+But this change also made storing persistent handles in STL containers much more difficult, since in C++98 copy constructor and assignment operator are required by most STL containers, and it's hard to work around this while keeping the compatibility with node <= v0.10.x. For the purpose of making it easy to migrate old native module to be compatible with both node v0.11.x and node <= v0.10.x, `NanUnsafePersistent` is provided. However you should always avoid copying persistent handles and prefer `NanAssignPersistent` when possible while migrating old code.
+
+`NanUnsafePersistent` is just like the `v8::Persistent` in node <= v0.10.x, which can be copied and assigned between each other. All the copied `NanUnsafePersistent`s would be pointed to the same storage, so you should never call `MakeWeak` for `NanUnsafePersistent`, and disposing one persistent handle would also dispose the copied ones.
+
+Here is an example of how you could use it:
+
+```c++
+Local<Object> obj = Object::New();
+std::map<int, NanUnsafePersistent<v8::Object> > map;
+
+NanAssignUnsafePersistent(Object, map[1], obj);
+
+NanUnsafePersistent<v8::Object> reference_to_obj = map[1];
+NanDispose(map[1]);  // reference_to_obj is also disposed.
+map.erase(1);
+```
+
 ### Contributors
 
 NAN is only possible due to the excellent work of the following contributors:
@@ -807,6 +833,7 @@ NAN is only possible due to the excellent work of the following contributors:
 <tr><th align="left">Trevor Norris</th><td><a href="https://github.com/trevnorris">GitHub/trevnorris</a></td><td><a href="http://twitter.com/trevnorris">Twitter/@trevnorris</a></td></tr>
 <tr><th align="left">Nathan Rajlich</th><td><a href="https://github.com/TooTallNate">GitHub/TooTallNate</a></td><td><a href="http://twitter.com/TooTallNate">Twitter/@TooTallNate</a></td></tr>
 <tr><th align="left">Brett Lawson</th><td><a href="https://github.com/brett19">GitHub/brett19</a></td><td><a href="http://twitter.com/brett19x">Twitter/@brett19x</a></td></tr>
+<tr><th align="left">Cheng Zhao</th><td><a href="https://github.com/zcbenz">GitHub/zcbenz</a></td><td><a href="http://weibo.com/bigbigfool">SinaWeibo/@笨小猫猫</a></td></tr>
 </tbody></table>
 
 Licence &amp; copyright

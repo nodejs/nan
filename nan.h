@@ -5,6 +5,7 @@
  *   - Rod Vagg <https://github.com/rvagg>
  *   - Benjamin Byholm <https://github.com/kkoopa>
  *   - Trevor Norris <https://github.com/trevnorris>
+ *   - Cheng Zhao <https://github.com/zcbenz>
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
@@ -320,6 +321,68 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 
+  template<class T> static NAN_INLINE(void NanDispose(
+      v8::Persistent<T> &handle
+  )) {
+
+//TODO: remove <0.11.8 support when 0.12 is released
+#if NODE_VERSION_AT_LEAST(0, 11, 8)
+    handle.Reset();
+#else
+    handle.Dispose(nan_isolate);
+#endif
+    handle.Clear();
+  }
+
+  template<typename TypeName> class NanUnsafePersistent {
+   public:
+    NanUnsafePersistent() : value(0) { }
+    explicit NanUnsafePersistent(v8::Persistent<TypeName>* handle) {
+      value = handle->ClearAndLeak();
+    }
+    explicit NanUnsafePersistent(const v8::Local<TypeName>& handle) {
+      v8::Persistent<TypeName> persistent(nan_isolate, handle);
+      value = persistent.ClearAndLeak();
+    }
+
+    NAN_INLINE(v8::Persistent<TypeName>* persistent()) {
+      v8::Persistent<TypeName>* handle = reinterpret_cast<v8::Persistent<TypeName>*>(&value);
+      return handle;
+    }
+
+    NAN_INLINE(void Dispose()) {
+      NanDispose(*persistent());
+      value = 0;
+    }
+
+    NAN_INLINE(void Clear()) {
+      value = 0;
+    }
+
+    NAN_INLINE(v8::Local<TypeName> NewLocal()) {
+      return v8::Local<TypeName>::New(nan_isolate, *persistent());
+    }
+
+    NAN_INLINE(bool IsEmpty() const) {
+      return value;
+    }
+
+   private:
+    TypeName* value;
+  };
+
+# define NanInitUnsafePersistent(type, name, obj)                              \
+  NanUnsafePersistent<type> name(obj)
+# define NanAssignUnsafePersistent(type, handle, obj)                          \
+  handle = NanUnsafePersistent<type>(obj)
+
+  template<class T> static NAN_INLINE(void NanDispose(
+      NanUnsafePersistent<T> &handle
+  )) {
+    handle.Dispose();
+    handle.Clear();
+  }
+
 //TODO: remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
 # define NanMakeWeak(handle, parameter, callback)                              \
@@ -394,19 +457,6 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  template<class T> static NAN_INLINE(void NanDispose(
-      v8::Persistent<T> &handle
-  )) {
-
-//TODO: remove <0.11.8 support when 0.12 is released
-#if NODE_VERSION_AT_LEAST(0, 11, 8)
-    handle.Reset();
-#else
-    handle.Dispose(nan_isolate);
-#endif
-    handle.Clear();
-  }
-
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
       char *data
     , size_t length
@@ -444,6 +494,13 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
      return *reinterpret_cast<v8::Local<TypeName>*>(
          const_cast<v8::Persistent<TypeName>*>(&persistent));
     }
+  }
+
+  template <class TypeName>
+  static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
+     const NanUnsafePersistent<TypeName>& persistent
+  )) {
+    return const_cast<NanUnsafePersistent<TypeName>&>(persistent).NewLocal();
   }
 
   static NAN_INLINE(bool NanHasInstance(
@@ -565,6 +622,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanObjectWrapHandle(obj) obj->handle_
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
+
+# define NanUnsafePersistent v8::Persistent
+# define NanInitUnsafePersistent NanInitPersistent
+# define NanAssignUnsafePersistent NanAssignPersistent
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))

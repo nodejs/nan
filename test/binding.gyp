@@ -79,4 +79,20 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+  , {
+        "target_name" : "persistent"
+      , "sources"     : [ "cpp/persistent.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
+        "target_name" : "unsafepersistent"
+      , "sources"     : [ "cpp/unsafepersistent.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
