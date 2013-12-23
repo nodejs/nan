@@ -801,7 +801,14 @@ protected:
 <a name="api_nan_unsafe_persistent"></a>
 ### NanUnsafePersistent
 
-`NanUnsafePersistent` is just like the `v8::Persistent` in node <= v0.10.x, which can be copied and assigned between each other. It's very useful when you are storing persistent handles in STL containers.
+From node v0.11.x, the `v8::Persistent` had became un-copiable and un-assignable, this was on purpose because copying persistent handles is dangerous:
+
+* If the original handle was weak, the new handle can become invalid even during an V8 API call.
+* It's easy to get the semantics wrong, e.g., copying a handle, doing operations on the original one (Dispose, MakeWeak etc) would make the copy affected too.
+
+But this change also made storing persistent handles in STL containers much more difficult, since in C++98 copy constructor and assignment operator are required by most STL containers, and it's hard to work around this while keeping the compatibility with node <= v0.10.x. For the purpose of making it easy to migrate old native module to be compatible with both node v0.11.x and node <= v0.10.x, `NanUnsafePersistent` is provided. However you should always avoid copying persistent handles and prefer `NanAssignPersistent` when possible while migrating old code.
+
+`NanUnsafePersistent` is just like the `v8::Persistent` in node <= v0.10.x, which can be copied and assigned between each other. All the copied `NanUnsafePersistent`s would be pointed to the same storage, so you should never call `MakeWeak` for `NanUnsafePersistent`, and disposing one persistent handle would also dispose the copied ones.
 
 Here is an example of how you could use it:
 
@@ -811,7 +818,8 @@ std::map<int, NanUnsafePersistent<v8::Object> > map;
 
 NanAssignUnsafePersistent(Object, map[1], obj);
 
-NanDispose(map[1]);
+NanUnsafePersistent<v8::Object> reference_to_obj = map[1];
+NanDispose(map[1]);  // reference_to_obj is also disposed.
 map.erase(1);
 ```
 
