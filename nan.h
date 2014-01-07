@@ -438,12 +438,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
      const v8::Persistent<TypeName>& persistent
   )) {
-    if (persistent.IsWeak()) {
-     return v8::Local<TypeName>::New(nan_isolate, persistent);
-    } else {
-     return *reinterpret_cast<v8::Local<TypeName>*>(
-         const_cast<v8::Persistent<TypeName>*>(&persistent));
-    }
+    return v8::Local<TypeName>::New(nan_isolate, persistent);
   }
 
   static NAN_INLINE(bool NanHasInstance(
@@ -679,12 +674,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
      const v8::Persistent<TypeName>& persistent
   )) {
-    if (persistent.IsWeak()) {
-     return NanNewLocal<TypeName>(persistent);
-    } else {
-     return *reinterpret_cast<v8::Local<TypeName>*>(
-         const_cast<v8::Persistent<TypeName>*>(&persistent));
-    }
+    return NanNewLocal<TypeName>(persistent);
   }
 
   static NAN_INLINE(bool NanHasInstance(
