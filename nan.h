@@ -1,16 +1,24 @@
 /**********************************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2013 NAN contributors:
+ * Copyright (c) 2014 NAN contributors:
  *   - Rod Vagg <https://github.com/rvagg>
  *   - Benjamin Byholm <https://github.com/kkoopa>
  *   - Trevor Norris <https://github.com/trevnorris>
+ *   - Nathan Rajlich <https://github.com/TooTallNate>
+ *   - Brett Lawson <https://github.com/brett19>
+ *   - Ben Noordhuis <https://github.com/bnoordhuis>
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.7.0 (current Node unstable: 0.11.9, Node stable: 0.10.23)
+ * Version 0.7.1 (current Node unstable: 0.11.10, Node stable: 0.10.24)
  *
  * ChangeLog:
+ *  * 0.7.1 Jan 9 2014
+ *    - Fixes to work against debug builds of Node
+ *    - Safer NanPersistentToLocal (avoid reinterpret_cast)
+ *    - Speed up common NanRawString case by only extracting flattened string when necessary
+ *
  *  * 0.7.0 Dec 17 2013
  *    - New no-arg form of NanCallback() constructor.
  *    - NanCallback#Call takes Handle rather than Local
