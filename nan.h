@@ -1029,7 +1029,6 @@ static NAN_INLINE(void* NanRawString(
 
   char *to = (char*)buf;
 
-  v8::String::AsciiValue value(toStr);
   switch(encoding) {
     case Nan::ASCII:
 #if NODE_MODULE_VERSION < 0x0C
@@ -1092,19 +1091,22 @@ static NAN_INLINE(void* NanRawString(
         , toStr->WriteUtf8(to, sz_ + term_len, NULL, flags) - term_len);
       return to;
     case Nan::BASE64:
-      sz_ = _nan_base64_decoded_size(*value, toStr->Length());
-      if (to == NULL) {
-        to = new char[sz_ + term_len];
-      } else {
-        assert(buflen >= sz_ + term_len);
+      {
+        v8::String::Value value(toStr);
+        sz_ = _nan_base64_decoded_size(*value, value.length());
+        if (to == NULL) {
+          to = new char[sz_ + term_len];
+        } else {
+          assert(buflen >= sz_ + term_len);
+        }
+        NanSetPointerSafe<size_t>(
+            datalen
+          , _nan_base64_decode(to, sz_, *value, value.length()));
+        if (term_len) {
+          to[sz_] = '\0';
+        }
+        return to;
       }
-      NanSetPointerSafe<size_t>(
-          datalen
-        , _nan_base64_decode(to, sz_, *value, value.length()));
-      if (term_len) {
-        to[sz_] = '\0';
-      }
-      return to;
     case Nan::UCS2:
       {
         sz_ = toStr->Length();
@@ -1123,17 +1125,19 @@ static NAN_INLINE(void* NanRawString(
         return to;
       }
     case Nan::HEX:
-      sz_ = toStr->Length();
-      assert(!(sz_ & 1) && "bad hex data");
-      if (to == NULL) {
-        to = new char[sz_ / 2 + term_len];
-      } else {
-        assert(buflen >= sz_ / 2 + term_len && "too small buffer");
+      {
+        v8::String::Value value(toStr);
+        sz_ = value.length();
+        assert(!(sz_ & 1) && "bad hex data");
+        if (to == NULL) {
+          to = new char[sz_ / 2 + term_len];
+        } else {
+          assert(buflen >= sz_ / 2 + term_len && "too small buffer");
+        }
+        NanSetPointerSafe<size_t>(
+            datalen
+          , _nan_hex_decode(to, sz_ / 2, *value, value.length()));
       }
-
-      NanSetPointerSafe<size_t>(
-          datalen
-        , _nan_hex_decode(to, sz_ / 2, *value, value.length()));
       if (term_len) {
         to[sz_ / 2] = '\0';
       }

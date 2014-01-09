@@ -47,7 +47,6 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
 }
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
-  NanScope();
   v8::Local<v8::FunctionTemplate> constructorHandle =
       NanPersistentToLocal(settergetter_constructor);
   v8::Local<v8::Object> instance =
@@ -94,7 +93,7 @@ NAN_SETTER(SetterGetter::SetProp2) {
 
   SetterGetter* settergetter =
     node::ObjectWrap::Unwrap<SetterGetter>(args.This());
-    settergetter->prop2.assign(NanFromV8String(value));
+    settergetter->prop2.assign(NanCString(value, NULL));
   settergetter->log.append("Prop2:SETTER(");
   settergetter->log.append(settergetter->prop2);
   settergetter->log.append(")\n");

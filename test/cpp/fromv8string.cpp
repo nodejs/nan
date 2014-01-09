@@ -15,7 +15,7 @@ NAN_METHOD(ReturnString) {
     flags = args[2]->Uint32Value();
   }
 
-  char *s = NanFromV8String(args[0].As<v8::Object>(), enc, &bc, NULL, 0, flags);
+  char *s = NanFromV8String(args[0], enc, &bc, NULL, 0, flags);
   if (enc == Nan::UCS2) {
     NanReturnValue(v8::String::New(reinterpret_cast<uint16_t *>(s), flags & v8::String::NO_NULL_TERMINATION ? bc / 2 : - 1));
   } else {
@@ -27,7 +27,7 @@ NAN_METHOD(ReturnCString) {
   NanScope();
 
   size_t bc;
-  char *s = NanCString(args[0].As<v8::Object>(), &bc);
+  char *s = NanCString(args[0], &bc);
   v8::Local<v8::String> str = v8::String::New(s);
   delete[] s;
 
