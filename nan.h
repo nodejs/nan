@@ -11,9 +11,13 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.7.1 (current Node unstable: 0.11.10, Node stable: 0.10.24)
+ * Version 0.8.0 (current Node unstable: 0.11.10, Node stable: 0.10.24)
  *
  * ChangeLog:
+ *  * 0.8.0 Jan 9 2014
+ *    - NanDispose -> NanDisposePersistent, deprecate NanDispose
+ *    - Extract _NAN_*_RETURN_TYPE, pull up NAN_*()
+ *
  *  * 0.7.1 Jan 9 2014
  *    - Fixes to work against debug builds of Node
  *    - Safer NanPersistentToLocal (avoid reinterpret_cast)
