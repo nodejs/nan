@@ -8,6 +8,8 @@ test('persistent', function (t) {
   t.type(persistent.save1, 'function');
   t.type(persistent.get1, 'function');
   t.type(persistent.dispose1, 'function');
+  t.type(persistent.toPersistentAndBackAgain, 'function');
+  t.deepEqual(persistent.toPersistentAndBackAgain({ x: 42 }), { x: 42 });
 
   persistent.save1('a string to save')
   t.equal(persistent.get1(), 'a string to save')
