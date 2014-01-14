@@ -20,7 +20,7 @@ NAN_METHOD(Get1) {
 NAN_METHOD(Dispose1) {
   NanScope();
 
-  NanDispose(persistentTest1);
+  NanDisposePersistent(persistentTest1);
 
   NanReturnUndefined();
 }
@@ -31,7 +31,7 @@ NAN_METHOD(ToPersistentAndBackAgain) {
   v8::Persistent<v8::Object> persistent;
   NanAssignPersistent(v8::Object, persistent, args[0].As<v8::Object>());
   v8::Local<v8::Object> object = NanPersistentToLocal<v8::Object>(persistent);
-  NanDispose(persistent);
+  NanDisposePersistent(persistent);
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
 
   NanReturnValue(object);
