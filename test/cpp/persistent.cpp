@@ -1,3 +1,11 @@
+/**********************************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ **********************************************************************************/
+
 #include <nan.h>
 #include <string.h>  // memset()
 
@@ -20,7 +28,7 @@ NAN_METHOD(Get1) {
 NAN_METHOD(Dispose1) {
   NanScope();
 
-  NanDispose(persistentTest1);
+  NanDisposePersistent(persistentTest1);
 
   NanReturnUndefined();
 }
@@ -31,7 +39,7 @@ NAN_METHOD(ToPersistentAndBackAgain) {
   v8::Persistent<v8::Object> persistent;
   NanAssignPersistent(v8::Object, persistent, args[0].As<v8::Object>());
   v8::Local<v8::Object> object = NanPersistentToLocal<v8::Object>(persistent);
-  NanDispose(persistent);
+  NanDisposePersistent(persistent);
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
 
   NanReturnValue(object);
