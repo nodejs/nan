@@ -127,8 +127,8 @@
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/
 
-#ifndef NAN_H
-#define NAN_H
+#ifndef NAN_H_
+#define NAN_H_
 
 #include <uv.h>
 #include <node.h>
@@ -307,7 +307,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
 
-//TODO: remove <0.11.8 support when 0.12 is released
+// TODO(rvagg): remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(parameter, callback)
@@ -327,7 +327,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   template<class T> static NAN_INLINE(v8::Local<T> NanNewLocal(
       v8::Handle<T> val
   )) {
-//TODO: remove <0.11.9 support when 0.12 is released
+// TODO(rvagg): remove <0.11.9 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 9)
     return v8::Local<T>::New(nan_isolate, val);
 #else
@@ -384,8 +384,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   template<class T> static NAN_INLINE(void NanDisposePersistent(
       v8::Persistent<T> &handle
   )) {
-
-//TODO: remove <0.11.8 support when 0.12 is released
+// TODO(rvagg): remove <0.11.8 support when 0.12 is released
 # if NODE_VERSION_AT_LEAST(0, 11, 8)
     handle.Reset();
 # else
@@ -511,6 +510,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     object->GetPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
     object->SetPointerInInternalField(index, value)
+
 # define NAN_WEAK_CALLBACK(type, name)                                         \
     void name(                                                                 \
         v8::Persistent<v8::Value> object                                       \
@@ -673,7 +673,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return lctx;
   }
 
-#endif // node version
+#endif  // NODE_MODULE_VERSION
 
 #define NAN_METHOD(name) _NAN_METHOD_RETURN_TYPE name(_NAN_METHOD_ARGS)
 #define NAN_GETTER(name)                                                       \
@@ -728,7 +728,7 @@ class NanCallback {
     NanAssignPersistent(v8::Object, handle, obj);
   }
 
-  NanCallback(const v8::Handle<v8::Function> &fn) {
+  explicit NanCallback(const v8::Handle<v8::Function> &fn) {
     NanScope();
     v8::Local<v8::Object> obj = v8::Object::New();
     NanAssignPersistent(v8::Object, handle, obj);
@@ -773,13 +773,13 @@ class NanCallback {
 };
 
 /* abstract */ class NanAsyncWorker {
-public:
-  NanAsyncWorker (NanCallback *callback) : callback(callback) {
+ public:
+  explicit NanAsyncWorker(NanCallback *callback) : callback(callback) {
     request.data = this;
     errmsg = NULL;
   }
 
-  virtual ~NanAsyncWorker () {
+  virtual ~NanAsyncWorker() {
     NanScope();
 
     if (!persistentHandle.IsEmpty())
@@ -790,7 +790,7 @@ public:
       delete errmsg;
   }
 
-  virtual void WorkComplete () {
+  virtual void WorkComplete() {
     NanScope();
 
     if (errmsg == NULL)
@@ -801,7 +801,7 @@ public:
     callback = NULL;
   }
 
-  void SavePersistent(const char *key, v8::Local<v8::Object> &obj) {
+  void SavePersistent(const char *key, const v8::Local<v8::Object> &obj) {
     NanScope();
 
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
@@ -815,22 +815,22 @@ public:
     return handle->Get(NanSymbol(key)).As<v8::Object>();
   }
 
-  virtual void Execute () =0;
+  virtual void Execute() = 0;
 
   uv_work_t request;
 
-protected:
+ protected:
   v8::Persistent<v8::Object> persistentHandle;
   NanCallback *callback;
   const char *errmsg;
 
-  virtual void HandleOKCallback () {
+  virtual void HandleOKCallback() {
     NanScope();
 
     callback->Call(0, NULL);
-  };
+  }
 
-  virtual void HandleErrorCallback () {
+  virtual void HandleErrorCallback() {
     NanScope();
 
     v8::Local<v8::Value> argv[] = {
@@ -1050,9 +1050,9 @@ static NAN_INLINE(void* NanRawString(
 
   v8::Local<v8::String> toStr = from->ToString();
 
-  char *to = (char*)buf;
+  char *to = static_cast<char *>(buf);
 
-  switch(encoding) {
+  switch (encoding) {
     case Nan::ASCII:
 #if NODE_MODULE_VERSION < 0x0C
       sz_ = toStr->Length();
@@ -1180,7 +1180,9 @@ static NAN_INLINE(char* NanFromV8String(
   , int flags =
         v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED
 )) {
-    return (char *) NanRawString(from, encoding, datalen, buf, buflen, flags);
+    return static_cast<char *>(
+      NanRawString(from, encoding, datalen, buf, buflen, flags)
+    );
 }
 
 static NAN_INLINE(char* NanCString(
@@ -1190,7 +1192,9 @@ static NAN_INLINE(char* NanCString(
   , size_t buflen = 0
   , int flags = v8::String::NO_OPTIONS
 )) {
-    return (char *) NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags);
+    return static_cast<char *>(
+      NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags)
+    );
 }
 
-#endif
+#endif  // NAN_H_
