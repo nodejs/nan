@@ -1,5 +1,13 @@
+/**********************************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ **********************************************************************************/
+
 #include <cstdlib>
-#include "pi_est.h"
+#include "./pi_est.h"
 
 /*
 Estimate the value of π by using a Monte Carlo method.
@@ -17,13 +25,14 @@ for a visualization of how this works.
 double Estimate (int points) {
   int i = points;
   int inside = 0;
+  unsigned int randseed = 1;
   // unique seed for each run, for threaded use
-  unsigned int seed = rand();
+  unsigned int seed = rand_r(&randseed);
 
   while (i-- > 0) {
     // rand_r() is used to avoid thread locking
-    double x = rand_r(&seed) / (double)RAND_MAX;
-    double y = rand_r(&seed) / (double)RAND_MAX;
+    double x = rand_r(&seed) / static_cast<double>(RAND_MAX);
+    double y = rand_r(&seed) / static_cast<double>(RAND_MAX);
 
     // x & y and now values between 0 and 1
     // now do a pythagorean diagonal calculation
@@ -33,5 +42,5 @@ double Estimate (int points) {
   }
 
   // calculate ratio and multiply by 4 for π
-  return (inside / (double)points) * 4;
+  return (inside / static_cast<double>(points)) * 4;
 }
