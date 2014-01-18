@@ -1,9 +1,21 @@
-#include <node.h>
-#include "../../nan.h"
-#include "pi_est.h"
-#include "async.h"
+/**********************************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ **********************************************************************************/
 
-using namespace v8;
+#include <node.h>
+#include <nan.h>
+#include "./pi_est.h"
+#include "./async.h"
+
+using v8::Function;
+using v8::Local;
+using v8::Null;
+using v8::Number;
+using v8::Value;
 
 class PiWorker : public NanAsyncWorker {
  public:
@@ -26,12 +38,12 @@ class PiWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Value> argv[] = {
-        NanNewLocal<Value>(Null())
+        NanNewLocal(Null())
       , Number::New(estimate)
     };
 
     callback->Call(2, argv);
-  };
+  }
 
  private:
   int points;
