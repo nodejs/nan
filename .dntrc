@@ -3,6 +3,7 @@
 
 NODE_VERSIONS="\
   master   \
+  v0.11.11 \
   v0.11.10 \
   v0.11.9  \
   v0.11.8  \
