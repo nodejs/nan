@@ -2,3 +2,5 @@ test/
 examples/
 .travis.yml
 .npmignore
+Makefile
+cpplint.py
