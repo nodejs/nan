@@ -515,7 +515,7 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-      char *data
+      const char *data
     , uint32_t size
   )) {
     return node::Buffer::New(data, size);
@@ -778,7 +778,7 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-      char *data
+      const char *data
     , uint32_t size
   )) {
     return NanNewLocal<v8::Object>(node::Buffer::New(data, size)->handle_);
