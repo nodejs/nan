@@ -42,7 +42,7 @@ Simply add **NAN** as a dependency in the *package.json* of your Node addon:
 $ npm install --save nan
 ```
 
-Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include "nan.h"` in your *.cpp* files:
+Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include <nan.h>` in your *.cpp* files:
 
 ``` python
 "include_dirs" : [
@@ -66,10 +66,12 @@ Note that there is no embedded version sniffing going on here and also the async
 ```c++
 // addon.cc
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 // ...
 
-using namespace v8;
+using v8::FunctionTemplate;
+using v8::Handle;
+using v8::Object;
 
 void InitAll(Handle<Object> exports) {
   exports->Set(NanSymbol("calculateSync"),
@@ -85,7 +87,7 @@ NODE_MODULE(addon, InitAll)
 ```c++
 // sync.h
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 
 NAN_METHOD(CalculateSync);
 ```
@@ -93,11 +95,11 @@ NAN_METHOD(CalculateSync);
 ```c++
 // sync.cc
 #include <node.h>
-#include "nan.h"
-#include "sync.h"
+#include <nan.h>
+#include "./sync.h"
 // ...
 
-using namespace v8;
+using v8::Number;
 
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {
@@ -114,12 +116,16 @@ NAN_METHOD(CalculateSync) {
 ```c++
 // async.cc
 #include <node.h>
-#include "nan.h"
-#include "async.h"
+#include <nan.h>
+#include "./async.h"
 
 // ...
 
-using namespace v8;
+using v8::Function;
+using v8::Local;
+using v8::Null;
+using v8::Number;
+using v8::Value;
 
 class PiWorker : public NanAsyncWorker {
  public:
@@ -142,7 +148,7 @@ class PiWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Value> argv[] = {
-        Local<Value>::New(Null())
+        NanNewLocal(Null())
       , Number::New(estimate)
     };
 
@@ -529,7 +535,7 @@ char *plugh(uint32_t *optional) {
 <a name="api_nan_set_pointer_safe"></a>
 ### bool NanSetPointerSafe(Type *, Type)
 
-A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply return `false`.  Otherwise, the value is assigned to the variable the pointer points to.
+A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply returns `false`.  Otherwise, the value is assigned to the variable the pointer points to.
 
 ```c++
 const char *plugh(size_t *outputsize) {
@@ -813,6 +819,6 @@ NAN is only possible due to the excellent work of the following contributors:
 Licence &amp; copyright
 -----------------------
 
-Copyright (c) 2013 NAN contributors (listed above).
+Copyright (c) 2014 NAN contributors (listed above).
 
 Native Abstractions for Node.js is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
