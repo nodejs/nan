@@ -410,7 +410,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-      char *data
+      const char *data
     , uint32_t size
   )) {
     return node::Buffer::New(data, size);
@@ -626,7 +626,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
-      char *data
+      const char *data
     , uint32_t size
   )) {
     return NanNewLocal<v8::Object>(node::Buffer::New(data, size)->handle_);
