@@ -132,8 +132,7 @@ void Init (v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> returnString =
     v8::FunctionTemplate::New(ReturnString);
   NanAssignPersistent(
-    v8::FunctionTemplate
-  , returnString_persistent
+    returnString_persistent
   , returnString
   );
   target->Set(
@@ -143,8 +142,7 @@ void Init (v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> returnCString =
     v8::FunctionTemplate::New(ReturnCString);
   NanAssignPersistent(
-    v8::FunctionTemplate
-  , returnCString_persistent
+    returnCString_persistent
   , returnCString
   );
   target->Set(
@@ -154,8 +152,7 @@ void Init (v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> compareCStringToBuffer =
     v8::FunctionTemplate::New(CompareCStringToBuffer);
   NanAssignPersistent(
-    v8::FunctionTemplate
-  , compareCStringToBuffer_persistent
+    compareCStringToBuffer_persistent
   , compareCStringToBuffer
   );
   target->Set(
@@ -165,8 +162,7 @@ void Init (v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> compareRawStringToBuffer =
     v8::FunctionTemplate::New(CompareRawStringToBuffer);
   NanAssignPersistent(
-    v8::FunctionTemplate
-  , compareRawStringToBuffer_persistent
+    compareRawStringToBuffer_persistent
   , compareRawStringToBuffer
   );
   target->Set(
