@@ -302,7 +302,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnUndefined() return
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
-# define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
+//# define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
+template<typename T, typename H>
+static NAN_INLINE(void NanAssignPersistent(H& handle, v8::Handle<T> obj)) {
+    handle.Reset(nan_isolate, obj);
+}
+
 # define NanInitPersistent(type, name, obj)                                    \
     v8::Persistent<type> name(nan_isolate, obj)
 # define NanObjectWrapHandle(obj) obj->handle()
@@ -527,8 +532,13 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnEmptyString() return v8::String::Empty()
 # define NanInitPersistent(type, name, obj)                                    \
     v8::Persistent<type> name = v8::Persistent<type>::New(obj)
-# define NanAssignPersistent(type, handle, obj)                                \
+/*# define NanAssignPersistent(type, handle, obj)                                \
     handle = v8::Persistent<type>::New(obj)
+*/
+template<typename T, typename H>
+static NAN_INLINE(void NanAssignPersistent (H& handle, v8::Handle<T> obj)) {
+    handle = v8::Persistent<T>::New(obj);
+}
 # define NanObjectWrapHandle(obj) obj->handle_
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
@@ -725,13 +735,13 @@ class NanCallback {
   NanCallback() {
     NanScope();
     v8::Local<v8::Object> obj = v8::Object::New();
-    NanAssignPersistent(v8::Object, handle, obj);
+    NanAssignPersistent(handle, obj);
   }
 
   explicit NanCallback(const v8::Handle<v8::Function> &fn) {
     NanScope();
     v8::Local<v8::Object> obj = v8::Object::New();
-    NanAssignPersistent(v8::Object, handle, obj);
+    NanAssignPersistent(handle, obj);
     SetFunction(fn);
   }
 
