@@ -41,7 +41,7 @@ SetterGetter::SetterGetter() {
 void SetterGetter::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
     v8::FunctionTemplate::New(SetterGetter::New);
-  NanAssignPersistent(v8::FunctionTemplate, settergetter_constructor, tpl);
+  NanAssignPersistent(settergetter_constructor, tpl);
   tpl->SetClassName(NanSymbol("SetterGetter"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
