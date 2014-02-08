@@ -26,7 +26,7 @@ class PiWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Value> argv[] = {
-        Local<Value>::New(Null())
+        NanNewLocal<Value>(Null())
       , Number::New(estimate)
     };
 
