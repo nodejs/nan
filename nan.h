@@ -302,9 +302,25 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanReturnUndefined() return
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
-//# define NanAssignPersistent(type, handle, obj) handle.Reset(nan_isolate, obj)
+
+// TODO(kkoopa): remove at some point,
+// this was introduced just so it could be deprecated
 template<typename T, typename H>
-static NAN_INLINE(void NanAssignPersistent(H& handle, v8::Handle<T> obj)) {
+static NAN_DEPRECATED(NAN_INLINE(
+  void _NanAssignPersistentOld(H& handle, v8::Handle<T> obj))) {
+    handle.Reset(nan_isolate, obj);
+}
+
+#define _NanAssignPersistentOldHelper(type, handle, obj)                       \
+    _NanAssignPersistentOld(handle, obj)
+
+#define GET_MACRO(_1,_2,_3,NAME,...) NAME
+#define NanAssignPersistent(...) GET_MACRO(__VA_ARGS__,                        \
+    _NanAssignPersistentOldHelper, _NanAssignPersistentNew)(__VA_ARGS__)
+
+// TODO(kkoopa): rename to NanAssignPersistent
+template<typename T, typename H>
+static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
     handle.Reset(nan_isolate, obj);
 }
 
@@ -532,13 +548,29 @@ static NAN_INLINE(void NanAssignPersistent(H& handle, v8::Handle<T> obj)) {
 # define NanReturnEmptyString() return v8::String::Empty()
 # define NanInitPersistent(type, name, obj)                                    \
     v8::Persistent<type> name = v8::Persistent<type>::New(obj)
-/*# define NanAssignPersistent(type, handle, obj)                                \
-    handle = v8::Persistent<type>::New(obj)
-*/
+
+
+// TODO(kkoopa): remove at some point,
+// this was introduced just so it could be deprecated
 template<typename T, typename H>
-static NAN_INLINE(void NanAssignPersistent (H& handle, v8::Handle<T> obj)) {
+static NAN_DEPRECATED(NAN_INLINE(
+  void _NanAssignPersistentOld(H& handle, v8::Handle<T> obj))) {
     handle = v8::Persistent<T>::New(obj);
 }
+
+#define _NanAssignPersistentOldHelper(type, handle, obj)                       \
+    _NanAssignPersistentOld(handle, obj)
+
+#define GET_MACRO(_1,_2,_3,NAME,...) NAME
+#define NanAssignPersistent(...) GET_MACRO(__VA_ARGS__,                        \
+    _NanAssignPersistentOldHelper, _NanAssignPersistentNew)(__VA_ARGS__)
+
+// TODO(kkoopa): rename to NanAssignPersistent
+template<typename T, typename H>
+static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
+    handle = v8::Persistent<T>::New(obj);
+}
+
 # define NanObjectWrapHandle(obj) obj->handle_
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
