@@ -137,6 +137,8 @@
 #include <node_object_wrap.h>
 #include <string.h>
 
+#define _NAN_GET_MACRO32(_1,_2,_3,NAME,...) NAME
+
 #if defined(__GNUC__) && !defined(DEBUG)
 # define NAN_INLINE(declarator) inline __attribute__((always_inline)) declarator
 #elif defined(_MSC_VER) && !defined(DEBUG)
@@ -152,6 +154,14 @@
 #else
 # define NAN_DEPRECATED(declarator) declarator
 #endif
+
+#ifdef _MSC_VER
+#if _MSC_VER < 1600
+// TODO(kkoopa): Implement
+#else
+#define typeof(expression) decltype(expression)
+#endif  // _MSC_VER < 1600
+#endif  // _MSC_VER
 
 // some generic helpers
 
@@ -314,8 +324,7 @@ static NAN_DEPRECATED(NAN_INLINE(
 #define _NanAssignPersistentOldHelper(type, handle, obj)                       \
     _NanAssignPersistentOld(handle, obj)
 
-#define GET_MACRO(_1,_2,_3,NAME,...) NAME
-#define NanAssignPersistent(...) GET_MACRO(__VA_ARGS__,                        \
+#define NanAssignPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                \
     _NanAssignPersistentOldHelper, _NanAssignPersistentNew)(__VA_ARGS__)
 
 // TODO(kkoopa): rename to NanAssignPersistent
@@ -324,8 +333,14 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
     handle.Reset(nan_isolate, obj);
 }
 
-# define NanInitPersistent(type, name, obj)                                    \
+# define NanInitPersistentNew(name, obj) v8::Persistent<typeof(**obj)>         \
+    name(nan_isolate, obj)
+# define NanInitPersistentOld(type, name, obj)                                 \
     v8::Persistent<type> name(nan_isolate, obj)
+
+# define NanInitPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                 \
+    NanInitPersistentOld, NanInitPersistentNew)(__VA_ARGS__)
+
 # define NanObjectWrapHandle(obj) obj->handle()
 
 // TODO(rvagg): remove <0.11.8 support when 0.12 is released
@@ -546,9 +561,11 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
-# define NanInitPersistent(type, name, obj)                                    \
+# define NanInitPersistentNew(name, obj) v8::Persistent<typeof(**obj)> name(obj)
+# define NanInitPersistentOld(type, name, obj)                                 \
     v8::Persistent<type> name = v8::Persistent<type>::New(obj)
-
+# define NanInitPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                 \
+    NanInitPersistentOld, NanInitPersistentNew)(__VA_ARGS__)
 
 // TODO(kkoopa): remove at some point,
 // this was introduced just so it could be deprecated
@@ -561,8 +578,7 @@ static NAN_DEPRECATED(NAN_INLINE(
 #define _NanAssignPersistentOldHelper(type, handle, obj)                       \
     _NanAssignPersistentOld(handle, obj)
 
-#define GET_MACRO(_1,_2,_3,NAME,...) NAME
-#define NanAssignPersistent(...) GET_MACRO(__VA_ARGS__,                        \
+#define NanAssignPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                \
     _NanAssignPersistentOldHelper, _NanAssignPersistentNew)(__VA_ARGS__)
 
 // TODO(kkoopa): rename to NanAssignPersistent
