@@ -561,14 +561,12 @@ class WeakCallbackData {
 };
 
 # define NAN_WEAK_CALLBACK(name)                                               \
-    template<class T, class P> void name(const WeakCallbackData<T, P> &data);  \
     template<typename T, typename P>                                           \
     NAN_INLINE(void _ ## name(v8::Persistent<v8::Value> object, void *data)) { \
         NanScope();                                                            \
          WeakCallbackData<T, P> wcbd(                                          \
              NanPersistentToLocal(static_cast<v8::Persistent<T> >(object))     \
            , static_cast<P*>(data));                                           \
-            NanPersistentToLocal(object), data);                               \
         name(wcbd);                                                            \
     }                                                                          \
                                                                                \
