@@ -298,10 +298,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     object->SetAlignedPointerInInternalField(index, value)
 
 # define NAN_WEAK_CALLBACK(name)                                               \
-    template<typename T> void name(                                            \
-        v8::Isolate* isolate                                                   \
-      , v8::Persistent<v8::Object>* object                                     \
-      , T data)
+    template<typename T, typename P> void name(                                \
+    const v8::WeakCallbackData<T, P>& data)
 //# define NAN_WEAK_CALLBACK_OBJECT (*object)
 //# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
@@ -346,7 +344,7 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
 // TODO(rvagg): remove <0.11.8 support when 0.12 is released
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
 # define NanMakeWeak(handle, parameter, callback)                              \
-    handle.MakeWeak(parameter, callback)
+    handle.SetWeak(&parameter, callback)
 #else
 # define NanMakeWeak(handle, parameter, callback)                              \
     handle.MakeWeak(nan_isolate, parameter, callback)
@@ -552,13 +550,22 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
     NAN_INLINE(void _Nan_ ## name(                                             \
         v8::Persistent<v8::Value> object                                       \
       , void *data)) {                                                         \
-        name(&object, static_cast<T*>(data));                                  \
+        name(static_cast<v8::Persistent<v8::Object >>(object), static_cast<T*>(data));                                   \
     }                                                                          \
                                                                                \
     template<typename T> void name(v8::Persistent<v8::Object> &object          \
     , T *data)
 //# define NAN_WEAK_CALLBACK_OBJECT object
 //# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
+
+typedef void(* v8::WeakReferenceCallback)(Persistent< Value > object, void *parameter)
+
+template<typename T> NAN_INLINE(void _NanMakeWeakHelper(v8::Persistent<T> handle, void *parameters, void(*callback)(v8::Persistent<v8::Value> object, T *data) )) {
+  handle.MakeWeak(parameters, callback);
+}
+
+# define NanMakeWeak(handle, parameters, callback)                             \
+    _NanMakeWeakHelper(handle, parameters, &_Nan_ ## callback)
 
 # define NanScope() v8::HandleScope scope
 # define NanLocker() v8::Locker locker
@@ -594,13 +601,6 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
 }
 
 # define NanObjectWrapHandle(obj) obj->handle_
-
-template<typename T> NAN_INLINE(void _NanMakeWeakHelper(v8::Persistent<T> handle, void *parameters, v8::WeakReferenceCallback callback)) {
-  handle.MakeWeak(parameters, callback);
-}
-
-# define NanMakeWeak(handle, parameters, callback)                             \
-    _NanMakeWeakHelper(handle, parameters, &_Nan_ ## callback)
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))
