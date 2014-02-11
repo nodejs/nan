@@ -545,27 +545,44 @@ static NAN_INLINE(void _NanAssignPersistentNew(H& handle, v8::Handle<T> obj)) {
 # define NanSetInternalFieldPointer(object, index, value)                      \
     object->SetPointerInInternalField(index, value)
 
+template<class T, class P>
+class WeakCallbackData {
+ public:
+  WeakCallbackData(v8::Local<T> handle, P* parameter)
+    : handle_(handle), parameter_(parameter) { }
+  typedef void (*Callback)(const WeakCallbackData<T, P>& data);
+
+  NAN_INLINE(v8::Local<T> GetValue() const) { return handle_; }
+  NAN_INLINE(P* GetParameter() const) { return parameter_; }
+
+ private:
+  v8::Local<T> handle_;
+  P* parameter_;
+};
+
 # define NAN_WEAK_CALLBACK(name)                                               \
-    template<typename T>                                                       \
-    NAN_INLINE(void _Nan_ ## name(                                             \
-        v8::Persistent<v8::Value> object                                       \
-      , void *data)) {                                                         \
-        name(static_cast<v8::Persistent<v8::Object >>(object), static_cast<T*>(data));                                   \
+    template<class T, class P> void name(const WeakCallbackData<T, P> &data);  \
+    template<typename T, typename P>                                           \
+    NAN_INLINE(void _ ## name(v8::Persistent<v8::Value> object, void *data)) { \
+        NanScope();                                                            \
+         WeakCallbackData<T, P> wcbd(                                          \
+             NanPersistentToLocal(static_cast<v8::Persistent<T> >(object))     \
+           , static_cast<P*>(data));                                           \
+            NanPersistentToLocal(object), data);                               \
+        name(wcbd);                                                            \
     }                                                                          \
                                                                                \
-    template<typename T> void name(v8::Persistent<v8::Object> &object          \
-    , T *data)
+    template<class T, typename P> void name(const WeakCallbackData<T, P> &data)
 //# define NAN_WEAK_CALLBACK_OBJECT object
 //# define NAN_WEAK_CALLBACK_DATA(type) ((type) data)
 
-typedef void(* v8::WeakReferenceCallback)(Persistent< Value > object, void *parameter)
 
-template<typename T> NAN_INLINE(void _NanMakeWeakHelper(v8::Persistent<T> handle, void *parameters, void(*callback)(v8::Persistent<v8::Value> object, T *data) )) {
+template<typename T, typename P> NAN_INLINE(void _NanMakeWeakHelper(v8::Persistent<T> handle, P *parameters, void(*callback)(v8::Persistent<v8::Value> object, void *data) )) {
   handle.MakeWeak(parameters, callback);
 }
 
 # define NanMakeWeak(handle, parameters, callback)                             \
-    _NanMakeWeakHelper(handle, parameters, &_Nan_ ## callback)
+    _NanMakeWeakHelper(handle, parameters, &_ ## callback)
 
 # define NanScope() v8::HandleScope scope
 # define NanLocker() v8::Locker locker

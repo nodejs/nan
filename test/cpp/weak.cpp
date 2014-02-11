@@ -8,18 +8,19 @@
 
 #include <nan.h>
 
-NAN_WEAK_CALLBACK(weakCallback) {
+//NAN_WEAK_CALLBACK(weakCallback) {
 //    data.GetIsolate();
 //    data.GetValue();
 //    data.getParameter();
 /*    if (false) {
         NanMakeWeak(data.GetValue(), data.getParameter(), &weakCallback);
     } else {*/
-	delete data.GetParameter();
+//	delete data.GetParameter();
 //    }
-}
+//}
 
-NAN_METHOD(Print) {
+NAN_WEAK_CALLBACK(weakCallback) {
+    delete data.GetParameter();
 }
 
 v8::Handle<v8::String> wrap() {
@@ -29,7 +30,8 @@ v8::Handle<v8::String> wrap() {
     int *parameter = new int(3);
 
     NanInitPersistent(obj, lstring);
-    NanMakeWeak(obj, parameter, &weakCallback);
+    #define COMMA() ,
+    NanMakeWeak(obj, parameter, weakCallback<v8::Value COMMA() int*>);
     return lstring;
 }
 
