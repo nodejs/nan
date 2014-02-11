@@ -40,8 +40,11 @@ v8::Handle<v8::String> wrap() {
     int *parameter = new int(3);
 
     NanInitPersistent(obj, lstring);
-    #define COMMA() ,
-    NanMakeWeak(obj, parameter, weakCallback<v8::Value COMMA() int*>);
+    #define _NAN_COMMA() ,
+// only works on < 0.11
+//    NanMakeWeak(obj, parameter, weakCallback<v8::Value _NAN_COMMA() int*>);
+// only works on >= 0.11.8
+    NanMakeWeak(obj, parameter, weakCallback);
     return lstring;
 }
 
