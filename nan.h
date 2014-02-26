@@ -931,7 +931,7 @@ template <typename TypeName> static size_t _nan_base64_decode(
   const TypeName* srcEnd = src + srcLen;
 
   while (src < srcEnd && dst < dstEnd) {
-    prtdiff_t remaining = srcEnd - src;
+    ptrdiff_t remaining = srcEnd - src;
     char a, b, c, d;
 
     while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
