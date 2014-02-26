@@ -1098,7 +1098,7 @@ static NAN_INLINE(void* NanRawString(
         toStr->WriteOneByte(
             reinterpret_cast<uint8_t *>(to)
           , 0
-          , sz_ + term_len
+          , int(sz_ + term_len)
           , flags));
       return to;
 #endif
