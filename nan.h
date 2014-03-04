@@ -217,7 +217,9 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.3 and below won't compile with these)
 
-static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
+// Always get the current Isolate
+static v8::Isolate* currentIsolate() { return v8::Isolate::GetCurrent(); }
+#define nan_isolate currentIsolate()
 
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
