@@ -8,6 +8,10 @@
 
 #include <nan.h>
 
+/*template<typename T, typename P> void __NanMakeWeakHelper(v8::Persistent<T> &handle, P *parameters, typename v8::WeakCallbackData<T, P>::Callback callback) {
+  handle.SetWeak(parameters, callback);
+}*/
+
 //NAN_WEAK_CALLBACK(weakCallback) {
 //    data.GetIsolate();
 //    data.GetValue();
@@ -20,8 +24,22 @@
 //}
 
 NAN_WEAK_CALLBACK(weakCallback) {
-    delete data.GetParameter();
+    //delete data.GetParameter();
 }
+
+/*    template<typename T, typename P>                                           \
+    void _weakCallback(const  v8::WeakCallbackData<T, P> &data) {       \
+        NanScope();                                                            \
+         WeakCallbackData<T, P> wcbd(                                          \
+             data.GetValue()                                                   \
+           , data.GetParameter());                                             \
+        weakCallback(wcbd);                                                            \
+    }                                                                          \
+                                                                               \
+    template<class T, typename P> void weakCallback(const WeakCallbackData<T, P> &data) {
+delete data.GetParameter();
+}*/
+
 
 //template<class T, class P> void name(const WeakCallbackData<T, P> &data);
 /*template<typename T, typename P> void _weakCallback(v8::Persistent<v8::Value> object, void *data) {
@@ -45,6 +63,8 @@ v8::Handle<v8::String> wrap() {
 //    NanMakeWeak(obj, parameter, weakCallback<v8::Value _NAN_COMMA() int*>);
 // only works on >= 0.11.8
     NanMakeWeak(obj, parameter, weakCallback);
+//    obj.SetWeak(parameter, &_weakCallback);
+    //NanMakeWeakHelper(obj, parameter, &_weakCallback);
     return lstring;
 }
 
