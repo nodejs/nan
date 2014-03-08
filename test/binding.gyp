@@ -87,4 +87,12 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+  , {
+        "target_name" : "weak"
+      , "sources"     : [ "cpp/weak.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
