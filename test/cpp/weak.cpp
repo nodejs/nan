@@ -24,7 +24,7 @@
 //}
 
 NAN_WEAK_CALLBACK(weakCallback) {
-    //delete data.GetParameter();
+    delete data.GetParameter();
 }
 
 /*    template<typename T, typename P>                                           \
@@ -62,7 +62,7 @@ v8::Handle<v8::String> wrap() {
 // only works on < 0.11
 //    NanMakeWeak(obj, parameter, weakCallback<v8::Value _NAN_COMMA() int*>);
 // only works on >= 0.11.8
-    NanMakeWeak(obj, parameter, weakCallback);
+    NanMakeWeak(obj, parameter, weakCallback<v8::String _NAN_COMMA() int>);
 //    obj.SetWeak(parameter, &_weakCallback);
     //NanMakeWeakHelper(obj, parameter, &_weakCallback);
     return lstring;
