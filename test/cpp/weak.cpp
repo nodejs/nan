@@ -26,7 +26,8 @@ v8::Handle<v8::String> wrap() {
     v8::Local<v8::String> lstring = v8::String::New("result");
 
     int *parameter = new int(3);
-    CallbackInfo<v8::String, int> *cbinfo = new CallbackInfo<v8::String, int>(lstring, parameter);
+    CallbackInfo<v8::String, int> *cbinfo =
+      new CallbackInfo<v8::String, int>(lstring, parameter);
     NanMakeWeak(cbinfo->handle, cbinfo, weakCallback);
     return lstring;
 }
