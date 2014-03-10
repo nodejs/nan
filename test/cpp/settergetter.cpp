@@ -1,9 +1,17 @@
+/**********************************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ **********************************************************************************/
+
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 #include <string>
 
 class SetterGetter : public node::ObjectWrap {
-public:
+ public:
   static void Init (v8::Handle<v8::Object> target);
   static v8::Handle<v8::Value> NewInstance ();
   static NAN_METHOD(New);
@@ -31,15 +39,19 @@ SetterGetter::SetterGetter() {
 }
 
 void SetterGetter::Init(v8::Handle<v8::Object> target) {
-  v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(SetterGetter::New)
-;
-  NanAssignPersistent(v8::FunctionTemplate, settergetter_constructor, tpl);
+  v8::Local<v8::FunctionTemplate> tpl =
+    v8::FunctionTemplate::New(SetterGetter::New);
+  NanAssignPersistent(settergetter_constructor, tpl);
   tpl->SetClassName(NanSymbol("SetterGetter"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
   proto->SetAccessor(NanSymbol("prop1"), SetterGetter::GetProp1);
-  proto->SetAccessor(NanSymbol("prop2"), SetterGetter::GetProp2, SetterGetter::SetProp2);
+  proto->SetAccessor(
+    NanSymbol("prop2")
+  , SetterGetter::GetProp2
+  , SetterGetter::SetProp2
+  );
 
   v8::Local<v8::Function> createnew =
     v8::FunctionTemplate::New(CreateNew)->GetFunction();
