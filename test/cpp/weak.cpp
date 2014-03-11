@@ -8,17 +8,11 @@
 
 #include <nan.h>
 
-template<class T, class P>
-struct CallbackInfo {
-  CallbackInfo(v8::Handle<T> handle_, P* parameter_)
-    : parameter(parameter_) { NanAssignPersistent(handle, handle_);}
-  v8::Persistent<T> handle;
-  P* parameter;
-};
-
-
 NAN_WEAK_CALLBACK(weakCallback) {
-    NanMakeWeak(data.GetParameter()->handle, data.GetParameter(), weakCallback);
+    fprintf(stderr, "test run\n");
+    assert(*(data.GetParameter()) == 3);
+//    data.Dispose();
+    data.Revive();
 }
 
 v8::Handle<v8::String> wrap() {
@@ -26,9 +20,9 @@ v8::Handle<v8::String> wrap() {
     v8::Local<v8::String> lstring = v8::String::New("result");
 
     int *parameter = new int(3);
-    CallbackInfo<v8::String, int> *cbinfo =
-      new CallbackInfo<v8::String, int>(lstring, parameter);
-    NanMakeWeak(cbinfo->handle, cbinfo, weakCallback);
+    NanInitPersistent(persistent, lstring);
+    NanMakeWeak(persistent, parameter, weakCallback);
+    //NanMakeWeakPersistent(lstring, parameter, weakCallback);
     return lstring;
 }
 
