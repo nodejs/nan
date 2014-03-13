@@ -227,38 +227,6 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 
 #define _NAN_COMMA() ,
 
-/*template<class T, class P>
-struct _NanWeakCallbackInfo {
-  typedef void (*Callback)(const v8::WeakCallbackData<T, P>& data);
-  _NanWeakCallbackInfo(const v8::Local<T>& handle_, P* parameter_, Callback callback_)
-    : parameter(parameter_), callback(callback_) { NanInitPersistent(handle, handle_); persistent = &handle;}
-  _NanWeakCallbackInfo(const v8::Persistent<T>& handle_, P* parameter_, Callback callback_)
-    : parameter(parameter_), callback(callback_) { persistent = &handle;}
-
-  Callback callback;
-  v8::Persistent<T> *persistent;
-  P* parameter;
-};
-
-template<class T, class P>
-class _NanWeakCallbackData {
- public:
-  _NanWeakCallbackData(const v8::Local<T>& handle, _NanWeakCallbackInfo<T, P> *info)
-    : handle_(handle), info_(info) { }
-//  typedef void (*Callback)(const _NanWeakCallbackData<T, P>& data);
-
-  NAN_INLINE(v8::Local<T> GetValue() const) { return handle_; }
-  NAN_INLINE(P* GetParameter() const) { return info_->parameter; }
-  NAN_INLINE(void Revive() const) { _NanMakeWeakHelper(*info_->persistent, info_, info_->callback); }
-  NAN_INLINE(void Dispose() const) { NanDisposePersistent(*info_->persistent); delete info_->parameter; delete info_; }
-
- private:
-  v8::Local<T> handle_;
-  _NanWeakCallbackInfo<T, P>* info_;
-};*/
-
-
-
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.3 and below won't compile with these)
 
@@ -354,34 +322,13 @@ static NAN_INLINE(void _NanAssignPersistentNew(H* handle, v8::Handle<T> obj)) {
 #define NanAssignPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                 \
     _NanAssignPersistentOldHelper, _NanAssignPersistentNewHelper)(__VA_ARGS__)
 
-# define NanInitPersistentNew(name, obj) v8::Persistent<typeof(**obj)>         \
-    name(nan_isolate, obj)
-# define NanInitPersistentOld(type, name, obj)                                 \
-    v8::Persistent<type> name(nan_isolate, obj)
-
-# define NanInitPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                  \
-    NanInitPersistentOld, NanInitPersistentNew)(__VA_ARGS__)
-/*
 template<class T, class P>
 struct _NanWeakCallbackInfo {
-  typedef void (*Callback)(const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> >& data);
-//  _NanWeakCallbackInfo(const v8::Local<T>& handle_, P* parameter_, Callback callback_)
-//    : parameter(parameter_), callback(callback_) { NanInitPersistent(handle, handle_); persistent = &handle;}
-  _NanWeakCallbackInfo(v8::Persistent<T> &persistent_, P* parameter_, Callback callback_)
-    : parameter(parameter_), callback(callback_) { persistent = &persistent_; }
-
-  P* parameter;
-  Callback callback;
-  v8::Persistent<T> *persistent;
-};*/
-
-template<class T, class P>
-struct _NanWeakCallbackInfo {
-  typedef void (*Callback)(const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> >& data);
-//  _NanWeakCallbackInfo(const v8::Local<T>& handle_, P* parameter_, Callback callback_)
-//    : parameter(parameter_), callback(callback_) { NanInitPersistent(handle, handle_); persistent = &handle;}
-  _NanWeakCallbackInfo(const v8::Handle<T> &handle_, P* parameter_, Callback callback_)
-    : parameter(parameter_), callback(callback_) { NanAssignPersistent(persistent, handle_); }
+  typedef void (*Callback)(
+    const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> >& data);
+  _NanWeakCallbackInfo(v8::Handle<T> handle_, P* parameter_, Callback callback_)
+    : parameter(parameter_), callback(callback_) {
+     NanAssignPersistent(persistent, handle_); }
 
   P* parameter;
   Callback callback;
@@ -391,12 +338,14 @@ struct _NanWeakCallbackInfo {
 template<class T, class P>
 class _NanWeakCallbackData {
  public:
-  typedef void (*Callback)(const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> >& data);
-  _NanWeakCallbackData(const v8::Local<T>& handle, _NanWeakCallbackInfo<T, P> *info)
-    : handle_(handle), info_(info) { }
-//  typedef void (*Callback)(const _NanWeakCallbackData<T, P>& data);
+  typedef void (*Callback)(
+    const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> >& data);
+  _NanWeakCallbackData(_NanWeakCallbackInfo<T, P> *info)
+    : info_(info) { }
 
-  NAN_INLINE(v8::Local<T> GetValue() const) { return handle_; }
+  NAN_INLINE(v8::Local<T> GetValue() const) {
+    return NanPersistentToLocal(info_->persistent);
+  }
   NAN_INLINE(P* GetParameter() const) { return info_->parameter; }
   NAN_INLINE(void Revive() const) {
     info_->persistent.SetWeak(info_, info_->callback);
@@ -409,19 +358,18 @@ class _NanWeakCallbackData {
     delete info_;
   }
 
-// private:
-  v8::Local<T> handle_;
+ private:
   _NanWeakCallbackInfo<T, P>* info_;
 };
 
 #if NODE_VERSION_AT_LEAST(0, 11, 8)
 # define _NAN_WEAK_CALLBACK_NEW(name)                                          \
     template<typename T, typename P>                                           \
-    void _Nan_Weak_Callback_ ## name(const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> > &data) { \
+    void _Nan_Weak_Callback_ ## name(                                          \
+      const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> > &data) {      \
         NanScope();                                                            \
          _NanWeakCallbackData<T, P> wcbd(                                      \
-             data.GetValue()                                                   \
-           , data.GetParameter());                                             \
+           data.GetParameter());                                               \
         name(wcbd);                                                            \
     }                                                                          \
                                                                                \
@@ -487,28 +435,18 @@ class _NanWeakCallbackData {
 
 # define NanObjectWrapHandle(obj) obj->handle()
 
-// TODO(rvagg): remove <0.11.8 support when 0.12 is released
-#if NODE_VERSION_AT_LEAST(0, 11, 8)
 template<class T, class P>
-void NAN_INLINE(_NanMakeWeakHelper(v8::Persistent<T> &handle, P* parameter, typename _NanWeakCallbackData<T, P>::Callback callback)) {
-    _NanWeakCallbackInfo<T, P> *cbinfo = new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
-    cbinfo->persistent->SetWeak(cbinfo, callback);
-}
-# define NanMakeWeak(handle, parameter, callback) \
-    _NanMakeWeakHelper(handle, parameter, &_Nan_Weak_Callback_ ## callback)
-#else
-# define NanMakeWeak(handle, parameters, callback) \
-    handle.MakeWeak(nan_isolate, parameters, &_Nan_Weak_Callback_ ## callback)
-#endif
-
-template<class T, class P>
-void NAN_INLINE(_NanMakeWeakPersistentHelper(const v8::Handle<T>& handle, P* parameter, typename _NanWeakCallbackData<T, P>::Callback callback)) {
-    _NanWeakCallbackInfo<T, P> *cbinfo = new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
+void NAN_INLINE(_NanMakeWeakPersistentHelper(
+  const v8::Handle<T>& handle
+, P* parameter
+, typename _NanWeakCallbackData<T, P>::Callback callback)) {
+    _NanWeakCallbackInfo<T, P> *cbinfo =
+     new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
     cbinfo->persistent.SetWeak(cbinfo, callback);
 }
 #define NanMakeWeakPersistent(handle, parameter, callback)                     \
-   _NanMakeWeakPersistentHelper(handle, parameter, &_Nan_Weak_Callback_ ## callback)
-
+  _NanMakeWeakPersistentHelper(handle                                         \
+  , parameter, &_Nan_Weak_Callback_ ## callback)
 
 # define _NAN_ERROR(fun, errmsg) fun(v8::String::New(errmsg))
 
@@ -700,63 +638,6 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(const v8::Handle<T>& handle, P* par
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
 
-# define NanGetInternalFieldPointer(object, index)                             \
-    object->GetPointerFromInternalField(index)
-# define NanSetInternalFieldPointer(object, index, value)                      \
-    object->SetPointerInInternalField(index, value)
-
-# define _NAN_WEAK_CALLBACK_NEW(name)                                          \
-    template<typename T, typename P>                                           \
-    void _Nan_Weak_Callback_ ## name(                                          \
-      v8::Persistent<v8::Value> object, void *data) {                          \
-        NanScope();                                                            \
-         _NanWeakCallbackData<T, P> wcbd(                                      \
-             NanPersistentToLocal(object).As<T>()                              \
-           , static_cast<P*>(data));                                           \
-        name(wcbd);                                                            \
-    }                                                                          \
-                                                                               \
-    template<class T, typename P>                                              \
-    NAN_INLINE(void name(const _NanWeakCallbackData<T, P> &data))
-
-# define _NAN_WEAK_CALLBACK_OLD(type, name)                                    \
-    template<typename T, typename P>                                           \
-    void NAN_DEPRECATED(_Nan_Weak_Callback_ ## name(                           \
-      v8::Persistent<v8::Value> object, void *data)) {                         \
-        NanScope();                                                            \
-         _NanWeakCallbackData<T, P> wcbd(                                      \
-             NanPersistentToLocal(object).As<T>()                              \
-           , static_cast<P*>(data));                                           \
-        name(wcbd);                                                            \
-    }                                                                          \
-                                                                               \
-    template<class T, typename P>                                              \
-    NAN_INLINE(void name(const _NanWeakCallbackData<T, P> &data))
-
-# define NAN_WEAK_CALLBACK(...) _NAN_GET_MACRO21(__VA_ARGS__,                  \
-    _NAN_WEAK_CALLBACK_OLD, _NAN_WEAK_CALLBACK_NEW)(__VA_ARGS__)
-
-# define NAN_WEAK_CALLBACK_OBJECT data.GetValue()
-# define NAN_WEAK_CALLBACK_DATA(type) (type) data.GetParameter()
-
-# define NanMakeWeak(handle, parameters, callback)                             \
-    handle.MakeWeak(parameters,                                                \
-    &_Nan_Weak_Callback_ ## callback<typeof(**handle) _NAN_COMMA()             \
-      typeof(*parameters)>)
-
-# define NanScope() v8::HandleScope scope
-# define NanLocker() v8::Locker locker
-# define NanUnlocker() v8::Unlocker unlocker
-# define NanReturnValue(value) return scope.Close(value)
-# define NanReturnUndefined() return v8::Undefined()
-# define NanReturnNull() return v8::Null()
-# define NanReturnEmptyString() return v8::String::Empty()
-# define NanInitPersistentNew(name, obj) v8::Persistent<typeof(**obj)> name(obj)
-# define NanInitPersistentOld(type, name, obj)                                 \
-    v8::Persistent<type> name = v8::Persistent<type>::New(obj)
-# define NanInitPersistent(...) _NAN_GET_MACRO32(__VA_ARGS__,                  \
-    NanInitPersistentOld, NanInitPersistentNew)(__VA_ARGS__)
-
 // TODO(kkoopa): remove at some point,
 // this was introduced just so it could be deprecated
 template<typename T, typename H>
@@ -779,6 +660,104 @@ static NAN_INLINE(void _NanAssignPersistentNew(H* handle, v8::Handle<T> obj)) {
     *handle = v8::Persistent<T>::New(obj);
 }
 
+template<class T, class P>
+struct _NanWeakCallbackInfo {
+  typedef void (*Callback)(v8::Persistent<v8::Value> object, void* parameter);
+  _NanWeakCallbackInfo(v8::Handle<T> handle_, P* parameter_, Callback callback_)
+    : parameter(parameter_), callback(callback_) {
+    persistent = v8::Persistent<T>::New(handle_);
+  }
+
+  P* parameter;
+  Callback callback;
+  v8::Persistent<T> persistent;
+};
+
+template<class T, class P>
+class _NanWeakCallbackData {
+ public:
+  _NanWeakCallbackData(_NanWeakCallbackInfo<T, P> *info)
+    : info_(info) { }
+
+  typedef void (*Callback)(v8::Persistent<v8::Value> object, void* parameter);
+
+  NAN_INLINE(v8::Local<T> GetValue() const) {
+    return NanPersistentToLocal(info_->persistent);
+  }
+  NAN_INLINE(P* GetParameter() const) { return info_->parameter; }
+  NAN_INLINE(void Revive() const) {
+    info_->persistent.MakeWeak(info_, info_->callback);
+  }
+
+  NAN_INLINE(void Dispose() const) {
+    info_->persistent.Dispose();
+    info_->persistent.Clear();
+    delete info_->parameter;
+    delete info_;
+  }
+
+ private:
+  _NanWeakCallbackInfo<T, P>* info_;
+};
+
+# define NanGetInternalFieldPointer(object, index)                             \
+    object->GetPointerFromInternalField(index)
+# define NanSetInternalFieldPointer(object, index, value)                      \
+    object->SetPointerInInternalField(index, value)
+
+# define _NAN_WEAK_CALLBACK_NEW(name)                                          \
+    template<typename T, typename P>                                           \
+    void _Nan_Weak_Callback_ ## name(                                          \
+      v8::Persistent<v8::Value> object, void *data) {                          \
+        NanScope();                                                            \
+         _NanWeakCallbackData<T, P> wcbd(                                      \
+           static_cast<_NanWeakCallbackInfo<T, P>*>(data));                    \
+        name(wcbd);                                                            \
+    }                                                                          \
+                                                                               \
+    template<class T, typename P>                                              \
+    NAN_INLINE(void name(const _NanWeakCallbackData<T, P> &data))
+
+# define _NAN_WEAK_CALLBACK_OLD(type, name)                                    \
+    template<typename T, typename P>                                           \
+    void NAN_DEPRECATED(_Nan_Weak_Callback_ ## name(                           \
+      v8::Persistent<v8::Value> object, void *data)) {                         \
+        NanScope();                                                            \
+         _NanWeakCallbackData<T, P> wcbd(                                      \
+           static_cast<_NanWeakCallbackInfo<T, P>*>(data));                    \
+        name(wcbd);                                                            \
+    }                                                                          \
+                                                                               \
+    template<class T, typename P>                                              \
+    NAN_INLINE(void name(const _NanWeakCallbackData<T, P> &data))
+
+# define NAN_WEAK_CALLBACK(...) _NAN_GET_MACRO21(__VA_ARGS__,                  \
+    _NAN_WEAK_CALLBACK_OLD, _NAN_WEAK_CALLBACK_NEW)(__VA_ARGS__)
+
+# define NAN_WEAK_CALLBACK_OBJECT data.GetValue()
+# define NAN_WEAK_CALLBACK_DATA(type) (type) data.GetParameter()
+
+template<class T, class P>
+void NAN_INLINE(_NanMakeWeakPersistentHelper(
+  v8::Handle<T> handle
+, P* parameter
+, typename _NanWeakCallbackData<T, P>::Callback callback)) {
+    _NanWeakCallbackInfo<T, P> *cbinfo =
+      new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
+    cbinfo->persistent.MakeWeak(cbinfo, callback);
+}
+#define NanMakeWeakPersistent(handle, parameter, callback)                     \
+  _NanMakeWeakPersistentHelper(handle, parameter,                              \
+  &_Nan_Weak_Callback_ ## callback<typeof(**handle) _NAN_COMMA()               \
+  typeof(*parameter)>)
+
+# define NanScope() v8::HandleScope scope
+# define NanLocker() v8::Locker locker
+# define NanUnlocker() v8::Unlocker unlocker
+# define NanReturnValue(value) return scope.Close(value)
+# define NanReturnUndefined() return v8::Undefined()
+# define NanReturnNull() return v8::Null()
+# define NanReturnEmptyString() return v8::String::Empty()
 # define NanObjectWrapHandle(obj) obj->handle_
 
 # define _NAN_ERROR(fun, errmsg)                                               \
