@@ -11,6 +11,10 @@
 NAN_WEAK_CALLBACK(weakCallback) {
     int *parameter = data.GetParameter();
 
+# if NODE_MODULE_VERSION > 0x000B
+      node::MakeCallback(nan_isolate->GetCurrentContext()->Global(),
+        data.GetValue(), 0, NULL);
+#else
     #if NODE_VERSION_AT_LEAST(0, 8, 0)
       node::MakeCallback(nan_isolate, v8::Context::GetCurrent()->Global(),
         data.GetValue(), 0, NULL);
@@ -22,6 +26,7 @@ NAN_WEAK_CALLBACK(weakCallback) {
         FatalException(try_catch);
       }
     #endif
+#endif
 
     if ((*parameter)++ == 0) {
       data.Revive();
@@ -32,7 +37,7 @@ NAN_WEAK_CALLBACK(weakCallback) {
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
     NanScope();
-    v8::Local<v8::String> lstring = v8::String::New("result");
+    v8::Local<v8::String> lstring = NanNew<v8::String>("result");
     int *parameter = new int(0);
     NanMakeWeakPersistent(func, parameter, weakCallback);
     return lstring;
@@ -46,7 +51,7 @@ NAN_METHOD(Hustle) {
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("hustle")
-    , v8::FunctionTemplate::New(Hustle)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 
