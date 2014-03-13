@@ -5,7 +5,7 @@
   "private": true,
   "gypfile": true,
   "scripts": {
-    "test": "node-gyp rebuild; tap js/*-test.js"
+    "test": "node-gyp rebuild; tap --gc js/*-test.js"
   },
   "dependencies": {
     "tap": "~0.4.3",
