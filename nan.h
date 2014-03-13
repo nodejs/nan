@@ -1183,7 +1183,7 @@ static NAN_INLINE(void* NanRawString(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-#if NODE_MODULE_VERSION > 0x000B
+#if NODE_MODULE_VERSION < 0x000C
       // TODO(isaacs): THIS IS AWFUL!!!
       // AGREE(kkoopa)
       {
