@@ -606,7 +606,6 @@ class _NanWeakCallbackData {
     template<typename T, typename P>                                           \
     void _Nan_Weak_Callback_ ## name(                                          \
       v8::Persistent<v8::Value> object, void *data) {                          \
-        NanScope();                                                            \
          _NanWeakCallbackData<T, P> wcbd(                                      \
            static_cast<_NanWeakCallbackInfo<T, P>*>(data));                    \
         name(wcbd);                                                            \
@@ -852,7 +851,17 @@ class NanCallback {
 
   void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
-
+#if (NODE_MODULE_VERSION > 0x000B) // 0.11.12+
+    v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
+        Get(NanSymbol("callback")).As<v8::Function>();
+    node::MakeCallback(
+        nan_isolate
+      , v8::Context::GetCurrent()->Global()
+      , callback
+      , argc
+      , argv
+    );
+#else
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
@@ -864,6 +873,7 @@ class NanCallback {
     );
 #else
     node::MakeCallback(handle, "callback", argc, argv);
+#endif
 #endif
   }
 
@@ -1173,7 +1183,7 @@ static NAN_INLINE(void* NanRawString(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-#if NODE_MODULE_VERSION < 0x0C
+#if NODE_MODULE_VERSION > 0x000B
       // TODO(isaacs): THIS IS AWFUL!!!
       // AGREE(kkoopa)
       {

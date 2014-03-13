@@ -12,7 +12,7 @@ NAN_WEAK_CALLBACK(weakCallback) {
     int *parameter = data.GetParameter();
 
     #if NODE_VERSION_AT_LEAST(0, 8, 0)
-      node::MakeCallback(v8::Context::GetCurrent()->Global(),
+      node::MakeCallback(nan_isolate, v8::Context::GetCurrent()->Global(),
         data.GetValue(), 0, NULL);
     #else
       v8::TryCatch try_catch;
