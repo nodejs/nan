@@ -11,12 +11,22 @@
 NAN_WEAK_CALLBACK(weakCallback) {
     int *parameter = data.GetParameter();
 
-    node::MakeCallback(v8::Context::GetCurrent()->Global(), data.GetValue(), 0, NULL);
+    #if NODE_VERSION_AT_LEAST(0, 8, 0)
+      node::MakeCallback(v8::Context::GetCurrent()->Global(),
+        data.GetValue(), 0, NULL);
+    #else
+      v8::TryCatch try_catch;
+      data.GetValue()->Call(v8::Null(), 0, NULL);
 
-    if (*parameter++ != 0) {
-      data.Dispose();
-    } else {
+      if (try_catch.HasCaught()) {
+        FatalException(try_catch);
+      }
+    #endif
+
+    if ((*parameter)++ == 0) {
       data.Revive();
+    } else {
+      data.Dispose();
     }
 }
 
@@ -33,18 +43,10 @@ NAN_METHOD(Hustle) {
   NanReturnValue(wrap(args[0].As<v8::Function>()));
 }
 
-NAN_METHOD(Idle) {
-  while (v8::V8::IdleNotification());
-}
-
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("hustle")
     , v8::FunctionTemplate::New(Hustle)->GetFunction()
-  );
-  target->Set(
-      NanSymbol("idle")
-    , v8::FunctionTemplate::New(Idle)->GetFunction()
   );
 }
 
