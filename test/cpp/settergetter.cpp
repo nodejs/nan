@@ -40,7 +40,7 @@ SetterGetter::SetterGetter() {
 
 void SetterGetter::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
-    v8::FunctionTemplate::New(SetterGetter::New);
+    NanNew<v8::FunctionTemplate>(SetterGetter::New);
   NanAssignPersistent(settergetter_constructor, tpl);
   tpl->SetClassName(NanSymbol("SetterGetter"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -54,7 +54,7 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
   );
 
   v8::Local<v8::Function> createnew =
-    v8::FunctionTemplate::New(CreateNew)->GetFunction();
+    NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
   target->Set(NanSymbol("create"), createnew);
 }
 
@@ -85,7 +85,7 @@ NAN_GETTER(SetterGetter::GetProp1) {
   settergetter->log.append(settergetter->prop1);
   settergetter->log.append(")\n");
 
-  NanReturnValue(v8::String::New(settergetter->prop1.c_str()));
+  NanReturnValue(NanNew<v8::String>(settergetter->prop1.c_str()));
 }
 
 NAN_GETTER(SetterGetter::GetProp2) {
@@ -97,7 +97,7 @@ NAN_GETTER(SetterGetter::GetProp2) {
   settergetter->log.append(settergetter->prop2);
   settergetter->log.append(")\n");
 
-  NanReturnValue(v8::String::New(settergetter->prop2.c_str()));
+  NanReturnValue(NanNew<v8::String>(settergetter->prop2.c_str()));
 }
 
 NAN_SETTER(SetterGetter::SetProp2) {
@@ -117,7 +117,7 @@ NAN_METHOD(SetterGetter::Log) {
   SetterGetter* settergetter =
     node::ObjectWrap::Unwrap<SetterGetter>(args.This());
 
-  NanReturnValue(v8::String::New(settergetter->log.c_str()));
+  NanReturnValue(NanNew<v8::String>(settergetter->log.c_str()));
 }
 
 NODE_MODULE(settergetter, SetterGetter::Init)

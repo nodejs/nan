@@ -48,19 +48,19 @@ NAN_METHOD(ToPersistentAndBackAgain) {
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("save1")
-    , v8::FunctionTemplate::New(Save1)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Save1)->GetFunction()
   );
   target->Set(
       NanSymbol("get1")
-    , v8::FunctionTemplate::New(Get1)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Get1)->GetFunction()
   );
   target->Set(
       NanSymbol("dispose1")
-    , v8::FunctionTemplate::New(Dispose1)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Dispose1)->GetFunction()
   );
   target->Set(
       NanSymbol("toPersistentAndBackAgain")
-    , v8::FunctionTemplate::New(ToPersistentAndBackAgain)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
   );
 }
 

@@ -189,8 +189,6 @@ template<class T> static NAN_INLINE(T NanGetPointerSafe(
   }
 }
 
-#define NanSymbol(value) v8::String::NewSymbol(value)
-
 static NAN_INLINE(bool NanBooleanOptionValue(
     v8::Local<v8::Object> optionsObj
   , v8::Handle<v8::String> opt, bool def
@@ -231,6 +229,19 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 // Node 0.11+ (0.11.3 and below won't compile with these)
 
 static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
+
+template<typename T>
+static NAN_INLINE(v8::Local<T> NanNew()) { return T::New(nan_isolate); }
+template<typename T, typename P>
+static NAN_INLINE(v8::Local<T> NanNew(P arg)) { return T::New(nan_isolate, arg); }
+template<>
+NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const char *>(const char *arg)) { return v8::String::NewFromUtf8(nan_isolate, arg); }
+template<>
+NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const uint8_t *>(const uint8_t *arg)) { return v8::String::NewFromOneByte(nan_isolate, arg); }
+template<>
+NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const uint16_t *>(const uint16_t *arg)) { return v8::String::NewFromTwoByte(nan_isolate, arg); }
+
+#define NanSymbol(value) NanNew<v8::String>(value)
 
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
@@ -334,7 +345,6 @@ class _NanWeakCallbackData {
 
   NAN_INLINE(void Dispose() const) {
     info_->persistent.Reset();
-    info_->persistent.Clear();
     delete info_->parameter;
     delete info_;
   }
@@ -378,12 +388,12 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
   _NanMakeWeakPersistentHelper(handle                                          \
   , parameter, &_Nan_Weak_Callback_ ## callback)
 
-# define _NAN_ERROR(fun, errmsg) fun(v8::String::New(errmsg))
+# define _NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
 
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
       NanScope();                                                              \
-      v8::ThrowException(_NAN_ERROR(fun, errmsg));                             \
+      nan_isolate->ThrowException(_NAN_ERROR(fun, errmsg));                    \
     } while (0);
 
   template<class T> static NAN_INLINE(v8::Local<T> NanNewLocal(
@@ -402,16 +412,16 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
 
   static NAN_INLINE(void NanThrowError(v8::Handle<v8::Value> error)) {
     NanScope();
-    v8::ThrowException(error);
+    nan_isolate->ThrowException(error);
   }
 
   static NAN_INLINE(v8::Handle<v8::Value> NanError(
       const char *msg
     , const int errorNumber
   )) {
-    v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
+    v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
-    obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
+    obj->Set(NanSymbol("code"), NanNew<v8::Integer>(errorNumber));
     return err;
   }
 
@@ -442,7 +452,6 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
       v8::Persistent<T> &handle
   )) {
     handle.Reset();
-    handle.Clear();
   }
 
   static NAN_INLINE(v8::Local<v8::Object> NanNewBufferHandle (
@@ -822,30 +831,29 @@ class NanCallback {
  public:
   NanCallback() {
     NanScope();
-    v8::Local<v8::Object> obj = v8::Object::New();
+    v8::Local<v8::Object> obj = NanNew<v8::Object>();
     NanAssignPersistent(handle, obj);
   }
 
   explicit NanCallback(const v8::Handle<v8::Function> &fn) {
     NanScope();
-    v8::Local<v8::Object> obj = v8::Object::New();
+    v8::Local<v8::Object> obj = NanNew<v8::Object>();
     NanAssignPersistent(handle, obj);
     SetFunction(fn);
   }
 
   ~NanCallback() {
     if (handle.IsEmpty()) return;
-    handle.Dispose();
-    handle.Clear();
+    handle.Reset();
   }
 
   NAN_INLINE(void SetFunction(const v8::Handle<v8::Function> &fn)) {
     NanScope();
-    NanPersistentToLocal(handle)->Set(NanSymbol("callback"), fn);
+    NanPersistentToLocal(handle)->Set(NanNew<v8::String>("callback"), fn);
   }
 
   NAN_INLINE(v8::Local<v8::Function> GetFunction ()) {
-    return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
+    return NanPersistentToLocal(handle)->Get(NanNew<v8::String>("callback"))
         .As<v8::Function>();
   }
 
@@ -855,8 +863,7 @@ class NanCallback {
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
     node::MakeCallback(
-        nan_isolate
-      , v8::Context::GetCurrent()->Global()
+        nan_isolate->GetCurrentContext()->Global()
       , callback
       , argc
       , argv
@@ -943,7 +950,7 @@ class NanCallback {
     NanScope();
 
     v8::Local<v8::Value> argv[] = {
-        v8::Exception::Error(v8::String::New(errmsg))
+        v8::Exception::Error(NanNew<v8::String>(errmsg))
     };
     callback->Call(1, argv);
   }

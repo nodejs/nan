@@ -17,7 +17,7 @@ NAN_METHOD(ReturnUndefined) {
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("r")
-    , v8::FunctionTemplate::New(ReturnUndefined)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(ReturnUndefined)->GetFunction()
   );
 }
 

@@ -14,14 +14,14 @@ NAN_METHOD(ReturnValue) {
   if (args.Length() == 1) {
     NanReturnValue(args[0]);
   } else {
-    NanReturnValue(v8::String::New("default"));
+    NanReturnValue(NanNew<v8::String>("default"));
   }
 }
 
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("r")
-    , v8::FunctionTemplate::New(ReturnValue)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
   );
 }
 
