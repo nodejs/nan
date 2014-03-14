@@ -390,8 +390,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       persistent.Reset();
     }
 
-    P* parameter;
-    Callback callback;
+    P* const parameter;
+    Callback const callback;
     v8::Persistent<T> persistent;
   };
 
@@ -675,8 +675,8 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
       persistent.Clear();
     }
 
-    P* parameter;
-    Callback callback;
+    P* const parameter;
+    Callback const callback;
     v8::Persistent<T> persistent;
   };
 
