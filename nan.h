@@ -230,6 +230,10 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 
 static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
+# define NanGetCurrentContext() nan_isolate->GetCurrentContext()
+# define NanMakeCallback(target, func, argc, argv)                             \
+    node::MakeCallback(nan_isolate, target, func, argc, argv)
+
 template<typename T>
 static NAN_INLINE(v8::Local<T> NanNew()) { return T::New(nan_isolate); }
 template<typename T, typename P>
@@ -872,7 +876,8 @@ class NanCallback {
     v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
     node::MakeCallback(
-        nan_isolate->GetCurrentContext()->Global()
+        nan_isolate
+      , nan_isolate->GetCurrentContext()->Global()
       , callback
       , argc
       , argv
