@@ -10,24 +10,7 @@
 
 NAN_WEAK_CALLBACK(weakCallback) {
     int *parameter = data.GetParameter();
-
-# if NODE_MODULE_VERSION > 0x000B
-      node::MakeCallback(nan_isolate->GetCurrentContext()->Global(),
-        data.GetValue(), 0, NULL);
-#else
-    #if NODE_VERSION_AT_LEAST(0, 8, 0)
-      node::MakeCallback(nan_isolate, v8::Context::GetCurrent()->Global(),
-        data.GetValue(), 0, NULL);
-    #else
-      v8::TryCatch try_catch;
-      data.GetValue()->Call(v8::Null(), 0, NULL);
-
-      if (try_catch.HasCaught()) {
-        FatalException(try_catch);
-      }
-    #endif
-#endif
-
+    NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
     if ((*parameter)++ == 0) {
       data.Revive();
     } else {
