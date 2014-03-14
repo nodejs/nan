@@ -522,6 +522,29 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
 #else
 // Node 0.8 and 0.10
 
+# define NanGetCurrentContext() v8::Context::GetCurrent()
+
+# if NODE_VERSION_AT_LEAST(0, 8, 0)
+#  define NanMakeCallback(target, func, argc, argv)                            \
+    node::MakeCallback(target, func, argc, argv)
+# else
+#  define NanMakeCallback(target, func, argc, argv)                            \
+    v8::TryCatch try_catch;                                                    \
+    func->Call(target, argc, argv);                                            \
+    if (try_catch.HasCaught()) {                                               \
+        v8::FatalException(try_catch);                                         \
+    }
+# endif
+
+template<typename T>
+static NAN_INLINE(v8::Local<T> NanNew()) { return v8::Local<T>::New(T::New()); }
+template<typename T, typename P>
+static NAN_INLINE(v8::Local<T> NanNew(P arg)) { return v8::Local<T>::New(T::New(arg)); }
+template<typename T, typename P>
+static NAN_INLINE(v8::Local<T> NanNew(P arg, int length)) { return v8::Local<T>::New(T::New(arg, length)); }
+
+#define NanSymbol(value) v8::String::NewSymbol(value)
+
 # define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define _NAN_METHOD_RETURN_TYPE v8::Handle<v8::Value>
@@ -857,7 +880,7 @@ class NanCallback {
 
   ~NanCallback() {
     if (handle.IsEmpty()) return;
-    handle.Reset();
+    NanDisposePersistent(handle);
   }
 
   NAN_INLINE(void SetFunction(const v8::Handle<v8::Function> &fn)) {
