@@ -19,7 +19,6 @@ NAN_WEAK_CALLBACK(weakCallback) {
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-    NanScope();
     v8::Local<v8::String> lstring = NanNew<v8::String>("result");
     int *parameter = new int(0);
     NanMakeWeakPersistent(func, parameter, weakCallback);
