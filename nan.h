@@ -234,12 +234,21 @@ template<typename T>
 static NAN_INLINE(v8::Local<T> NanNew()) { return T::New(nan_isolate); }
 template<typename T, typename P>
 static NAN_INLINE(v8::Local<T> NanNew(P arg)) { return T::New(nan_isolate, arg); }
+template<typename T, typename P>
+static NAN_INLINE(v8::Local<T> NanNew(P arg, int length)) { return T::New(nan_isolate, arg); }
+template<>
+NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const char *>(const char *arg, int length)) { return v8::String::NewFromUtf8(nan_isolate, arg, v8::String::kNormalString, length); }
 template<>
 NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const char *>(const char *arg)) { return v8::String::NewFromUtf8(nan_isolate, arg); }
 template<>
+NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const uint8_t *>(const uint8_t *arg, int length)) { return v8::String::NewFromOneByte(nan_isolate, arg, v8::String::kNormalString, length); }
+template<>
 NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const uint8_t *>(const uint8_t *arg)) { return v8::String::NewFromOneByte(nan_isolate, arg); }
 template<>
+NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const uint16_t *>(const uint16_t *arg, int length)) { return v8::String::NewFromTwoByte(nan_isolate, arg, v8::String::kNormalString, length); }
+template<>
 NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA() const uint16_t *>(const uint16_t *arg)) { return v8::String::NewFromTwoByte(nan_isolate, arg); }
+
 
 #define NanSymbol(value) NanNew<v8::String>(value)
 

@@ -13,7 +13,7 @@ NAN_METHOD(ReturnString) {
   NanScope();
   Nan::Encoding enc = Nan::UTF8;
   size_t bc;
-  unsigned int flags = v8::String::HINT_MANY_WRITES_EXPECTED
+  int flags = v8::String::HINT_MANY_WRITES_EXPECTED
                      | v8::String::NO_NULL_TERMINATION;
 
   if (args[1]->IsUint32()) {
@@ -29,11 +29,11 @@ NAN_METHOD(ReturnString) {
     NanReturnValue(
       NanNew<v8::String>(
         reinterpret_cast<const uint16_t *>(s)
-      )
+      , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1)
     );
   } else {
     NanReturnValue(
-      NanNew<v8::String>(s)
+      NanNew<v8::String>(s, (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
     );
   }
 }
