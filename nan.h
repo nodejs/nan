@@ -228,77 +228,6 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.3 and below won't compile with these)
 
-static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
-
-# define NanGetCurrentContext() nan_isolate->GetCurrentContext()
-# define NanMakeCallback(target, func, argc, argv)                             \
-    node::MakeCallback(nan_isolate, target, func, argc, argv)
-
-  template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew()) {
-    return T::New(nan_isolate);
-  }
-  template<typename T, typename P>
-  static NAN_INLINE(v8::Local<T> NanNew(P arg)) {
-    return T::New(nan_isolate, arg);
-  }
-  template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew(v8::Handle<T> arg)) {
-    return v8::Local<T>::New(nan_isolate, arg);
-  }
-  template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew(v8::Persistent<T> arg)) {
-    return v8::Local<T>::New(nan_isolate, arg);
-  }
-  template<typename T, typename P>
-  static NAN_INLINE(v8::Local<T> NanNew(P arg, int length)) {
-    return T::New(nan_isolate, arg);
-  }
-  template<>
-  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
-  const char *>(const char *arg, int length)) {
-    return v8::String::NewFromUtf8(
-        nan_isolate
-      , arg
-      , v8::String::kNormalString
-      , length);
-  }
-  template<>
-  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
-  const char *>(const char *arg)) {
-    return v8::String::NewFromUtf8(nan_isolate, arg);
-  }
-  template<>
-  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
-  const uint8_t *>(const uint8_t *arg, int length)) {
-    return v8::String::NewFromOneByte(
-        nan_isolate
-      , arg
-      , v8::String::kNormalString
-      , length);
-  }
-  template<>
-  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
-  const uint8_t *>(const uint8_t *arg)) {
-    return v8::String::NewFromOneByte(nan_isolate, arg);
-  }
-  template<>
-  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
-  const uint16_t *>(const uint16_t *arg, int length)) {
-    return v8::String::NewFromTwoByte(
-        nan_isolate
-      , arg
-      , v8::String::kNormalString
-      , length);
-  }
-  template<>
-  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
-  const uint16_t *>(const uint16_t *arg)) {
-    return v8::String::NewFromTwoByte(nan_isolate, arg);
-  }
-
-#define NanSymbol(value) NanNew<v8::String>(value)
-
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define _NAN_METHOD_RETURN_TYPE void
@@ -362,11 +291,79 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE void
 
+static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
+
+# define NanGetCurrentContext() nan_isolate->GetCurrentContext()
+# define NanMakeCallback(target, func, argc, argv)                             \
+    node::MakeCallback(nan_isolate, target, func, argc, argv)
+# define NanSymbol(value) NanNew<v8::String>(value)
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetAlignedPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
     object->SetAlignedPointerInInternalField(index, value)
 
+  template<typename T>
+  static NAN_INLINE(v8::Local<T> NanNew()) {
+    return T::New(nan_isolate);
+  }
+  template<typename T, typename P>
+  static NAN_INLINE(v8::Local<T> NanNew(P arg)) {
+    return T::New(nan_isolate, arg);
+  }
+  template<typename T>
+  static NAN_INLINE(v8::Local<T> NanNew(v8::Handle<T> arg)) {
+    return v8::Local<T>::New(nan_isolate, arg);
+  }
+  template<typename T>
+  static NAN_INLINE(v8::Local<T> NanNew(v8::Persistent<T> arg)) {
+    return v8::Local<T>::New(nan_isolate, arg);
+  }
+  template<typename T, typename P>
+  static NAN_INLINE(v8::Local<T> NanNew(P arg, int length)) {
+    return T::New(nan_isolate, arg);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const char *>(const char *arg, int length)) {
+    return v8::String::NewFromUtf8(
+        nan_isolate
+      , arg
+      , v8::String::kNormalString
+      , length);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const char *>(const char *arg)) {
+    return v8::String::NewFromUtf8(nan_isolate, arg);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const uint8_t *>(const uint8_t *arg, int length)) {
+    return v8::String::NewFromOneByte(
+        nan_isolate
+      , arg
+      , v8::String::kNormalString
+      , length);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const uint8_t *>(const uint8_t *arg)) {
+    return v8::String::NewFromOneByte(nan_isolate, arg);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const uint16_t *>(const uint16_t *arg, int length)) {
+    return v8::String::NewFromTwoByte(
+        nan_isolate
+      , arg
+      , v8::String::kNormalString
+      , length);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const uint16_t *>(const uint16_t *arg)) {
+    return v8::String::NewFromTwoByte(nan_isolate, arg);
+  }
   template<typename T>
   static NAN_INLINE(void NanAssignPersistent(
       v8::Persistent<T> &handle
@@ -674,7 +671,6 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
       , persistent(v8::Persistent<T>::New(handle)) { }
 
     ~_NanWeakCallbackInfo() {
-      fprintf(stderr, "DESTRUCTOR\n");
       persistent.Dispose();
       persistent.Clear();
     }
@@ -699,7 +695,6 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
     }
 
     NAN_INLINE(void Dispose() const) {
-      fprintf(stderr, "Dispose\n");
       delete info_;
     }
 
