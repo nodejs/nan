@@ -366,7 +366,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
   template<typename T>
   static NAN_INLINE(void NanAssignPersistent(
-      v8::Persistent<T> &handle
+      v8::Persistent<T>& handle
     , v8::Handle<T> obj)) {
       handle.Reset(nan_isolate, obj);
   }
@@ -417,7 +417,11 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     _NanWeakCallbackInfo<T, P>* info_;
   };
 
+// do not use for declaration
 # define NAN_WEAK_CALLBACK(name)                                               \
+    template<class T, typename P>                                              \
+    void name(const _NanWeakCallbackData<T, P> &data);                         \
+                                                                               \
     template<typename T, typename P>                                           \
     void _Nan_Weak_Callback_ ## name(                                          \
       const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> > &data) {      \
@@ -707,7 +711,11 @@ void NAN_INLINE(_NanMakeWeakPersistentHelper(
 # define NanSetInternalFieldPointer(object, index, value)                      \
     object->SetPointerInInternalField(index, value)
 
+// do not use for declaration
 # define NAN_WEAK_CALLBACK(name)                                               \
+    template<class T, typename P>                                              \
+    void name(const _NanWeakCallbackData<T, P> &data);                         \
+                                                                               \
     template<typename T, typename P>                                           \
     void _Nan_Weak_Callback_ ## name(                                          \
       v8::Persistent<v8::Value> object, void *data) {                          \
