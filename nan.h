@@ -670,11 +670,13 @@ void NAN_INLINE(NanMakeWeakPersistent(
     node::MakeCallback(target, func, argc, argv)
 # else
 #  define NanMakeCallback(target, func, argc, argv)                            \
-    v8::TryCatch try_catch;                                                    \
-    func->Call(target, argc, argv);                                            \
-    if (try_catch.HasCaught()) {                                               \
-        v8::FatalException(try_catch);                                         \
-    }
+    do {                                                                       \
+      v8::TryCatch try_catch;                                                  \
+      func->Call(target, argc, argv);                                          \
+      if (try_catch.HasCaught()) {                                             \
+          v8::FatalException(try_catch);                                       \
+      }                                                                        \
+    } while (0)
 # endif
 
 # define NanSymbol(value) v8::String::NewSymbol(value)
