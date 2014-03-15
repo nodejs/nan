@@ -528,7 +528,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanInitPersistent(type, name, obj)                                    \
     v8::Persistent<type> name = v8::Persistent<type>::New(obj)
 # define NanAssignPersistent(type, handle, obj)                                \
-    handle = v8::Persistent<type>::New(obj)
+    do {                                                                       \
+      handle.Dispose();                                                        \
+      handle = v8::Persistent<type>::New(obj);                                 \
+    } while (0)
 # define NanObjectWrapHandle(obj) obj->handle_
 # define NanMakeWeak(handle, parameters, callback)                             \
     handle.MakeWeak(parameters, callback)
