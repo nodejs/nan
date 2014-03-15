@@ -982,11 +982,11 @@ class NanCallback {
 
   NAN_INLINE(void SetFunction(const v8::Handle<v8::Function> &fn)) {
     NanScope();
-    NanPersistentToLocal(handle)->Set(NanNew<v8::String>("callback"), fn);
+    NanPersistentToLocal(handle)->Set(NanSymbol("callback"), fn);
   }
 
   NAN_INLINE(v8::Local<v8::Function> GetFunction ()) {
-    return NanPersistentToLocal(handle)->Get(NanNew<v8::String>("callback"))
+    return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
         .As<v8::Function>();
   }
 
