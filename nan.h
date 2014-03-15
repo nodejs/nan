@@ -478,6 +478,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         const _NanWeakCallbackData<T, P> &data))
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
+# define NanEscapableScope() v8::EscapableHandleScope esc_scope(nan_isolate)
+# define NanEscapeScope(val) esc_scope.Escape(val)
 # define NanLocker() v8::Locker locker(nan_isolate)
 # define NanUnlocker() v8::Unlocker unlocker(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
@@ -780,6 +782,8 @@ void NAN_INLINE(NanMakeWeakPersistent(
   }
 
 # define NanScope() v8::HandleScope scope
+# define NanEscapableScope() v8::HandleScope esc_scope()
+# define NanEscapeScope(val) esc_scope.Close(val)
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value) return scope.Close(value)
