@@ -160,8 +160,10 @@
 #if _MSC_VER < 1600
 // TODO(kkoopa): Implement
 #else
-#define typeof(expression) decltype(expression)
+#define _NAN_TYPEOF(expression) decltype(expression)
 #endif  // _MSC_VER < 1600
+#else
+#define _NAN_TYPEOF(expression) typeof(expression)
 #endif  // _MSC_VER
 
 // some generic helpers
@@ -1061,7 +1063,7 @@ class NanCallback {
     callback = NULL;
   }
 
-  void SavePersistent(const char *key, const v8::Local<v8::Object> &obj) {
+  void SavePersistent(const char *key, v8::Local<v8::Object> obj) {
     NanScope();
 
     v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);

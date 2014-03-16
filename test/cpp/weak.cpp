@@ -9,21 +9,21 @@
 #include <nan.h>
 
 NAN_WEAK_CALLBACK(weakCallback) {
-    int *parameter = data.GetParameter();
-    NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
-    if ((*parameter)++ == 0) {
-      data.Revive();
-    } else {
-      delete parameter;
-      data.Dispose();
-    }
+  int *parameter = data.GetParameter();
+  NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
+  if ((*parameter)++ == 0) {
+    data.Revive();
+  } else {
+    delete parameter;
+    data.Dispose();
+  }
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-    v8::Local<v8::String> lstring = NanNew<v8::String>("result");
-    int *parameter = new int(0);
-    NanMakeWeakPersistent(func, parameter, &weakCallback<v8::Function, int>);
-    return lstring;
+  v8::Local<v8::String> lstring = NanNew<v8::String>("result");
+  int *parameter = new int(0);
+  NanMakeWeakPersistent(func, parameter, &weakCallback<v8::Function, int>);
+  return lstring;
 }
 
 NAN_METHOD(Hustle) {
