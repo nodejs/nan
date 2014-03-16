@@ -26,11 +26,10 @@ NAN_METHOD(ReturnString) {
 
   void *s = NanRawString(args[0], enc, &bc, NULL, 0, flags);
   if (enc == Nan::UCS2) {
-    NanReturnValue(
-      NanNew<v8::String>(
-          static_cast<uint16_t *>(s)
-        , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1)
-    );
+    v8::Local<v8::String> retval = NanNew<v8::String>(static_cast<uint16_t *>(s)
+      , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1);
+    assert((bc & 1) == 0 && "UCS2 string byte count was not even");
+    NanReturnValue(retval);
   } else {
     NanReturnValue(
       NanNew<v8::String>(
