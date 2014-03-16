@@ -440,6 +440,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       handle.Reset(nan_isolate, obj);
   }
   template<typename T>
+  static NAN_INLINE(void NanAssignPersistent(
+      v8::Persistent<T>& handle
+    , const v8::Persistent<T>& obj)) {
+      handle.Reset(nan_isolate, obj);
+  }
+  template<typename T>
   static NAN_INLINE(v8::Local<T> NanPersistentToLocal(
      const v8::Persistent<T>& persistent
   )) {
