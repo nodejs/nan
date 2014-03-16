@@ -12,7 +12,6 @@ SOURCES = \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
 	test/cpp/asyncworker.cpp \
-	test/cpp/fromv8string.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
 	test/cpp/multifile2.h \
@@ -23,9 +22,10 @@ SOURCES = \
 	test/cpp/returnundefined.cpp \
 	test/cpp/returnvalue.cpp \
 	test/cpp/settergetter.cpp \
+	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
         test/cpp/weak.cpp \
-	test/node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc \
+	test/node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
 FILTER = -whitespace/parens
 
