@@ -297,10 +297,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanNull() v8::Null(nan_isolate)
 # define NanTrue() v8::True(nan_isolate)
 # define NanFalse() v8::False(nan_isolate)
+# define NanAdjustExternalMemory(amount)                                       \
+    nan_isolate->AdjustAmountOfExternalAllocatedMemory(amount)
+# define NanSetTemplate(templ, name, value) templ->Set(nan_isolate, name, value)
 # define NanGetCurrentContext() nan_isolate->GetCurrentContext()
 # define NanMakeCallback(target, func, argc, argv)                             \
     node::MakeCallback(nan_isolate, target, func, argc, argv)
-# define NanSymbol(value) NanNew<v8::String>(value)
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetAlignedPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
@@ -311,20 +313,20 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return T::New(nan_isolate);
   }
   template<typename T, typename P>
-  static NAN_INLINE(v8::Local<T> NanNew(P arg)) {
-    return T::New(nan_isolate, arg);
+  static NAN_INLINE(v8::Local<T> NanNew(P arg1)) {
+    return T::New(nan_isolate, arg1);
   }
   template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew(v8::Handle<T> arg)) {
-    return v8::Local<T>::New(nan_isolate, arg);
+  static NAN_INLINE(v8::Local<T> NanNew(v8::Handle<T> arg1)) {
+    return v8::Local<T>::New(nan_isolate, arg1);
   }
   template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew(v8::Persistent<T> arg)) {
-    return v8::Local<T>::New(nan_isolate, arg);
+  static NAN_INLINE(v8::Local<T> NanNew(v8::Persistent<T> arg1)) {
+    return v8::Local<T>::New(nan_isolate, arg1);
   }
   template<typename T, typename P>
-  static NAN_INLINE(v8::Local<T> NanNew(P arg, int length)) {
-    return T::New(nan_isolate, arg);
+  static NAN_INLINE(v8::Local<T> NanNew(P arg1, int arg2)) {
+    return T::New(nan_isolate, arg1, arg2);
   }
   template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
@@ -410,17 +412,20 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   const uint16_t *>(const uint16_t *arg)) {
     return v8::String::NewFromTwoByte(nan_isolate, arg);
   }
+
+# define NanSymbol(value) NanNew<v8::String>(value)
+
   template<typename T>
   static NAN_INLINE(void NanAssignPersistent(
       v8::Persistent<T>& handle
     , v8::Handle<T> obj)) {
       handle.Reset(nan_isolate, obj);
   }
-  template <class TypeName>
-  static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
-     const v8::Persistent<TypeName>& persistent
+  template<typename T>
+  static NAN_INLINE(v8::Local<T> NanPersistentToLocal(
+     const v8::Persistent<T>& persistent
   )) {
-    return v8::Local<TypeName>::New(nan_isolate, persistent);
+    return v8::Local<T>::New(nan_isolate, persistent);
   }
 
   template<class T, class P>
@@ -663,8 +668,10 @@ void NAN_INLINE(NanMakeWeakPersistent(
 # define NanNull() v8::Null()
 # define NanTrue() v8::True()
 # define NanFalse() v8::False()
+# define NanAdjustExternalMemory(amount)                                       \
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(amount)
+# define NanSetTemplate(templ, name, value) templ->Set(name, value)
 # define NanGetCurrentContext() v8::Context::GetCurrent()
-
 # if NODE_VERSION_AT_LEAST(0, 8, 0)
 #  define NanMakeCallback(target, func, argc, argv)                            \
     node::MakeCallback(target, func, argc, argv)
@@ -702,6 +709,7 @@ void NAN_INLINE(NanMakeWeakPersistent(
     return v8::Local<T>::New(T::New(arg, length));
   }
   template<typename T>
+
   static NAN_INLINE(void NanAssignPersistent(
       v8::Persistent<T>& handle
     , v8::Handle<T> obj)) {
