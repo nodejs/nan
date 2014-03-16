@@ -1306,7 +1306,7 @@ static NAN_INLINE(void* NanRawString(
 
   switch (encoding) {
     case Nan::ASCII:
-#if NODE_MODULE_VERSION < 0x0C
+#if NODE_MODULE_VERSION < 0x000C
       sz_ = toStr->Length();
       if (to == NULL) {
         to = new char[sz_ + term_len];
@@ -1364,8 +1364,8 @@ static NAN_INLINE(void* NanRawString(
       }
       NanSetPointerSafe<size_t>(
           datalen
-        , toStr->WriteUtf8(to, static_cast<int>(sz_ + term_len)                \
-            , NULL, flags)                                                     \
+        , toStr->WriteUtf8(to, static_cast<int>(sz_ + term_len)
+            , NULL, flags)
           - term_len);
       return to;
     case Nan::BASE64:

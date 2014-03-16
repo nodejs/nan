@@ -28,13 +28,14 @@ NAN_METHOD(ReturnString) {
   if (enc == Nan::UCS2) {
     NanReturnValue(
       NanNew<v8::String>(
-        static_cast<uint16_t *>(s)
-      , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1)
+          static_cast<uint16_t *>(s)
+        , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1)
     );
   } else {
     NanReturnValue(
       NanNew<v8::String>(
-        static_cast<char *>(s), (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
+          static_cast<char *>(s)
+        , (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
     );
   }
 }
