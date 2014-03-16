@@ -32,6 +32,14 @@
         ]
     }
   , {
+        "target_name" : "news"
+      , "sources"     : [ "cpp/news.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
         "target_name" : "returnvalue"
       , "sources"     : [ "cpp/returnvalue.cpp" ]
       , "cflags"      : [ "-Wno-unused-local-typedefs" ]
