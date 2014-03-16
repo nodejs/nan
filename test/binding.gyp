@@ -8,8 +8,8 @@
         ]
     }
   , {
-        "target_name" : "fromv8string"
-      , "sources"     : [ "cpp/fromv8string.cpp" ]
+        "target_name" : "strings"
+      , "sources"     : [ "cpp/strings.cpp" ]
       , "cflags"      : [ "-Wno-unused-local-typedefs" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"

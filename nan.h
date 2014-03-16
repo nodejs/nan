@@ -1426,20 +1426,6 @@ static NAN_INLINE(void* NanRawString(
   return to;
 }
 
-static NAN_INLINE(char* NanFromV8String(
-    v8::Handle<v8::Value> from
-  , enum Nan::Encoding encoding = Nan::UTF8
-  , size_t *datalen = NULL
-  , char *buf = NULL
-  , size_t buflen = 0
-  , int flags =
-        v8::String::NO_NULL_TERMINATION | v8::String::HINT_MANY_WRITES_EXPECTED
-)) {
-    return static_cast<char *>(
-      NanRawString(from, encoding, datalen, buf, buflen, flags)
-    );
-}
-
 static NAN_INLINE(char* NanCString(
     v8::Handle<v8::Value> from
   , size_t *datalen

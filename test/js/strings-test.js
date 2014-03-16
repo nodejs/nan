@@ -13,7 +13,7 @@ const ASCII  = 0
 test('FromV8String', function (t) {
   t.plan(17)
 
-  var r = bindings('fromv8string').returnString
+  var r = bindings('strings').returnString
 
   t.type(r, 'function')
   t.equal(r('an ascii string', ASCII), 'an ascii string')
@@ -36,13 +36,13 @@ test('FromV8String', function (t) {
 
 test('return NanCString', function (t) {
   t.plan(2);
-  var r = bindings('fromv8string').returnCString
+  var r = bindings('strings').returnCString
   t.type(r, 'function');
   t.equal(r('an utf8 strïng'), 'an utf8 strïng');
 });
 
 test('compare NanCString', function (t) {
-  var compareCStringToBuffer = bindings('fromv8string').compareCStringToBuffer
+  var compareCStringToBuffer = bindings('strings').compareCStringToBuffer
   t.type(compareCStringToBuffer, 'function')
 
   try {
@@ -54,7 +54,7 @@ test('compare NanCString', function (t) {
 })
 
 test('compare NanRawString', function (t) {
-  var compareRawStringToBuffer = bindings('fromv8string').compareRawStringToBuffer
+  var compareRawStringToBuffer = bindings('strings').compareRawStringToBuffer
     , rndStr                   = crypto.randomBytes(32)
 
   t.type(compareRawStringToBuffer, 'function')

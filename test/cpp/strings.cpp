@@ -24,16 +24,17 @@ NAN_METHOD(ReturnString) {
     flags = args[2]->Uint32Value();
   }
 
-  const char *s = NanFromV8String(args[0], enc, &bc, NULL, 0, flags);
+  void *s = NanRawString(args[0], enc, &bc, NULL, 0, flags);
   if (enc == Nan::UCS2) {
     NanReturnValue(
       NanNew<v8::String>(
-        reinterpret_cast<const uint16_t *>(s)
+        static_cast<uint16_t *>(s)
       , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1)
     );
   } else {
     NanReturnValue(
-      NanNew<v8::String>(s, (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
+      NanNew<v8::String>(
+        static_cast<char *>(s), (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
     );
   }
 }
@@ -42,7 +43,7 @@ NAN_METHOD(ReturnCString) {
   NanScope();
 
   size_t bc;
-  const char *s = NanCString(args[0], &bc);
+  char *s = NanCString(args[0], &bc);
   v8::Local<v8::String> str = NanNew<v8::String>(s);
   delete[] s;
 
@@ -170,4 +171,4 @@ void Init (v8::Handle<v8::Object> target) {
   );
 }
 
-NODE_MODULE(fromv8string, Init)
+NODE_MODULE(strings, Init)
