@@ -45,6 +45,18 @@ NAN_METHOD(ToPersistentAndBackAgain) {
   NanReturnValue(object);
 }
 
+NAN_METHOD(PersistentToPersistent) {
+  NanScope();
+
+  v8::Persistent<v8::String> persistent;
+  NanAssignPersistent(persistent, args[0].As<v8::String>());
+  NanAssignPersistent(persistentTest1, persistent);
+  NanDisposePersistent(persistent);
+  NanDisposePersistent(persistentTest1);
+
+  NanReturnUndefined();
+}
+
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("save1")
@@ -61,6 +73,10 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("toPersistentAndBackAgain")
     , NanNew<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("persistentToPersistent")
+    , NanNew<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
   );
 }
 
