@@ -8,39 +8,33 @@
 
 #include <nan.h>
 
-template<class T, class P>
-struct CallbackInfo {
-  CallbackInfo(v8::Handle<T> handle_, P* parameter_)
-    : parameter(parameter_) { NanAssignPersistent(handle, handle_);}
-  v8::Persistent<T> handle;
-  P* parameter;
-};
-
-
 NAN_WEAK_CALLBACK(weakCallback) {
-    NanMakeWeak(data.GetParameter()->handle, data.GetParameter(), weakCallback);
+  int *parameter = data.GetParameter();
+  NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
+  if ((*parameter)++ == 0) {
+    data.Revive();
+  } else {
+    delete parameter;
+    data.Dispose();
+  }
 }
 
-v8::Handle<v8::String> wrap() {
-    NanScope();
-    v8::Local<v8::String> lstring = v8::String::New("result");
-
-    int *parameter = new int(3);
-    CallbackInfo<v8::String, int> *cbinfo =
-      new CallbackInfo<v8::String, int>(lstring, parameter);
-    NanMakeWeak(cbinfo->handle, cbinfo, weakCallback);
-    return lstring;
+v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
+  v8::Local<v8::String> lstring = NanNew<v8::String>("result");
+  int *parameter = new int(0);
+  NanMakeWeakPersistent(func, parameter, &weakCallback<v8::Function, int>);
+  return lstring;
 }
 
 NAN_METHOD(Hustle) {
   NanScope();
-  NanReturnValue(wrap());
+  NanReturnValue(wrap(args[0].As<v8::Function>()));
 }
 
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("hustle")
-    , v8::FunctionTemplate::New(Hustle)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 

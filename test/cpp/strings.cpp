@@ -13,7 +13,7 @@ NAN_METHOD(ReturnString) {
   NanScope();
   Nan::Encoding enc = Nan::UTF8;
   size_t bc;
-  unsigned int flags = v8::String::HINT_MANY_WRITES_EXPECTED
+  int flags = v8::String::HINT_MANY_WRITES_EXPECTED
                      | v8::String::NO_NULL_TERMINATION;
 
   if (args[1]->IsUint32()) {
@@ -24,17 +24,17 @@ NAN_METHOD(ReturnString) {
     flags = args[2]->Uint32Value();
   }
 
-  char *s = NanFromV8String(args[0], enc, &bc, NULL, 0, flags);
+  void *s = NanRawString(args[0], enc, &bc, NULL, 0, flags);
   if (enc == Nan::UCS2) {
-    NanReturnValue(
-      v8::String::New(
-        reinterpret_cast<uint16_t *>(s)
-      , flags & v8::String::NO_NULL_TERMINATION ? bc / 2 : - 1
-      )
-    );
+    v8::Local<v8::String> retval = NanNew<v8::String>(static_cast<uint16_t *>(s)
+      , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1);
+    assert((bc & 1) == 0 && "UCS2 string byte count was not even");
+    NanReturnValue(retval);
   } else {
     NanReturnValue(
-      v8::String::New(s, flags & v8::String::NO_NULL_TERMINATION ? bc : -1)
+      NanNew<v8::String>(
+          static_cast<char *>(s)
+        , (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
     );
   }
 }
@@ -44,7 +44,7 @@ NAN_METHOD(ReturnCString) {
 
   size_t bc;
   char *s = NanCString(args[0], &bc);
-  v8::Local<v8::String> str = v8::String::New(s);
+  v8::Local<v8::String> str = NanNew<v8::String>(s);
   delete[] s;
 
   NanReturnValue(str);
@@ -60,21 +60,21 @@ NAN_METHOD(CompareCStringToBuffer) {
   char* actualChars = NanCString(args[0], &actualLen);
 
   if (actualLen != expectedLen) {
-    NanThrowError(v8::String::New("actual length != expected length"));
+    NanThrowError(NanNew<v8::String>("actual length != expected length"));
     NanReturnUndefined();
   }
 
   if (actualChars[expectedLen] != '\0') {
-    NanThrowError(v8::String::New("should be null-terminated"));
+    NanThrowError(NanNew<v8::String>("should be null-terminated"));
     NanReturnUndefined();
   }
 
   if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
-    NanThrowError(v8::String::New("actual chars != expected chars"));
+    NanThrowError(NanNew<v8::String>("actual chars != expected chars"));
     NanReturnUndefined();
   }
 
-  NanReturnValue(v8::Boolean::New(true));
+  NanReturnValue(NanNew<v8::Boolean>(true));
 }
 
 NAN_METHOD(CompareRawStringToBuffer) {
@@ -99,26 +99,26 @@ NAN_METHOD(CompareRawStringToBuffer) {
   delete[] decoded;
 
   if (actualLen != expectedLen) {
-    NanThrowError(v8::String::New("actual length != expected length"));
+    NanThrowError(NanNew<v8::String>("actual length != expected length"));
     NanReturnUndefined();
   }
 
   /* this is silly, it could easily be a virgin, zeroed buffer we're inspecting
   if (actualChars[expectedLen] == '\0') {
     delete[] actualChars;
-    NanThrowError(v8::String::New("should not be null-terminated"));
+    NanThrowError(NanNew<v8::String>("should not be null-terminated"));
     NanReturnUndefined();
   }*/
 
   if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
     delete[] actualChars;
-    NanThrowError(v8::String::New("actual chars != expected chars"));
+    NanThrowError(NanNew<v8::String>("actual chars != expected chars"));
     NanReturnUndefined();
   }
 
   delete[] actualChars;
 
-  NanReturnValue(v8::Boolean::New(true));
+  NanReturnValue(NanNew<v8::Boolean>(true));
 }
 
 v8::Persistent<v8::FunctionTemplate> returnString_persistent;
@@ -130,7 +130,7 @@ void Init (v8::Handle<v8::Object> target) {
   NanScope();
 
   v8::Local<v8::FunctionTemplate> returnString =
-    v8::FunctionTemplate::New(ReturnString);
+    NanNew<v8::FunctionTemplate>(ReturnString);
   NanAssignPersistent(
     returnString_persistent
   , returnString
@@ -140,7 +140,7 @@ void Init (v8::Handle<v8::Object> target) {
     , returnString->GetFunction()
   );
   v8::Local<v8::FunctionTemplate> returnCString =
-    v8::FunctionTemplate::New(ReturnCString);
+    NanNew<v8::FunctionTemplate>(ReturnCString);
   NanAssignPersistent(
     returnCString_persistent
   , returnCString
@@ -150,7 +150,7 @@ void Init (v8::Handle<v8::Object> target) {
     , returnCString->GetFunction()
   );
   v8::Local<v8::FunctionTemplate> compareCStringToBuffer =
-    v8::FunctionTemplate::New(CompareCStringToBuffer);
+    NanNew<v8::FunctionTemplate>(CompareCStringToBuffer);
   NanAssignPersistent(
     compareCStringToBuffer_persistent
   , compareCStringToBuffer
@@ -160,7 +160,7 @@ void Init (v8::Handle<v8::Object> target) {
     , compareCStringToBuffer->GetFunction()
   );
   v8::Local<v8::FunctionTemplate> compareRawStringToBuffer =
-    v8::FunctionTemplate::New(CompareRawStringToBuffer);
+    NanNew<v8::FunctionTemplate>(CompareRawStringToBuffer);
   NanAssignPersistent(
     compareRawStringToBuffer_persistent
   , compareRawStringToBuffer
@@ -171,4 +171,4 @@ void Init (v8::Handle<v8::Object> target) {
   );
 }
 
-NODE_MODULE(fromv8string, Init)
+NODE_MODULE(strings, Init)

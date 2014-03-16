@@ -11,6 +11,8 @@
 
 NAN_METHOD(ReturnString) {
   NanScope();
-
-  NanReturnValue(v8::String::New(NanFromV8String(args[0])));
+  char *buf = NanCString(args[0], NULL);
+  v8::Local<v8::String> s = NanNew<v8::String>(buf);
+  delete[] buf;
+  NanReturnValue(s);
 }

@@ -45,33 +45,22 @@ NAN_METHOD(ToPersistentAndBackAgain) {
   NanReturnValue(object);
 }
 
-/* do not ever do like this, it leaks a persistent handle */
-NAN_METHOD(InitPersistentAndLeak) {
-  NanScope();
-  NanInitPersistent(result, v8::String::New("result"));
-  NanReturnValue(NanPersistentToLocal(result));
-}
-
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("save1")
-    , v8::FunctionTemplate::New(Save1)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Save1)->GetFunction()
   );
   target->Set(
       NanSymbol("get1")
-    , v8::FunctionTemplate::New(Get1)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Get1)->GetFunction()
   );
   target->Set(
       NanSymbol("dispose1")
-    , v8::FunctionTemplate::New(Dispose1)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(Dispose1)->GetFunction()
   );
   target->Set(
       NanSymbol("toPersistentAndBackAgain")
-    , v8::FunctionTemplate::New(ToPersistentAndBackAgain)->GetFunction()
-  );
-  target->Set(
-      NanSymbol("initPersistentAndLeak")
-    , v8::FunctionTemplate::New(InitPersistentAndLeak)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
   );
 }
 
