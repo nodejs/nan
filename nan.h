@@ -331,6 +331,22 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return T::New(nan_isolate, arg1, arg2);
   }
   template<>
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() int32_t>(int32_t val)) {
+    return v8::Uint32::New(nan_isolate, val)->ToUint32();
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+    return v8::Uint32::NewFromUnsigned(nan_isolate, val)->ToUint32();
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() int32_t>(int32_t val)) {
+    return v8::Int32::New(nan_isolate, val)->ToInt32();
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+    return v8::Int32::NewFromUnsigned(nan_isolate, val)->ToInt32();
+  }
+  template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
   char *>(char *arg, int length)) {
     return v8::String::NewFromUtf8(
@@ -710,8 +726,24 @@ void NAN_INLINE(NanMakeWeakPersistent(
   static NAN_INLINE(v8::Local<T> NanNew(P arg, int length)) {
     return v8::Local<T>::New(T::New(arg, length));
   }
-  template<typename T>
+  template<>
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() int32_t>(int32_t val)) {
+    return v8::Uint32::New(val)->ToUint32();
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+    return v8::Uint32::NewFromUnsigned(val)->ToUint32();
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() int32_t>(int32_t val)) {
+    return v8::Int32::New(val)->ToInt32();
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+    return v8::Int32::NewFromUnsigned(val)->ToInt32();
+  }
 
+  template<typename T>
   static NAN_INLINE(void NanAssignPersistent(
       v8::Persistent<T>& handle
     , v8::Handle<T> obj)) {
