@@ -21,5 +21,5 @@ NAN_METHOD(CalculateSync) {
   int points = args[0]->Uint32Value();
   double est = Estimate(points);
 
-  NanReturnValue(Number::New(est));
+  NanReturnValue(NanNew<Number>(est));
 }
