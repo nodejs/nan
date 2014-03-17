@@ -331,19 +331,23 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return T::New(nan_isolate, arg1, arg2);
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() int32_t>(int32_t val)) {
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA()
+  int32_t>(int32_t val)) {
     return v8::Uint32::NewFromUnsigned(nan_isolate, val)->ToUint32();
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA()
+  uint32_t>(uint32_t val)) {
     return v8::Uint32::NewFromUnsigned(nan_isolate, val)->ToUint32();
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() int32_t>(int32_t val)) {
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA()
+  int32_t>(int32_t val)) {
     return v8::Int32::New(nan_isolate, val)->ToInt32();
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA()
+  uint32_t>(uint32_t val)) {
     return v8::Int32::New(nan_isolate, val)->ToInt32();
   }
   template<>
@@ -733,60 +737,72 @@ void NAN_INLINE(NanMakeWeakPersistent(
     return v8::Local<T>::New(T::New(arg, length));
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() int32_t>(int32_t val)) {
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA()
+  int32_t>(int32_t val)) {
     return v8::Uint32::NewFromUnsigned(val)->ToUint32();
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+  NAN_INLINE(v8::Local<v8::Uint32> NanNew<v8::Uint32 _NAN_COMMA()
+  uint32_t>(uint32_t val)) {
     return v8::Uint32::NewFromUnsigned(val)->ToUint32();
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() int32_t>(int32_t val)) {
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA()
+  int32_t>(int32_t val)) {
     return v8::Int32::New(val)->ToInt32();
   }
   template<>
-  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA() uint32_t>(uint32_t val)) {
+  NAN_INLINE(v8::Local<v8::Int32> NanNew<v8::Int32 _NAN_COMMA()
+  uint32_t>(uint32_t val)) {
     return v8::Int32::New(val)->ToInt32();
   }
 
   template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
   uint8_t *>(uint8_t *arg, int length)) {
-    uint16_t warg[length];
+    uint16_t *warg = new uint16_t[length];
     for (int i = 0; i < length; i++) {
       warg[i] = arg[i];
     }
-    return v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    delete[] warg;
+    return retval;
   }
   template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
   const uint8_t *>(const uint8_t *arg, int length)) {
-    uint16_t warg[length];
+    uint16_t *warg = new uint16_t[length];
     for (int i = 0; i < length; i++) {
       warg[i] = arg[i];
     }
-    return v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    delete[] warg;
+    return retval;
   }
   template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
   uint8_t *>(uint8_t *arg)) {
     int length = strlen(reinterpret_cast<char *>(arg));
-    uint16_t warg[length];
+    uint16_t *warg = new uint16_t[length];
     for (int i = 0; i < length; i++) {
       warg[i] = arg[i];
     }
 
-    return v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    delete[] warg;
+    return retval;
   }
   template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
   const uint8_t *>(const uint8_t *arg)) {
     int length = strlen(reinterpret_cast<const char *>(arg));
-    uint16_t warg[length];
+    uint16_t *warg = new uint16_t[length];
     for (int i = 0; i < length; i++) {
       warg[i] = arg[i];
     }
-    return v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    delete[] warg;
+    return retval;
   }
 
   template<typename T>
