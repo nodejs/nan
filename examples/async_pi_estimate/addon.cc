@@ -19,10 +19,10 @@ using v8::Object;
 // Estimate() function
 void InitAll(Handle<Object> exports) {
   exports->Set(NanSymbol("calculateSync"),
-    FunctionTemplate::New(CalculateSync)->GetFunction());
+    NanNew<FunctionTemplate>(CalculateSync)->GetFunction());
 
   exports->Set(NanSymbol("calculateAsync"),
-    FunctionTemplate::New(CalculateAsync)->GetFunction());
+    NanNew<FunctionTemplate>(CalculateAsync)->GetFunction());
 }
 
 NODE_MODULE(addon, InitAll)
