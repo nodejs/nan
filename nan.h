@@ -441,6 +441,29 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::String::Empty(nan_isolate);
   }
 
+  static NAN_INLINE(void NanAddGCEpilogueCallback(
+      v8::Isolate::GCEpilogueCallback callback
+    , v8::GCType gc_type_filter = v8::kGCTypeAll)) {
+    nan_isolate->AddGCEpilogueCallback(callback, gc_type_filter);
+  }
+  static NAN_INLINE(void NanRemoveGCEpilogueCallback(
+      v8::Isolate::GCEpilogueCallback callback)) {
+    nan_isolate->RemoveGCEpilogueCallback(callback);
+  }
+  static NAN_INLINE(void NanAddGCPrologueCallback(
+      v8::Isolate::GCPrologueCallback callback
+    , v8::GCType gc_type_filter = v8::kGCTypeAll)) {
+    nan_isolate->AddGCPrologueCallback(callback, gc_type_filter);
+  }
+  static NAN_INLINE(void NanRemoveGCPrologueCallback(
+      v8::Isolate::GCPrologueCallback callback)) {
+    nan_isolate->RemoveGCPrologueCallback(callback);
+  }
+  static NAN_INLINE(void NanGetHeapStatistics(
+      v8::HeapStatistics *heap_statistics)) {
+    nan_isolate->GetHeapStatistics(heap_statistics);
+  }
+
 # define NanSymbol(value) NanNew<v8::String>(value)
 
   template<typename T>
@@ -815,6 +838,29 @@ typedef v8::InvocationCallback NanFunctionCallback;
   template<>
   NAN_INLINE(v8::Local<v8::String> NanNew<v8::String>()) {
     return v8::String::Empty();
+  }
+
+  static NAN_INLINE(void NanAddGCEpilogueCallback(
+    v8::GCEpilogueCallback callback
+  , v8::GCType gc_type_filter = v8::kGCTypeAll)) {
+    v8::V8::AddGCEpilogueCallback(callback, gc_type_filter);
+  }
+  static NAN_INLINE(void NanRemoveGCEpilogueCallback(
+    v8::GCEpilogueCallback callback)) {
+    v8::V8::RemoveGCEpilogueCallback(callback);
+  }
+  static NAN_INLINE(void NanAddGCPrologueCallback(
+    v8::GCPrologueCallback callback
+  , v8::GCType gc_type_filter = v8::kGCTypeAll)) {
+    v8::V8::AddGCPrologueCallback(callback, gc_type_filter);
+  }
+  static NAN_INLINE(void NanRemoveGCPrologueCallback(
+    v8::GCPrologueCallback callback)) {
+    v8::V8::RemoveGCPrologueCallback(callback);
+  }
+  static NAN_INLINE(void NanGetHeapStatistics(
+    v8::HeapStatistics *heap_statistics)) {
+    v8::V8::GetHeapStatistics(heap_statistics);
   }
 
   template<typename T>
