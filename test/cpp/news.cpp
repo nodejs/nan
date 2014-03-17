@@ -52,6 +52,10 @@ NAN_METHOD(NewUcs2String) {
   uint16_t s[] = {'s', 't', 'r', 0x00ef, 'n', 'g', 0};
   NanReturnValue(NanNew<v8::String>(s));
 }
+NAN_METHOD(NewRegExp) {
+  NanScope();
+  NanReturnValue(NanNew<v8::RegExp>(NanNew<v8::String>("foo"), v8::RegExp::kNone));
+}
 
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
@@ -93,6 +97,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newUcs2String")
     , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newRegExp")
+    , NanNew<v8::FunctionTemplate>(NewRegExp)->GetFunction()
   );
 }
 
