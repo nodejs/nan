@@ -316,6 +316,26 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   static NAN_INLINE v8::Local<T> NanNew(P arg1, int arg2) {
     return T::New(nan_isolate, arg1, arg2);
   }
+  template<typename T>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
+  template<typename T>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
+  template<typename T, typename P>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
+  template<typename T, typename P>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
   template<>
   NAN_INLINE v8::Local<v8::Uint32> NanNew<v8::Uint32, int32_t>(int32_t val) {
     return v8::Uint32::NewFromUnsigned(nan_isolate, val)->ToUint32();
@@ -744,6 +764,26 @@ typedef v8::InvocationCallback NanFunctionCallback;
   template<typename T, typename P>
   static NAN_INLINE v8::Local<T> NanNew(P arg, int length) {
     return v8::Local<T>::New(T::New(arg, length));
+  }
+  template<typename T>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
+  template<typename T>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
+  template<typename T, typename P>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
+  }
+  template<typename T, typename P>
+  static NAN_INLINE v8::Local<v8::RegExp> NanNew(
+      v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
+    return v8::RegExp::New(pattern, flags);
   }
   template<>
   NAN_INLINE v8::Local<v8::Uint32> NanNew<v8::Uint32, int32_t>(int32_t val) {
