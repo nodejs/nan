@@ -230,6 +230,8 @@ static NAN_INLINE(uint32_t NanUInt32OptionValue(
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.3 and below won't compile with these)
 
+typedef v8::FunctionCallback NanFunctionCallback;
+
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define _NAN_METHOD_RETURN_TYPE void
@@ -434,6 +436,10 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   const uint16_t *>(const uint16_t *arg)) {
     return v8::String::NewFromTwoByte(nan_isolate, arg);
   }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String>()) {
+    return v8::String::Empty(nan_isolate);
+  }
 
 # define NanSymbol(value) NanNew<v8::String>(value)
 
@@ -511,8 +517,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
         const _NanWeakCallbackData<T, P> &data))
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
-# define NanEscapableScope() v8::EscapableHandleScope esc_scope(nan_isolate)
-# define NanEscapeScope(val) esc_scope.Escape(val)
+# define NanEscapableScope() v8::EscapableHandleScope scope(nan_isolate)
+# define NanEscapeScope(val) scope.Escape(val)
 # define NanLocker() v8::Locker locker(nan_isolate)
 # define NanUnlocker() v8::Unlocker unlocker(nan_isolate)
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
@@ -639,6 +645,8 @@ void NAN_INLINE(NanMakeWeakPersistent(
 
 #else
 // Node 0.8 and 0.10
+
+typedef v8::InvocationCallback NanFunctionCallback;
 
 # define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
@@ -804,6 +812,10 @@ void NAN_INLINE(NanMakeWeakPersistent(
     delete[] warg;
     return retval;
   }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String>()) {
+    return v8::String::Empty();
+  }
 
   template<typename T>
   static NAN_INLINE(void NanAssignPersistent(
@@ -888,8 +900,8 @@ void NAN_INLINE(NanMakeWeakPersistent(
   }
 
 # define NanScope() v8::HandleScope scope
-# define NanEscapableScope() v8::HandleScope esc_scope()
-# define NanEscapeScope(val) esc_scope.Close(val)
+# define NanEscapableScope() v8::HandleScope scope
+# define NanEscapeScope(val) scope.Close(val)
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value) return scope.Close(value)
