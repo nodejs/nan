@@ -60,7 +60,7 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
   v8::Local<v8::FunctionTemplate> constructorHandle =
-      NanPersistentToLocal(settergetter_constructor);
+      NanNew(settergetter_constructor);
   v8::Local<v8::Object> instance =
     constructorHandle->GetFunction()->NewInstance(0, NULL);
   return instance;

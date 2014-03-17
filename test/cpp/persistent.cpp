@@ -22,7 +22,7 @@ NAN_METHOD(Save1) {
 NAN_METHOD(Get1) {
   NanScope();
 
-  NanReturnValue(NanPersistentToLocal<v8::String>(persistentTest1));
+  NanReturnValue(NanNew(persistentTest1));
 }
 
 NAN_METHOD(Dispose1) {
@@ -38,7 +38,7 @@ NAN_METHOD(ToPersistentAndBackAgain) {
 
   v8::Persistent<v8::Object> persistent;
   NanAssignPersistent(persistent, args[0].As<v8::Object>());
-  v8::Local<v8::Object> object = NanPersistentToLocal<v8::Object>(persistent);
+  v8::Local<v8::Object> object = NanNew(persistent);
   NanDisposePersistent(persistent);
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
 
