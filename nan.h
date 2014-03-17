@@ -546,7 +546,7 @@ void NAN_INLINE(NanMakeWeakPersistent(
       nan_isolate->ThrowException(_NAN_ERROR(fun, errmsg));                    \
     } while (0);
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
+  static NAN_INLINE(v8::Local<v8::Value> NanError(const char* errmsg)) {
     return  _NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
@@ -559,7 +559,7 @@ void NAN_INLINE(NanMakeWeakPersistent(
     nan_isolate->ThrowException(error);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanError(
+  static NAN_INLINE(v8::Local<v8::Value> NanError(
       const char *msg
     , const int errorNumber
   )) {
@@ -576,7 +576,7 @@ void NAN_INLINE(NanMakeWeakPersistent(
     NanThrowError(NanError(msg, errorNumber));
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanTypeError(const char* errmsg)) {
+  static NAN_INLINE(v8::Local<v8::Value> NanTypeError(const char* errmsg)) {
     return _NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
@@ -584,7 +584,7 @@ void NAN_INLINE(NanMakeWeakPersistent(
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanRangeError(const char* errmsg)) {
+  static NAN_INLINE(v8::Local<v8::Value> NanRangeError(const char* errmsg)) {
     return _NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
@@ -908,7 +908,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
-# define NanObjectWrapHandle(obj) obj->handle_
+# define NanObjectWrapHandle(obj) v8::Local<v8::Object>::New(obj->handle_)
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))
@@ -916,25 +916,26 @@ typedef v8::InvocationCallback NanFunctionCallback;
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
       NanScope();                                                              \
-      return v8::ThrowException(_NAN_ERROR(fun, errmsg));                      \
+      return v8::Local<v8::Value>::New(                                        \
+        v8::ThrowException(_NAN_ERROR(fun, errmsg)));                          \
     } while (0);
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanError(const char* errmsg)) {
+  static NAN_INLINE(v8::Local<v8::Value> NanError(const char* errmsg)) {
     return _NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(const char* errmsg)) {
+  static NAN_INLINE(v8::Local<v8::Value> NanThrowError(const char* errmsg)) {
     _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(
+  static NAN_INLINE(v8::Local<v8::Value> NanThrowError(
       v8::Handle<v8::Value> error
   )) {
     NanScope();
-    return v8::ThrowException(error);
+    return v8::Local<v8::Value>::New(v8::ThrowException(error));
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanError(
+  static NAN_INLINE(v8::Local<v8::Value> NanError(
       const char *msg
     , const int errorNumber
   )) {
@@ -944,30 +945,30 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return err;
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowError(
+  static NAN_INLINE(v8::Local<v8::Value> NanThrowError(
       const char *msg
     , const int errorNumber
   )) {
     return NanThrowError(NanError(msg, errorNumber));
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanTypeError(const char* errmsg)) {
+  static NAN_INLINE(v8::Local<v8::Value> NanTypeError(const char* errmsg)) {
     return _NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowTypeError(
+  static NAN_INLINE(v8::Local<v8::Value> NanThrowTypeError(
       const char* errmsg
   )) {
     _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanRangeError(
+  static NAN_INLINE(v8::Local<v8::Value> NanRangeError(
       const char* errmsg
   )) {
     return _NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
-  static NAN_INLINE(v8::Handle<v8::Value> NanThrowRangeError(
+  static NAN_INLINE(v8::Local<v8::Value> NanThrowRangeError(
       const char* errmsg
   )) {
     _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
