@@ -325,7 +325,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return v8::Local<T>::New(nan_isolate, arg1);
   }
   template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew(v8::Persistent<T> arg1)) {
+  static NAN_INLINE(v8::Local<T> NanNew(const v8::Persistent<T> &arg1)) {
     return v8::Local<T>::New(nan_isolate, arg1);
   }
   template<typename T, typename P>
@@ -478,12 +478,6 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     , const v8::Persistent<T>& obj)) {
       handle.Reset(nan_isolate, obj);
   }
-  template<typename T>
-  static NAN_INLINE(v8::Local<T> NanPersistentToLocal(
-     const v8::Persistent<T>& persistent
-  )) {
-    return v8::Local<T>::New(nan_isolate, persistent);
-  }
 
   template<class T, class P>
   struct _NanWeakCallbackInfo {
@@ -510,7 +504,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
       : info_(info) { }
 
     NAN_INLINE(v8::Local<T> GetValue() const) {
-      return NanPersistentToLocal(info_->persistent);
+      return NanNew(info_->persistent);
     }
     NAN_INLINE(P* GetParameter() const) { return info_->parameter; }
     NAN_INLINE(void Revive() const) {
@@ -652,7 +646,7 @@ void NAN_INLINE(NanMakeWeakPersistent(
       v8::Persistent<v8::FunctionTemplate>& function_template
     , v8::Handle<v8::Value> value
   )) {
-    return NanPersistentToLocal(function_template)->HasInstance(value);
+    return NanNew(function_template)->HasInstance(value);
   }
 
   static NAN_INLINE(v8::Local<v8::Context> NanNewContextHandle(
@@ -756,7 +750,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return v8::Local<T>::New(arg);
   }
   template<typename T>
-  static NAN_INLINE(v8::Local<T> NanNew(v8::Persistent<T> arg)) {
+  static NAN_INLINE(v8::Local<T> NanNew(const v8::Persistent<T> &arg)) {
     return v8::Local<T>::New(arg);
   }
   template<typename T, typename P>
@@ -870,12 +864,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
       handle.Dispose();
       handle = v8::Persistent<T>::New(obj);
   }
-  template <class TypeName>
-  static NAN_INLINE(v8::Local<TypeName> NanPersistentToLocal(
-     const v8::Persistent<TypeName>& persistent
-  )) {
-    return v8::Local<TypeName>::New(persistent);
-  }
 
   template<class T, class P>
   struct _NanWeakCallbackInfo {
@@ -902,7 +890,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
       : info_(info) { }
 
     NAN_INLINE(v8::Local<T> GetValue() const) {
-      return NanPersistentToLocal(info_->persistent);
+      return NanNew(info_->persistent);
     }
     NAN_INLINE(P* GetParameter() const) { return info_->parameter; }
     NAN_INLINE(void Revive() const) {
@@ -1147,18 +1135,18 @@ class NanCallback {
 
   NAN_INLINE(void SetFunction(const v8::Handle<v8::Function> &fn)) {
     NanScope();
-    NanPersistentToLocal(handle)->Set(NanSymbol("callback"), fn);
+    NanNew(handle)->Set(NanSymbol("callback"), fn);
   }
 
   NAN_INLINE(v8::Local<v8::Function> GetFunction ()) {
-    return NanPersistentToLocal(handle)->Get(NanSymbol("callback"))
+    return NanNew(handle)->Get(NanSymbol("callback"))
         .As<v8::Function>();
   }
 
   void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
 #if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
-    v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
+    v8::Local<v8::Function> callback = NanNew(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
     node::MakeCallback(
         nan_isolate
@@ -1169,7 +1157,7 @@ class NanCallback {
     );
 #else
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
-    v8::Local<v8::Function> callback = NanPersistentToLocal(handle)->
+    v8::Local<v8::Function> callback = NanNew(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
     node::MakeCallback(
         v8::Context::GetCurrent()->Global()
@@ -1219,14 +1207,14 @@ class NanCallback {
   void SavePersistent(const char *key, v8::Local<v8::Object> obj) {
     NanScope();
 
-    v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
+    v8::Local<v8::Object> handle = NanNew(persistentHandle);
     handle->Set(NanSymbol(key), obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) {
     NanScope();
 
-    v8::Local<v8::Object> handle = NanPersistentToLocal(persistentHandle);
+    v8::Local<v8::Object> handle = NanNew(persistentHandle);
     return handle->Get(NanSymbol(key)).As<v8::Object>();
   }
 
