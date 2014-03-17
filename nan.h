@@ -749,6 +749,46 @@ void NAN_INLINE(NanMakeWeakPersistent(
     return v8::Int32::New(val)->ToInt32();
   }
 
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  uint8_t *>(uint8_t *arg, int length)) {
+    uint16_t warg[length];
+    for (int i = 0; i < length; i++) {
+      warg[i] = arg[i];
+    }
+    return v8::String::New(warg, length);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const uint8_t *>(const uint8_t *arg, int length)) {
+    uint16_t warg[length];
+    for (int i = 0; i < length; i++) {
+      warg[i] = arg[i];
+    }
+    return v8::String::New(warg, length);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  uint8_t *>(uint8_t *arg)) {
+    int length = strlen(reinterpret_cast<char *>(arg));
+    uint16_t warg[length];
+    for (int i = 0; i < length; i++) {
+      warg[i] = arg[i];
+    }
+
+    return v8::String::New(warg, length);
+  }
+  template<>
+  NAN_INLINE(v8::Local<v8::String> NanNew<v8::String _NAN_COMMA()
+  const uint8_t *>(const uint8_t *arg)) {
+    int length = strlen(reinterpret_cast<const char *>(arg));
+    uint16_t warg[length];
+    for (int i = 0; i < length; i++) {
+      warg[i] = arg[i];
+    }
+    return v8::String::New(warg, length);
+  }
+
   template<typename T>
   static NAN_INLINE(void NanAssignPersistent(
       v8::Persistent<T>& handle
