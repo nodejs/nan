@@ -316,6 +316,24 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   static NAN_INLINE v8::Local<T> NanNew(P arg1, int arg2) {
     return T::New(nan_isolate, arg1, arg2);
   }
+  template<>
+  NAN_INLINE v8::Local<v8::BooleanObject> NanNew(bool value) {
+    return v8::BooleanObject::New(value).As<v8::BooleanObject>();
+  }
+  template<>
+  NAN_INLINE v8::Local<v8::StringObject> NanNew<v8::StringObject, v8::Local<v8::String> >(
+      v8::Local<v8::String> value) {
+    return v8::StringObject::New(value).As<v8::StringObject>();
+  }
+  template<>
+  NAN_INLINE v8::Local<v8::StringObject> NanNew<v8::StringObject, v8::Handle<v8::String> >(
+      v8::Handle<v8::String> value) {
+    return v8::StringObject::New(value).As<v8::StringObject>();
+  }
+  template<>
+  NAN_INLINE v8::Local<v8::NumberObject> NanNew(double value) {
+    return v8::NumberObject::New(nan_isolate, value).As<v8::NumberObject>();
+  }
   template<typename T>
   static NAN_INLINE v8::Local<v8::RegExp> NanNew(
       v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
@@ -785,6 +803,26 @@ typedef v8::InvocationCallback NanFunctionCallback;
       v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
     return v8::RegExp::New(pattern, flags);
   }
+
+  template<>
+  NAN_INLINE v8::Local<v8::BooleanObject> NanNew(bool value) {
+    return v8::BooleanObject::New(value).As<v8::BooleanObject>();
+  }
+  template<>
+  NAN_INLINE v8::Local<v8::StringObject> NanNew<v8::StringObject, v8::Local<v8::String> >(
+      v8::Local<v8::String> value) {
+    return v8::StringObject::New(value).As<v8::StringObject>();
+  }
+  template<>
+  NAN_INLINE v8::Local<v8::StringObject> NanNew<v8::StringObject, v8::Handle<v8::String> >(
+      v8::Handle<v8::String> value) {
+    return v8::StringObject::New(value).As<v8::StringObject>();
+  }
+  template<>
+  NAN_INLINE v8::Local<v8::NumberObject> NanNew(double value) {
+    return v8::NumberObject::New(value).As<v8::NumberObject>();
+  }
+
   template<>
   NAN_INLINE v8::Local<v8::Uint32> NanNew<v8::Uint32, int32_t>(int32_t val) {
     return v8::Uint32::NewFromUnsigned(val)->ToUint32();
