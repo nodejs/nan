@@ -51,7 +51,7 @@ NAN_METHOD(NewLatin1String) {
 }
 NAN_METHOD(NewUcs2String) {
   NanScope();
-  uint16_t s[] = {'s', 't', 'r', 0x00ef, 'n', 'g', 0};
+  uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
   NanReturnValue(NanNew<v8::String>(s));
 }
 NAN_METHOD(NewRegExp) {
@@ -75,6 +75,35 @@ NAN_METHOD(NewExternal) {
   v8::Local<v8::External> ext = NanNew<v8::External>(&magic);
   assert(*static_cast<int *>(ext->Value()) == 1337);
   NanReturnValue(NanNew<v8::String>("passed"));
+}
+
+static const uint16_t ws[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
+static const char s[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
+
+class ExtString : public v8::String::ExternalStringResource {
+ public:
+  ~ExtString() { }
+  const uint16_t *data() const { return ws; }
+  size_t length() const { return sizeof (ws) / sizeof (*ws) - 1; };
+};
+
+
+class ExtAsciiString : public v8::String::ExternalAsciiStringResource {
+ public:
+  ~ExtAsciiString() { }
+  const char *data() const { return s; }
+  size_t length() const { return sizeof (s) / sizeof (*s) - 1; };
+};
+
+NAN_METHOD(NewExternalStringResource) {
+  NanScope();
+  v8::Local<v8::String> ext = NanNew(new ExtString());
+  NanReturnValue(ext);
+}
+NAN_METHOD(NewExternalAsciiStringResource) {
+  NanScope();
+  v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
+  NanReturnValue(ext);
 }
 
 void Init(v8::Handle<v8::Object> target) {
@@ -137,6 +166,14 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newExternal")
     , NanNew<v8::FunctionTemplate>(NewExternal)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newExternalStringResource")
+    , NanNew<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newExternalAsciiStringResource")
+    , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)->GetFunction()
   );
 }
 
