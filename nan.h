@@ -316,6 +316,12 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   static NAN_INLINE v8::Local<T> NanNew(P arg1, int arg2) {
     return T::New(nan_isolate, arg1, arg2);
   }
+  static NAN_INLINE v8::Local<v8::String> NanNew(v8::String::ExternalStringResource *resource) {
+    return v8::String::NewExternal(nan_isolate, resource);
+  }
+  static NAN_INLINE v8::Local<v8::String> NanNew(v8::String::ExternalAsciiStringResource *resource) {
+    return v8::String::NewExternal(nan_isolate, resource);
+  }
   template<>
   NAN_INLINE v8::Local<v8::BooleanObject> NanNew(bool value) {
     return v8::BooleanObject::New(value).As<v8::BooleanObject>();
@@ -802,6 +808,13 @@ typedef v8::InvocationCallback NanFunctionCallback;
   static NAN_INLINE v8::Local<v8::RegExp> NanNew(
       v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
     return v8::RegExp::New(pattern, flags);
+  }
+
+  static NAN_INLINE v8::Local<v8::String> NanNew(v8::String::ExternalStringResource *resource) {
+    return v8::String::NewExternal(resource);
+  }
+  static NAN_INLINE v8::Local<v8::String> NanNew(v8::String::ExternalAsciiStringResource *resource) {
+    return v8::String::NewExternal(resource);
   }
 
   template<>
