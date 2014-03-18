@@ -9,6 +9,8 @@
 #include <node.h>
 #include <nan.h>
 
+static int magic = 1337;
+
 NAN_METHOD(NewNumber) {
   NanScope();
   NanReturnValue(NanNew<v8::Number>(0.5));
@@ -56,6 +58,24 @@ NAN_METHOD(NewRegExp) {
   NanScope();
   NanReturnValue(NanNew<v8::RegExp>(NanNew<v8::String>("foo"), v8::RegExp::kNone));
 }
+NAN_METHOD(NewStringObject) {
+  NanScope();
+  NanReturnValue(NanNew<v8::StringObject>(NanNew<v8::String>("foo")));
+}
+NAN_METHOD(NewNumberObject) {
+  NanScope();
+  NanReturnValue(NanNew<v8::NumberObject>(0.5));
+}
+NAN_METHOD(NewBooleanObject) {
+  NanScope();
+  NanReturnValue(NanNew<v8::BooleanObject>(true));
+}
+NAN_METHOD(NewExternal) {
+  NanScope();
+  v8::Local<v8::External> ext = NanNew<v8::External>(&magic);
+  assert(*static_cast<int *>(ext->Value()) == 1337);
+  NanReturnValue(NanNew<v8::String>("passed"));
+}
 
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
@@ -101,6 +121,22 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newRegExp")
     , NanNew<v8::FunctionTemplate>(NewRegExp)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newStringObject")
+    , NanNew<v8::FunctionTemplate>(NewStringObject)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newNumberObject")
+    , NanNew<v8::FunctionTemplate>(NewNumberObject)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newBooleanObject")
+    , NanNew<v8::FunctionTemplate>(NewBooleanObject)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newExternal")
+    , NanNew<v8::FunctionTemplate>(NewExternal)->GetFunction()
   );
 }
 
