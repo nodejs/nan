@@ -100,10 +100,19 @@ NAN_METHOD(NewExternalStringResource) {
   v8::Local<v8::String> ext = NanNew(new ExtString());
   NanReturnValue(ext);
 }
+
 NAN_METHOD(NewExternalAsciiStringResource) {
   NanScope();
   v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
   NanReturnValue(ext);
+}
+
+NAN_METHOD(NewSignature) {
+  NanScope();
+  v8::Local<v8::FunctionTemplate> tmpl = NanNew<v8::FunctionTemplate>(NewSignature);
+  v8::Local<v8::Signature> sig = NanNew<v8::Signature>(tmpl, 1, &tmpl);
+  tmpl = NanNew<v8::FunctionTemplate>(NewSignature, v8::Handle<v8::Value>(), sig);
+  NanReturnValue(NanNew<v8::String>("string"));
 }
 
 void Init(v8::Handle<v8::Object> target) {
@@ -174,6 +183,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newExternalAsciiStringResource")
     , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newSignature")
+    , NanNew<v8::FunctionTemplate>(NewSignature)->GetFunction()
   );
 }
 
