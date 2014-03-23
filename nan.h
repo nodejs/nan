@@ -305,11 +305,17 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return T::New(nan_isolate, arg1);
   }
   template<typename T>
-  NAN_INLINE v8::Local<v8::Signature> NanNew(v8::Handle<v8::FunctionTemplate> receiver, int argc, v8::Handle<v8::FunctionTemplate> argv[] = 0) {
+  static NAN_INLINE v8::Local<v8::Signature> NanNew(
+      v8::Handle<v8::FunctionTemplate> receiver
+    , int argc
+    , v8::Handle<v8::FunctionTemplate> argv[] = 0) {
     return v8::Signature::New(nan_isolate, receiver, argc, argv);
   }
   template<typename T>
-  NAN_INLINE v8::Local<v8::FunctionTemplate> NanNew(NanFunctionCallback callback, v8::Handle<v8::Value> data = v8::Handle<v8::Value>(), v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
+  static NAN_INLINE v8::Local<v8::FunctionTemplate> NanNew(
+      NanFunctionCallback callback
+    , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+    , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
     return T::New(nan_isolate, callback, data, signature);
   }
   template<typename T>
@@ -790,11 +796,17 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return v8::Local<T>::New(arg);
   }
   template<typename T>
-  NAN_INLINE v8::Local<v8::Signature> NanNew(v8::Handle<v8::FunctionTemplate> receiver, int argc, v8::Handle<v8::FunctionTemplate> argv[] = 0) {
+  static NAN_INLINE v8::Local<v8::Signature> NanNew(
+      v8::Handle<v8::FunctionTemplate> receiver
+    , int argc
+    , v8::Handle<v8::FunctionTemplate> argv[] = 0) {
     return v8::Signature::New(receiver, argc, argv);
   }
   template<typename T>
-  NAN_INLINE v8::Local<v8::FunctionTemplate> NanNew(NanFunctionCallback callback, v8::Handle<v8::Value> data = v8::Handle<v8::Value>(), v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
+  static NAN_INLINE v8::Local<v8::FunctionTemplate> NanNew(
+      NanFunctionCallback callback
+    , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+    , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
     return T::New(callback, data, signature);
   }
   template<typename T>
