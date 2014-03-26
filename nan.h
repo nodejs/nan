@@ -321,9 +321,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   template<typename T>
   static NAN_INLINE v8::Local<v8::Context> NanNew(
       v8::ExtensionConfiguration* extensions
-    , v8::Handle<v8::ObjectTemplate> tmplt = v8::Handle<v8::ObjectTemplate>()
-	, v8::Handle<v8::Value> object = v8::Handle<v8::Value>()) {
-    return v8::Context::New(nan_isolate, extensions, tmplt, object);
+    , v8::Handle<v8::ObjectTemplate> tpl = v8::Handle<v8::ObjectTemplate>()
+    , v8::Handle<v8::Value> object = v8::Handle<v8::Value>()) {
+    return v8::Context::New(nan_isolate, extensions, tpl, object);
   }
   template<typename T>
   static NAN_INLINE v8::Local<T> NanNew(v8::Handle<T> arg1) {
@@ -807,14 +807,14 @@ typedef v8::InvocationCallback NanFunctionCallback;
   }
   template<typename T>
   static NAN_INLINE v8::Local<v8::Context> NanNew(
-      v8::ExtensionConfiguration* extensions 
-    , v8::Handle<v8::ObjectTemplate> tmplt = v8::Handle<v8::ObjectTemplate>()
-	, v8::Handle<v8::Value> object = v8::Handle<v8::Value>()) {
-	v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmplt, object);
-	v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
-	ctx.Dispose();
-	ctx.Clear();
-	return lctx;
+      v8::ExtensionConfiguration* extensions
+    , v8::Handle<v8::ObjectTemplate> tpl = v8::Handle<v8::ObjectTemplate>()
+    , v8::Handle<v8::Value> object = v8::Handle<v8::Value>()) {
+    v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tpl, object);
+    v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
+    ctx.Dispose();
+    ctx.Clear();
+    return lctx;
   }
   template<typename T>
   static NAN_INLINE v8::Local<T> NanNew(const v8::Persistent<T> &arg) {
@@ -1144,7 +1144,12 @@ typedef v8::InvocationCallback NanFunctionCallback;
       const char *data
     , uint32_t size
   ) {
+#if NODE_MODULE_VERSION >= 0x000B
     return NanNew<v8::Object>(node::Buffer::New(data, size)->handle_);
+#else
+    return NanNew<v8::Object>(
+      node::Buffer::New(const_cast<char*>(data), size)->handle_);
+#endif
   }
 
   static NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
