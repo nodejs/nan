@@ -3,14 +3,6 @@
 
 NODE_VERSIONS="\
   master   \
-  v0.11.11 \
-  v0.11.10 \
-  v0.11.9  \
-  v0.11.8  \
-  v0.11.7  \
-  v0.11.6  \
-  v0.11.5  \
-  v0.11.4  \
   v0.10.26 \
   v0.10.25 \
   v0.10.24 \
@@ -31,6 +23,6 @@ TEST_CMD="\
   cd /dnt/test/ &&                                               \
   npm install &&                                                 \
   node_modules/.bin/node-gyp --nodedir /usr/src/node/ rebuild && \
-  node_modules/.bin/tap js/*-test.js;                            \
+  node_modules/.bin/tap --gc js/*-test.js;                            \
 "
 
