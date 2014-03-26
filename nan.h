@@ -319,13 +319,6 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return T::New(nan_isolate, callback, data, signature);
   }
   template<typename T>
-  static NAN_INLINE v8::Local<v8::Context> NanNew(
-      v8::ExtensionConfiguration* extensions
-    , v8::Handle<v8::ObjectTemplate> tpl = v8::Handle<v8::ObjectTemplate>()
-    , v8::Handle<v8::Value> object = v8::Handle<v8::Value>()) {
-    return v8::Context::New(nan_isolate, extensions, tpl, object);
-  }
-  template<typename T>
   static NAN_INLINE v8::Local<T> NanNew(v8::Handle<T> arg1) {
     return v8::Local<T>::New(nan_isolate, arg1);
   }
@@ -702,6 +695,17 @@ void NAN_INLINE NanMakeWeakPersistent(
     return NanNew(function_template)->HasInstance(value);
   }
 
+  static NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
+      v8::ExtensionConfiguration* extensions = NULL
+    , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
+    , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
+  ) {
+    return v8::Local<v8::Context>::New(
+        nan_isolate
+      , v8::Context::New(nan_isolate, extensions, tmpl, obj)
+    );
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -804,17 +808,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
     , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
     return T::New(callback, data, signature);
-  }
-  template<typename T>
-  static NAN_INLINE v8::Local<v8::Context> NanNew(
-      v8::ExtensionConfiguration* extensions
-    , v8::Handle<v8::ObjectTemplate> tpl = v8::Handle<v8::ObjectTemplate>()
-    , v8::Handle<v8::Value> object = v8::Handle<v8::Value>()) {
-    v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tpl, object);
-    v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
-    ctx.Dispose();
-    ctx.Clear();
-    return lctx;
   }
   template<typename T>
   static NAN_INLINE v8::Local<T> NanNew(const v8::Persistent<T> &arg) {
@@ -1173,6 +1166,17 @@ typedef v8::InvocationCallback NanFunctionCallback;
     , v8::Handle<v8::Value> value
   ) {
     return function_template->HasInstance(value);
+  }
+
+  static NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
+      v8::ExtensionConfiguration* extensions = NULL
+    , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
+    , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
+  ) {
+    v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
+    v8::Local<v8::Context> lctx = NanNew<v8::Context>(ctx);
+    ctx.Dispose();
+    return lctx;
   }
 
 #endif  // NODE_MODULE_VERSION
