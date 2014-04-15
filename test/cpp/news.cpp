@@ -117,7 +117,7 @@ NAN_METHOD(NewSignature) {
 
 NAN_METHOD(NewScript) {
   NanScope();
-  v8::Local<NanUnboundScript> script = NanNewUnboundScript(NanNew<v8::String>("2+4"));
+  v8::Local<NanScript> script = NanNew<NanScript>(NanNew<v8::String>("2+4"));
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
