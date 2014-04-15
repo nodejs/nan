@@ -2,7 +2,7 @@ const test     = require('tap').test
     , bindings = require('bindings');
 
 test('news', function (t) {
-  t.plan(36);
+  t.plan(38);
   t.type(bindings('news').newNumber, 'function');
   t.type(bindings('news').newPositiveInteger, 'function');
   t.type(bindings('news').newNegativeInteger, 'function');
@@ -21,6 +21,7 @@ test('news', function (t) {
   t.type(bindings('news').newExternalStringResource, 'function');
   t.type(bindings('news').newExternalAsciiStringResource, 'function');
   t.type(bindings('news').newSignature, 'function');
+  t.type(bindings('news').newScript, 'function');
 
   t.equal(bindings('news').newNumber(), 0.5);
   t.equal(bindings('news').newPositiveInteger(), 1);
@@ -40,4 +41,5 @@ test('news', function (t) {
   t.equals(bindings('news').newExternalStringResource(), 'strïng');
   t.equals(bindings('news').newExternalAsciiStringResource(), 'string');
   t.equals(bindings('news').newSignature(), 'string');
+  t.equals(bindings('news').newScript(), 6);
 });
