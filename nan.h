@@ -1326,9 +1326,10 @@ class NanCallback {
     handle->Set(NanSymbol(key), obj);
   }
 
-  NAN_INLINE v8::Local<v8::Object> GetFromPersistent(const char *key) {
+  v8::Local<v8::Object> GetFromPersistent(const char *key) {
+    NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return handle->Get(NanSymbol(key)).As<v8::Object>();
+    return NanEscapeScope(handle->Get(NanSymbol(key)).As<v8::Object>());
   }
 
   virtual void Execute() = 0;
