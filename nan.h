@@ -1293,6 +1293,10 @@ class NanCallback {
   explicit NanAsyncWorker(NanCallback *callback) : callback(callback) {
     request.data = this;
     errmsg = NULL;
+
+    NanScope();
+    v8::Local<v8::Object> obj = NanNew<v8::Object>();
+    NanAssignPersistent(persistentHandle, obj);
   }
 
   virtual ~NanAsyncWorker() {
@@ -1317,16 +1321,12 @@ class NanCallback {
     callback = NULL;
   }
 
-  void SavePersistent(const char *key, v8::Local<v8::Object> obj) {
-    NanScope();
-
+  NAN_INLINE void SavePersistent(const char *key, v8::Local<v8::Object> &obj) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
     handle->Set(NanSymbol(key), obj);
   }
 
-  v8::Local<v8::Object> GetFromPersistent(const char *key) {
-    NanScope();
-
+  NAN_INLINE v8::Local<v8::Object> GetFromPersistent(const char *key) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
     return handle->Get(NanSymbol(key)).As<v8::Object>();
   }

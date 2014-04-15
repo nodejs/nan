@@ -103,4 +103,11 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+  , {
+        "target_name" : "bufferworkerpersistent"
+      , "sources"     : [ "cpp/bufferworkerpersistent.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
