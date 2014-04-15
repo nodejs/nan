@@ -115,6 +115,12 @@ NAN_METHOD(NewSignature) {
   NanReturnValue(NanNew<v8::String>("string"));
 }
 
+NAN_METHOD(NewScript) {
+  NanScope();
+  v8::Local<NanUnboundScript> script = NanNewUnboundScript(NanNew<v8::String>("2+4"));
+  NanReturnValue(NanRunScript(script)->ToInt32());
+}
+
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newNumber")
@@ -187,6 +193,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newSignature")
     , NanNew<v8::FunctionTemplate>(NewSignature)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newScript")
+    , NanNew<v8::FunctionTemplate>(NewScript)->GetFunction()
   );
 }
 

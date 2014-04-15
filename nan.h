@@ -706,6 +706,32 @@ void NAN_INLINE NanMakeWeakPersistent(
     );
   }
 
+  typedef v8::UnboundScript NanUnboundScript;
+  typedef v8::Script NanBoundScript;
+
+  static NAN_INLINE v8::Local<NanUnboundScript> NanNewUnboundScript(v8::Local<v8::String> source_string, const v8::ScriptOrigin& origin) {
+    v8::ScriptCompiler::Source source(source_string, origin);
+    return v8::ScriptCompiler::CompileUnbound(nan_isolate, &source);
+  }
+  static NAN_INLINE v8::Local<NanUnboundScript> NanNewUnboundScript(v8::Local<v8::String> source_string) {
+    v8::ScriptCompiler::Source source(source_string);
+    return v8::ScriptCompiler::CompileUnbound(nan_isolate, &source);
+  }
+  static NAN_INLINE v8::Local<NanBoundScript> NanNewBoundScript(v8::Local<v8::String> source_string, const v8::ScriptOrigin& origin) {
+    v8::ScriptCompiler::Source source(source_string, origin);
+    return v8::ScriptCompiler::Compile(nan_isolate, &source);
+  }
+  static NAN_INLINE v8::Local<NanBoundScript> NanNewBoundScript(v8::Local<v8::String> source_string) {
+    v8::ScriptCompiler::Source source(source_string);
+    return v8::ScriptCompiler::Compile(nan_isolate, &source);
+  }
+  static NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Local<NanUnboundScript> script) {
+    return script->BindToCurrentContext()->Run();
+  }
+  static NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Local<NanBoundScript> script) {
+    return script->Run();
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -1177,6 +1203,25 @@ typedef v8::InvocationCallback NanFunctionCallback;
     v8::Local<v8::Context> lctx = NanNew<v8::Context>(ctx);
     ctx.Dispose();
     return lctx;
+  }
+
+  typedef v8::Script NanUnboundScript;
+  typedef v8::Script NanBoundScript;
+
+  static NAN_INLINE v8::Local<NanUnboundScript> NanNewUnboundScript(v8::Local<v8::String> source_string, const v8::ScriptOrigin& origin) {
+    return v8::Script::New(source_string, origin);
+  }
+  static NAN_INLINE v8::Local<NanUnboundScript> NanNewUnboundScript(v8::Local<v8::String> source_string) {
+    return v8::Script::New(source_string);
+  }
+  static NAN_INLINE v8::Local<NanBoundScript> NanNewBoundScript(v8::Local<v8::String> source_string, const v8::ScriptOrigin& origin) {
+    return v8::Script::Compile(source_string, origin);
+  }
+  static NAN_INLINE v8::Local<NanBoundScript> NanNewBoundScript(v8::Local<v8::String> source_string) {
+    return v8::Script::Compile(source_string);
+  }
+  static NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Local<v8::Script> script) {
+    return script->Run();
   }
 
 #endif  // NODE_MODULE_VERSION
