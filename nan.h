@@ -667,25 +667,25 @@ void NAN_INLINE NanMakeWeakPersistent(
     , node::smalloc::FreeCallback callback
     , void *hint
   ) {
-    return node::Buffer::New(data, length, callback, hint);
+    return node::Buffer::New(nan_isolate, data, length, callback, hint);
   }
 
   static NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
       const char *data
     , uint32_t size
   ) {
-    return node::Buffer::New(data, size);
+    return node::Buffer::New(nan_isolate, data, size);
   }
 
   static NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
-    return node::Buffer::New(size);
+    return node::Buffer::New(nan_isolate, size);
   }
 
   static NAN_INLINE v8::Local<v8::Object> NanBufferUse(
       char* data
     , uint32_t size
   ) {
-    return node::Buffer::Use(data, size);
+    return node::Buffer::Use(nan_isolate, data, size);
   }
 
   static NAN_INLINE bool NanHasInstance(
