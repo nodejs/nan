@@ -779,7 +779,7 @@ class NanCallback {
 public:
   NanAsyncWorker (NanCallback *callback) : callback(callback) {
     request.data = this;
-    errmsg = NULL;
+    errmsg_ = NULL;
   }
 
   virtual ~NanAsyncWorker () {
@@ -789,14 +789,14 @@ public:
       NanDisposePersistent(persistentHandle);
     if (callback)
       delete callback;
-    if (errmsg)
-      delete errmsg;
+    if (errmsg_)
+      delete errmsg_;
   }
 
   virtual void WorkComplete () {
     NanScope();
 
-    if (errmsg == NULL)
+    if (errmsg_ == NULL)
       HandleOKCallback();
     else
       HandleErrorCallback();
@@ -825,7 +825,6 @@ public:
 protected:
   v8::Persistent<v8::Object> persistentHandle;
   NanCallback *callback;
-  const char *errmsg;
 
   virtual void HandleOKCallback () {
     NanScope();
@@ -837,10 +836,24 @@ protected:
     NanScope();
 
     v8::Local<v8::Value> argv[] = {
-        v8::Exception::Error(v8::String::New(errmsg))
+        v8::Exception::Error(v8::String::New(errmsg_))
     };
     callback->Call(1, argv);
   }
+
+  void SetErrmsg(const char *msg) {
+    size_t size = strlen(msg);
+    errmsg_ = new char[size + 1];
+    strncpy(errmsg_, msg, size);
+    errmsg_[size] = '\0';
+  }
+
+  char *Errmsg() {
+    return errmsg_;
+  }
+
+private:
+  char *errmsg_;
 };
 
 NAN_INLINE(void NanAsyncExecute (uv_work_t* req)) {
