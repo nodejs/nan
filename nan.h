@@ -344,7 +344,9 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   template<>
-  NAN_INLINE v8::Local<NanUnboundScript> NanNew<NanUnboundScript>(v8::Local<v8::String> s) {
+  NAN_INLINE v8::Local<NanUnboundScript> NanNew<NanUnboundScript>(
+      v8::Local<v8::String> s
+  ) {
     v8::ScriptCompiler::Source source(s);
     return v8::ScriptCompiler::CompileUnbound(nan_isolate, &source);
   }
@@ -733,16 +735,22 @@ void NAN_INLINE NanMakeWeakPersistent(
     return v8::ScriptCompiler::Compile(nan_isolate, &source);
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(v8::Local<v8::String> s) {
+  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+      v8::Local<v8::String> s
+  ) {
     v8::ScriptCompiler::Source source(s);
     return v8::ScriptCompiler::Compile(nan_isolate, &source);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Local<NanUnboundScript> script) {
+  NAN_INLINE v8::Local<v8::Value> NanRunScript(
+      v8::Local<NanUnboundScript> script
+  ) {
     return script->BindToCurrentContext()->Run();
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Local<NanBoundScript> script) {
+  NAN_INLINE v8::Local<v8::Value> NanRunScript(
+      v8::Local<NanBoundScript> script
+  ) {
     return script->Run();
   }
 
@@ -894,7 +902,9 @@ typedef v8::InvocationCallback NanFunctionCallback;
   }
 
   template<>
-  NAN_INLINE v8::Local<NanUnboundScript> NanNew<NanUnboundScript>(v8::Local<v8::String> s) {
+  NAN_INLINE v8::Local<NanUnboundScript> NanNew<NanUnboundScript>(
+      v8::Local<v8::String> s
+  ) {
     return v8::Script::New(s);
   }
 
@@ -1242,7 +1252,9 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return v8::Script::Compile(s, const_cast<v8::ScriptOrigin *>(&origin));
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(v8::Local<v8::String> s) {
+  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+    v8::Local<v8::String> s
+  ) {
     return v8::Script::Compile(s);
   }
 
