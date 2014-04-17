@@ -2,7 +2,7 @@ const test     = require('tap').test
     , bindings = require('bindings');
 
 test('news', function (t) {
-  t.plan(46);
+  t.plan(48);
   t.type(bindings('news').newNumber, 'function');
   t.type(bindings('news').newPositiveInteger, 'function');
   t.type(bindings('news').newNegativeInteger, 'function');
@@ -26,6 +26,7 @@ test('news', function (t) {
   t.type(bindings('news').compileScript, 'function');
   t.type(bindings('news').compileScript2, 'function');
   t.type(bindings('news').newDate, 'function');
+  t.type(bindings('news').newArray, 'function');
 
   t.equal(bindings('news').newNumber(), 0.5);
   t.equal(bindings('news').newPositiveInteger(), 1);
@@ -50,4 +51,5 @@ test('news', function (t) {
   t.equals(bindings('news').compileScript(), 6);
   t.equals(bindings('news').compileScript2(), 6);
   t.deepEquals(bindings('news').newDate(), new Date(1337));
+  t.deepEquals(bindings('news').newArray(), []);
 });

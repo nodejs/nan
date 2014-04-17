@@ -338,6 +338,16 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   template<>
+  NAN_INLINE v8::Local<v8::Array> NanNew<v8::Array>() {
+    return v8::Array::New(nan_isolate);
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Array> NanNew<v8::Array>(int length) {
+    return v8::Array::New(nan_isolate, length);
+  }
+
+  template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(double time) {
     return v8::Date::New(nan_isolate, time).As<v8::Date>();
   }
@@ -945,6 +955,17 @@ typedef v8::InvocationCallback NanFunctionCallback;
       v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
     return v8::RegExp::New(pattern, flags);
   }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Array> NanNew<v8::Array>() {
+    return v8::Array::New();
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Array> NanNew<v8::Array>(int length) {
+    return v8::Array::New(length);
+  }
+
 
   template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(double time) {

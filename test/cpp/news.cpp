@@ -146,6 +146,11 @@ NAN_METHOD(NewDate) {
   NanReturnValue(NanNew<v8::Date>(1337));
 }
 
+NAN_METHOD(NewArray) {
+  NanScope();
+  NanReturnValue(NanNew<v8::Array>());
+}
+
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newNumber")
@@ -238,6 +243,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newDate")
     , NanNew<v8::FunctionTemplate>(NewDate)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newArray")
+    , NanNew<v8::FunctionTemplate>(NewArray)->GetFunction()
   );
 }
 
