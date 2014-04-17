@@ -337,6 +337,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     return T::New(nan_isolate, arg1, arg2);
   }
 
+  template<>
+  NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(double time) {
+    return v8::Date::New(nan_isolate, time).As<v8::Date>();
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
+    return v8::Date::New(nan_isolate, time).As<v8::Date>();
+  }
 
   typedef v8::UnboundScript NanUnboundScript;
   typedef v8::Script NanBoundScript;
@@ -388,7 +397,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   template<>
-  NAN_INLINE v8::Local<v8::NumberObject> NanNew(double value) {
+  NAN_INLINE v8::Local<v8::NumberObject> NanNew<v8::NumberObject>(double value) {
     return v8::NumberObject::New(nan_isolate, value).As<v8::NumberObject>();
   }
 
@@ -937,6 +946,16 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return v8::RegExp::New(pattern, flags);
   }
 
+  template<>
+  NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(double time) {
+    return v8::Date::New(time).As<v8::Date>();
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
+    return v8::Date::New(time).As<v8::Date>();
+  }
+
   typedef v8::Script NanUnboundScript;
   typedef v8::Script NanBoundScript;
 
@@ -985,7 +1004,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
   }
 
   template<>
-  NAN_INLINE v8::Local<v8::NumberObject> NanNew(double value) {
+  NAN_INLINE v8::Local<v8::NumberObject> NanNew<v8::NumberObject>(double value) {
     return v8::NumberObject::New(value).As<v8::NumberObject>();
   }
 

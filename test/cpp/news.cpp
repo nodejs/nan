@@ -141,6 +141,11 @@ NAN_METHOD(CompileScript2) {
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
+NAN_METHOD(NewDate) {
+  NanScope();
+  NanReturnValue(NanNew<v8::Date>(1337));
+}
+
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newNumber")
@@ -229,6 +234,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("compileScript2")
     , NanNew<v8::FunctionTemplate>(CompileScript2)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("newDate")
+    , NanNew<v8::FunctionTemplate>(NewDate)->GetFunction()
   );
 }
 
