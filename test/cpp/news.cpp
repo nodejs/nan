@@ -115,11 +115,31 @@ NAN_METHOD(NewSignature) {
   NanReturnValue(NanNew<v8::String>("string"));
 }
 
-/*NAN_METHOD(NewScript) {
+NAN_METHOD(NewScript) {
   NanScope();
   v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew<v8::String>("2+4"));
   NanReturnValue(NanRunScript(script)->ToInt32());
-}*/
+}
+
+NAN_METHOD(NewScript2) {
+  NanScope();
+  v8::ScriptOrigin origin(NanNew<v8::String>("x"));
+  v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew<v8::String>("2+4"), origin);
+  NanReturnValue(NanRunScript(script)->ToInt32());
+}
+
+NAN_METHOD(CompileScript) {
+  NanScope();
+  v8::Local<NanBoundScript> script = NanCompileScript(NanNew<v8::String>("2+4"));
+  NanReturnValue(NanRunScript(script)->ToInt32());
+}
+
+NAN_METHOD(CompileScript2) {
+  NanScope();
+  v8::ScriptOrigin origin(NanNew<v8::String>("x"));
+  v8::Local<NanBoundScript> script = NanCompileScript(NanNew<v8::String>("2+4"), origin);
+  NanReturnValue(NanRunScript(script)->ToInt32());
+}
 
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
@@ -194,10 +214,22 @@ void Init(v8::Handle<v8::Object> target) {
       NanSymbol("newSignature")
     , NanNew<v8::FunctionTemplate>(NewSignature)->GetFunction()
   );
-  /*target->Set(
+  target->Set(
       NanSymbol("newScript")
     , NanNew<v8::FunctionTemplate>(NewScript)->GetFunction()
-  );*/
+  );
+  target->Set(
+      NanSymbol("newScript2")
+    , NanNew<v8::FunctionTemplate>(NewScript2)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("compileScript")
+    , NanNew<v8::FunctionTemplate>(CompileScript)->GetFunction()
+  );
+  target->Set(
+      NanSymbol("compileScript2")
+    , NanNew<v8::FunctionTemplate>(CompileScript2)->GetFunction()
+  );
 }
 
 NODE_MODULE(news, Init)
