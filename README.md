@@ -780,7 +780,7 @@ Use to add properties on object and function templates.
 Use instead of `node::MakeCallback` to call javascript functions. This is the only proper way of calling functions.
 
 <a name="api_nan_compile_script"></a>
-### NanCompileScript(Handle<String> s [, const ScriptOrigin& origin])
+### NanCompileScript(Handle<String> s [, const ScriptOrigin&amp; origin])
 
 Use to create new scripts bound to the current context.
 
