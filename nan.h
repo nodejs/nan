@@ -11,9 +11,12 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 0.9.0-wip (current Node unstable: 0.11.13-pre, Node stable: 0.10.26)
+ * Version 1.0.0-wip (current Node unstable: 0.11.13-pre, Node stable: 0.10.26)
  *
  * ChangeLog:
+ *  * 1.0.0 Some Day
+ *    - Rewrite for v8 3.25
+ *
  *  * 0.8.0 Jan 9 2014
  *    - NanDispose -> NanDisposePersistent, deprecate NanDispose
  *    - Extract _NAN_*_RETURN_TYPE, pull up NAN_*()
@@ -407,8 +410,8 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   }
 
   template<>
-  NAN_INLINE v8::Local<v8::NumberObject> NanNew<v8::NumberObject>(double value) {
-    return v8::NumberObject::New(nan_isolate, value).As<v8::NumberObject>();
+  NAN_INLINE v8::Local<v8::NumberObject> NanNew<v8::NumberObject>(double val) {
+    return v8::NumberObject::New(nan_isolate, val).As<v8::NumberObject>();
   }
 
   template<typename T>
@@ -1025,8 +1028,8 @@ typedef v8::InvocationCallback NanFunctionCallback;
   }
 
   template<>
-  NAN_INLINE v8::Local<v8::NumberObject> NanNew<v8::NumberObject>(double value) {
-    return v8::NumberObject::New(value).As<v8::NumberObject>();
+  NAN_INLINE v8::Local<v8::NumberObject> NanNew<v8::NumberObject>(double val) {
+    return v8::NumberObject::New(val).As<v8::NumberObject>();
   }
 
   template<>
@@ -1361,6 +1364,8 @@ typedef v8::InvocationCallback NanFunctionCallback;
   }
 
 #endif  // NODE_MODULE_VERSION
+
+typedef void (*NanFreeCallback)(char *data, void *hint);
 
 #define NAN_METHOD(name) _NAN_METHOD_RETURN_TYPE name(_NAN_METHOD_ARGS)
 #define NAN_GETTER(name)                                                       \
