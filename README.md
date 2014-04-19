@@ -401,22 +401,22 @@ Local<Object> lo = NanNew(o);
 ```
 
 <a name="api_nan_undefined"></a>
-### Handle<Primitive> NanUndefined()
+### Handle&lt;Primitive&gt; NanUndefined()
 
 Use instead of `Undefined()`
 
 <a name="api_nan_null"></a>
-### Handle<Primitive> NanNull()
+### Handle&lt;Primitive&gt; NanNull()
 
 Use instead of `Null()`
 
 <a name="api_nan_true"></a>
-### Handle<Primitive> NanTrue()
+### Handle&lt;Primitive&gt; NanTrue()
 
 Use instead of `True()`
 
 <a name="api_nan_false"></a>
-### Handle<Primitive> NanFalse()
+### Handle&lt;Primitive&gt; NanFalse()
 
 Use instead of `False()`
 
@@ -501,7 +501,7 @@ Handle<String> Foo::Bar() {
 ```
 
 <a name="api_nan_esacpe_scope"></a>
-### NanEscapeScope(Handle<T> value);
+### Local&lt;T&gt; NanEscapeScope(Handle&lt;T&gt; value);
 Use together with `NanEscapableScope` to escape the scope. Corresponds to `HandleScope::Close` or `EscapableHandleScope::Escape`.
 
 <a name="api_nan_locker"></a>
@@ -750,7 +750,7 @@ NanAssignPersistent(Object, persistentHandle, obj)
 ```
 
 <a name="api_nan_make_weak_persistent"></a>
-### NanMakeWeakPersistent(Handle<T> handle, P* parameter, _NanWeakCallbackInfo<T, P>::Callback callback)
+### NanMakeWeakPersistent(Handle&lt;T&gt; handle, P* parameter, _NanWeakCallbackInfo&lt;T, P&gt;::Callback callback)
 
 Creates a weak persistent handle with the supplied parameter and `NAN_WEAK_CALLBACK`. The callback has to be fully specialized to work on all versions of Node.
 
