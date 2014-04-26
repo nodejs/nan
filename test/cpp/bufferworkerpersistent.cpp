@@ -21,7 +21,7 @@ class BufferWorker : public NanAsyncWorker {
 
       NanScope();
 
-      SavePersistent("buffer", bufferHandle);
+      SaveToPersistent("buffer", bufferHandle);
     }
 
   ~BufferWorker() {}

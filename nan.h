@@ -1507,7 +1507,7 @@ class NanCallback {
     callback = NULL;
   }
 
-  NAN_INLINE void SavePersistent(const char *key, v8::Local<v8::Object> &obj) {
+  NAN_INLINE void SaveToPersistent(const char *key, v8::Local<v8::Object> &obj) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
     handle->Set(NanSymbol(key), obj);
   }
