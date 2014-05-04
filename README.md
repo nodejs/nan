@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 0.8.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
+***Current version: 1.0.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -18,6 +18,26 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### May-2013: Major changes for V8 3.25 / Node 0.11.13
+
+Node 0.11.11 and 0.11.12 were both broken releases for native add-ons, you simply can't properly compile against either of them for different reasons. But we now have a 0.11.13 release that jumps a couple of versions of V8 ahead and includes some more, major (traumatic) API changes.
+
+Because we are now nearing Node 0.12 and estimate that the version of V8 we are using in Node 0.11.13 will be close to the API we get for 0.12, we have taken the opportunity to not only *fix* NAN for 0.11.13 but make some major changes to improve the NAN API.
+
+We have **removed support for Node 0.11 versions prior to 0.11.13**, (although our tests are still passing for 0.11.10). As usual, our tests are run against (and pass) the last 5 versions of Node 0.8 and Node 0.10. We also include Node 0.11.13 obviously.
+
+The major change is something that [Benjamin Byholm](kkoopa) has put many hours in to. We now have a fantastic new `NanNew<T>(args)` interface for creating new `Local`s, this replaces `NanNewLocal()` and much more. If you look in [./nan.h](nan.h) you'll see a large number of overloaded versions of this method. In general you should be able to `NanNew<Type>(arguments)` for any type you want to make a `Local` from. This includes `Persistent` types, so we now have a `Local<T> NanNew(const Persistent<T> arg)` to replace `NanPersistentToLocal()`.
+
+We also now have `NanUndefined()`, `NanNull()`, `NanTrue()` and `NanFalse()`. Mainly because of the new requirement for an `Isolate` argument for each of the native V8 versions of this.
+
+V8 has now introduced an `EscapableHandleScope` from which you `scope.Escape(Local<T> value)` to *return* a value from a one scope to another. This replaces the standard `HandleScope` and `scope.Close(Local<T> value)`, although `HandleScope` still exists for when you don't need to return a handle to the caller. For NAN we are exposing it as `NanEscapableScope()` and `NanEscapeScope()`, while `NanScope()` is still how you create a new scope that doesn't need to return handles. For older versions of Node/V8, it'll still map to the older `HandleScope` functionality.
+
+`NanFromV8String()` was deprecated and has now been removed. You should use `NanCString()` or `NanRawString()` instead.
+
+Because `node::MakeCallback()` now takes an `Isolate`, and because it doesn't exist in older versions of Node, we've introduced `NanMakeCallabck()`. You should *always* use this when calling a JavaScript function from C++.
+
+There's lots more, check out the Changelog in nan.h or look through [#86](https://github.com/rvagg/nan/pull/86) for all the gory details.
 
 ### Dec-2013: NanCString and NanRawString
 
@@ -42,7 +62,7 @@ Simply add **NAN** as a dependency in the *package.json* of your Node addon:
 $ npm install --save nan
 ```
 
-Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include "nan.h"` in your *.cpp* files:
+Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include <nan.h>` in your *.cpp* files:
 
 ``` python
 "include_dirs" : [
@@ -66,17 +86,19 @@ Note that there is no embedded version sniffing going on here and also the async
 ```c++
 // addon.cc
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 // ...
 
-using namespace v8;
+using v8::FunctionTemplate;
+using v8::Handle;
+using v8::Object;
 
 void InitAll(Handle<Object> exports) {
   exports->Set(NanSymbol("calculateSync"),
-    FunctionTemplate::New(CalculateSync)->GetFunction());
+    NanNew<FunctionTemplate>(CalculateSync)->GetFunction());
 
   exports->Set(NanSymbol("calculateAsync"),
-    FunctionTemplate::New(CalculateAsync)->GetFunction());
+    NanNew<FunctionTemplate>(CalculateAsync)->GetFunction());
 }
 
 NODE_MODULE(addon, InitAll)
@@ -85,7 +107,7 @@ NODE_MODULE(addon, InitAll)
 ```c++
 // sync.h
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 
 NAN_METHOD(CalculateSync);
 ```
@@ -93,11 +115,11 @@ NAN_METHOD(CalculateSync);
 ```c++
 // sync.cc
 #include <node.h>
-#include "nan.h"
-#include "sync.h"
+#include <nan.h>
+#include "./sync.h"
 // ...
 
-using namespace v8;
+using v8::Number;
 
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {
@@ -107,19 +129,23 @@ NAN_METHOD(CalculateSync) {
   int points = args[0]->Uint32Value();
   double est = Estimate(points);
 
-  NanReturnValue(Number::New(est));
+  NanReturnValue(NanNew<Number>(est));
 }
 ```
 
 ```c++
 // async.cc
 #include <node.h>
-#include "nan.h"
-#include "async.h"
+#include <nan.h>
+#include "./async.h"
 
 // ...
 
-using namespace v8;
+using v8::Function;
+using v8::Local;
+using v8::Null;
+using v8::Number;
+using v8::Value;
 
 class PiWorker : public NanAsyncWorker {
  public:
@@ -142,8 +168,8 @@ class PiWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Value> argv[] = {
-        Local<Value>::New(Null())
-      , Number::New(estimate)
+        NanNew(NanNull())
+      , NanNew<Number>(estimate)
     };
 
     callback->Call(2, argv);
@@ -184,25 +210,29 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
- * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a> 
- * <a href="#api_nan_new_local"><b><code>NanNewLocal</code></b></a>
+ * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
+ * <a href="#api_nan_new"><b><code>NanNew</code></b></a>
+ * <a href="#api_nan_undefined"><b><code>NanUndefined</code></b></a>
+ * <a href="#api_nan_null"><b><code>NanNull</code></b></a>
+ * <a href="#api_nan_true"><b><code>NanTrue</code></b></a>
+ * <a href="#api_nan_false"><b><code>NanFalse</code></b></a>
  * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_return_null"><b><code>NanReturnNull</code></b></a>
  * <a href="#api_nan_return_empty_string"><b><code>NanReturnEmptyString</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
+ * <a href="#api_nan_escapable_scope"><b><code>NanEscapableScope</code></b></a>
+ * <a href="#api_nan_escape_scope"><b><code>NanEscapeScope</code></b></a>
  * <a href="#api_nan_locker"><b><code>NanLocker</code></b></a>
  * <a href="#api_nan_unlocker"><b><code>NanUnlocker</code></b></a>
  * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
- * <a href="#api_nan_make_weak"><b><code>NanMakeWeak</code></b></a>
  * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
  * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
  * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
  * <a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a>
  * <a href="#api_nan_c_string"><b><code>NanCString</code></b></a>
- * <a href="#api_nan_from_v8_string"><b><code>NanFromV8String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
  * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanTypeError</code></b>, <b><code>NanRangeError</code></b></a>
@@ -210,11 +240,21 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
  * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
+ * <a href="#api_nan_get_current_context"><b><code>NanGetCurrentContext</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
- * <a href="#api_nan_persistent_to_local"><b><code>NanPersistentToLocal</code></b></a>
  * <a href="#api_nan_dispose_persistent"><b><code>NanDisposePersistent</code></b></a>
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
- * <a href="#api_nan_init_persistent"><b><code>NanInitPersistent</code></b></a>
+ * <a href="#api_nan_make_weak_persistent"><b><code>NanMakeWeakPersistent</code></b></a>
+ * <a href="#api_nan_set_template"><b><code>NanSetTemplate</code></b></a>
+ * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
+ * <a href="#api_nan_compile_script"><b><code>NanCompileScript</code></b></a>
+ * <a href="#api_nan_run_script"><b><code>NanRunScript</code></b></a>
+ * <a href="#api_nan_adjust_external_memory"><b><code>NanAdjustExternalMemory</code></b></a>
+ * <a href="#api_nan_add_gc_epilogue_callback"><b><code>NanAddGCEpilogueCallback</code></b></a>
+ * <a href="#api_nan_add_gc_prologue_callback"><b><code>NanAddGCPrologueCallback</code></b></a>
+ * <a href="#api_nan_remove_gc_epilogue_callback"><b><code>NanRemoveGCEpilogueCallback</code></b></a>
+ * <a href="#api_nan_remove_gc_prologue_callback"><b><code>NanRemoveGCPrologueCallback</code></b></a>
+ * <a href="#api_nan_get_heap_statistics"><b><code>NanGetHeapStatistics</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
@@ -325,50 +365,80 @@ Use `NAN_INDEX_QUERY` to declare your V8 accessible index queries. Same as `NAN_
 You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_QUERY`.
 
 <a name="api_nan_weak_callback"></a>
-### NAN_WEAK_CALLBACK(type, cbname)
+### NAN_WEAK_CALLBACK(cbname)
 
-Use `NAN_WEAK_CALLBACK` to declare your V8 WeakReference callbacks. There is an object argument accessible through `NAN_WEAK_CALLBACK_OBJECT`. The `type` argument gives the type of the `data` argument, accessible through `NAN_WEAK_CALLBACK_DATA(type)`.
+Use `NAN_WEAK_CALLBACK` to define your V8 WeakReference callbacks. Do not use for declaration. There is an argument object `const _NanWeakCallbackData<T, P> &data` allowing access to the weak object and the supplied parameter through its `GetValue` and `GetParameter` methods.
 
 ```c++
-static NAN_WEAK_CALLBACK(BufferReference*, WeakCheck) {
-  if (NAN_WEAK_CALLBACK_DATA(BufferReference*)->noLongerNeeded_) {
-    delete NAN_WEAK_CALLBACK_DATA(BufferReference*);
+NAN_WEAK_CALLBACK(weakCallback) {
+  int *parameter = data.GetParameter();
+  NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
+  if ((*parameter)++ == 0) {
+    data.Revive();
   } else {
-    // Still in use, revive, prevent GC
-    NanMakeWeak(NAN_WEAK_CALLBACK_OBJECT, NAN_WEAK_CALLBACK_DATA(BufferReference*), &WeakCheck);
+    delete parameter;
+    data.Dispose();
   }
 }
 ```
 
 <a name="api_nan_deprecated"></a>
-### NAN_DEPRECATED(declarator)
-Declares a function as deprecated. Identical to `V8_DEPRECATED`.
+### NAN_DEPRECATED
+Declares a function as deprecated.
 
 ```c++
-static NAN_DEPRECATED(NAN_METHOD(foo)) {
+static NAN_DEPRECATED NAN_METHOD(foo) {
   ...
 }
 ```
 
 <a name="api_nan_inline"></a>
-### NAN_INLINE(declarator)
-Inlines a function. Identical to `V8_INLINE`.
+### NAN_INLINE
+Inlines a function.
 
 ```c++
-static NAN_INLINE(int foo(int bar)) {
+NAN_INLINE int foo(int bar) {
   ...
 }
 ```
 
-<a name="api_nan_new_local"></a>
-### NanNewLocal&lt;T&gt;(Handle&lt;Value&gt;)
+<a name="api_nan_new"></a>
+### Local&lt;T&gt; NanNew&lt;T&gt;( ... )
 
-Use `NanNewLocal` in place of `v8::Local<T>::New(...)` as this function
-requires an `isolate` argument in recent versions of V8 but not in older versions.
+Use `NanNew` to construct almost all v8 objects and make new local handles.
 
 ```c++
-NanNewLocal<v8::Value>(v8::Null())
+Local<String> s = NanNew<String>("value");
+
+...
+
+Persistent<Object> o;
+
+...
+
+Local<Object> lo = NanNew(o);
+
 ```
+
+<a name="api_nan_undefined"></a>
+### Handle&lt;Primitive&gt; NanUndefined()
+
+Use instead of `Undefined()`
+
+<a name="api_nan_null"></a>
+### Handle&lt;Primitive&gt; NanNull()
+
+Use instead of `Null()`
+
+<a name="api_nan_true"></a>
+### Handle&lt;Primitive&gt; NanTrue()
+
+Use instead of `True()`
+
+<a name="api_nan_false"></a>
+### Handle&lt;Primitive&gt; NanFalse()
+
+Use instead of `False()`
 
 <a name="api_nan_return_value"></a>
 ### NanReturnValue(Handle&lt;Value&gt;)
@@ -379,7 +449,7 @@ Use `NanReturnValue` when you want to return a value from your V8 accessible met
 NAN_METHOD(Foo::Bar) {
   ...
 
-  NanReturnValue(String::New("FooBar!"));
+  NanReturnValue(NanNew<String>("FooBar!"));
 }
 ```
 
@@ -433,9 +503,26 @@ The introduction of `isolate` references for many V8 calls in Node 0.11 makes `N
 NAN_METHOD(Foo::Bar) {
   NanScope();
 
-  NanReturnValue(String::New("FooBar!"));
+  NanReturnValue(NanNew<String>("FooBar!"));
 }
 ```
+
+<a name="api_nan_escapable_scope"></a>
+### NanEscapableScope()
+
+The separation of handle scopes into escapable and inescapable scopes makes `NanEscapableScope()` necessary, use it in place of `HandleScope scope` when you later wish to `Close()` the scope:
+
+```c++
+Handle<String> Foo::Bar() {
+  NanEscapableScope();
+
+  return NanEscapeScope(NanNew<String>("FooBar!"));
+}
+```
+
+<a name="api_nan_esacpe_scope"></a>
+### Local&lt;T&gt; NanEscapeScope(Handle&lt;T&gt; value);
+Use together with `NanEscapableScope` to escape the scope. Corresponds to `HandleScope::Close` or `EscapableHandleScope::Escape`.
 
 <a name="api_nan_locker"></a>
 ### NanLocker()
@@ -491,18 +578,13 @@ NanSetInternalFieldPointer(wrapper, 0, this);
 When you want to fetch the V8 object handle from a native object you've wrapped with Node's `ObjectWrap`, you should use `NanObjectWrapHandle`:
 
 ```c++
-NanObjectWrapHandle(iterator)->Get(String::NewSymbol("end"))
+NanObjectWrapHandle(iterator)->Get(NanSymbol("end"))
 ```
-
-<a name="api_nan_make_weak"></a>
-### NanMakeWeak(Persistent&lt;T&gt;, parameter, callback)
-
-Make a persistent reference weak.
 
 <a name="api_nan_symbol"></a>
 ### String NanSymbol(char *)
 
-This isn't strictly about compatibility, it's just an easier way to create string symbol objects (i.e. `String::NewSymbol(x)`), for getting and setting object properties, or names of objects.
+Use to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.
 
 ```c++
 bool foo = false;
@@ -529,7 +611,7 @@ char *plugh(uint32_t *optional) {
 <a name="api_nan_set_pointer_safe"></a>
 ### bool NanSetPointerSafe(Type *, Type)
 
-A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply return `false`.  Otherwise, the value is assigned to the variable the pointer points to.
+A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply returns `false`.  Otherwise, the value is assigned to the variable the pointer points to.
 
 ```c++
 const char *plugh(size_t *outputsize) {
@@ -565,16 +647,6 @@ Just remember that you'll end up with an object that you'll need to `delete[]` a
 ```c++
 size_t count;
 char* name = NanCString(args[0], &count);
-```
-
-<a name="api_nan_from_v8_string"></a>
-### char* NanFromV8String(Handle&lt;Value&gt;[, enum Nan::Encoding, size_t *, char *, size_t, int])
-
-A convenience function that uses `NanRawString()` to convert a V8 `String` to a `char*`. Defaults to UTF8 encoding and no null-termination.
-
-```c++
-size_t count;
-char* name = NanFromV8String(args[0]);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
@@ -633,7 +705,7 @@ NanNewBufferHandle((char*)value.data(), value.size());
 
 Can also be used to initialize a `Buffer` with just a `size` argument.
 
-Can also be supplied with a `NAN_WEAK_CALLBACK` and a hint for the garbage collector, when dealing with weak references.
+Can also be supplied with a `NanFreeCallback` and a hint for the garbage collector.
 
 <a name="api_nan_buffer_use"></a>
 ### Local&lt;Object&gt; NanBufferUse(char*, uint32_t)
@@ -652,25 +724,23 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
-<a name="api_nan_persistent_to_local"></a>
-### Local&lt;Type&gt; NanPersistentToLocal(Persistent&lt;Type&gt;&)
-
-Aside from `FunctionCallbackInfo`, the biggest and most painful change to V8 in Node 0.11 is the many restrictions now placed on `Persistent` handles. They are difficult to assign and difficult to fetch the original value out of.
-
-Use `NanPersistentToLocal` to convert a `Persistent` handle back to a `Local` handle.
-
-```c++
-Local<Object> handle = NanPersistentToLocal(persistentHandle);
-```
-
 <a href="#api_nan_new_context_handle">
 ### Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
 Creates a new `Local<Context>` handle.
 
 ```c++
-Local<FunctionTemplate> ftmpl = FunctionTemplate::New();
+Local<FunctionTemplate> ftmpl = NanNew<FunctionTemplate>();
 Local<ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
 Local<Context> ctx =  NanNewContextHandle(NULL, otmpl);
+```
+
+<a href="#api_nan_get_current_context">
+### Local<Context> NanGetCurrentContext()
+
+Gets the current context.
+
+```c++
+Local<Context> ctx = NanGetCurrentContext();
 ```
 
 <a name="api_nan_dispose_persistent"></a>
@@ -694,21 +764,80 @@ Persistent<Object> persistentHandle;
 
 ...
 
-Local<Object> obj = Object::New();
+Local<Object> obj = NanNew<Object>();
 obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a Local<String>
 NanAssignPersistent(Object, persistentHandle, obj)
 ```
 
-<a name="api_nan_init_persistent"></a>
-### NanInitPersistent(type, name, object)
+<a name="api_nan_make_weak_persistent"></a>
+### NanMakeWeakPersistent(Handle&lt;T&gt; handle, P* parameter, _NanWeakCallbackInfo&lt;T, P&gt;::Callback callback)
 
-User `NanInitPersistent` to declare and initialize a new `Persistent` with the supplied object. The assignment operator for `Persistent` is no longer public in Node 0.11, so this macro makes it easier to declare and initializing a new `Persistent`. See <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a> for more information.
+Creates a weak persistent handle with the supplied parameter and `NAN_WEAK_CALLBACK`. The callback has to be fully specialized to work on all versions of Node.
 
 ```c++
-Local<Object> obj = Object::New();
-obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a Local<String>
-NanInitPersistent(Object, persistentHandle, obj);
+NAN_WEAK_CALLBACK(weakCallback) {
+
+...
+
+}
+
+Local<Function> func;
+
+...
+
+int *parameter = new int(0);
+NanMakeWeakPersistent(func, parameter, &weakCallback<Function, int>);
 ```
+
+<a name="api_nan_set_template"></a>
+### NanSetTemplate(templ, name, value)
+
+Use to add properties on object and function templates.
+
+<a name="api_nan_make_callback"></a>
+### NanMakeCallback(target, func, argc, argv)
+
+Use instead of `node::MakeCallback` to call javascript functions. This is the only proper way of calling functions.
+
+<a name="api_nan_compile_script"></a>
+### NanCompileScript(Handle<String> s [, const ScriptOrigin&amp; origin])
+
+Use to create new scripts bound to the current context.
+
+<a name="api_nan_run_script"></a>
+### NanRunScript(script)
+
+Use to run both bound and unbound scripts.
+
+<a name="api_nan_adjust_external_memory"></a>
+### NanAdjustExternalMemory(int change_in_bytes)
+
+Simply does `AdjustAmountOfExternalAllocatedMemory`
+
+<a name="api_nan_add_gc_epilogue_callback"></a>
+### NanAddGCEpilogueCallback(GCEpilogueCallback callback, GCType gc_type_filter=kGCTypeAll)
+
+Simply does `AddGCEpilogueCallback`
+
+<a name="api_nan_add_gc_prologue_callback"></a>
+### NanAddGCPrologueCallback(GCPrologueCallback callback, GCType gc_type_filter=kGCTypeAll)
+
+Simply does `AddGCPrologueCallback`
+
+<a name="api_nan_remove_gc_epilogue_callback"></a>
+### NanRemoveGCEpilogueCallback(GCEpilogueCallback callback)
+
+Simply does `RemoveGCEpilogueCallback`
+
+<a name="api_nan_add_gc_prologue_callback"></a>
+### NanRemoveGCPrologueCallback(GCPrologueCallback callback)
+
+Simply does `RemoveGCPrologueCallback`
+
+<a name="api_nan_get_heap_statistics"></a>
+### NanGetHeapStatistics(HeapStatistics *heap_statistics)
+
+Simply does `GetHeapStatistics`
 
 <a name="api_nan_callback"></a>
 ### NanCallback
@@ -730,14 +859,14 @@ callback->Call(0, NULL);
 
 // an error argument:
 Handle<Value> argv[] = {
-  Exception::Error(String::New("fail!"))
+  NanError(NanNew<String>("fail!"))
 };
 callback->Call(1, argv);
 
 // a success argument:
 Handle<Value> argv[] = {
-  Null(),
-  String::New("w00t!")
+  NanNull(),
+  NanNew<String>("w00t!")
 };
 callback->Call(2, argv);
 ```
@@ -813,6 +942,6 @@ NAN is only possible due to the excellent work of the following contributors:
 Licence &amp; copyright
 -----------------------
 
-Copyright (c) 2013 NAN contributors (listed above).
+Copyright (c) 2014 NAN contributors (listed above).
 
 Native Abstractions for Node.js is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.

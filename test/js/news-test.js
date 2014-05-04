@@ -1,0 +1,55 @@
+const test     = require('tap').test
+    , bindings = require('bindings');
+
+test('news', function (t) {
+  t.plan(48);
+  t.type(bindings('news').newNumber, 'function');
+  t.type(bindings('news').newPositiveInteger, 'function');
+  t.type(bindings('news').newNegativeInteger, 'function');
+  t.type(bindings('news').newInt32FromPositive, 'function');
+  t.type(bindings('news').newInt32FromNegative, 'function');
+  t.type(bindings('news').newUint32FromPositive, 'function');
+  t.type(bindings('news').newUint32FromNegative, 'function');
+  t.type(bindings('news').newUtf8String, 'function');
+  t.type(bindings('news').newLatin1String, 'function');
+  t.type(bindings('news').newUcs2String, 'function');
+  t.type(bindings('news').newRegExp, 'function');
+  t.type(bindings('news').newStringObject, 'function');
+  t.type(bindings('news').newNumberObject, 'function');
+  t.type(bindings('news').newBooleanObject, 'function');
+  t.type(bindings('news').newExternal, 'function');
+  t.type(bindings('news').newExternalStringResource, 'function');
+  t.type(bindings('news').newExternalAsciiStringResource, 'function');
+  t.type(bindings('news').newSignature, 'function');
+  t.type(bindings('news').newScript, 'function');
+  t.type(bindings('news').newScript2, 'function');
+  t.type(bindings('news').compileScript, 'function');
+  t.type(bindings('news').compileScript2, 'function');
+  t.type(bindings('news').newDate, 'function');
+  t.type(bindings('news').newArray, 'function');
+
+  t.equal(bindings('news').newNumber(), 0.5);
+  t.equal(bindings('news').newPositiveInteger(), 1);
+  t.equal(bindings('news').newNegativeInteger(), -1);
+  t.equal(bindings('news').newInt32FromPositive(), -1);
+  t.equal(bindings('news').newInt32FromNegative(), -1);
+  t.equal(bindings('news').newUint32FromPositive(), 0xFFFFFFFF);
+  t.equal(bindings('news').newUint32FromNegative(), 0xFFFFFFFF);
+  t.equal(bindings('news').newUtf8String(), 'strïng');
+  t.equal(bindings('news').newLatin1String(), 'strïng');
+  t.equal(bindings('news').newUcs2String(), 'strïng');
+  t.deepEquals(bindings('news').newRegExp(), /foo/g);
+  t.deepEquals(bindings('news').newStringObject(), new String("foo"));
+  t.deepEquals(bindings('news').newNumberObject(), new Number(0.5));
+  t.deepEquals(bindings('news').newBooleanObject(), new Boolean(true));
+  t.equals(bindings('news').newExternal(), 'passed');
+  t.equals(bindings('news').newExternalStringResource(), 'strïng');
+  t.equals(bindings('news').newExternalAsciiStringResource(), 'string');
+  t.equals(bindings('news').newSignature(), 'string');
+  t.equals(bindings('news').newScript(), 6);
+  t.equals(bindings('news').newScript2(), 6);
+  t.equals(bindings('news').compileScript(), 6);
+  t.equals(bindings('news').compileScript2(), 6);
+  t.deepEquals(bindings('news').newDate(), new Date(1337));
+  t.deepEquals(bindings('news').newArray(), []);
+});

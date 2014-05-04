@@ -8,8 +8,8 @@
         ]
     }
   , {
-        "target_name" : "fromv8string"
-      , "sources"     : [ "cpp/fromv8string.cpp" ]
+        "target_name" : "strings"
+      , "sources"     : [ "cpp/strings.cpp" ]
       , "cflags"      : [ "-Wno-unused-local-typedefs" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
@@ -26,6 +26,14 @@
   , {
         "target_name" : "multifile"
       , "sources"     : [ "cpp/multifile1.cpp", "cpp/multifile2.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
+        "target_name" : "news"
+      , "sources"     : [ "cpp/news.cpp" ]
       , "cflags"      : [ "-Wno-unused-local-typedefs" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
@@ -83,6 +91,21 @@
         "target_name" : "persistent"
       , "sources"     : [ "cpp/persistent.cpp" ]
       , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
+        "target_name" : "weak"
+      , "sources"     : [ "cpp/weak.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
+        "target_name" : "bufferworkerpersistent"
+      , "sources"     : [ "cpp/bufferworkerpersistent.cpp" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
         ]

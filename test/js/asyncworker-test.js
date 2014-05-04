@@ -3,9 +3,9 @@ const test     = require('tap').test
 
 test('asyncworker', function (t) {
   var worker = bindings('asyncworker').a
-  t.type(worker, 'function')
-  var ticks  = 0
+    , ticks  = 0
     , called = false
+  t.type(worker, 'function')
   function tick () {
     ticks++
     if (!called)

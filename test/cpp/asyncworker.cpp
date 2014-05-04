@@ -1,6 +1,14 @@
+/**********************************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ **********************************************************************************/
+
 #include <unistd.h>
 #include <node.h>
-#include "nan.h"
+#include <nan.h>
 
 class SleepWorker : public NanAsyncWorker {
  public:
@@ -23,8 +31,10 @@ NAN_METHOD(Sleep) {
   NanReturnUndefined();
 }
 
-void Init (v8::Handle<v8::Object> exports) {
-  exports->Set(NanSymbol("a"), v8::FunctionTemplate::New(Sleep)->GetFunction());
+void Init(v8::Handle<v8::Object> exports) {
+  exports->Set(
+      NanSymbol("a")
+    , NanNew<v8::FunctionTemplate>(Sleep)->GetFunction());
 }
 
 NODE_MODULE(asyncworker, Init)
