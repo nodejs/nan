@@ -17,11 +17,17 @@
  *  * 1.0.0 May 4 2014
  *    - Heavy API changes for V8 3.25 / Node 0.11.13
  *    - Use cpplint.py
+ *    - Removed NanInitPersistent
+ *    - Removed NanPersistentToLocal
+ *    - Removed NanFromV8String
+ *    - Removed NanMakeWeak
+ *    - Removed NanNewLocal
+ *    - Removed NAN_WEAK_CALLBACK_OBJECT
+ *    - Removed NAN_WEAK_CALLBACK_DATA
  *    - Introduce NanNew, replaces NanNewLocal, NanPersistentToLocal, adds many overloaded typed versions
  *    - Introduce NanUndefined, NanNull, NanTrue and NanFalse
  *    - Introduce NanEscapableScope and NanEscapeScope
- *    - Remove NanMakeWeak
- *    - Introduce NanMakeWeakPersistent
+ *    - Introduce NanMakeWeakPersistent (requires a special callback to work on both old and new node)
  *    - Introduce NanMakeCallback for node::MakeCallback
  *    - Introduce NanSetTemplate
  *    - Introduce NanGetCurrentContext

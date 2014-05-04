@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 1.0.0-wip*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
+***Current version: 1.0.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -18,6 +18,24 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### May-2013: Major changes for V8 3.25 / Node 0.11.13
+
+Node 0.11.11 and 0.11.12 were both broken releases for native add-ons, you simply can't properly compile against either of them for different reasons. But we now have a 0.11.13 release that jumps a couple of versions of V8 ahead and includes some more, major (traumatic) API changes.
+
+Because we are now nearing Node 0.12 and estimate that the version of V8 we are using in Node 0.11.13 will be close to the API we get for 0.12, we have taken the opportunity to not only *fix* NAN for 0.11.13 but make some major changes to improve the NAN API. We have **removed support for Node 0.11 versions prior to 0.11.13**, (although our tests are still passing for 0.11.10). As usual, our tests are run against (and pass) the last 5 versions of Node 0.8 and Node 0.10. We also include Node 0.11.13 obviously.
+
+The major change is something that [Benjamin Byholm](kkoopa) has put many hours in to. We now have a fantastic new `NanNew<T>()` interface for creating new `Local`s, this replaces `NanNewLocal()` and much more. If you look in [./nan.h](nan.h) you'll see a large number of overloaded versions of this method. In general you should be able to `NanNew<Type>(arguments)` for any type you want to make a `Local` from. This includes `Persistent` types, so we now have a `Local<T> NanNew(const Persistent<T> arg)` to replace `NanPersistentToLocal()`.
+
+We also now have `NanUndefined()`, `NanNull()`, `NanTrue()` and `NanFalse()`. Mainly because of the new requirement for an `Isolate` argument for each of the native V8 versions of this.
+
+V8 has now introduced an `EscapableHandleScope` from which you `scope.Escape(Local<T> value)` to *return* a value from a one scope to another. This replaces the standard `HandleScope` and `scope.Close(Local<T> value)`, although `HandleScope` still exists for when you don't need to return a handle to the caller. For NAN we are exposing it as `NanEscapableScope()` and `NanEscapeScope()`, while `NanScope()` is still how you create a new scope that doesn't need to return handles. For older versions of Node/V8, it'll still map to the older `HandleScope` functionality.
+
+`NanFromV8String()` was deprecated and has now been removed. You should use `NanCString()` or `NanRawString()` instead.
+
+Because `node::MakeCallback()` now takes an `Isolate`, and because it doesn't exist in older versions of Node, we've introduced `NanMakeCallabck()`. You should *always* use this when calling a JavaScript function from C++.
+
+There's lots more, check out the Changelog in nan.h or look through [#86](https://github.com/rvagg/nan/pull/86) for all the gory details.
 
 ### Dec-2013: NanCString and NanRawString
 
