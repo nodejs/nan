@@ -11,11 +11,25 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 1.0.0-wip (current Node unstable: 0.11.13-pre, Node stable: 0.10.26)
+ * Version 1.0.0 (current Node unstable: 0.11.13, Node stable: 0.10.28)
  *
  * ChangeLog:
- *  * 1.0.0 Some Day
- *    - Rewrite for v8 3.25
+ *  * 1.0.0 May 4 2014
+ *    - Heavy API changes for V8 3.25 / Node 0.11.13
+ *    - Use cpplint.py
+ *    - Introduce NanNew, replaces NanNewLocal, NanPersistentToLocal, adds many overloaded typed versions
+ *    - Introduce NanUndefined, NanNull, NanTrue and NanFalse
+ *    - Introduce NanEscapableScope and NanEscapeScope
+ *    - Remove NanMakeWeak
+ *    - Introduce NanMakeWeakPersistent
+ *    - Introduce NanMakeCallback for node::MakeCallback
+ *    - Introduce NanSetTemplate
+ *    - Introduce NanGetCurrentContext
+ *    - Introduce NanCompileScript and NanRunScript
+ *    - Introduce NanAdjustExternalMemory
+ *    - Introduce NanAddGCEpilogueCallback, NanAddGCPrologueCallback, NanRemoveGCEpilogueCallback, NanRemoveGCPrologueCallback
+ *    - Introduce NanGetHeapStatistics
+ *    - Rename NanAsyncWorker#SavePersistent() to SaveToPersistent()
  *
  *  * 0.8.0 Jan 9 2014
  *    - NanDispose -> NanDisposePersistent, deprecate NanDispose
