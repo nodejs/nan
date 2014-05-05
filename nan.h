@@ -822,13 +822,13 @@ void NAN_INLINE NanMakeWeakPersistent(
   }
 
   NAN_INLINE v8::Local<v8::Value> NanRunScript(
-      v8::Local<NanUnboundScript> script
+      v8::Handle<NanUnboundScript> script
   ) {
     return script->BindToCurrentContext()->Run();
   }
 
   NAN_INLINE v8::Local<v8::Value> NanRunScript(
-      v8::Local<NanBoundScript> script
+      v8::Handle<NanBoundScript> script
   ) {
     return script->Run();
   }
@@ -1379,7 +1379,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return v8::Script::Compile(s);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Local<v8::Script> script) {
+  NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Handle<v8::Script> script) {
     return script->Run();
   }
 
