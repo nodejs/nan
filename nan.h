@@ -676,7 +676,7 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     }                                                                          \
                                                                                \
     template<typename T, typename P>                                           \
-    NAN_INLINE void _Nan_Weak_Callback_ ## name(                               \
+    static NAN_INLINE void _Nan_Weak_Callback_ ## name(                        \
         const _NanWeakCallbackData<T, P> &data)
 
 # define NanScope() v8::HandleScope scope(nan_isolate)
@@ -1215,7 +1215,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
     }                                                                          \
                                                                                \
     template<typename T, typename P>                                           \
-    NAN_INLINE void _Nan_Weak_Callback_ ## name(                               \
+    static NAN_INLINE void _Nan_Weak_Callback_ ## name(                        \
         const _NanWeakCallbackData<T, P> &data)
 
   template<typename T, typename P>
