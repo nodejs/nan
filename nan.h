@@ -1496,9 +1496,8 @@ class NanCallback {
 
 /* abstract */ class NanAsyncWorker {
  public:
-  explicit NanAsyncWorker(NanCallback *callback) : callback(callback) {
+  explicit NanAsyncWorker(NanCallback *callback) : callback(callback), errmsg_(NULL) {
     request.data = this;
-    errmsg = NULL;
 
     NanScope();
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
@@ -1512,14 +1511,14 @@ class NanCallback {
       NanDisposePersistent(persistentHandle);
     if (callback)
       delete callback;
-    if (errmsg)
-      delete errmsg;
+    if (errmsg_)
+      delete[] errmsg_;
   }
 
   virtual void WorkComplete() {
     NanScope();
 
-    if (errmsg == NULL)
+    if (errmsg_ == NULL)
       HandleOKCallback();
     else
       HandleErrorCallback();
@@ -1545,7 +1544,6 @@ class NanCallback {
  protected:
   v8::Persistent<v8::Object> persistentHandle;
   NanCallback *callback;
-  const char *errmsg;
 
   virtual void HandleOKCallback() {
     NanScope();
@@ -1557,10 +1555,25 @@ class NanCallback {
     NanScope();
 
     v8::Local<v8::Value> argv[] = {
-        v8::Exception::Error(NanNew<v8::String>(errmsg))
+        v8::Exception::Error(NanNew<v8::String>(errmsg()))
     };
     callback->Call(1, argv);
   }
+
+  void set_errmsg(const char *msg) {
+    size_t size = strlen(msg) + 1;
+    errmsg_ = new char[size];
+    memcpy(errmsg_, msg, size);
+    strncpy(errmsg_, msg, size);
+    errmsg_[size] = '\0';
+  }
+
+  const char* errmsg() {
+    return errmsg_;
+  }
+
+private:
+  char *errmsg_;
 };
 
 NAN_INLINE void NanAsyncExecute (uv_work_t* req) {
