@@ -7,7 +7,7 @@ class ErrorWorker : public NanAsyncWorker {
   ~ErrorWorker() {}
 
   void Execute () {
-    set_errmsg("Error");
+    SetErrorMessage("Error");
   }
 };
 

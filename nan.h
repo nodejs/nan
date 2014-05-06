@@ -1555,20 +1555,18 @@ class NanCallback {
     NanScope();
 
     v8::Local<v8::Value> argv[] = {
-        v8::Exception::Error(NanNew<v8::String>(errmsg()))
+        v8::Exception::Error(NanNew<v8::String>(ErrorMessage()))
     };
     callback->Call(1, argv);
   }
 
-  void set_errmsg(const char *msg) {
+  void SetErrorMessage(const char *msg) {
     size_t size = strlen(msg) + 1;
     errmsg_ = new char[size];
     memcpy(errmsg_, msg, size);
-    strncpy(errmsg_, msg, size);
-    errmsg_[size] = '\0';
   }
 
-  const char* errmsg() {
+  const char* ErrorMessage() {
     return errmsg_;
   }
 
