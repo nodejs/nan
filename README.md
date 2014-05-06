@@ -735,7 +735,7 @@ Local<Context> ctx =  NanNewContextHandle(NULL, otmpl);
 ```
 
 <a href="#api_nan_get_current_context">
-### Local<Context> NanGetCurrentContext()
+### Local&lt;Context&gt; NanGetCurrentContext()
 
 Gets the current context.
 
