@@ -1561,6 +1561,10 @@ class NanCallback {
   }
 
   void SetErrorMessage(const char *msg) {
+    if (errmsg_) {
+      delete[] errmsg_;
+    }
+
     size_t size = strlen(msg) + 1;
     errmsg_ = new char[size];
     memcpy(errmsg_, msg, size);
