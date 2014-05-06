@@ -106,6 +106,15 @@
   , {
         "target_name" : "bufferworkerpersistent"
       , "sources"     : [ "cpp/bufferworkerpersistent.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
+        "target_name" : "asyncworkererror"
+      , "sources"     : [ "cpp/asyncworkererror.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
         ]
