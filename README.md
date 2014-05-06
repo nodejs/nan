@@ -753,7 +753,7 @@ NanDisposePersistent(persistentHandle);
 ```
 
 <a name="api_nan_assign_persistent"></a>
-### NanAssignPersistent(type, handle, object)
+### NanAssignPersistent(handle, object)
 
 Use `NanAssignPersistent` to assign a non-`Persistent` handle to a `Persistent` one. You can no longer just declare a `Persistent` handle and assign directly to it later, you have to `Reset` it in Node 0.11, so this makes it easier.
 
@@ -766,7 +766,7 @@ Persistent<Object> persistentHandle;
 
 Local<Object> obj = NanNew<Object>();
 obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a Local<String>
-NanAssignPersistent(Object, persistentHandle, obj)
+NanAssignPersistent(persistentHandle, obj)
 ```
 
 <a name="api_nan_make_weak_persistent"></a>
