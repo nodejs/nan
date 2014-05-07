@@ -652,9 +652,15 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
     NAN_INLINE v8::Local<T> GetValue() const {
       return NanNew(info_->persistent);
     }
+
     NAN_INLINE P* GetParameter() const { return info_->parameter; }
+
     NAN_INLINE void Revive() const {
       info_->persistent.SetWeak(info_, info_->callback);
+    }
+
+    NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
+      return info_;
     }
 
     NAN_INLINE void Dispose() const {
@@ -692,13 +698,14 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 # define NanObjectWrapHandle(obj) obj->handle()
 
 template<typename T, typename P>
-void NAN_INLINE NanMakeWeakPersistent(
+NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     v8::Handle<T> handle
   , P* parameter
   , typename _NanWeakCallbackInfo<T, P>::Callback callback) {
     _NanWeakCallbackInfo<T, P> *cbinfo =
      new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
     cbinfo->persistent.SetWeak(cbinfo, callback);
+    return cbinfo;
 }
 
 # define _NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
@@ -1187,10 +1194,17 @@ typedef v8::InvocationCallback NanFunctionCallback;
     NAN_INLINE v8::Local<T> GetValue() const {
       return NanNew(info_->persistent);
     }
+
     NAN_INLINE P* GetParameter() const { return info_->parameter; }
+
     NAN_INLINE void Revive() const {
       info_->persistent.MakeWeak(info_, info_->callback);
     }
+
+    NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
+      return info_;
+    }
+
     NAN_INLINE void Dispose() const {
       delete info_;
     }
@@ -1219,13 +1233,14 @@ typedef v8::InvocationCallback NanFunctionCallback;
         const _NanWeakCallbackData<T, P> &data)
 
   template<typename T, typename P>
-  NAN_INLINE void NanMakeWeakPersistent(
+  NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     v8::Handle<T> handle
   , P* parameter
   , typename _NanWeakCallbackInfo<T, P>::Callback callback) {
       _NanWeakCallbackInfo<T, P> *cbinfo =
         new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
       cbinfo->persistent.MakeWeak(cbinfo, callback);
+      return cbinfo;
   }
 
 # define NanScope() v8::HandleScope scope
