@@ -807,9 +807,10 @@ void NAN_INLINE NanMakeWeakPersistent(
     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
   ) {
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     return v8::Local<v8::Context>::New(
-        v8::Isolate::GetCurrent()
-      , v8::Context::New(v8::Isolate::GetCurrent(), extensions, tmpl, obj)
+        isolate
+      , v8::Context::New(isolate, extensions, tmpl, obj)
     );
   }
 
@@ -1472,11 +1473,12 @@ class NanCallback {
   void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
 #if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(NanSymbol("callback")).As<v8::Function>();
     node::MakeCallback(
-        v8::Isolate::GetCurrent()
-      , v8::Isolate::GetCurrent()->GetCurrentContext()->Global()
+        isolate
+      , isolate->GetCurrentContext()->Global()
       , callback
       , argc
       , argv
