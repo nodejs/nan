@@ -902,7 +902,7 @@ public:
   virtual void Execute ();
 
   // Save a V8 object in a Persistent handle to protect it from GC
-  void SavePersistent(const char *key, Local<Object> &obj);
+  void SaveToPersistent(const char *key, Local<Object> &obj);
 
   // Fetch a stored V8 object (don't call from within `Execute()`)
   Local<Object> GetFromPersistent(const char *key);
