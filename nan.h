@@ -644,22 +644,30 @@ static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
   };
 
   template<typename T, typename P>
-  struct _NanWeakCallbackData {
+  class _NanWeakCallbackData {
+   public:
     _NanWeakCallbackData(_NanWeakCallbackInfo<T, P> *info)
       : info_(info) { }
 
     NAN_INLINE v8::Local<T> GetValue() const {
       return NanNew(info_->persistent);
     }
+
     NAN_INLINE P* GetParameter() const { return info_->parameter; }
+
     NAN_INLINE void Revive() const {
       info_->persistent.SetWeak(info_, info_->callback);
+    }
+
+    NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
+      return info_;
     }
 
     NAN_INLINE void Dispose() const {
       delete info_;
     }
 
+   private:
     _NanWeakCallbackInfo<T, P>* info_;
   };
 
@@ -1178,21 +1186,30 @@ typedef v8::InvocationCallback NanFunctionCallback;
   };
 
   template<typename T, typename P>
-  struct _NanWeakCallbackData {
+  class _NanWeakCallbackData {
+   public:
     _NanWeakCallbackData(_NanWeakCallbackInfo<T, P> *info)
       : info_(info) { }
 
     NAN_INLINE v8::Local<T> GetValue() const {
       return NanNew(info_->persistent);
     }
+
     NAN_INLINE P* GetParameter() const { return info_->parameter; }
+
     NAN_INLINE void Revive() const {
       info_->persistent.MakeWeak(info_, info_->callback);
     }
+
+    NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
+      return info_;
+    }
+
     NAN_INLINE void Dispose() const {
       delete info_;
     }
 
+   private:
     _NanWeakCallbackInfo<T, P>* info_;
   };
 
