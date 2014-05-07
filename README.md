@@ -168,7 +168,7 @@ class PiWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Value> argv[] = {
-        NanNew(NanNull())
+        NanNull()
       , NanNew<Number>(estimate)
     };
 
@@ -421,22 +421,22 @@ Local<Object> lo = NanNew(o);
 ```
 
 <a name="api_nan_undefined"></a>
-### Handle&lt;Primitive&gt; NanUndefined()
+### Local&lt;Primitive&gt; NanUndefined()
 
 Use instead of `Undefined()`
 
 <a name="api_nan_null"></a>
-### Handle&lt;Primitive&gt; NanNull()
+### Local&lt;Primitive&gt; NanNull()
 
 Use instead of `Null()`
 
 <a name="api_nan_true"></a>
-### Handle&lt;Primitive&gt; NanTrue()
+### Local&lt;Primitive&gt; NanTrue()
 
 Use instead of `True()`
 
 <a name="api_nan_false"></a>
-### Handle&lt;Primitive&gt; NanFalse()
+### Local&lt;Primitive&gt; NanFalse()
 
 Use instead of `False()`
 
