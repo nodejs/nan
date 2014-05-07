@@ -892,12 +892,12 @@ public:
   // Clean up persistent handles and delete the *callback
   virtual ~NanAsyncWorker ();
 
-  // Check the `char *errmsg` property and call HandleOKCallback()
+  // Check the `ErrorMessage()` and call HandleOKCallback()
   // or HandleErrorCallback depending on whether it has been set or not
   virtual void WorkComplete ();
 
   // You must implement this to do some async work. If there is an
-  // error then allocate `errmsg` to a message and the callback will
+  // error then use `SetErrorMessage()` to set an error message and the callback will
   // be passed that string in an Error object
   virtual void Execute ();
 
@@ -906,11 +906,14 @@ public:
 
   // Fetch a stored V8 object (don't call from within `Execute()`)
   Local<Object> GetFromPersistent(const char *key);
-
+  
+  // Get the error message (or NULL)
+  const char *ErrorMessage();
+  
+  // Set an error message
+  void SetErrorMessage(const char *msg);
+  
 protected:
-  // Set this if there is an error, otherwise it's NULL
-  const char *errmsg;
-
   // Default implementation calls the callback function with no arguments.
   // Override this to return meaningful data
   virtual void HandleOKCallback ();
