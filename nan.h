@@ -304,10 +304,10 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 typedef v8::FunctionCallback NanFunctionCallback;
 static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
 
-# define NanUndefined() v8::Undefined(nan_isolate)
-# define NanNull() v8::Null(nan_isolate)
-# define NanTrue() v8::True(nan_isolate)
-# define NanFalse() v8::False(nan_isolate)
+# define NanUndefined() NanNew(v8::Undefined(nan_isolate))
+# define NanNull() NanNew(v8::Null(nan_isolate))
+# define NanTrue() NanNew(v8::True(nan_isolate))
+# define NanFalse() NanNew(v8::False(nan_isolate))
 # define NanAdjustExternalMemory(amount)                                       \
     nan_isolate->AdjustAmountOfExternalAllocatedMemory(amount)
 # define NanSetTemplate(templ, name, value) templ->Set(nan_isolate, name, value)
@@ -897,10 +897,10 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
 typedef v8::InvocationCallback NanFunctionCallback;
 
-# define NanUndefined() v8::Undefined()
-# define NanNull() v8::Null()
-# define NanTrue() v8::True()
-# define NanFalse() v8::False()
+# define NanUndefined() NanNew(v8::Undefined())
+# define NanNull() NanNew(v8::Null())
+# define NanTrue() NanNew(v8::True())
+# define NanFalse() NanNew(v8::False())
 # define NanAdjustExternalMemory(amount)                                       \
     v8::V8::AdjustAmountOfExternalAllocatedMemory(amount)
 # define NanSetTemplate(templ, name, value) templ->Set(name, value)
