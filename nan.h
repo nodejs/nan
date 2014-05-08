@@ -1449,7 +1449,7 @@ typedef void (*NanFreeCallback)(char *data, void *hint);
 
 class NanCallback {
  public:
-  NanCallback() {
+  NanCallback() : empty_(true) {
     NanScope();
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
     NanAssignPersistent(handle, obj);
@@ -1470,12 +1470,15 @@ class NanCallback {
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
     NanScope();
     NanNew(handle)->Set(NanSymbol("callback"), fn);
+    empty_ = false;
   }
 
-  NAN_INLINE v8::Local<v8::Function> GetFunction () {
+  NAN_INLINE v8::Local<v8::Function> GetFunction() const {
     return NanNew(handle)->Get(NanSymbol("callback"))
         .As<v8::Function>();
   }
+
+  NAN_INLINE bool IsEmpty() const { return empty_; }
 
   void Call(int argc, v8::Handle<v8::Value> argv[]) {
     NanScope();
@@ -1507,6 +1510,7 @@ class NanCallback {
 
  private:
   v8::Persistent<v8::Object> handle;
+  bool empty_;
 };
 
 /* abstract */ class NanAsyncWorker {
@@ -1546,7 +1550,7 @@ class NanCallback {
     handle->Set(NanSymbol(key), obj);
   }
 
-  v8::Local<v8::Object> GetFromPersistent(const char *key) {
+  v8::Local<v8::Object> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
     return NanEscapeScope(handle->Get(NanSymbol(key)).As<v8::Object>());
@@ -1585,7 +1589,7 @@ class NanCallback {
     memcpy(errmsg_, msg, size);
   }
 
-  const char* ErrorMessage() {
+  const char* ErrorMessage() const {
     return errmsg_;
   }
 
