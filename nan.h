@@ -302,7 +302,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 # define _NAN_INDEX_QUERY_RETURN_TYPE void
 
 typedef v8::FunctionCallback NanFunctionCallback;
-static v8::Isolate* nan_isolate = v8::Isolate::GetCurrent();
+#define nan_isolate v8::Isolate::GetCurrent()
 
 # define NanUndefined() NanNew(v8::Undefined(nan_isolate))
 # define NanNull() NanNew(v8::Null(nan_isolate))
