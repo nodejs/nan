@@ -568,7 +568,7 @@ Sets the value of the internal field at `index` on a V8 `Object` handle.
 ```c++
 static Persistent<Function> dataWrapperCtor;
 ...
-Local<Object> wrapper = NanPersistentToLocal(dataWrapperCtor)->NewInstance();
+Local<Object> wrapper = NanNew(dataWrapperCtor)->NewInstance();
 NanSetInternalFieldPointer(wrapper, 0, this);
 ```
 
