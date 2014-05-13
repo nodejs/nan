@@ -874,7 +874,7 @@ callback->Call(2, argv);
 `NanCallback` also has a `Local<Function> GetCallback()` method that you can use
 to fetch a local handle to the underlying callback function, as well  as a
 `void SetFunction(Handle<Function>)` for setting the callback on the
-`NanCallback`.  Additionally a generic constructor is available for using
+`NanCallback`. You can check if a `NanCallback` is empty with the `bool IsEmpty()` method. Additionally a generic constructor is available for using
 `NanCallback` without performing heap allocations.
 
 <a name="api_nan_async_worker"></a>
