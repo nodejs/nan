@@ -1339,7 +1339,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
     , node::Buffer::free_callback callback
     , void *hint
   ) {
-    return NanNew<v8::Object>(
+    return NanNew(
         node::Buffer::New(data, length, callback, hint)->handle_);
   }
 
@@ -1348,15 +1348,15 @@ typedef v8::InvocationCallback NanFunctionCallback;
     , uint32_t size
   ) {
 #if NODE_MODULE_VERSION >= 0x000B
-    return NanNew<v8::Object>(node::Buffer::New(data, size)->handle_);
+    return NanNew(node::Buffer::New(data, size)->handle_);
 #else
-    return NanNew<v8::Object>(
+    return NanNew(
       node::Buffer::New(const_cast<char*>(data), size)->handle_);
 #endif
   }
 
   NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
-    return NanNew<v8::Object>(node::Buffer::New(size)->handle_);
+    return NanNew(node::Buffer::New(size)->handle_);
   }
 
   NAN_INLINE void FreeData(char *data, void *hint) {
@@ -1367,7 +1367,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
       char* data
     , uint32_t size
   ) {
-    return NanNew<v8::Object>(
+    return NanNew(
         node::Buffer::New(data, size, FreeData, NULL)->handle_);
   }
 
@@ -1384,7 +1384,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
   ) {
     v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
-    v8::Local<v8::Context> lctx = NanNew<v8::Context>(ctx);
+    v8::Local<v8::Context> lctx = NanNew(ctx);
     ctx.Dispose();
     return lctx;
   }
@@ -1507,7 +1507,7 @@ class NanCallback {
 #else
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = NanNew(handle)->
-        Get(NanSymbol(kCallbackIndex).As<v8::Function>();
+        Get(NanSymbol(kCallbackIndex)).As<v8::Function>();
     node::MakeCallback(
         v8::Context::GetCurrent()->Global()
       , callback
@@ -1771,7 +1771,7 @@ static bool _NanGetExternalParts(
   }
 
   assert(val->IsString());
-  v8::Local<v8::String> str = NanNew<v8::String>(val.As<v8::String>());
+  v8::Local<v8::String> str = NanNew(val.As<v8::String>());
 
   if (str->IsExternalAscii()) {
     const v8::String::ExternalAsciiStringResource* ext;
