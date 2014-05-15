@@ -312,8 +312,6 @@ typedef v8::FunctionCallback NanFunctionCallback;
 # define NanSetTemplate(templ, name, value)                                    \
     templ->Set(v8::Isolate::GetCurrent(), name, value)
 # define NanGetCurrentContext() v8::Isolate::GetCurrent()->GetCurrentContext()
-# define NanMakeCallback(target, func, argc, argv)                             \
-    node::MakeCallback(v8::Isolate::GetCurrent(), target, func, argc, argv)
 # define NanGetInternalFieldPointer(object, index)                             \
     object->GetAlignedPointerFromInternalField(index)
 # define NanSetInternalFieldPointer(object, index, value)                      \
@@ -848,6 +846,15 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return script->Run();
   }
 
+  NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
+      v8::Handle<v8::Object> target
+    , v8::Handle<v8::Function> func
+    , int argc
+    , v8::Handle<v8::Value>* argv) {
+    return NanNew(node::MakeCallback(
+        v8::Isolate::GetCurrent(), target, func, argc, argv));
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -913,19 +920,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
     v8::V8::AdjustAmountOfExternalAllocatedMemory(amount)
 # define NanSetTemplate(templ, name, value) templ->Set(name, value)
 # define NanGetCurrentContext() v8::Context::GetCurrent()
-# if NODE_VERSION_AT_LEAST(0, 8, 0)
-#  define NanMakeCallback(target, func, argc, argv)                            \
-    node::MakeCallback(target, func, argc, argv)
-# else
-#  define NanMakeCallback(target, func, argc, argv)                            \
-    do {                                                                       \
-      v8::TryCatch try_catch;                                                  \
-      func->Call(target, argc, argv);                                          \
-      if (try_catch.HasCaught()) {                                             \
-          node::FatalException(try_catch);                                       \
-      }                                                                        \
-    } while (0)
-# endif
 
 # define NanSymbol(value) v8::String::NewSymbol(value)
 
@@ -1405,6 +1399,24 @@ typedef v8::InvocationCallback NanFunctionCallback;
   NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Handle<v8::Script> script) {
     return script->Run();
   }
+
+  NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
+      v8::Handle<v8::Object> target
+    , v8::Handle<v8::Function> func
+    , int argc
+    , v8::Handle<v8::Value>* argv) {
+# if NODE_VERSION_AT_LEAST(0, 8, 0)
+    return NanNew(node::MakeCallback(target, func, argc, argv))
+# else
+    v8::TryCatch try_catch;
+    v8::Local<v8::Value> result = NanNew(func->Call(target, argc, argv));
+    if (try_catch.HasCaught()) {
+        node::FatalException(try_catch);
+    }
+    return result;
+# endif
+  }
+}
 
 #endif  // NODE_MODULE_VERSION
 
