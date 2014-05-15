@@ -686,10 +686,10 @@ Local<Value> res = NanError("you must supply a callback argument");
 <a name="api_nan_throw_error"></a>
 ### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local&lt;Value&gt;), NanThrowError(Local&lt;Value&gt;, int)
 
-For throwing `Error`, `TypeError` and `RangeError` objects. You should `return` this call:
+For throwing `Error`, `TypeError` and `RangeError` objects.
 
 ```c++
-return NanThrowError("you must supply a callback argument");
+NanThrowError("you must supply a callback argument");
 ```
 
 Can also handle any custom object you may want to throw. If used with the error code argument, it will add the supplied error code to the error object as a property called `code`.
