@@ -922,7 +922,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
       v8::TryCatch try_catch;                                                  \
       func->Call(target, argc, argv);                                          \
       if (try_catch.HasCaught()) {                                             \
-          v8::FatalException(try_catch);                                       \
+          node::FatalException(try_catch);                                       \
       }                                                                        \
     } while (0)
 # endif
@@ -1506,8 +1506,8 @@ class NanCallback {
     );
 #else
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
-    v8::Local<v8::Function> callback = NanNew(handle)->
-        Get(NanSymbol(kCallbackIndex).As<v8::Function>();
+    v8::Local<v8::Function> callback = handle->
+        Get(kCallbackIndex).As<v8::Function>();
     node::MakeCallback(
         v8::Context::GetCurrent()->Global()
       , callback
@@ -1515,7 +1515,9 @@ class NanCallback {
       , argv
     );
 #else
-    node::MakeCallback(handle, "callback", argc, argv);
+    v8::Local<v8::Function> callback = handle->
+        Get(kCallbackIndex).As<v8::Function>();
+    NanMakeCallback(v8::Context::GetCurrent()->Global(), callback, argc, argv);
 #endif
 #endif
   }
