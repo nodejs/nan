@@ -35,7 +35,7 @@ V8 has now introduced an `EscapableHandleScope` from which you `scope.Escape(Loc
 
 `NanFromV8String()` was deprecated and has now been removed. You should use `NanCString()` or `NanRawString()` instead.
 
-Because `node::MakeCallback()` now takes an `Isolate`, and because it doesn't exist in older versions of Node, we've introduced `NanMakeCallabck()`. You should *always* use this when calling a JavaScript function from C++.
+Because `node::MakeCallback()` now takes an `Isolate`, and because it doesn't exist in older versions of Node, we've introduced `NanMakeCallback()`. You should *always* use this when calling a JavaScript function from C++.
 
 There's lots more, check out the Changelog in nan.h or look through [#86](https://github.com/rvagg/nan/pull/86) for all the gory details.
 
