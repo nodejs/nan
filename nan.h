@@ -691,7 +691,18 @@ typedef v8::FunctionCallback NanFunctionCallback;
 # define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
 # define NanEscapableScope()                                                   \
   v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
-# define NanEscapeScope(val) scope.Escape(val)
+
+template<typename T>
+NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Handle<T> val) {
+  return NanNew(val);
+}
+
+template<typename T>
+NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
+  return val;
+}
+
+# define NanEscapeScope(val) scope.Escape(_NanEscapeScopeHelper(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
