@@ -431,12 +431,12 @@ Use instead of `Undefined()`
 Use instead of `Null()`
 
 <a name="api_nan_true"></a>
-### Local&lt;Primitive&gt; NanTrue()
+### Local&lt;Boolean&gt; NanTrue()
 
 Use instead of `True()`
 
 <a name="api_nan_false"></a>
-### Local&lt;Primitive&gt; NanFalse()
+### Local&lt;Boolean&gt; NanFalse()
 
 Use instead of `False()`
 
