@@ -497,7 +497,7 @@ NAN_METHOD(Foo::Baz) {
 <a name="api_nan_scope"></a>
 ### NanScope()
 
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanScope()` necessary, use it in place of `HandleScope scope`:
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanScope()` necessary, use it in place of `HandleScope scope` when you do not wish to return handles (`Handle` or `Local`) to the surrounding scope (or in functions directly exposed to V8, as they do not return values in the normal sense):
 
 ```c++
 NAN_METHOD(Foo::Bar) {
@@ -507,10 +507,22 @@ NAN_METHOD(Foo::Bar) {
 }
 ```
 
+This method is not directly exposed to V8, nor does it return a handle, so it uses an unescapable scope:
+
+```c++
+bool Foo::Bar() {
+  NanScope();
+  
+  Local<Boolean> val = NanFalse();
+  ...
+  return val->Value();
+}
+```
+
 <a name="api_nan_escapable_scope"></a>
 ### NanEscapableScope()
 
-The separation of handle scopes into escapable and inescapable scopes makes `NanEscapableScope()` necessary, use it in place of `HandleScope scope` when you later wish to `Close()` the scope:
+The separation of handle scopes into escapable and inescapable scopes makes `NanEscapableScope()` necessary, use it in place of `HandleScope scope` when you later wish to return a handle (`Handle` or `Local`) from the scope, this is for internal functions not directly exposed to V8:
 
 ```c++
 Handle<String> Foo::Bar() {
