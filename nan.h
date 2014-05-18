@@ -710,6 +710,7 @@ NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
 # define NanReturnUndefined() return
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
+# define NanEmptyString() v8::String::Empty(v8::Isolate::GetCurrent())
 # define NanUndefined() NanNew(v8::Undefined(v8::Isolate::GetCurrent()))
 # define NanNull() NanNew(v8::Null(v8::Isolate::GetCurrent()))
 # define NanTrue() NanNew(v8::True(v8::Isolate::GetCurrent()))
@@ -1270,6 +1271,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
+# define NanEmptyString() v8::String::Empty()
 # define NanUndefined() NanNew(v8::Undefined())
 # define NanNull() NanNew(v8::Null())
 # define NanTrue() NanNew(v8::True())
