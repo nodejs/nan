@@ -136,7 +136,7 @@ void Init (v8::Handle<v8::Object> target) {
   , returnString
   );
   target->Set(
-      NanSymbol("returnString")
+      NanNew<v8::String>("returnString")
     , returnString->GetFunction()
   );
   v8::Local<v8::FunctionTemplate> returnCString =
@@ -146,7 +146,7 @@ void Init (v8::Handle<v8::Object> target) {
   , returnCString
   );
   target->Set(
-      NanSymbol("returnCString")
+      NanNew<v8::String>("returnCString")
     , returnCString->GetFunction()
   );
   v8::Local<v8::FunctionTemplate> compareCStringToBuffer =
@@ -156,7 +156,7 @@ void Init (v8::Handle<v8::Object> target) {
   , compareCStringToBuffer
   );
   target->Set(
-      NanSymbol("compareCStringToBuffer")
+      NanNew<v8::String>("compareCStringToBuffer")
     , compareCStringToBuffer->GetFunction()
   );
   v8::Local<v8::FunctionTemplate> compareRawStringToBuffer =
@@ -166,7 +166,7 @@ void Init (v8::Handle<v8::Object> target) {
   , compareRawStringToBuffer
   );
   target->Set(
-      NanSymbol("compareRawStringToBuffer")
+      NanNew<v8::String>("compareRawStringToBuffer")
     , compareRawStringToBuffer->GetFunction()
   );
 }

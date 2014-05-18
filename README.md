@@ -92,12 +92,13 @@ Note that there is no embedded version sniffing going on here and also the async
 using v8::FunctionTemplate;
 using v8::Handle;
 using v8::Object;
+using v8::String;
 
 void InitAll(Handle<Object> exports) {
-  exports->Set(NanSymbol("calculateSync"),
+  exports->Set(NanNew<String>("calculateSync"),
     NanNew<FunctionTemplate>(CalculateSync)->GetFunction());
 
-  exports->Set(NanSymbol("calculateAsync"),
+  exports->Set(NanNew<String>("calculateAsync"),
     NanNew<FunctionTemplate>(CalculateAsync)->GetFunction());
 }
 
@@ -228,7 +229,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
- * <a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a>
+ * <del><a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a></del>
  * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
  * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
  * <a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a>
@@ -578,18 +579,19 @@ NanSetInternalFieldPointer(wrapper, 0, this);
 When you want to fetch the V8 object handle from a native object you've wrapped with Node's `ObjectWrap`, you should use `NanObjectWrapHandle`:
 
 ```c++
-NanObjectWrapHandle(iterator)->Get(NanSymbol("end"))
+NanObjectWrapHandle(iterator)->Get(NanNew<String>("end"))
 ```
 
 <a name="api_nan_symbol"></a>
-### String NanSymbol(char *)
+### <del>Local&lt;String&gt; NanSymbol(const char *)</del>
 
-Use to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.
+Deprecated. Use `NanNew<String>` instead.
+<del>Use to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.</del>
 
 ```c++
 bool foo = false;
-if (obj->Has(NanSymbol("foo")))
-  foo = optionsObj->Get(NanSymbol("foo"))->BooleanValue()
+if (obj->Has(NanNew<String>("foo")))
+  foo = optionsObj->Get(NanNew<String>("foo"))->BooleanValue()
 ```
 
 <a name="api_nan_get_pointer_safe"></a>
@@ -658,9 +660,9 @@ The optional last parameter is the *default* value, which is `false` if left off
 
 ```c++
 // `foo` is false unless the user supplies a truthy value for it
-bool foo = NanBooleanOptionValue(optionsObj, NanSymbol("foo"));
+bool foo = NanBooleanOptionValue(optionsObj, NanNew<String>("foo"));
 // `bar` is true unless the user supplies a falsy value for it
-bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanSymbol("bar"), true);
+bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanNew<String>("bar"), true);
 ```
 
 <a name="api_nan_uint32_option_value"></a>
@@ -671,7 +673,7 @@ Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integ
 Requires all 3 arguments as a default is not optional:
 
 ```c++
-uint32_t count = NanUInt32OptionValue(optionsObj, NanSymbol("count"), 1024);
+uint32_t count = NanUInt32OptionValue(optionsObj, NanNew<String>("count"), 1024);
 ```
 
 <a name="api_nan_error"></a>
@@ -765,7 +767,7 @@ Persistent<Object> persistentHandle;
 ...
 
 Local<Object> obj = NanNew<Object>();
-obj->Set(NanSymbol("key"), keyHandle); // where keyHandle might be a Local<String>
+obj->Set(NanNew<String>("key"), keyHandle); // where keyHandle might be a Local<String>
 NanAssignPersistent(persistentHandle, obj)
 ```
 

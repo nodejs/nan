@@ -14,14 +14,15 @@
 using v8::FunctionTemplate;
 using v8::Handle;
 using v8::Object;
+using v8::String;
 
 // Expose synchronous and asynchronous access to our
 // Estimate() function
 void InitAll(Handle<Object> exports) {
-  exports->Set(NanSymbol("calculateSync"),
+  exports->Set(NanNew<String>("calculateSync"),
     NanNew<FunctionTemplate>(CalculateSync)->GetFunction());
 
-  exports->Set(NanSymbol("calculateAsync"),
+  exports->Set(NanNew<String>("calculateAsync"),
     NanNew<FunctionTemplate>(CalculateAsync)->GetFunction());
 }
 

@@ -10,7 +10,7 @@
 #include <nan.h>
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(NanSymbol("key"), NanNew<v8::String>("a property"));
+  target->Set(NanNew<v8::String>("key"), NanNew<v8::String>("a property"));
 }
 
 NODE_MODULE(symbols, Init)

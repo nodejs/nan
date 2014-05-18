@@ -33,7 +33,7 @@ NAN_METHOD(Sleep) {
 
 void Init(v8::Handle<v8::Object> exports) {
   exports->Set(
-      NanSymbol("a")
+      NanNew<v8::String>("a")
     , NanNew<v8::FunctionTemplate>(Sleep)->GetFunction());
 }
 

@@ -42,20 +42,20 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
     NanNew<v8::FunctionTemplate>(SetterGetter::New);
   NanAssignPersistent(settergetter_constructor, tpl);
-  tpl->SetClassName(NanSymbol("SetterGetter"));
+  tpl->SetClassName(NanNew<v8::String>("SetterGetter"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
-  proto->SetAccessor(NanSymbol("prop1"), SetterGetter::GetProp1);
+  proto->SetAccessor(NanNew<v8::String>("prop1"), SetterGetter::GetProp1);
   proto->SetAccessor(
-    NanSymbol("prop2")
+    NanNew<v8::String>("prop2")
   , SetterGetter::GetProp2
   , SetterGetter::SetProp2
   );
 
   v8::Local<v8::Function> createnew =
     NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
-  target->Set(NanSymbol("create"), createnew);
+  target->Set(NanNew<v8::String>("create"), createnew);
 }
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
