@@ -33,7 +33,7 @@ NAN_METHOD(Hustle) {
 
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
-      NanSymbol("hustle")
+      NanNew<v8::String>("hustle")
     , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }

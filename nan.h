@@ -303,10 +303,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 
 typedef v8::FunctionCallback NanFunctionCallback;
 
-# define NanUndefined() NanNew(v8::Undefined(v8::Isolate::GetCurrent()))
-# define NanNull() NanNew(v8::Null(v8::Isolate::GetCurrent()))
-# define NanTrue() NanNew(v8::True(v8::Isolate::GetCurrent()))
-# define NanFalse() NanNew(v8::False(v8::Isolate::GetCurrent()))
 # define NanAdjustExternalMemory(amount)                                       \
     v8::Isolate::GetCurrent()->AdjustAmountOfExternalAllocatedMemory(amount)
 # define NanSetTemplate(templ, name, value)                                    \
@@ -612,7 +608,12 @@ typedef v8::FunctionCallback NanFunctionCallback;
     v8::Isolate::GetCurrent()->GetHeapStatistics(heap_statistics);
   }
 
-# define NanSymbol(value) NanNew<v8::String>(value)
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> _NanSymbolHelper(
+      const char* data, int length = -1) {
+    return NanNew<v8::String>(data, length);
+  }
+
+# define NanSymbol(value) _NanSymbolHelper(value)
 
   template<typename T>
   NAN_INLINE void NanAssignPersistent(
@@ -709,7 +710,10 @@ NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
 # define NanReturnUndefined() return
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
-
+# define NanUndefined() NanNew(v8::Undefined(v8::Isolate::GetCurrent()))
+# define NanNull() NanNew(v8::Null(v8::Isolate::GetCurrent()))
+# define NanTrue() NanNew(v8::True(v8::Isolate::GetCurrent()))
+# define NanFalse() NanNew(v8::False(v8::Isolate::GetCurrent()))
 # define NanObjectWrapHandle(obj) obj->handle()
 
 template<typename T, typename P>
@@ -750,7 +754,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   ) {
     v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
-    obj->Set(NanSymbol("code"), NanNew<v8::Integer>(errorNumber));
+    obj->Set(NanNew<v8::String>("code"), NanNew<v8::Integer>(errorNumber));
     return err;
   }
 
@@ -923,16 +927,17 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
 typedef v8::InvocationCallback NanFunctionCallback;
 
-# define NanUndefined() NanNew(v8::Undefined())
-# define NanNull() NanNew(v8::Null())
-# define NanTrue() NanNew(v8::True())
-# define NanFalse() NanNew(v8::False())
 # define NanAdjustExternalMemory(amount)                                       \
     v8::V8::AdjustAmountOfExternalAllocatedMemory(amount)
 # define NanSetTemplate(templ, name, value) templ->Set(name, value)
 # define NanGetCurrentContext() v8::Context::GetCurrent()
 
-# define NanSymbol(value) v8::String::NewSymbol(value)
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> _NanSymbolHelper(
+      const char* data, int length = -1) {
+    return v8::String::NewSymbol(data, length);
+  }
+
+# define NanSymbol(value) _NanSymbolHelper(value)
 
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
@@ -1265,6 +1270,10 @@ typedef v8::InvocationCallback NanFunctionCallback;
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
+# define NanUndefined() NanNew(v8::Undefined())
+# define NanNull() NanNew(v8::Null())
+# define NanTrue() NanNew(v8::True())
+# define NanFalse() NanNew(v8::False())
 # define NanObjectWrapHandle(obj) v8::Local<v8::Object>::New(obj->handle_)
 
 # define _NAN_ERROR(fun, errmsg)                                               \
@@ -1586,13 +1595,13 @@ class NanCallback {
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Object> &obj) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    handle->Set(NanSymbol(key), obj);
+    handle->Set(NanNew<v8::String>(key), obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return NanEscapeScope(handle->Get(NanSymbol(key)).As<v8::Object>());
+    return NanEscapeScope(handle->Get(NanNew<v8::String>(key)).As<v8::Object>());
   }
 
   virtual void Execute() = 0;

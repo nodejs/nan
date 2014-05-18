@@ -153,99 +153,99 @@ NAN_METHOD(NewArray) {
 
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
-      NanSymbol("newNumber")
+      NanNew<v8::String>("newNumber")
     , NanNew<v8::FunctionTemplate>(NewNumber)->GetFunction()
   );
   target->Set(
-      NanSymbol("newNegativeInteger")
+      NanNew<v8::String>("newNegativeInteger")
     , NanNew<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
   );
   target->Set(
-      NanSymbol("newPositiveInteger")
+      NanNew<v8::String>("newPositiveInteger")
     , NanNew<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
   );
   target->Set(
-      NanSymbol("newInt32FromPositive")
+      NanNew<v8::String>("newInt32FromPositive")
     , NanNew<v8::FunctionTemplate>(NewInt32FromPositive)->GetFunction()
   );
   target->Set(
-      NanSymbol("newInt32FromNegative")
+      NanNew<v8::String>("newInt32FromNegative")
     , NanNew<v8::FunctionTemplate>(NewInt32FromNegative)->GetFunction()
   );
   target->Set(
-      NanSymbol("newUint32FromPositive")
+      NanNew<v8::String>("newUint32FromPositive")
     , NanNew<v8::FunctionTemplate>(NewUint32FromPositive)->GetFunction()
   );
   target->Set(
-      NanSymbol("newUint32FromNegative")
+      NanNew<v8::String>("newUint32FromNegative")
     , NanNew<v8::FunctionTemplate>(NewUint32FromNegative)->GetFunction()
   );
   target->Set(
-      NanSymbol("newUtf8String")
+      NanNew<v8::String>("newUtf8String")
     , NanNew<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
   );
   target->Set(
-      NanSymbol("newLatin1String")
+      NanNew<v8::String>("newLatin1String")
     , NanNew<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
   );
   target->Set(
-      NanSymbol("newUcs2String")
+      NanNew<v8::String>("newUcs2String")
     , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
   );
   target->Set(
-      NanSymbol("newRegExp")
+      NanNew<v8::String>("newRegExp")
     , NanNew<v8::FunctionTemplate>(NewRegExp)->GetFunction()
   );
   target->Set(
-      NanSymbol("newStringObject")
+      NanNew<v8::String>("newStringObject")
     , NanNew<v8::FunctionTemplate>(NewStringObject)->GetFunction()
   );
   target->Set(
-      NanSymbol("newNumberObject")
+      NanNew<v8::String>("newNumberObject")
     , NanNew<v8::FunctionTemplate>(NewNumberObject)->GetFunction()
   );
   target->Set(
-      NanSymbol("newBooleanObject")
+      NanNew<v8::String>("newBooleanObject")
     , NanNew<v8::FunctionTemplate>(NewBooleanObject)->GetFunction()
   );
   target->Set(
-      NanSymbol("newExternal")
+      NanNew<v8::String>("newExternal")
     , NanNew<v8::FunctionTemplate>(NewExternal)->GetFunction()
   );
   target->Set(
-      NanSymbol("newExternalStringResource")
+      NanNew<v8::String>("newExternalStringResource")
     , NanNew<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
   );
   target->Set(
-      NanSymbol("newExternalAsciiStringResource")
+      NanNew<v8::String>("newExternalAsciiStringResource")
     , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)->GetFunction()
   );
   target->Set(
-      NanSymbol("newSignature")
+      NanNew<v8::String>("newSignature")
     , NanNew<v8::FunctionTemplate>(NewSignature)->GetFunction()
   );
   target->Set(
-      NanSymbol("newScript")
+      NanNew<v8::String>("newScript")
     , NanNew<v8::FunctionTemplate>(NewScript)->GetFunction()
   );
   target->Set(
-      NanSymbol("newScript2")
+      NanNew<v8::String>("newScript2")
     , NanNew<v8::FunctionTemplate>(NewScript2)->GetFunction()
   );
   target->Set(
-      NanSymbol("compileScript")
+      NanNew<v8::String>("compileScript")
     , NanNew<v8::FunctionTemplate>(CompileScript)->GetFunction()
   );
   target->Set(
-      NanSymbol("compileScript2")
+      NanNew<v8::String>("compileScript2")
     , NanNew<v8::FunctionTemplate>(CompileScript2)->GetFunction()
   );
   target->Set(
-      NanSymbol("newDate")
+      NanNew<v8::String>("newDate")
     , NanNew<v8::FunctionTemplate>(NewDate)->GetFunction()
   );
   target->Set(
-      NanSymbol("newArray")
+      NanNew<v8::String>("newArray")
     , NanNew<v8::FunctionTemplate>(NewArray)->GetFunction()
   );
 }
