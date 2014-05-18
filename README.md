@@ -213,6 +213,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
  * <a href="#api_nan_new"><b><code>NanNew</code></b></a>
+ * <a href="#api_nan_empty_string"><b><code>NanEmptyString</code></b></a>
  * <a href="#api_nan_undefined"><b><code>NanUndefined</code></b></a>
  * <a href="#api_nan_null"><b><code>NanNull</code></b></a>
  * <a href="#api_nan_true"><b><code>NanTrue</code></b></a>
@@ -420,6 +421,11 @@ Persistent<Object> o;
 Local<Object> lo = NanNew(o);
 
 ```
+
+<a name="api_nan_empty_string"></a>
+### Local&lt;String&gt; NanEmptyString()
+
+Use instead of `String::Empty()`
 
 <a name="api_nan_undefined"></a>
 ### Local&lt;Primitive&gt; NanUndefined()
