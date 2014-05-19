@@ -386,16 +386,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
         v8::Isolate::GetCurrent(), &source);
   }
 
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalStringResource *resource) {
-    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
-  }
-
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalAsciiStringResource *resource) {
-    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
-  }
-
   template<>
   NAN_INLINE v8::Local<v8::BooleanObject> NanNew(bool value) {
     return v8::BooleanObject::New(value).As<v8::BooleanObject>();
@@ -570,6 +560,42 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String>() {
     return v8::String::Empty(v8::Isolate::GetCurrent());
   }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(const char* arg, int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint8_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint16_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
+    return NanNew<v8::Number>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::Integer> NanNew(int val) {
+    return NanNew<v8::Integer>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalStringResource *resource) {
+    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalAsciiStringResource *resource) {
+    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
+  }
+
+
 
 # define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
 # define NanEscapableScope()                                                   \
@@ -1063,16 +1089,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return v8::Script::New(s);
   }
 
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalStringResource *resource) {
-    return v8::String::NewExternal(resource);
-  }
-
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalAsciiStringResource *resource) {
-    return v8::String::NewExternal(resource);
-  }
-
   template<>
   NAN_INLINE v8::Local<v8::BooleanObject> NanNew(bool value) {
     return v8::BooleanObject::New(value).As<v8::BooleanObject>();
@@ -1121,11 +1137,15 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, uint8_t *>(
       uint8_t *arg
     , int length) {
-    uint16_t *warg = new uint16_t[length];
-    for (int i = 0; i < length; i++) {
+    int len = length;
+    if (len < 0) {
+      len = strlen(reinterpret_cast<const char *>(arg));
+    }
+    uint16_t *warg = new uint16_t[len];
+    for (int i = 0; i < len; i++) {
       warg[i] = arg[i];
     }
-    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, len);
     delete[] warg;
     return retval;
   }
@@ -1134,11 +1154,15 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, const uint8_t *>(
       const uint8_t *arg
     , int length) {
-    uint16_t *warg = new uint16_t[length];
-    for (int i = 0; i < length; i++) {
+    int len = length;
+    if (len < 0) {
+      len = strlen(reinterpret_cast<const char *>(arg));
+    }
+    uint16_t *warg = new uint16_t[len];
+    for (int i = 0; i < len; i++) {
       warg[i] = arg[i];
     }
-    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, len);
     delete[] warg;
     return retval;
   }
@@ -1172,6 +1196,40 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String>() {
     return v8::String::Empty();
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(const char* arg, int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint8_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint16_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
+    return NanNew<v8::Number>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::Integer> NanNew(int val) {
+    return NanNew<v8::Integer>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalStringResource *resource) {
+    return v8::String::NewExternal(resource);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalAsciiStringResource *resource) {
+    return v8::String::NewExternal(resource);
   }
 
 # define NanScope() v8::HandleScope scope

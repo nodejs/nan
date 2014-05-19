@@ -2,7 +2,7 @@ const test     = require('tap').test
     , bindings = require('bindings');
 
 test('news', function (t) {
-  t.plan(48);
+  t.plan(44);
   t.type(bindings('news').newNumber, 'function');
   t.type(bindings('news').newPositiveInteger, 'function');
   t.type(bindings('news').newNegativeInteger, 'function');
@@ -18,8 +18,6 @@ test('news', function (t) {
   t.type(bindings('news').newNumberObject, 'function');
   t.type(bindings('news').newBooleanObject, 'function');
   t.type(bindings('news').newExternal, 'function');
-  t.type(bindings('news').newExternalStringResource, 'function');
-  t.type(bindings('news').newExternalAsciiStringResource, 'function');
   t.type(bindings('news').newSignature, 'function');
   t.type(bindings('news').newScript, 'function');
   t.type(bindings('news').newScript2, 'function');
@@ -43,8 +41,6 @@ test('news', function (t) {
   t.deepEquals(bindings('news').newNumberObject(), new Number(0.5));
   t.deepEquals(bindings('news').newBooleanObject(), new Boolean(true));
   t.equals(bindings('news').newExternal(), 'passed');
-  t.equals(bindings('news').newExternalStringResource(), 'strïng');
-  t.equals(bindings('news').newExternalAsciiStringResource(), 'string');
   t.equals(bindings('news').newSignature(), 'string');
   t.equals(bindings('news').newScript(), 6);
   t.equals(bindings('news').newScript2(), 6);
