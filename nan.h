@@ -585,6 +585,14 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     return NanNew<v8::Integer>(val);
   }
 
+  NAN_INLINE v8::Local<v8::Uint32> NanNew(unsigned int val) {
+    return NanNew<v8::Uint32>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::Boolean> NanNew(bool val) {
+    return NanNew<v8::Boolean>(val);
+  }
+
   NAN_INLINE v8::Local<v8::String> NanNew(
       v8::String::ExternalStringResource *resource) {
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
@@ -594,8 +602,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
       v8::String::ExternalAsciiStringResource *resource) {
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
-
-
 
 # define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
 # define NanEscapableScope()                                                   \
@@ -1227,6 +1233,14 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return NanNew<v8::Integer>(val);
   }
 
+  NAN_INLINE v8::Local<v8::Uint32> NanNew(unsigned int val) {
+    return NanNew<v8::Uint32>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::Boolean> NanNew(bool val) {
+    return NanNew<v8::Boolean>(val);
+  }
+
   NAN_INLINE v8::Local<v8::String> NanNew(
       v8::String::ExternalStringResource *resource) {
     return v8::String::NewExternal(resource);
@@ -1722,7 +1736,7 @@ class NanCallback {
   v8::Local<v8::Object> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return NanEscapeScope(handle->Get(NanNew<v8::String>(key)).As<v8::Object>());
+    return NanEscapeScope(handle->Get(NanNew(key)).As<v8::Object>());
   }
 
   virtual void Execute() = 0;
