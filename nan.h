@@ -612,7 +612,9 @@ typedef v8::FunctionCallback NanFunctionCallback;
     v8::Isolate::GetCurrent()->GetHeapStatistics(heap_statistics);
   }
 
-# define NanSymbol(value) NanNew<v8::String>(value)
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(const char* data) {
+    return NanNew<v8::String>(data);
+  }
 
   template<typename T>
   NAN_INLINE void NanAssignPersistent(
@@ -750,7 +752,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   ) {
     v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
     v8::Local<v8::Object> obj = err.As<v8::Object>();
-    obj->Set(NanSymbol("code"), NanNew<v8::Integer>(errorNumber));
+    obj->Set(NanNew<v8::String>("code"), NanNew<v8::Integer>(errorNumber));
     return err;
   }
 
@@ -932,7 +934,10 @@ typedef v8::InvocationCallback NanFunctionCallback;
 # define NanSetTemplate(templ, name, value) templ->Set(name, value)
 # define NanGetCurrentContext() v8::Context::GetCurrent()
 
-# define NanSymbol(value) v8::String::NewSymbol(value)
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
+      const char* data, int length = -1) {
+    return v8::String::NewSymbol(data, length);
+  }
 
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
@@ -1586,13 +1591,13 @@ class NanCallback {
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Object> &obj) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    handle->Set(NanSymbol(key), obj);
+    handle->Set(NanNew<v8::String>(key), obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return NanEscapeScope(handle->Get(NanSymbol(key)).As<v8::Object>());
+    return NanEscapeScope(handle->Get(NanNew<v8::String>(key)).As<v8::Object>());
   }
 
   virtual void Execute() = 0;

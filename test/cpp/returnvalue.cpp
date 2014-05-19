@@ -20,7 +20,7 @@ NAN_METHOD(ReturnValue) {
 
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
-      NanSymbol("r")
+      NanNew<v8::String>("r")
     , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
   );
 }
