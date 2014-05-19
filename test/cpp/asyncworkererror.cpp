@@ -1,9 +1,17 @@
+/**********************************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ **********************************************************************************/
+
 #include <unistd.h>
 #include <nan.h>
 
 class ErrorWorker : public NanAsyncWorker {
  public:
-  ErrorWorker(NanCallback *callback) : NanAsyncWorker(callback) {}
+  explicit ErrorWorker(NanCallback *callback) : NanAsyncWorker(callback) {}
   ~ErrorWorker() {}
 
   void Execute () {

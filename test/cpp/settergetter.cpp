@@ -6,7 +6,6 @@
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  **********************************************************************************/
 
-#include <node.h>
 #include <nan.h>
 #include <string>
 
