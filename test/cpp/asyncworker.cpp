@@ -7,7 +7,6 @@
  **********************************************************************************/
 
 #include <unistd.h>
-#include <node.h>
 #include <nan.h>
 
 class SleepWorker : public NanAsyncWorker {

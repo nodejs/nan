@@ -301,21 +301,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE void
 
-typedef v8::FunctionCallback NanFunctionCallback;
-
-# define NanUndefined() NanNew(v8::Undefined(v8::Isolate::GetCurrent()))
-# define NanNull() NanNew(v8::Null(v8::Isolate::GetCurrent()))
-# define NanTrue() NanNew(v8::True(v8::Isolate::GetCurrent()))
-# define NanFalse() NanNew(v8::False(v8::Isolate::GetCurrent()))
-# define NanAdjustExternalMemory(amount)                                       \
-    v8::Isolate::GetCurrent()->AdjustAmountOfExternalAllocatedMemory(amount)
-# define NanSetTemplate(templ, name, value)                                    \
-    templ->Set(v8::Isolate::GetCurrent(), name, value)
-# define NanGetCurrentContext() v8::Isolate::GetCurrent()->GetCurrentContext()
-# define NanGetInternalFieldPointer(object, index)                             \
-    object->GetAlignedPointerFromInternalField(index)
-# define NanSetInternalFieldPointer(object, index, value)                      \
-    object->SetAlignedPointerInInternalField(index, value)
+  typedef v8::FunctionCallback NanFunctionCallback;
 
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
@@ -398,16 +384,6 @@ typedef v8::FunctionCallback NanFunctionCallback;
     v8::ScriptCompiler::Source source(s);
     return v8::ScriptCompiler::CompileUnbound(
         v8::Isolate::GetCurrent(), &source);
-  }
-
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalStringResource *resource) {
-    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
-  }
-
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalAsciiStringResource *resource) {
-    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
 
   template<>
@@ -585,6 +561,114 @@ typedef v8::FunctionCallback NanFunctionCallback;
     return v8::String::Empty(v8::Isolate::GetCurrent());
   }
 
+  NAN_INLINE v8::Local<v8::String> NanNew(const char* arg, int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint8_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint16_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
+    return NanNew<v8::Number>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::Integer> NanNew(int val) {
+    return NanNew<v8::Integer>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalStringResource *resource) {
+    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalAsciiStringResource *resource) {
+    return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
+  }
+
+
+
+# define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
+# define NanEscapableScope()                                                   \
+  v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
+
+  template<typename T>
+  NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Handle<T> val) {
+    return NanNew(val);
+  }
+
+  template<typename T>
+  NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
+    return val;
+  }
+
+# define NanEscapeScope(val) scope.Escape(_NanEscapeScopeHelper(val))
+# define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
+# define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
+# define NanReturnValue(value) return args.GetReturnValue().Set(value)
+# define NanReturnUndefined() return
+# define NanReturnNull() return args.GetReturnValue().SetNull()
+# define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
+
+# define NanObjectWrapHandle(obj) obj->handle()
+
+  NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::Undefined(v8::Isolate::GetCurrent())));
+  }
+
+  NAN_INLINE v8::Local<v8::Primitive> NanNull() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::Null(v8::Isolate::GetCurrent())));
+  }
+
+  NAN_INLINE v8::Local<v8::Boolean> NanTrue() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::True(v8::Isolate::GetCurrent())));
+  }
+
+  NAN_INLINE v8::Local<v8::Boolean> NanFalse() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::False(v8::Isolate::GetCurrent())));
+  }
+
+  NAN_INLINE int NanAdjustExternalMemory(int bc) {
+    return v8::Isolate::GetCurrent()->AdjustAmountOfExternalAllocatedMemory(bc);
+  }
+
+  NAN_INLINE void NanSetTemplate(
+      v8::Handle<v8::Template> templ
+    , const char *name
+    , v8::Handle<v8::Data> value) {
+    templ->Set(v8::Isolate::GetCurrent(), name, value);
+  }
+
+  NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
+    return v8::Isolate::GetCurrent()->GetCurrentContext();
+  }
+
+  NAN_INLINE void* NanGetInternalFieldPointer(
+      v8::Handle<v8::Object> object
+    , int index) {
+    return object->GetAlignedPointerFromInternalField(index);
+  }
+
+  NAN_INLINE void NanSetInternalFieldPointer(
+      v8::Handle<v8::Object> object
+    , int index
+    , void* value) {
+    object->SetAlignedPointerInInternalField(index, value);
+  }
+
   NAN_INLINE void NanAddGCEpilogueCallback(
       v8::Isolate::GCEpilogueCallback callback
     , v8::GCType gc_type_filter = v8::kGCTypeAll) {
@@ -687,30 +771,6 @@ typedef v8::FunctionCallback NanFunctionCallback;
     template<typename T, typename P>                                           \
     static NAN_INLINE void _Nan_Weak_Callback_ ## name(                        \
         const _NanWeakCallbackData<T, P> &data)
-
-# define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
-# define NanEscapableScope()                                                   \
-  v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
-
-template<typename T>
-NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Handle<T> val) {
-  return NanNew(val);
-}
-
-template<typename T>
-NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
-  return val;
-}
-
-# define NanEscapeScope(val) scope.Escape(_NanEscapeScopeHelper(val))
-# define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
-# define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
-# define NanReturnValue(value) return args.GetReturnValue().Set(value)
-# define NanReturnUndefined() return
-# define NanReturnNull() return args.GetReturnValue().SetNull()
-# define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
-
-# define NanObjectWrapHandle(obj) obj->handle()
 
 template<typename T, typename P>
 NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
@@ -921,16 +981,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
 
-typedef v8::InvocationCallback NanFunctionCallback;
-
-# define NanUndefined() NanNew(v8::Undefined())
-# define NanNull() NanNew(v8::Null())
-# define NanTrue() NanNew(v8::True())
-# define NanFalse() NanNew(v8::False())
-# define NanAdjustExternalMemory(amount)                                       \
-    v8::V8::AdjustAmountOfExternalAllocatedMemory(amount)
-# define NanSetTemplate(templ, name, value) templ->Set(name, value)
-# define NanGetCurrentContext() v8::Context::GetCurrent()
+  typedef v8::InvocationCallback NanFunctionCallback;
 
 # define NanSymbol(value) v8::String::NewSymbol(value)
 
@@ -1038,16 +1089,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return v8::Script::New(s);
   }
 
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalStringResource *resource) {
-    return v8::String::NewExternal(resource);
-  }
-
-  NAN_INLINE v8::Local<v8::String> NanNew(
-      v8::String::ExternalAsciiStringResource *resource) {
-    return v8::String::NewExternal(resource);
-  }
-
   template<>
   NAN_INLINE v8::Local<v8::BooleanObject> NanNew(bool value) {
     return v8::BooleanObject::New(value).As<v8::BooleanObject>();
@@ -1096,11 +1137,15 @@ typedef v8::InvocationCallback NanFunctionCallback;
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, uint8_t *>(
       uint8_t *arg
     , int length) {
-    uint16_t *warg = new uint16_t[length];
-    for (int i = 0; i < length; i++) {
+    int len = length;
+    if (len < 0) {
+      len = strlen(reinterpret_cast<const char *>(arg));
+    }
+    uint16_t *warg = new uint16_t[len];
+    for (int i = 0; i < len; i++) {
       warg[i] = arg[i];
     }
-    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, len);
     delete[] warg;
     return retval;
   }
@@ -1109,11 +1154,15 @@ typedef v8::InvocationCallback NanFunctionCallback;
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, const uint8_t *>(
       const uint8_t *arg
     , int length) {
-    uint16_t *warg = new uint16_t[length];
-    for (int i = 0; i < length; i++) {
+    int len = length;
+    if (len < 0) {
+      len = strlen(reinterpret_cast<const char *>(arg));
+    }
+    uint16_t *warg = new uint16_t[len];
+    for (int i = 0; i < len; i++) {
       warg[i] = arg[i];
     }
-    v8::Local<v8::String> retval = v8::String::New(warg, length);
+    v8::Local<v8::String> retval = v8::String::New(warg, len);
     delete[] warg;
     return retval;
   }
@@ -1147,6 +1196,99 @@ typedef v8::InvocationCallback NanFunctionCallback;
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String>() {
     return v8::String::Empty();
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(const char* arg, int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint8_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const uint16_t* arg
+    , int length = -1) {
+    return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
+    return NanNew<v8::Number>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::Integer> NanNew(int val) {
+    return NanNew<v8::Integer>(val);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalStringResource *resource) {
+    return v8::String::NewExternal(resource);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalAsciiStringResource *resource) {
+    return v8::String::NewExternal(resource);
+  }
+
+# define NanScope() v8::HandleScope scope
+# define NanEscapableScope() v8::HandleScope scope
+# define NanEscapeScope(val) scope.Close(val)
+# define NanLocker() v8::Locker locker
+# define NanUnlocker() v8::Unlocker unlocker
+# define NanReturnValue(value) return scope.Close(value)
+# define NanReturnUndefined() return v8::Undefined()
+# define NanReturnNull() return v8::Null()
+# define NanReturnEmptyString() return v8::String::Empty()
+# define NanObjectWrapHandle(obj) v8::Local<v8::Object>::New(obj->handle_)
+
+  NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::Undefined()));
+  }
+
+  NAN_INLINE v8::Local<v8::Primitive> NanNull() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::Null()));
+  }
+
+  NAN_INLINE v8::Local<v8::Boolean> NanTrue() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::True()));
+  }
+
+  NAN_INLINE v8::Local<v8::Boolean> NanFalse() {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(v8::False()));
+  }
+
+  NAN_INLINE int NanAdjustExternalMemory(int bc) {
+    return v8::V8::AdjustAmountOfExternalAllocatedMemory(bc);
+  }
+
+  NAN_INLINE void NanSetTemplate(
+      v8::Handle<v8::Template> templ
+    , const char *name
+    , v8::Handle<v8::Data> value) {
+    templ->Set(name, value);
+  }
+
+  NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
+    return v8::Context::GetCurrent();
+  }
+
+  NAN_INLINE void* NanGetInternalFieldPointer(
+      v8::Handle<v8::Object> object
+    , int index) {
+    return object->GetPointerFromInternalField(index);
+  }
+
+  NAN_INLINE void NanSetInternalFieldPointer(
+      v8::Handle<v8::Object> object
+    , int index
+    , void* value) {
+    object->SetPointerInInternalField(index, value);
   }
 
   NAN_INLINE void NanAddGCEpilogueCallback(
@@ -1226,11 +1368,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
     _NanWeakCallbackInfo<T, P>* info_;
   };
 
-# define NanGetInternalFieldPointer(object, index)                             \
-    object->GetPointerFromInternalField(index)
-# define NanSetInternalFieldPointer(object, index, value)                      \
-    object->SetPointerInInternalField(index, value)
-
 // do not use for declaration
 # define NAN_WEAK_CALLBACK(name)                                               \
     template<typename T, typename P>                                           \
@@ -1255,17 +1392,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
       cbinfo->persistent.MakeWeak(cbinfo, callback);
       return cbinfo;
   }
-
-# define NanScope() v8::HandleScope scope
-# define NanEscapableScope() v8::HandleScope scope
-# define NanEscapeScope(val) scope.Close(val)
-# define NanLocker() v8::Locker locker
-# define NanUnlocker() v8::Unlocker unlocker
-# define NanReturnValue(value) return scope.Close(value)
-# define NanReturnUndefined() return v8::Undefined()
-# define NanReturnNull() return v8::Null()
-# define NanReturnEmptyString() return v8::String::Empty()
-# define NanObjectWrapHandle(obj) v8::Local<v8::Object>::New(obj->handle_)
 
 # define _NAN_ERROR(fun, errmsg)                                               \
     fun(v8::String::New(errmsg))
@@ -1417,7 +1543,7 @@ typedef v8::InvocationCallback NanFunctionCallback;
     , int argc
     , v8::Handle<v8::Value>* argv) {
 # if NODE_VERSION_AT_LEAST(0, 8, 0)
-    return NanNew(node::MakeCallback(target, func, argc, argv))
+    return NanNew(node::MakeCallback(target, func, argc, argv));
 # else
     v8::TryCatch try_catch;
     v8::Local<v8::Value> result = NanNew(func->Call(target, argc, argv));
@@ -1427,7 +1553,6 @@ typedef v8::InvocationCallback NanFunctionCallback;
     return result;
 # endif
   }
-}
 
 #endif  // NODE_MODULE_VERSION
 

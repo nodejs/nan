@@ -7,7 +7,6 @@
  **********************************************************************************/
 
 #include <unistd.h>
-#include <node.h>
 #include <nan.h>
 
 class BufferWorker : public NanAsyncWorker {
@@ -47,7 +46,8 @@ NAN_METHOD(Sleep) {
   v8::Local<v8::Object> bufferHandle = args[1].As<v8::Object>();
   NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
-  NanAsyncQueueWorker(new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
+  NanAsyncQueueWorker(
+      new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
   NanReturnUndefined();
 }
 

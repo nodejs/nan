@@ -6,7 +6,6 @@
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  **********************************************************************************/
 
-#include <node.h>
 #include <nan.h>
 
 static int magic = 1337;
@@ -15,61 +14,75 @@ NAN_METHOD(NewNumber) {
   NanScope();
   NanReturnValue(NanNew<v8::Number>(0.5));
 }
+
 NAN_METHOD(NewNegativeInteger) {
   NanScope();
   NanReturnValue(NanNew<v8::Integer>(-1));
 }
+
 NAN_METHOD(NewPositiveInteger) {
   NanScope();
   NanReturnValue(NanNew<v8::Integer>(1));
 }
+
 NAN_METHOD(NewInt32FromPositive) {
   NanScope();
   NanReturnValue(NanNew<v8::Int32>(0xFFFFFFFF));
 }
+
 NAN_METHOD(NewInt32FromNegative) {
   NanScope();
   NanReturnValue(NanNew<v8::Int32>(-1));
 }
+
 NAN_METHOD(NewUint32FromPositive) {
   NanScope();
   NanReturnValue(NanNew<v8::Uint32>(0xFFFFFFFF));
 }
+
 NAN_METHOD(NewUint32FromNegative) {
   NanScope();
   NanReturnValue(NanNew<v8::Uint32>(-1));
 }
+
 NAN_METHOD(NewUtf8String) {
   NanScope();
   const char s[] = "strïng";
   NanReturnValue(NanNew<v8::String>(s));
 }
+
 NAN_METHOD(NewLatin1String) {
   NanScope();
   const uint8_t s[] = "str\xefng";
   NanReturnValue(NanNew<v8::String>(s));
 }
+
 NAN_METHOD(NewUcs2String) {
   NanScope();
   uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
   NanReturnValue(NanNew<v8::String>(s));
 }
+
 NAN_METHOD(NewRegExp) {
   NanScope();
-  NanReturnValue(NanNew<v8::RegExp>(NanNew<v8::String>("foo"), v8::RegExp::kNone));
+  NanReturnValue(NanNew<v8::RegExp>(NanNew("foo"), v8::RegExp::kNone));
 }
+
 NAN_METHOD(NewStringObject) {
   NanScope();
   NanReturnValue(NanNew<v8::StringObject>(NanNew<v8::String>("foo")));
 }
+
 NAN_METHOD(NewNumberObject) {
   NanScope();
   NanReturnValue(NanNew<v8::NumberObject>(0.5));
 }
+
 NAN_METHOD(NewBooleanObject) {
   NanScope();
   NanReturnValue(NanNew<v8::BooleanObject>(true));
 }
+
 NAN_METHOD(NewExternal) {
   NanScope();
   v8::Local<v8::External> ext = NanNew<v8::External>(&magic);
@@ -77,67 +90,40 @@ NAN_METHOD(NewExternal) {
   NanReturnValue(NanNew<v8::String>("passed"));
 }
 
-static const uint16_t ws[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
-static const char s[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
-
-class ExtString : public v8::String::ExternalStringResource {
- public:
-  ~ExtString() { }
-  const uint16_t *data() const { return ws; }
-  size_t length() const { return sizeof (ws) / sizeof (*ws) - 1; };
-};
-
-
-class ExtAsciiString : public v8::String::ExternalAsciiStringResource {
- public:
-  ~ExtAsciiString() { }
-  const char *data() const { return s; }
-  size_t length() const { return sizeof (s) / sizeof (*s) - 1; };
-};
-
-NAN_METHOD(NewExternalStringResource) {
-  NanScope();
-  v8::Local<v8::String> ext = NanNew(new ExtString());
-  NanReturnValue(ext);
-}
-
-NAN_METHOD(NewExternalAsciiStringResource) {
-  NanScope();
-  v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
-  NanReturnValue(ext);
-}
-
 NAN_METHOD(NewSignature) {
   NanScope();
-  v8::Local<v8::FunctionTemplate> tmpl = NanNew<v8::FunctionTemplate>(NewSignature);
+  v8::Local<v8::FunctionTemplate> tmpl =
+      NanNew<v8::FunctionTemplate>(NewSignature);
   v8::Local<v8::Signature> sig = NanNew<v8::Signature>(tmpl, 1, &tmpl);
-  tmpl = NanNew<v8::FunctionTemplate>(NewSignature, v8::Handle<v8::Value>(), sig);
+  tmpl = NanNew<v8::FunctionTemplate>(
+      NewSignature, v8::Handle<v8::Value>(), sig);
   NanReturnValue(NanNew<v8::String>("string"));
 }
 
 NAN_METHOD(NewScript) {
   NanScope();
-  v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew<v8::String>("2+4"));
+  v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew("2+4"));
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(NewScript2) {
   NanScope();
   v8::ScriptOrigin origin(NanNew<v8::String>("x"));
-  v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew<v8::String>("2+4"), origin);
+  v8::Local<NanUnboundScript> script =
+      NanNew<NanUnboundScript>(NanNew("2+4"), origin);
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(CompileScript) {
   NanScope();
-  v8::Local<NanBoundScript> script = NanCompileScript(NanNew<v8::String>("2+4"));
+  v8::Local<NanBoundScript> script = NanCompileScript(NanNew("2+4"));
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(CompileScript2) {
   NanScope();
   v8::ScriptOrigin origin(NanNew<v8::String>("x"));
-  v8::Local<NanBoundScript> script = NanCompileScript(NanNew<v8::String>("2+4"), origin);
+  v8::Local<NanBoundScript> script = NanCompileScript(NanNew("2+4"), origin);
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
@@ -211,14 +197,6 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanSymbol("newExternal")
     , NanNew<v8::FunctionTemplate>(NewExternal)->GetFunction()
-  );
-  target->Set(
-      NanSymbol("newExternalStringResource")
-    , NanNew<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
-  );
-  target->Set(
-      NanSymbol("newExternalAsciiStringResource")
-    , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)->GetFunction()
   );
   target->Set(
       NanSymbol("newSignature")
