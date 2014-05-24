@@ -15,7 +15,6 @@ NAN_WEAK_CALLBACK(weakCallback) {
     data.Revive();
   } else {
     delete parameter;
-    data.Dispose();
   }
 }
 

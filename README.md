@@ -368,7 +368,7 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 <a name="api_nan_weak_callback"></a>
 ### NAN_WEAK_CALLBACK(cbname)
 
-Use `NAN_WEAK_CALLBACK` to define your V8 WeakReference callbacks. Do not use for declaration. There is an argument object `const _NanWeakCallbackData<T, P> &data` allowing access to the weak object and the supplied parameter through its `GetValue` and `GetParameter` methods. You can even access the weak callback info object through the `GetCallbackInfo()`method, but you probably should not. You must either `Revive()` the weak handle or `Dispose()` it among with the callback info structure.
+Use `NAN_WEAK_CALLBACK` to define your V8 WeakReference callbacks. Do not use for declaration. There is an argument object `const _NanWeakCallbackData<T, P> &data` allowing access to the weak object and the supplied parameter through its `GetValue` and `GetParameter` methods. You can even access the weak callback info object through the `GetCallbackInfo()`method, but you probably should not. `Revive()` keeps the weak object alive until the next GC round.
 
 ```c++
 NAN_WEAK_CALLBACK(weakCallback) {
@@ -378,7 +378,6 @@ NAN_WEAK_CALLBACK(weakCallback) {
     data.Revive();
   } else {
     delete parameter;
-    data.Dispose();
   }
 }
 ```
