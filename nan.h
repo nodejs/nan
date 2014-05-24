@@ -750,6 +750,10 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 
     NAN_INLINE P* GetParameter() const { return info_->parameter; }
 
+    NAN_INLINE bool IsNearDeath() const {
+      return info_->persistent.IsNearDeath();
+    }
+
     NAN_INLINE void Revive() const {
       info_->persistent.SetWeak(info_, info_->callback);
     }
@@ -758,8 +762,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
       return info_;
     }
 
-    NAN_INLINE void Dispose() const {
-      delete info_;
+    NAN_DEPRECATED NAN_INLINE void Dispose() const {
     }
 
    private:
@@ -774,6 +777,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
         _NanWeakCallbackData<T, P> wcbd(                                       \
            data.GetParameter());                                               \
         _Nan_Weak_Callback_ ## name(wcbd);                                     \
+        if (wcbd.IsNearDeath()) delete wcbd.GetCallbackInfo();                 \
     }                                                                          \
                                                                                \
     template<typename T, typename P>                                           \
@@ -1371,6 +1375,10 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
     NAN_INLINE P* GetParameter() const { return info_->parameter; }
 
+    NAN_INLINE bool IsNearDeath() const {
+      return info_->persistent.IsNearDeath();
+    }
+
     NAN_INLINE void Revive() const {
       info_->persistent.MakeWeak(info_, info_->callback);
     }
@@ -1379,8 +1387,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return info_;
     }
 
-    NAN_INLINE void Dispose() const {
-      delete info_;
+    NAN_DEPRECATED NAN_INLINE void Dispose() const {
     }
 
    private:
@@ -1395,6 +1402,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
         _NanWeakCallbackData<T, P> wcbd(                                       \
            static_cast<_NanWeakCallbackInfo<T, P>*>(data));                    \
         _Nan_Weak_Callback_ ## name(wcbd);                                     \
+        if (wcbd.IsNearDeath()) delete wcbd.GetCallbackInfo();                 \
     }                                                                          \
                                                                                \
     template<typename T, typename P>                                           \
