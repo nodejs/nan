@@ -772,6 +772,9 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 // do not use for declaration
 # define NAN_WEAK_CALLBACK(name)                                               \
     template<typename T, typename P>                                           \
+    static NAN_INLINE void _Nan_Weak_Callback_ ## name(                        \
+    const _NanWeakCallbackData<T, P> &data);                                   \
+    template<typename T, typename P>                                           \
     static void name(                                                          \
       const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> > &data) {      \
         _NanWeakCallbackData<T, P> wcbd(                                       \
@@ -1396,6 +1399,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
 // do not use for declaration
 # define NAN_WEAK_CALLBACK(name)                                               \
+    template<typename T, typename P>                                           \
+    static NAN_INLINE void _Nan_Weak_Callback_ ## name(                        \
+    const _NanWeakCallbackData<T, P> &data);                                   \
     template<typename T, typename P>                                           \
     static void name(                                                          \
       v8::Persistent<v8::Value> object, void *data) {                          \
