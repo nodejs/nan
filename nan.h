@@ -11,9 +11,20 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 1.0.0 (current Node unstable: 0.11.13, Node stable: 0.10.28)
+ * Version 1.1,1 (current Node unstable: 0.11.13, Node stable: 0.10.28)
  *
  * ChangeLog:
+ *  * 1.1.1 May 28 2014
+ *    - Release to fix version mismatch in nan.h and lack of changelog entry for 1.1.0
+ *
+ *  * 1.0.0 May 25 2014
+ *    - Remove nan_isolate, use v8::Isolate::GetCurrent() internally instead
+ *    - Additional explicit overloads for NanNew(): (char*,int), (uint8_t*[,int]),
+ *      (uint16_t*[,int), double, int, unsigned int, bool, v8::String::ExternalStringResource*,
+ *      v8::String::ExternalAsciiStringResource*
+ *    - Deprecate NanSymbol()
+ *    - Added SetErrorMessage() and ErrorMessage() to NanAsyncWorker
+ *
  *  * 1.0.0 May 4 2014
  *    - Heavy API changes for V8 3.25 / Node 0.11.13
  *    - Use cpplint.py
