@@ -11,13 +11,16 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 1.1,1 (current Node unstable: 0.11.13, Node stable: 0.10.28)
+ * Version 1.1.2 (current Node unstable: 0.11.13, Node stable: 0.10.28)
  *
  * ChangeLog:
+ *  * 1.1.2 May 28 2014
+ *    - Release to fix more stuff-ups in 1.1.1
+ *
  *  * 1.1.1 May 28 2014
  *    - Release to fix version mismatch in nan.h and lack of changelog entry for 1.1.0
  *
- *  * 1.0.0 May 25 2014
+ *  * 1.1.0 May 25 2014
  *    - Remove nan_isolate, use v8::Isolate::GetCurrent() internally instead
  *    - Additional explicit overloads for NanNew(): (char*,int), (uint8_t*[,int]),
  *      (uint16_t*[,int), double, int, unsigned int, bool, v8::String::ExternalStringResource*,
