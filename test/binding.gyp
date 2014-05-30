@@ -126,5 +126,12 @@
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
         ]
+    }, {
+        "target_name" : "settemplate"
+      , "sources"     : [ "cpp/settemplate.cpp" ]
+      , "cflags"      : [ "-Wno-unused-local-typedefs" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
     }
 ]}
