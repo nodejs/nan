@@ -1,16 +1,12 @@
 language: node_js
 env:
+  - NODE_VERSION="0.6"
   - NODE_VERSION="0.8"
-  - NODE_VERSION="0.10.17"
-  - NODE_VERSION="0.10.18"
-  - NODE_VERSION="0.10.20"
-  - NODE_VERSION="0.10.21"
-  - NODE_VERSION="0.11.4"
-  - NODE_VERSION="0.11.5"
-  - NODE_VERSION="0.11.6"
-  - NODE_VERSION="0.11.9"
-# buggy npm - NODE_VERSION="0.11.7"
-# buggy npm - NODE_VERSION="0.11.8"
+  - NODE_VERSION="0.10.25"
+  - NODE_VERSION="0.10.26"
+  - NODE_VERSION="0.10.27"
+  - NODE_VERSION="0.10.28"
+  - NODE_VERSION="0.11.13"
 node_js:
   - "0.10"
 notifications:
