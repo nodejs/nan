@@ -27,7 +27,7 @@ NAN_METHOD(Work) {
 }
 
 void Init (v8::Handle<v8::Object> exports) {
-  exports->Set(NanNew<v8::String>("a"), NanNew<v8::FunctionTemplate>(Work)->GetFunction());
+  exports->Set(NanNew("a"), NanNew<v8::FunctionTemplate>(Work)->GetFunction());
 }
 
 NODE_MODULE(asyncworkererror, Init)
