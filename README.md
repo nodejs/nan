@@ -541,7 +541,7 @@ Handle<String> Foo::Bar() {
 }
 ```
 
-<a name="api_nan_esacpe_scope"></a>
+<a name="api_nan_escape_scope"></a>
 ### Local&lt;T&gt; NanEscapeScope(Handle&lt;T&gt; value);
 Use together with `NanEscapableScope` to escape the scope. Corresponds to `HandleScope::Close` or `EscapableHandleScope::Escape`.
 
@@ -746,7 +746,7 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
-<a href="#api_nan_new_context_handle">
+<a name="api_nan_new_context_handle"></a>
 ### Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
 Creates a new `Local<Context>` handle.
 
@@ -756,7 +756,7 @@ Local<ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
 Local<Context> ctx =  NanNewContextHandle(NULL, otmpl);
 ```
 
-<a href="#api_nan_get_current_context">
+<a name="api_nan_get_current_context"></a>
 ### Local&lt;Context&gt; NanGetCurrentContext()
 
 Gets the current context.
@@ -851,7 +851,7 @@ Simply does `AddGCPrologueCallback`
 
 Simply does `RemoveGCEpilogueCallback`
 
-<a name="api_nan_add_gc_prologue_callback"></a>
+<a name="api_nan_remove_gc_prologue_callback"></a>
 ### NanRemoveGCPrologueCallback(GCPrologueCallback callback)
 
 Simply does `RemoveGCPrologueCallback`
