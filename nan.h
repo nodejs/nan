@@ -716,10 +716,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     v8::Isolate::GetCurrent()->GetHeapStatistics(heap_statistics);
   }
 
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(const char* data, int length = -1) {
-    return NanNew<v8::String>(data, length);
-  }
-
   template<typename T>
   NAN_INLINE void NanAssignPersistent(
       v8::Persistent<T>& handle
@@ -774,9 +770,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 
     NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
       return info_;
-    }
-
-    NAN_DEPRECATED NAN_INLINE void Dispose() const {
     }
 
    private:
@@ -1011,11 +1004,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define _NAN_INDEX_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
 
   typedef v8::InvocationCallback NanFunctionCallback;
-
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
-      const char* data, int length = -1) {
-    return v8::String::NewSymbol(data, length);
-  }
 
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
@@ -1402,9 +1390,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
     NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
       return info_;
-    }
-
-    NAN_DEPRECATED NAN_INLINE void Dispose() const {
     }
 
    private:
