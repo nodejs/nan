@@ -1,0 +1,3 @@
+[submodule "examples/nan-example-eol"]
+	path = examples/nan-example-eol
+	url = https://github.com/CodeCharmLtd/nan-example-eol.git
