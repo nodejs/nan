@@ -716,7 +716,8 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     v8::Isolate::GetCurrent()->GetHeapStatistics(heap_statistics);
   }
 
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(const char* data, int length = -1) {
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
+      const char* data, int length = -1) {
     return NanNew<v8::String>(data, length);
   }
 
