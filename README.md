@@ -655,8 +655,7 @@ Just remember that you'll end up with an object that you'll need to `delete[]` a
 ```c++
 size_t count;
 void* decoded = NanRawString(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
-char param_copy[count];
-memcpy(param_copy, decoded, count);
+...
 delete[] decoded;
 ```
 
@@ -669,6 +668,8 @@ Just remember that you'll end up with an object that you'll need to `delete[]` a
 ```c++
 size_t count;
 char* name = NanCString(args[0], &count);
+...
+delete[] name;
 ```
 
 <a name="api_nan_boolean_option_value"></a>
