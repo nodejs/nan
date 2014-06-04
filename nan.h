@@ -11,9 +11,16 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
- * Version 1.1.2 (current Node unstable: 0.11.13, Node stable: 0.10.28)
+ * Version 1.2.0 (current Node unstable: 0.11.13, Node stable: 0.10.28)
  *
  * ChangeLog:
+ *  * 1.2.0 Jun 5 2015
+ *    - Add NanSetPrototypeTemplate
+ *    - Changed NAN_WEAK_CALLBACK internals, switched _NanWeakCallbackData to class,
+ *      introduced _NanWeakCallbackDispatcher
+ *    - Removed -Wno-unused-local-typedefs from test builds
+ *    - Made test builds Windows compatible ('Sleep()')
+ * `
  *  * 1.1.2 May 28 2014
  *    - Release to fix more stuff-ups in 1.1.1
  *
