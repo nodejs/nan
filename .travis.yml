@@ -14,7 +14,7 @@ notifications:
     - rod@vagg.org
 before_install:
   - rm -rf ~/.nvm
-  - curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+  - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - node --version
