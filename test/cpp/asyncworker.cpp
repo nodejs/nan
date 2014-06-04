@@ -8,7 +8,7 @@
 
 #ifndef _WIN32
 #include <unistd.h>
-#define Sleep_(x) usleep((x)*1000)
+#define Sleep(x) usleep((x)*1000)
 #endif
 #include <nan.h>
 
@@ -19,14 +19,14 @@ class SleepWorker : public NanAsyncWorker {
   ~SleepWorker() {}
 
   void Execute () {
-    Sleep_(milliseconds);
+    Sleep(milliseconds);
   }
 
  private:
   int milliseconds;
 };
 
-NAN_METHOD(Sleep) {
+NAN_METHOD(DoSleep) {
   NanScope();
   NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
   NanAsyncQueueWorker(new SleepWorker(callback, args[0]->Uint32Value()));
@@ -36,7 +36,7 @@ NAN_METHOD(Sleep) {
 void Init(v8::Handle<v8::Object> exports) {
   exports->Set(
       NanNew<v8::String>("a")
-    , NanNew<v8::FunctionTemplate>(Sleep)->GetFunction());
+    , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
 NODE_MODULE(asyncworker, Init)
