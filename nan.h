@@ -671,6 +671,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     , v8::Handle<v8::Data> value) {
     templ->Set(v8::Isolate::GetCurrent(), name, value);
   }
+  
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Isolate::GetCurrent()->GetCurrentContext();
@@ -1316,6 +1317,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , v8::Handle<v8::Data> value) {
     templ->Set(name, value);
   }
+  
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Context::GetCurrent();
@@ -2161,6 +2163,14 @@ NAN_INLINE char* NanCString(
     return static_cast<char *>(
       NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags)
     );
+}
+
+NAN_INLINE void NanSetPrototypeTemplate(
+    v8::Local<v8::FunctionTemplate> templ
+  , const char *name
+  , v8::Handle<v8::Data> value
+) {
+    NanSetTemplate(templ->PrototypeTemplate(), name, value);
 }
 
 #endif  // NAN_H_

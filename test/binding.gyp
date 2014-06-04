@@ -110,5 +110,11 @@
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
         ]
+    }, {
+        "target_name" : "settemplate"
+      , "sources"     : [ "cpp/settemplate.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
     }
 ]}

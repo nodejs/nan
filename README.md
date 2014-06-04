@@ -256,6 +256,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
  * <a href="#api_nan_make_weak_persistent"><b><code>NanMakeWeakPersistent</code></b></a>
  * <a href="#api_nan_set_template"><b><code>NanSetTemplate</code></b></a>
+ * <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
  * <a href="#api_nan_compile_script"><b><code>NanCompileScript</code></b></a>
  * <a href="#api_nan_run_script"><b><code>NanRunScript</code></b></a>
@@ -816,6 +817,11 @@ NanMakeWeakPersistent(func, parameter, &weakCallback);
 ### NanSetTemplate(templ, name, value)
 
 Use to add properties on object and function templates.
+
+<a name="api_nan_set_prototype_template"></a>
+### NanSetPrototypeTemplate(templ, name, value)
+
+Use to add prototype properties on function templates.
 
 <a name="api_nan_make_callback"></a>
 ### NanMakeCallback(target, func, argc, argv)
