@@ -6,7 +6,10 @@
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  **********************************************************************************/
 
+#ifndef _WIN32
 #include <unistd.h>
+#define Sleep(x) usleep((x)*1000)
+#endif
 #include <nan.h>
 
 class SleepWorker : public NanAsyncWorker {
@@ -16,7 +19,8 @@ class SleepWorker : public NanAsyncWorker {
   ~SleepWorker() {}
 
   void Execute () {
-    usleep(milliseconds * 1000);
+	 
+    Sleep(milliseconds);
   }
 
  private:
