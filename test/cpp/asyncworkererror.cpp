@@ -6,7 +6,6 @@
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  **********************************************************************************/
 
-#include <unistd.h>
 #include <nan.h>
 
 class ErrorWorker : public NanAsyncWorker {
