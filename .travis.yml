@@ -14,11 +14,12 @@ notifications:
     - rod@vagg.org
 before_install:
   - rm -rf ~/.nvm
-  - curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+  - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - node --version
   - npm --version
+  - if [ "$NODE_VERSION" == "0.6" ]; then npm config set ca ""; fi
   - cd test
   - npm install
 script: npm test
