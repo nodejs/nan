@@ -377,7 +377,7 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 <a name="api_nan_weak_callback"></a>
 ### NAN_WEAK_CALLBACK(cbname)
 
-Use `NAN_WEAK_CALLBACK` to define your V8 WeakReference callbacks. Do not use for declaration. There is an argument object `const _NanWeakCallbackData<T, P> &data` allowing access to the weak object and the supplied parameter through its `GetValue` and `GetParameter` methods. You can even access the weak callback info object through the `GetCallbackInfo()`method, but you probably should not. `Revive()` keeps the weak object alive until the next GC round.
+Use `NAN_WEAK_CALLBACK` to define your V8 WeakReference callbacks. There is an argument object `const _NanWeakCallbackData<T, P> &data` allowing access to the weak object and the supplied parameter through its `GetValue` and `GetParameter` methods. You can even access the weak callback info object through the `GetCallbackInfo()`method, but you probably should not. `Revive()` keeps the weak object alive until the next GC round.
 
 ```c++
 NAN_WEAK_CALLBACK(weakCallback) {
@@ -795,7 +795,7 @@ NanAssignPersistent(persistentHandle, obj)
 <a name="api_nan_make_weak_persistent"></a>
 ### _NanWeakCallbackInfo&lt;T, P&gt;* NanMakeWeakPersistent(Handle&lt;T&gt;, P*, _NanWeakCallbackInfo&lt;T, P&gt;::Callback)
 
-Creates a weak persistent handle with the supplied parameter and `NAN_WEAK_CALLBACK`. The callback has to be fully specialized to work on all versions of Node.
+Creates a weak persistent handle with the supplied parameter and `NAN_WEAK_CALLBACK`.
 
 ```c++
 NAN_WEAK_CALLBACK(weakCallback) {
@@ -809,7 +809,7 @@ Local<Function> func;
 ...
 
 int *parameter = new int(0);
-NanMakeWeakPersistent(func, parameter, &weakCallback<Function, int>);
+NanMakeWeakPersistent(func, parameter, &weakCallback);
 ```
 
 <a name="api_nan_set_template"></a>
