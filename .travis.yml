@@ -19,6 +19,7 @@ before_install:
   - nvm install $NODE_VERSION
   - node --version
   - npm --version
+  - [ "$NODE_VERSION" == "0.6" ] && npm config set ca ""
   - cd test
   - npm install
 script: npm test
