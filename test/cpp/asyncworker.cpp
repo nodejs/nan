@@ -19,7 +19,6 @@ class SleepWorker : public NanAsyncWorker {
   ~SleepWorker() {}
 
   void Execute () {
-	 
     Sleep(milliseconds);
   }
 
