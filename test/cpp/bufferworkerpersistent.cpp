@@ -8,7 +8,7 @@
 
 #ifndef _WIN32
 #include <unistd.h>
-#define Sleep(x) usleep((x)*1000)
+#define Sleep_(x) usleep((x)*1000)
 #endif
 #include <nan.h>
 
@@ -29,7 +29,7 @@ class BufferWorker : public NanAsyncWorker {
   ~BufferWorker() {}
 
   void Execute () {
-    Sleep(milliseconds);
+    Sleep_(milliseconds);
   }
 
   void HandleOKCallback () {
