@@ -8,7 +8,7 @@
     "url": "git://github.com/rvagg/nan.git"
   },
   "scripts": {
-    "test": "cd test && npm test"
+    "test": "cd test && npm install && npm test"
   },
   "contributors": [
     "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
