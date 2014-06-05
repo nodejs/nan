@@ -21,8 +21,8 @@ test_script:
   - npm --version
   # We test multiple Windows shells because of Node.js stdout buffering issues:
   # https://github.com/joyent/node/issues/3584
-  - ps: "cd test && npm install && npm test # PowerShell" # Pass comment to PS for easier debugging
-  - cmd: cd test && npm install && npm test
+  - ps: "npm test # PowerShell" # Pass comment to PS for easier debugging
+  - cmd: npm test
 
 # Don't actually build.
 build: off
