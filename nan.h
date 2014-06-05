@@ -678,7 +678,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     , v8::Handle<v8::Data> value) {
     templ->Set(v8::Isolate::GetCurrent(), name, value);
   }
-  
+
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Isolate::GetCurrent()->GetCurrentContext();
@@ -964,6 +964,24 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , v8::Handle<v8::Value>* argv) {
     return NanNew(node::MakeCallback(
         v8::Isolate::GetCurrent(), target, func, argc, argv));
+  }
+
+  NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
+      v8::Handle<v8::Object> target
+    , v8::Handle<v8::String> symbol
+    , int argc
+    , v8::Handle<v8::Value>* argv) {
+    return NanNew(node::MakeCallback(
+        v8::Isolate::GetCurrent(), target, symbol, argc, argv));
+  }
+
+  NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
+      v8::Handle<v8::Object> target
+    , const char* method
+    , int argc
+    , v8::Handle<v8::Value>* argv) {
+    return NanNew(node::MakeCallback(
+        v8::Isolate::GetCurrent(), target, method, argc, argv));
   }
 
 #else
@@ -1324,7 +1342,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , v8::Handle<v8::Data> value) {
     templ->Set(name, value);
   }
-  
+
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Context::GetCurrent();
@@ -1618,6 +1636,31 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
         node::FatalException(try_catch);
     }
     return result;
+# endif
+  }
+
+  NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
+      v8::Handle<v8::Object> target
+    , v8::Handle<v8::String> symbol
+    , int argc
+    , v8::Handle<v8::Value>* argv) {
+# if NODE_VERSION_AT_LEAST(0, 8, 0)
+    return NanNew(node::MakeCallback(target, symbol, argc, argv));
+# else
+    v8::Local<v8::Function> callback = target->Get(symbol).As<v8::Function>();
+    return NanMakeCallback(target, callback, argc, argv);
+# endif
+  }
+
+  NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
+      v8::Handle<v8::Object> target
+    , const char* method
+    , int argc
+    , v8::Handle<v8::Value>* argv) {
+# if NODE_VERSION_AT_LEAST(0, 8, 0)
+    return NanNew(node::MakeCallback(target, method, argc, argv));
+# else
+    return NanMakeCallback(target, NanNew(method), argc, argv);
 # endif
   }
 

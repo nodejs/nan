@@ -117,4 +117,11 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+    , {
+        "target_name" : "makecallback"
+      , "sources"     : [ "cpp/makecallback.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
