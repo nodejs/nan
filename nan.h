@@ -180,6 +180,7 @@
 #include <node_version.h>
 #include <node_object_wrap.h>
 #include <string.h>
+#include <limits.h>
 
 #if defined(__GNUC__) && !defined(DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
@@ -669,7 +670,8 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   }
 
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
-    return v8::Isolate::GetCurrent()->AdjustAmountOfExternalAllocatedMemory(bc);
+    return static_cast<int>(
+        v8::Isolate::GetCurrent()->AdjustAmountOfExternalAllocatedMemory(bc));
   }
 
   NAN_INLINE void NanSetTemplate(
@@ -678,7 +680,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     , v8::Handle<v8::Data> value) {
     templ->Set(v8::Isolate::GetCurrent(), name, value);
   }
-
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Isolate::GetCurrent()->GetCurrentContext();
@@ -1121,7 +1122,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return v8::Array::New(length);
   }
 
-
   template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(double time) {
     return v8::Date::New(time).As<v8::Date>();
@@ -1200,7 +1200,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , int length) {
     int len = length;
     if (len < 0) {
-      len = strlen(reinterpret_cast<const char *>(arg));
+      size_t temp = strlen(reinterpret_cast<const char *>(arg));
+      assert(temp <= INT_MAX && "too long string");
+      len = static_cast<int>(temp);
     }
     uint16_t *warg = new uint16_t[len];
     for (int i = 0; i < len; i++) {
@@ -1217,7 +1219,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , int length) {
     int len = length;
     if (len < 0) {
-      len = strlen(reinterpret_cast<const char *>(arg));
+      size_t temp = strlen(reinterpret_cast<const char *>(arg));
+      assert(temp <= INT_MAX && "too long string");
+      len = static_cast<int>(temp);
     }
     uint16_t *warg = new uint16_t[len];
     for (int i = 0; i < len; i++) {
@@ -1230,7 +1234,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, uint8_t *>(uint8_t *arg) {
-    int length = strlen(reinterpret_cast<char *>(arg));
+    size_t temp = strlen(reinterpret_cast<char *>(arg));
+    assert(temp <= INT_MAX && "too long string");
+    int length = static_cast<int>(temp);
     uint16_t *warg = new uint16_t[length];
     for (int i = 0; i < length; i++) {
       warg[i] = arg[i];
@@ -1244,7 +1250,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, const uint8_t *>(
       const uint8_t *arg) {
-    int length = strlen(reinterpret_cast<const char *>(arg));
+    size_t temp = strlen(reinterpret_cast<const char *>(arg));
+    assert(temp <= INT_MAX && "too long string");
+    int length = static_cast<int>(temp);
     uint16_t *warg = new uint16_t[length];
     for (int i = 0; i < length; i++) {
       warg[i] = arg[i];
@@ -1333,7 +1341,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
-    return v8::V8::AdjustAmountOfExternalAllocatedMemory(bc);
+    return static_cast<int>(v8::V8::AdjustAmountOfExternalAllocatedMemory(bc));
   }
 
   NAN_INLINE void NanSetTemplate(
@@ -1342,7 +1350,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , v8::Handle<v8::Data> value) {
     templ->Set(name, value);
   }
-
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Context::GetCurrent();
