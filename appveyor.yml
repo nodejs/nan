@@ -13,6 +13,7 @@ install:
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
   # Typical npm stuff.
   - npm install
+  - npm run rebuild-tests
 
 # Post-install test scripts.
 test_script:
