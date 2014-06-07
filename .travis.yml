@@ -20,6 +20,6 @@ before_install:
   - node --version
   - npm --version
   - if [ "$NODE_VERSION" == "0.6" ]; then npm config set ca ""; fi
-  - npm install
   - npm run rebuild-tests
+  # at this point Travis-CI will implicitly run `npm install` for us
 script: tap --gc test/js/*-test.js
