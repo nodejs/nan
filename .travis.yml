@@ -21,6 +21,7 @@ before_install:
   - npm --version
   - if [ "$NODE_VERSION" == "0.6" ]; then npm config set ca ""; fi
   - npm install
+  - npm run rebuild-tests
   - cd test
   - node-gyp rebuild
 script: tap --gc js/*-test.js
