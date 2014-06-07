@@ -8,7 +8,7 @@
     "url": "git://github.com/rvagg/nan.git"
   },
   "scripts": {
-    "test": "npm run rebuild-tests && tap --gc test/js/*-test.js",
+    "test": "tap --gc test/js/*-test.js",
     "rebuild-tests": "node-gyp rebuild --directory test"
   },
   "contributors": [
@@ -22,7 +22,6 @@
   "devDependencies": {
     "tap": "~0.4.3",
     "bindings": "~1.2.0",
-    "node-gyp": "~0.10.0",
     "xtend": "~2.1.1"
   },
   "license": "MIT"
