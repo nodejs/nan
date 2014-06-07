@@ -23,5 +23,4 @@ before_install:
   - npm install
   - npm run rebuild-tests
   - cd test
-  - node-gyp rebuild
 script: tap --gc js/*-test.js
