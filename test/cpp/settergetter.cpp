@@ -135,25 +135,10 @@ NAN_SETTER(SetterGetter::SetProp2) {
 
   SetterGetter* settergetter =
     node::ObjectWrap::Unwrap<SetterGetter>(args.This());
-  char* buf = NanCString(value, NULL);
-  strncpy(settergetter->prop2, buf, sizeof (settergetter->prop2));
-  settergetter->prop2[sizeof (settergetter->prop2) - 1] = '\0';
-  delete[] buf;
-  assert(strlen(settergetter->log) < sizeof (settergetter->log));
-  strncat(
-      settergetter->log
-    , "Prop2:SETTER("
-    , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
-  assert(strlen(settergetter->log) < sizeof (settergetter->log));
-  strncat(
-      settergetter->log
-    , settergetter->prop2
-    , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
-  assert(strlen(settergetter->log) < sizeof (settergetter->log));
-  strncat(
-      settergetter->log
-    , ")\n"
-    , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
+    settergetter->prop2.assign(NanUtf8String(value)());
+  settergetter->log.append("Prop2:SETTER(");
+  settergetter->log.append(settergetter->prop2);
+  settergetter->log.append(")\n");
 }
 
 NAN_METHOD(SetterGetter::Log) {

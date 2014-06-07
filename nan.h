@@ -1020,6 +1020,79 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return static_cast<T*>(isolate->GetData(0));
   }
 
+  class NanAsciiString {
+   public:
+    NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
+      v8::Local<v8::String> toStr = from->ToString();
+      int buf_size = toStr->Length() + 1;
+      buf = new char[buf_size];
+      size = toStr->WriteOneByte(
+          reinterpret_cast<unsigned char*>(buf), 0, buf_size);
+    }
+
+    NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE char* operator()() { return buf; }
+
+    NAN_INLINE ~NanAsciiString() {
+      delete[] buf;
+    }
+
+   private:
+    char *buf;
+    int size;
+  };
+
+  class NanUtf8String {
+   public:
+    NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
+      v8::Local<v8::String> toStr = from->ToString();
+      int buf_size = toStr->Utf8Length() + 1;
+      buf = new char[buf_size];
+      size = toStr->WriteUtf8(buf, buf_size);
+    }
+
+    NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE char* operator()() { return buf; }
+
+    NAN_INLINE ~NanUtf8String() {
+      delete[] buf;
+    }
+
+   private:
+    char *buf;
+    int size;
+  };
+
+  class NanUcs2String {
+   public:
+    NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
+      v8::Local<v8::String> toStr = from->ToString();
+      int buf_size = toStr->Length() + 1;
+      buf = new uint16_t[buf_size];
+      size = toStr->Write(buf, 0, buf_size);
+    }
+
+    NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE uint16_t* operator()() { return buf; }
+
+    NAN_INLINE ~NanUcs2String() {
+      delete[] buf;
+    }
+
+   private:
+    uint16_t *buf;
+    int size;
+  };
+
 #else
 // Node 0.8 and 0.10
 
@@ -1725,20 +1798,92 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # endif
   }
 
-template<typename T>
-NAN_INLINE void NanSetIsolateData(
-    v8::Isolate *isolate
-  , T *data
-) {
-    isolate->SetData(data);
-}
+  template<typename T>
+  NAN_INLINE void NanSetIsolateData(
+      v8::Isolate *isolate
+    , T *data
+  ) {
+      isolate->SetData(data);
+  }
 
-template<typename T>
-NAN_INLINE T *NanGetIsolateData(
-    v8::Isolate *isolate
-) {
-    return static_cast<T*>(isolate->GetData());
-}
+  template<typename T>
+  NAN_INLINE T *NanGetIsolateData(
+      v8::Isolate *isolate
+  ) {
+      return static_cast<T*>(isolate->GetData());
+  }
+
+  class NanAsciiString {
+   public:
+    NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
+      v8::Local<v8::String> toStr = from->ToString();
+      int buf_size = toStr->Length() + 1;
+      buf = new char[buf_size];
+      size = toStr->WriteAscii(buf, 0, buf_size);
+    }
+
+    NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE char* operator()() { return buf; }
+
+    NAN_INLINE ~NanAsciiString() {
+      delete[] buf;
+    }
+
+   private:
+    char *buf;
+    int size;
+  };
+
+  class NanUtf8String {
+   public:
+    NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
+      v8::Local<v8::String> toStr = from->ToString();
+      int buf_size = toStr->Utf8Length() + 1;
+      buf = new char[buf_size];
+      size = toStr->WriteUtf8(buf, buf_size);
+    }
+
+    NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE char* operator()() { return buf; }
+
+    NAN_INLINE ~NanUtf8String() {
+      delete[] buf;
+    }
+
+   private:
+    char *buf;
+    int size;
+  };
+
+  class NanUcs2String {
+   public:
+    NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
+      v8::Local<v8::String> toStr = from->ToString();
+      int buf_size = toStr->Length() + 1;
+      buf = new uint16_t[buf_size];
+      size = toStr->Write(buf, 0, buf_size);
+    }
+
+    NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE uint16_t* operator()() { return buf; }
+
+    NAN_INLINE ~NanUcs2String() {
+      delete[] buf;
+    }
+
+   private:
+    uint16_t *buf;
+    int size;
+  };
 
 #endif  // NODE_MODULE_VERSION
 
@@ -2132,7 +2277,7 @@ namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 }
 
-NAN_INLINE void* NanRawString(
+/* NAN_DEPRECATED */ NAN_INLINE void* _NanRawString(
     v8::Handle<v8::Value> from
   , enum Nan::Encoding encoding
   , size_t *datalen
@@ -2280,7 +2425,19 @@ NAN_INLINE void* NanRawString(
   return to;
 }
 
-NAN_INLINE char* NanCString(
+NAN_DEPRECATED NAN_INLINE void* NanRawString(
+    v8::Handle<v8::Value> from
+  , enum Nan::Encoding encoding
+  , size_t *datalen
+  , void *buf
+  , size_t buflen
+  , int flags
+) {
+  return _NanRawString(from, encoding, datalen, buf, buflen, flags);
+}
+
+
+NAN_DEPRECATED NAN_INLINE char* NanCString(
     v8::Handle<v8::Value> from
   , size_t *datalen
   , char *buf = NULL
@@ -2288,7 +2445,7 @@ NAN_INLINE char* NanCString(
   , int flags = v8::String::NO_OPTIONS
 ) {
     return static_cast<char *>(
-      NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags)
+      _NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags)
     );
 }
 
