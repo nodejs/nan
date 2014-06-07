@@ -1,6 +1,7 @@
 const test     = require('tap').test
-var EventEmitter = require('events').EventEmitter;
-var MyObject = require('bindings')('makecallback').MyObject;
+    , testRoot = require('path').resolve(__dirname, '..')
+    , MyObject = require('bindings')({ module_root: testRoot, bindings: 'makecallback' }).MyObject
+    , EventEmitter = require('events').EventEmitter;
 
 // extend prototype
 function inherits(target, source) {

@@ -1,9 +1,10 @@
 const test     = require('tap').test
-    , bindings = require('bindings')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'settemplate' })
 	
 test('SetPrototypeTemplate', function (t) {
   t.plan(4);
-  var r = new bindings('settemplate').MyObject();
+  var r = new bindings.MyObject();
   t.type(r, 'object');
   r = Object.getPrototypeOf(r);
   t.type(r, 'object');

@@ -8,7 +8,7 @@
     "url": "git://github.com/rvagg/nan.git"
   },
   "scripts": {
-    "test": "cd test; npm install; npm test"
+    "test": "node-gyp rebuild --directory test && tap --gc test/js/*-test.js"
   },
   "contributors": [
     "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
@@ -18,5 +18,10 @@
     "Brett Lawson <brett19@gmail.com> (https://github.com/brett19)",
     "Ben Noordhuis <info@bnoordhuis.nl> (https://github.com/bnoordhuis)"
   ],
+  "devDependencies": {
+    "tap": "~0.4.3",
+    "bindings": "~1.2.0",
+    "xtend": "~2.1.1"
+  },
   "license": "MIT"
 }

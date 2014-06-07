@@ -1,6 +1,7 @@
 const test     = require('tap').test
-    , bindings = require('bindings')
-    , crypto   = require('crypto')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'strings' })
+    , crypto   = require('crypto');
 
 const ASCII  = 0
     , UTF8   = 1
@@ -13,7 +14,7 @@ const ASCII  = 0
 test('FromV8String', function (t) {
   t.plan(17)
 
-  var r = bindings('strings').returnString
+  var r = bindings.returnString
 
   t.type(r, 'function')
   t.equal(r('an ascii string', ASCII), 'an ascii string')
@@ -36,13 +37,13 @@ test('FromV8String', function (t) {
 
 test('return NanCString', function (t) {
   t.plan(2);
-  var r = bindings('strings').returnCString
+  var r = bindings.returnCString
   t.type(r, 'function');
   t.equal(r('an utf8 strïng'), 'an utf8 strïng');
 });
 
 test('compare NanCString', function (t) {
-  var compareCStringToBuffer = bindings('strings').compareCStringToBuffer
+  var compareCStringToBuffer = bindings.compareCStringToBuffer
   t.type(compareCStringToBuffer, 'function')
 
   try {
@@ -54,7 +55,7 @@ test('compare NanCString', function (t) {
 })
 
 test('compare NanRawString', function (t) {
-  var compareRawStringToBuffer = bindings('strings').compareRawStringToBuffer
+  var compareRawStringToBuffer = bindings.compareRawStringToBuffer
     , rndStr                   = crypto.randomBytes(32)
 
   t.type(compareRawStringToBuffer, 'function')

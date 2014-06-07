@@ -1,9 +1,10 @@
 const test     = require('tap').test
-    , bindings = require('bindings')
-    , crypto   = require('crypto')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'bufferworkerpersistent' })
+    , crypto   = require('crypto');
 
 test('bufferworkerpersistent', function (t) {
-  var worker = bindings('bufferworkerpersistent').a
+  var worker = bindings.a
     , called = false
     , buf    = crypto.randomBytes(256)
     , bufHex = buf.toString('hex')

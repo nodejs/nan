@@ -1,9 +1,10 @@
 const test     = require('tap').test
-    , bindings = require('bindings')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'settergetter' });
 
 test('settergetter', function (t) {
   t.plan(4)
-  var settergetter = bindings('settergetter').create()
+  var settergetter = bindings.create()
   t.equal(settergetter.prop1, 'this is property 1')
   t.ok(settergetter.prop2 === '')
   settergetter.prop2 = 'setting a value'

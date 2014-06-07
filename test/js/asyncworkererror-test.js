@@ -1,8 +1,9 @@
 const test     = require('tap').test
-    , bindings = require('bindings')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncworkererror' });
 
 test('asyncworkererror', function (t) {
-  var worker = bindings('asyncworkererror').a
+  var worker = bindings.a
   t.type(worker, 'function')
   worker(function (err) {
     t.ok(err)

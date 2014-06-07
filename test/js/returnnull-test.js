@@ -1,9 +1,10 @@
 const test     = require('tap').test
-    , bindings = require('bindings');
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'returnnull' });
 
 test('returnnull', function (t) {
   t.plan(3);
-  t.type(bindings('returnnull').r, 'function');
-  t.equal(bindings('returnnull').r('a string value'), null);
-  t.equal(bindings('returnnull').r(), null);
+  t.type(bindings.r, 'function');
+  t.equal(bindings.r('a string value'), null);
+  t.equal(bindings.r(), null);
 });
