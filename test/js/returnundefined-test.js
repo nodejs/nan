@@ -1,9 +1,10 @@
 const test     = require('tap').test
-    , bindings = require('bindings');
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'returnundefined' });
 
 test('returnundefined', function (t) {
   t.plan(3);
-  t.type(bindings('returnundefined').r, 'function');
-  t.equal(bindings('returnundefined').r('a string value'), undefined);
-  t.equal(bindings('returnundefined').r(), undefined);
+  t.type(bindings.r, 'function');
+  t.equal(bindings.r('a string value'), undefined);
+  t.equal(bindings.r(), undefined);
 });

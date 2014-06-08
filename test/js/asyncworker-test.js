@@ -1,8 +1,9 @@
 const test     = require('tap').test
-    , bindings = require('bindings')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncworker' });
 
 test('asyncworker', function (t) {
-  var worker = bindings('asyncworker').a
+  var worker = bindings.a
     , ticks  = 0
     , called = false
   t.type(worker, 'function')

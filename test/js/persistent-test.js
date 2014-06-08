@@ -1,10 +1,11 @@
 const test     = require('tap').test
-    , bindings = require('bindings');
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'persistent' });
 
 test('persistent', function (t) {
   t.plan(9)
 
-  var persistent = bindings('persistent')
+  var persistent = bindings;
   t.type(persistent.save1, 'function');
   t.type(persistent.get1, 'function');
   t.type(persistent.dispose1, 'function');
