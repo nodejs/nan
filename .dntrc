@@ -22,10 +22,10 @@ NODE_VERSIONS="\
   v0.8.22  \
 "
 OUTPUT_PREFIX="nan-"
-TEST_CMD="\
-  cd /dnt/test/ &&                                               \
-  npm install &&                                                 \
-  node_modules/.bin/node-gyp --nodedir /usr/src/node/ rebuild && \
-  node_modules/.bin/tap --gc js/*-test.js;                            \
+TEST_CMD="                                                                        \
+  cd /dnt/ &&                                                                     \
+  npm install &&                                                                  \
+  node_modules/.bin/node-gyp --nodedir /usr/src/node/ rebuild --directory test && \
+  node_modules/.bin/tap --gc test/js/*-test.js                                    \
 "
 
