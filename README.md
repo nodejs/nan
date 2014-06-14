@@ -144,6 +144,14 @@ NAN_METHOD(CalculateSync) {
 ```
 
 ```c++
+// async.h
+#include <node.h>
+#include <nan.h>
+
+NAN_METHOD(CalculateAsync);
+```
+
+```c++
 // async.cc
 #include <node.h>
 #include <nan.h>
