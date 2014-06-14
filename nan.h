@@ -14,7 +14,7 @@
  * Version 1.2.0 (current Node unstable: 0.11.13, Node stable: 0.10.28)
  *
  * ChangeLog:
- *  * 1.2.0 Jun 5 2015
+ *  * 1.2.0 Jun 5 2014
  *    - Add NanSetPrototypeTemplate
  *    - Changed NAN_WEAK_CALLBACK internals, switched _NanWeakCallbackData to class,
  *      introduced _NanWeakCallbackDispatcher
