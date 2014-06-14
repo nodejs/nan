@@ -37,7 +37,9 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	// Prototype
-	NanSetPrototypeTemplate(tpl, "test", NanNew<v8::String>("a prototype property"));
+	NanSetPrototypeTemplate(tpl, "prototypeProp", NanNew<v8::String>("a prototype property"));
+	// Instance
+	NanSetInstanceTemplate(tpl, "instanceProp", NanNew<v8::String>("an instance property"));
 
 	NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
 	exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());

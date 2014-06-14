@@ -2223,4 +2223,12 @@ NAN_INLINE void NanSetPrototypeTemplate(
     NanSetTemplate(templ->PrototypeTemplate(), name, value);
 }
 
+NAN_INLINE void NanSetInstanceTemplate(
+	v8::Local<v8::FunctionTemplate> templ
+	, const char *name
+	, v8::Handle<v8::Data> value
+	) {
+	NanSetTemplate(templ->InstanceTemplate(), name, value);
+}
+
 #endif  // NAN_H_
