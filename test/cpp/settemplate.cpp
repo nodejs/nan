@@ -40,6 +40,11 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
 	NanSetPrototypeTemplate(tpl, "prototypeProp", NanNew<v8::String>("a prototype property"));
 	// Instance
 	NanSetInstanceTemplate(tpl, "instanceProp", NanNew<v8::String>("an instance property"));
+	// PropertyAttributes
+	NanSetInstanceTemplate(tpl, NanNew<v8::String>("none"), NanNew<v8::String>("none"), v8::None);
+	NanSetInstanceTemplate(tpl, NanNew<v8::String>("readOnly"), NanNew<v8::String>("readOnly"), v8::ReadOnly);
+	NanSetInstanceTemplate(tpl, NanNew<v8::String>("dontEnum"), NanNew<v8::String>("dontEnum"), v8::DontEnum);
+	NanSetInstanceTemplate(tpl, NanNew<v8::String>("dontDelete"), NanNew<v8::String>("dontDelete"), v8::DontDelete);
 
 	NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
 	exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
