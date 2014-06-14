@@ -684,7 +684,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 	  , v8::Handle<v8::String> name
 	  , v8::Handle<v8::Data> value
 	  , v8::PropertyAttribute attributes) {
-	  templ->Set(v8::Isolate::GetCurrent(), name, value, attributes);
+	  templ->Set(name, value, attributes);
   }
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
