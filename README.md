@@ -823,17 +823,17 @@ NanMakeWeakPersistent(func, parameter, &weakCallback);
 ```
 
 <a name="api_nan_set_template"></a>
-### NanSetTemplate(templ, name, value)
+### NanSetTemplate(templ, name, value [, attributes])
 
 Use to add properties on object and function templates.
 
 <a name="api_nan_set_prototype_template"></a>
-### NanSetPrototypeTemplate(templ, name, value)
+### NanSetPrototypeTemplate(templ, name, value [, attributes])
 
 Use to add prototype properties on function templates.
 
 <a name="api_nan_set_instance_template"></a>
-### NanSetInstanceTemplate(templ, name, value)
+### NanSetInstanceTemplate(templ, name, value [, attributes])
 
 Use to add instance properties on function templates.
 
