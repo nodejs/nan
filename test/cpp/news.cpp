@@ -59,8 +59,8 @@ NAN_METHOD(NewLatin1String) {
 
 NAN_METHOD(NewUcs2String) {
   NanScope();
-  uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
-  NanReturnValue(NanNew<v8::String>(s));
+  const uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
+  NanReturnValue(NanNew(s));
 }
 
 NAN_METHOD(NewRegExp) {

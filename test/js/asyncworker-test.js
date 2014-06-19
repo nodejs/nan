@@ -15,7 +15,7 @@ test('asyncworker', function (t) {
   setTimeout(tick, 0)
   worker(200, function () {
     called = true
-    t.ok(ticks > 12, 'got plenty of ticks! (' + ticks + ')')
+    t.ok(ticks > 6, 'got plenty of ticks! (' + ticks + ')')
     t.end()
   })
 })

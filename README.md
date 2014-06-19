@@ -849,7 +849,7 @@ Use to run both bound and unbound scripts.
 <a name="api_nan_adjust_external_memory"></a>
 ### NanAdjustExternalMemory(int change_in_bytes)
 
-Simply does `AdjustAmountOfExternalAllocatedMemory`
+Simply does `AdjustAmountOfExternalAllocatedMemory`, note that the argument and returned value have type `int`.
 
 <a name="api_nan_add_gc_epilogue_callback"></a>
 ### NanAddGCEpilogueCallback(GCEpilogueCallback callback, GCType gc_type_filter=kGCTypeAll)
