@@ -985,6 +985,21 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
         v8::Isolate::GetCurrent(), target, method, argc, argv));
   }
 
+  template<typename T>
+  NAN_INLINE void NanSetIsolateData(
+      v8::Isolate *isolate
+    , T *data
+  ) {
+      isolate->SetData(0, data);
+  }
+
+  template<typename T>
+  NAN_INLINE T *NanGetIsolateData(
+      v8::Isolate *isolate
+  ) {
+      return static_cast<T*>(isolate->GetData(0));
+  }
+
 #else
 // Node 0.8 and 0.10
 
@@ -1671,6 +1686,21 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # endif
   }
 
+template<typename T>
+NAN_INLINE void NanSetIsolateData(
+    v8::Isolate *isolate
+  , T *data
+) {
+    isolate->SetData(data);
+}
+
+template<typename T>
+NAN_INLINE T *NanGetIsolateData(
+    v8::Isolate *isolate
+) {
+    return static_cast<T*>(isolate->GetData());
+}
+
 #endif  // NODE_MODULE_VERSION
 
 typedef void (*NanFreeCallback)(char *data, void *hint);
@@ -2228,29 +2258,6 @@ NAN_INLINE void NanSetPrototypeTemplate(
   , v8::Handle<v8::Data> value
 ) {
     NanSetTemplate(templ->PrototypeTemplate(), name, value);
-}
-
-template<typename T>
-NAN_INLINE void NanSetIsolateData(
-    v8::Isolate *isolate
-  , T *data
-) {
-#if NODE_VERSION_AT_LEAST(0, 11, 13)
-    isolate->SetData(0, data);
-#else
-    isolate->SetData(data);
-#endif
-}
-
-template<typename T>
-NAN_INLINE T *NanGetIsolateData(
-    v8::Isolate *isolate
-) {
-#if NODE_VERSION_AT_LEAST(0, 11, 13)
-    return static_cast<T*>(isolate->GetData(0));
-#else
-    return static_cast<T*>(isolate->GetData());
-#endif
 }
 
 #endif  // NAN_H_
