@@ -124,4 +124,11 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+    , {
+        "target_name" : "isolatedata"
+      , "sources"     : [ "cpp/isolatedata.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
