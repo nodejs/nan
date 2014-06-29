@@ -10,8 +10,12 @@
     </td></tr></table>
     <script>
       var $blink = document.getElementById('blink')
+        , title  = (document.title + '   ').split('')
+
       setInterval(function () {
         $blink.style.opacity = Math.abs(($blink.style.opacity || 0) - 1)
+        title.push(title.shift())
+        document.title = title.join('')
       }, 250)
     </script>
   </body>
