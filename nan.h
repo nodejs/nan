@@ -681,6 +681,14 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     templ->Set(v8::Isolate::GetCurrent(), name, value);
   }
 
+  NAN_INLINE void NanSetTemplate(
+      v8::Handle<v8::Template> templ
+    , v8::Handle<v8::String> name
+    , v8::Handle<v8::Data> value
+    , v8::PropertyAttribute attributes) {
+    templ->Set(name, value, attributes);
+  }
+
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
     return v8::Isolate::GetCurrent()->GetCurrentContext();
   }
@@ -1364,6 +1372,14 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , const char *name
     , v8::Handle<v8::Data> value) {
     templ->Set(name, value);
+  }
+
+  NAN_INLINE void NanSetTemplate(
+      v8::Handle<v8::Template> templ
+    , v8::Handle<v8::String> name
+    , v8::Handle<v8::Data> value
+    , v8::PropertyAttribute attributes) {
+    templ->Set(name, value, attributes);
   }
 
   NAN_INLINE v8::Local<v8::Context> NanGetCurrentContext() {
@@ -2257,7 +2273,33 @@ NAN_INLINE void NanSetPrototypeTemplate(
   , const char *name
   , v8::Handle<v8::Data> value
 ) {
-    NanSetTemplate(templ->PrototypeTemplate(), name, value);
+  NanSetTemplate(templ->PrototypeTemplate(), name, value);
+}
+
+NAN_INLINE void NanSetPrototypeTemplate(
+    v8::Local<v8::FunctionTemplate> templ
+  , v8::Handle<v8::String> name
+  , v8::Handle<v8::Data> value
+  , v8::PropertyAttribute attributes
+) {
+  NanSetTemplate(templ->PrototypeTemplate(), name, value, attributes);
+}
+
+NAN_INLINE void NanSetInstanceTemplate(
+    v8::Local<v8::FunctionTemplate> templ
+  , const char *name
+  , v8::Handle<v8::Data> value
+) {
+  NanSetTemplate(templ->InstanceTemplate(), name, value);
+}
+
+NAN_INLINE void NanSetInstanceTemplate(
+    v8::Local<v8::FunctionTemplate> templ
+  , v8::Handle<v8::String> name
+  , v8::Handle<v8::Data> value
+  , v8::PropertyAttribute attributes
+) {
+  NanSetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
 
 #endif  // NAN_H_
