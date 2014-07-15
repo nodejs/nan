@@ -105,6 +105,13 @@
         ]
     }
   , {
+        "target_name" : "asyncworkerintermediate"
+      , "sources"     : [ "cpp/asyncworkerintermediate.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+  , {
         "target_name" : "asyncworkererror"
       , "sources"     : [ "cpp/asyncworkererror.cpp" ]
       , "include_dirs": [
