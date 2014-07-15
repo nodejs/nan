@@ -30,7 +30,7 @@ class SleepWorker : public NanAsyncWorker {
     int *number = (int *)data;
     v8::Local<v8::Value> argv[] = {
         NanNull(),
-        NanNew<v8::String>("intermediate")
+        NanNew<v8::String>("intermediate"),
         NanNew<v8::Integer>(*number)
     };
     callback->Call(3, argv);
