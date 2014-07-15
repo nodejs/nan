@@ -1842,7 +1842,7 @@ class NanCallback {
  public:
   explicit NanAsyncWorker(NanCallback *callback)
       : callback(callback), errmsg_(NULL) {
-    request.data = this;
+    intermediate.data = request.data = this;
 
     NanScope();
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
@@ -1852,6 +1852,8 @@ class NanCallback {
   virtual ~NanAsyncWorker() {
     NanScope();
 
+    uv_barrier_destroy(&this->intermediateBarrier);
+    uv_unref((uv_handle_t*)&this->intermediate);
     if (!persistentHandle.IsEmpty())
       NanDisposePersistent(persistentHandle);
     if (callback)
@@ -1871,6 +1873,14 @@ class NanCallback {
     callback = NULL;
   }
 
+  void CallIntermediate(void *data) {
+    this->intermediateData = data;
+    uv_async_send(&this->intermediate);
+    uv_barrier_wait(&this->intermediateBarrier);
+  }
+
+  virtual void HandleIntermediate(void *data) {}
+
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Object> &obj) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
@@ -1886,6 +1896,9 @@ class NanCallback {
   virtual void Execute() = 0;
 
   uv_work_t request;
+  uv_async_t intermediate;
+  uv_barrier_t intermediateBarrier;
+  void *intermediateData;
 
  protected:
   v8::Persistent<v8::Object> persistentHandle;
@@ -1929,6 +1942,13 @@ NAN_INLINE void NanAsyncExecute (uv_work_t* req) {
   worker->Execute();
 }
 
+NAN_INLINE void NanAsyncExecuteIntermediate (uv_async_t* handle, int status) {
+  NanAsyncWorker* worker = static_cast<NanAsyncWorker*>(handle->data);
+  worker->HandleIntermediate(worker->intermediateData);
+  worker->intermediateData = NULL;
+  uv_barrier_wait(&worker->intermediateBarrier);
+}
+
 NAN_INLINE void NanAsyncExecuteComplete (uv_work_t* req) {
   NanAsyncWorker* worker = static_cast<NanAsyncWorker*>(req->data);
   worker->WorkComplete();
@@ -1936,8 +1956,16 @@ NAN_INLINE void NanAsyncExecuteComplete (uv_work_t* req) {
 }
 
 NAN_INLINE void NanAsyncQueueWorker (NanAsyncWorker* worker) {
+  uv_loop_t *loop = uv_default_loop();
+  uv_async_init(
+      loop
+    , &worker->intermediate
+    , NanAsyncExecuteIntermediate);
+  uv_barrier_init(
+      &worker->intermediateBarrier
+    , 2);
   uv_queue_work(
-      uv_default_loop()
+      loop
     , &worker->request
     , NanAsyncExecute
     , (uv_after_work_cb)NanAsyncExecuteComplete
