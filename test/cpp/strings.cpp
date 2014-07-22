@@ -10,17 +10,17 @@
 
 NAN_METHOD(ReturnAsciiString) {
   NanScope();
-  NanReturnValue(NanNew(NanAsciiString(args[0])()));
+  NanReturnValue(NanNew(*NanAsciiString(args[0])));
 }
 
 NAN_METHOD(ReturnUtf8String) {
   NanScope();
-  NanReturnValue(NanNew(NanUtf8String(args[0])()));
+  NanReturnValue(NanNew(*NanUtf8String(args[0])));
 }
 
 NAN_METHOD(ReturnUcs2String) {
   NanScope();
-  NanReturnValue(NanNew(NanUcs2String(args[0])()));
+  NanReturnValue(NanNew(*NanUcs2String(args[0])));
 }
 
 v8::Persistent<v8::FunctionTemplate> returnAsciiString_persistent;

@@ -1034,7 +1034,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return size;
     }
 
-    NAN_INLINE char* operator()() { return buf; }
+    NAN_INLINE char* operator*() { return buf; }
 
     NAN_INLINE ~NanAsciiString() {
       delete[] buf;
@@ -1058,7 +1058,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return size;
     }
 
-    NAN_INLINE char* operator()() { return buf; }
+    NAN_INLINE char* operator*() { return buf; }
 
     NAN_INLINE ~NanUtf8String() {
       delete[] buf;
@@ -1082,7 +1082,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return size;
     }
 
-    NAN_INLINE uint16_t* operator()() { return buf; }
+    NAN_INLINE uint16_t* operator*() { return buf; }
 
     NAN_INLINE ~NanUcs2String() {
       delete[] buf;
@@ -1826,7 +1826,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return size;
     }
 
-    NAN_INLINE char* operator()() { return buf; }
+    NAN_INLINE char* operator*() { return buf; }
 
     NAN_INLINE ~NanAsciiString() {
       delete[] buf;
@@ -1850,7 +1850,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return size;
     }
 
-    NAN_INLINE char* operator()() { return buf; }
+    NAN_INLINE char* operator*() { return buf; }
 
     NAN_INLINE ~NanUtf8String() {
       delete[] buf;
@@ -1874,7 +1874,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       return size;
     }
 
-    NAN_INLINE uint16_t* operator()() { return buf; }
+    NAN_INLINE uint16_t* operator*() { return buf; }
 
     NAN_INLINE ~NanUcs2String() {
       delete[] buf;

@@ -703,10 +703,10 @@ delete[] name;
 
 Convert a `String` to zero-terminated, Ascii-encoded `char *`.
 
-```c+++
+```c++
 NAN_METHOD(foo) {
   NanScope();
-  NanReturnValue(NanNew(NanAsciiString(arg[0])()));
+  NanReturnValue(NanNew(*NanAsciiString(arg[0])));
 }
 ```
 
@@ -715,10 +715,10 @@ NAN_METHOD(foo) {
 
 Convert a `String` to zero-terminated, Utf8-encoded `char *`.
 
-```c+++
+```c++
 NAN_METHOD(foo) {
   NanScope();
-  NanReturnValue(NanNew(NanUtf8String(arg[0])()));
+  NanReturnValue(NanNew(*NanUtf8String(arg[0])));
 }
 ```
 
@@ -727,10 +727,10 @@ NAN_METHOD(foo) {
 
 Convert a `String` to zero-terminated, Ucs2-encoded `uint16_t *`.
 
-```c+++
+```c++
 NAN_METHOD(foo) {
   NanScope();
-  NanReturnValue(NanNew(NanUcs2String(arg[0])()));
+  NanReturnValue(NanNew(*NanUcs2String(arg[0])));
 }
 ```
 
