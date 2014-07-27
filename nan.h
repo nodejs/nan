@@ -1802,33 +1802,34 @@ class NanCallback {
     return NanNew(handle)->Get(kCallbackIndex)->IsUndefined();
   }
 
-  void Call(int argc, v8::Handle<v8::Value> argv[]) const {
-    NanScope();
+  v8::Handle<v8::Value> Call(int argc, v8::Handle<v8::Value> argv[]) const {
+    NanEscapableScope();
 #if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    node::MakeCallback(
+    return NanEscapeScope(node::MakeCallback(
         isolate
       , isolate->GetCurrentContext()->Global()
       , callback
       , argc
       , argv
-    );
+    ));
 #else
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
-    node::MakeCallback(
+    return NanEscapeScope(node::MakeCallback(
         v8::Context::GetCurrent()->Global()
       , callback
       , argc
       , argv
-    );
+    ));
 #else
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
-    NanMakeCallback(v8::Context::GetCurrent()->Global(), callback, argc, argv);
+    return NanEscapeScope(NanMakeCallback(
+        v8::Context::GetCurrent()->Global(), callback, argc, argv));
 #endif
 #endif
   }
