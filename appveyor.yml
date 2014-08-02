@@ -11,10 +11,11 @@ environment:
 install:
   # Get the latest stable version of Node 0.STABLE.latest
   - npm install npm
+  - move node_modules npm
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
   # Typical npm stuff.
-  - node_modules/.bin/npm install
-  - node_modules/.bin/npm run rebuild-tests
+  - npm/.bin/npm install
+  - npm/.bin/npm run rebuild-tests
 
 # Post-install test scripts.
 test_script:
