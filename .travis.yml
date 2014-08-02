@@ -13,13 +13,14 @@ notifications:
   email:
     - rod@vagg.org
 before_install:
+  - npm install npm
+  - mv node_modules npm
   - rm -rf ~/.nvm
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - node --version
-  - npm --version
-  - if [ "$NODE_VERSION" == "0.6" ]; then npm config set ca ""; fi
-  - npm run rebuild-tests
+  - npm/.bin/npm --version
+  - npm/.bin/npm run rebuild-tests
   # at this point Travis-CI will implicitly run `npm install` for us
 script: tap --gc test/js/*-test.js
