@@ -174,7 +174,6 @@
 #ifndef NAN_H_
 #define NAN_H_
 
-#include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
 #include <node_version.h>
@@ -182,6 +181,7 @@
 #include <string.h>
 #include <limits.h>
 #include <string>
+#include "./nauv.h"
 
 #if defined(__GNUC__) && !defined(DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))

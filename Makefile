@@ -11,6 +11,7 @@ SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
+	nauv.h \
 	test/cpp/asyncworker.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
