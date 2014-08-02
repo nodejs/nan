@@ -12,8 +12,6 @@ node_js:
 notifications:
   email:
     - rod@vagg.org
-script:
-  - npm/.bin/npm test
 before_install:
   - npm install npm
   - mv node_modules npm
@@ -25,4 +23,6 @@ before_install:
   - npm/.bin/npm --version
   - npm/.bin/npm run rebuild-tests
   # at this point Travis-CI will implicitly run `npm install` for us
+install:
+  - npm/.bin/npm install
 script: tap --gc test/js/*-test.js
