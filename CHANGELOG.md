@@ -1,9 +1,9 @@
 # NAN ChangeLog
 
-### Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30
+**Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30**
 
 
-**1.3.0 Aug 2 2014**
+### 1.3.0 Aug 2 2014
 
  - Added NanNew<v8::String, std::string>(std::string)
  - Added NanNew<v8::String, std::string&>(std::string&)
@@ -21,7 +21,7 @@
  - Added NanSetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ, const char *name, v8::Handle<v8::Data> value)
  - Added NanSetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ, v8::Handle<v8::String> name, v8::Handle<v8::Data> value, v8::PropertyAttribute attributes)
 
-**1.2.0 Jun 5 2014**
+### 1.2.0 Jun 5 2014
 
  - Add NanSetPrototypeTemplate
  - Changed NAN_WEAK_CALLBACK internals, switched _NanWeakCallbackData to class,
@@ -29,15 +29,15 @@
  - Removed -Wno-unused-local-typedefs from test builds
  - Made test builds Windows compatible ('Sleep()')
 
-**1.1.2 May 28 2014**
+### 1.1.2 May 28 2014
 
  - Release to fix more stuff-ups in 1.1.1
 
-**1.1.1 May 28 2014**
+### 1.1.1 May 28 2014
 
  - Release to fix version mismatch in nan.h and lack of changelog entry for 1.1.0
 
-**1.1.0 May 25 2014**
+### 1.1.0 May 25 2014
 
  - Remove nan_isolate, use v8::Isolate::GetCurrent() internally instead
  - Additional explicit overloads for NanNew(): (char*,int), (uint8_t*[,int]),
@@ -46,7 +46,7 @@
  - Deprecate NanSymbol()
  - Added SetErrorMessage() and ErrorMessage() to NanAsyncWorker
 
-**1.0.0 May 4 2014**
+### 1.0.0 May 4 2014
 
  - Heavy API changes for V8 3.25 / Node 0.11.13
  - Use cpplint.py
@@ -70,18 +70,18 @@
  - Introduce NanGetHeapStatistics
  - Rename NanAsyncWorker#SavePersistent() to SaveToPersistent()
 
-**0.8.0 Jan 9 2014**
+### 0.8.0 Jan 9 2014
 
  - NanDispose -> NanDisposePersistent, deprecate NanDispose
  - Extract _NAN_*_RETURN_TYPE, pull up NAN_*()
 
-**0.7.1 Jan 9 2014**
+### 0.7.1 Jan 9 2014
 
  - Fixes to work against debug builds of Node
  - Safer NanPersistentToLocal (avoid reinterpret_cast)
  - Speed up common NanRawString case by only extracting flattened string when necessary
 
-**0.7.0 Dec 17 2013**
+### 0.7.0 Dec 17 2013
 
  - New no-arg form of NanCallback() constructor.
  - NanCallback#Call takes Handle rather than Local
@@ -92,58 +92,58 @@
      (replacement for NanFromV8String)
  - Introduce NanCString() for null-terminated char* from v8::String
 
-**0.6.0 Nov 21 2013**
+### 0.6.0 Nov 21 2013
 
  - Introduce NanNewLocal<T>(v8::Handle<T> value) for use in place of
      v8::Local<T>::New(...) since v8 started requiring isolate in Node 0.11.9
 
-**0.5.2 Nov 16 2013**
+### 0.5.2 Nov 16 2013
 
  - Convert SavePersistent and GetFromPersistent in NanAsyncWorker from protected and public
 
-**0.5.1 Nov 12 2013**
+### 0.5.1 Nov 12 2013
 
  - Use node::MakeCallback() instead of direct v8::Function::Call()
 
-**0.5.0 Nov 11 2013**
+### 0.5.0 Nov 11 2013
 
  - Added @TooTallNate as collaborator
  - New, much simpler, "include_dirs" for binding.gyp
  - Added full range of NAN_INDEX_* macros to match NAN_PROPERTY_* macros
 
-**0.4.4 Nov 2 2013**
+### 0.4.4 Nov 2 2013
 
  - Isolate argument from v8::Persistent::MakeWeak removed for 0.11.8+
 
-**0.4.3 Nov 2 2013**
+### 0.4.3 Nov 2 2013
 
  - Include node_object_wrap.h, removed from node.h for Node 0.11.8.
 
-**0.4.2 Nov 2 2013**
+### 0.4.2 Nov 2 2013
 
  - Handle deprecation of v8::Persistent::Dispose(v8::Isolate* isolate)) for
      Node 0.11.8 release.
 
-**0.4.1 Sep 16 2013**
+### 0.4.1 Sep 16 2013
 
  - Added explicit `#include <uv.h>` as it was removed from node.h for v0.11.8
 
-**0.4.0 Sep 2 2013**
+### 0.4.0 Sep 2 2013
 
  - Added NAN_INLINE and NAN_DEPRECATED and made use of them
  - Added NanError, NanTypeError and NanRangeError
  - Cleaned up code
 
-**0.3.2 Aug 30 2013**
+### 0.3.2 Aug 30 2013
 
  - Fix missing scope declaration in GetFromPersistent() and SaveToPersistent
      in NanAsyncWorker
 
-**0.3.1 Aug 20 2013**
+### 0.3.1 Aug 20 2013
 
  - fix "not all control paths return a value" compile warning on some platforms
 
-**0.3.0 Aug 19 2013**
+### 0.3.0 Aug 19 2013
 
  - Made NAN work with NPM
  - Lots of fixes to NanFromV8String, pulling in features from new Node core
@@ -158,16 +158,16 @@
  - Changed NanThrowError(Local<Value>) to NanThrowError(Handle<Value>)
  - Fixed leak in NanAsyncWorker when errmsg is used
 
-**0.2.2 Aug 5 2013**
+### 0.2.2 Aug 5 2013
 
  - Fixed usage of undefined variable with node::BASE64 in NanFromV8String()
 
-**0.2.1 Aug 5 2013**
+### 0.2.1 Aug 5 2013
 
  - Fixed 0.8 breakage, node::BUFFER encoding type not available in 0.8 for
      NanFromV8String()
 
-**0.2.0 Aug 5 2013**
+### 0.2.0 Aug 5 2013
 
  - Added NAN_PROPERTY_GETTER, NAN_PROPERTY_SETTER, NAN_PROPERTY_ENUMERATOR,
      NAN_PROPERTY_DELETER, NAN_PROPERTY_QUERY
@@ -189,7 +189,7 @@
  - Added initial test suite (to be expanded)
  - Allow NanUInt32OptionValue to convert any Number object
 
-**0.1.0 Jul 21 2013**
+### 0.1.0 Jul 21 2013
 
  - Added `NAN_GETTER`, `NAN_SETTER`
  - Added `NanThrowError` with single Local<Value> argument
