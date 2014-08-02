@@ -252,8 +252,11 @@ NAN_METHOD(CalculateAsync) {
  * <del><a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a></del>
  * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
  * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
- * <a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a>
- * <a href="#api_nan_c_string"><b><code>NanCString</code></b></a>
+ * <del><a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a></del>
+ * <del><a href="#api_nan_c_string"><b><code>NanCString</code></b></a></del>
+ * <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>
+ * <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a>
+ * <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>
  * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
  * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
  * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanTypeError</code></b>, <b><code>NanRangeError</code></b></a>
@@ -666,29 +669,69 @@ const char *plugh(size_t *outputsize) {
 ```
 
 <a name="api_nan_raw_string"></a>
-### void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)
+### <del>void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)</del>
 
-When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
+Deprecated. Use something else.
+
+<del>When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
+Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:</del>
 
 ```c++
 size_t count;
 void* decoded = NanRawString(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
 ...
-delete[] decoded;
+delete[] reinterpret_cast<char*>(decoded);
 ```
 
 <a name="api_nan_c_string"></a>
-### char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])
+### <del>char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])</del>
 
-When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:
+Deprecated. Use `NanUtf8String` instead.
+
+<del>When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
+Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:</del>
 
 ```c++
 size_t count;
 char* name = NanCString(args[0], &count);
 ...
 delete[] name;
+```
+
+<a name="api_nan_ascii_string"></a>
+### NanAsciiString
+
+Convert a `String` to zero-terminated, Ascii-encoded `char *`.
+
+```c++
+NAN_METHOD(foo) {
+  NanScope();
+  NanReturnValue(NanNew(*NanAsciiString(arg[0])));
+}
+```
+
+<a name="api_nan_utf8_string"></a>
+### NanUtf8String
+
+Convert a `String` to zero-terminated, Utf8-encoded `char *`.
+
+```c++
+NAN_METHOD(foo) {
+  NanScope();
+  NanReturnValue(NanNew(*NanUtf8String(arg[0])));
+}
+```
+
+<a name="api_nan_ucs2_string"></a>
+### NanUcs2String
+
+Convert a `String` to zero-terminated, Ucs2-encoded `uint16_t *`.
+
+```c++
+NAN_METHOD(foo) {
+  NanScope();
+  NanReturnValue(NanNew(*NanUcs2String(arg[0])));
+}
 ```
 
 <a name="api_nan_boolean_option_value"></a>

@@ -134,11 +134,12 @@ NAN_SETTER(SetterGetter::SetProp2) {
   NanScope();
 
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
-  char* buf = NanCString(value, NULL);
-  strncpy(settergetter->prop2, buf, sizeof (settergetter->prop2));
+      node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+  strncpy(
+      settergetter->prop2
+    , *NanUtf8String(value)
+    , sizeof (settergetter->prop2));
   settergetter->prop2[sizeof (settergetter->prop2) - 1] = '\0';
-  delete[] buf;
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
