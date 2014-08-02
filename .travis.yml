@@ -18,11 +18,10 @@ before_install:
   - rm -rf ~/.nvm
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
+  - npm/.bin/npm --version
+  - npm/.bin/npm install
+  - npm/.bin/npm run rebuild-tests
   - nvm install $NODE_VERSION
   - node --version
-  - npm/.bin/npm --version
-  - npm/.bin/npm run rebuild-tests
-  # at this point Travis-CI will implicitly run `npm install` for us
 install:
-  - npm/.bin/npm install
 script: tap --gc test/js/*-test.js
