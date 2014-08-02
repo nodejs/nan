@@ -12,6 +12,8 @@ node_js:
 notifications:
   email:
     - rod@vagg.org
+script:
+  - npm/.bin/npm test
 before_install:
   - npm install npm
   - mv node_modules npm
