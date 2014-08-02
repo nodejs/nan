@@ -1,10 +1,10 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
  * Copyright (c) 2014 NAN contributors
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
- **********************************************************************************/
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
 #include <nan.h>
 #include <string>

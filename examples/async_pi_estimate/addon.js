@@ -1,3 +1,11 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
+
 var addon = require('./build/Release/addon');
 var calculations = process.argv[2] || 100000000;
 

@@ -1,4 +1,4 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
  * Copyright (c) 2014 NAN contributors:
@@ -9,7 +9,7 @@
  *   - Brett Lawson <https://github.com/brett19>
  *   - Ben Noordhuis <https://github.com/bnoordhuis>
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  *
  * Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30
  *

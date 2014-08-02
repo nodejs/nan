@@ -1051,4 +1051,4 @@ Licence &amp; copyright
 
 Copyright (c) 2014 NAN contributors (listed above).
 
-Native Abstractions for Node.js is licensed under an MIT +no-false-attribs license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+Native Abstractions for Node.js is licensed under an MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
