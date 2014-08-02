@@ -8,7 +8,7 @@ Native Abstractions for Node.js
 [![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
 [![Build
-Status](https://secure.travis-ci.org/rvagg/bl.png)](http://travis-ci.org/rvagg/bl)
+Status](https://secure.travis-ci.org/rvagg/bl.png)](http://travis-ci.org/rvagg/nan)
 [![Build
 status](https://ci.appveyor.com/api/projects/status/kh73pbm9dsju7fgh)](https://ci.appveyor.com/project/RodVagg/nan)
 
