@@ -187,7 +187,7 @@ void Init(v8::Handle<v8::Object> target) {
   );
   target->Set(
       NanNew<v8::String>("newStdString")
-    , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(NewStdString)->GetFunction()
   );
   target->Set(
       NanNew<v8::String>("newRegExp")
