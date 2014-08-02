@@ -1325,7 +1325,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE v8::Local<v8::String> NanNew(
-      std::string& arg) {
+      const std::string& arg) {
     return NanNew<v8::String>(arg.c_str(), arg.size());
   }
 

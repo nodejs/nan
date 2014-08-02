@@ -29,7 +29,7 @@ SOURCES = \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
         test/cpp/weak.cpp \
-	test/node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
+	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
 FILTER = -whitespace/parens
 
