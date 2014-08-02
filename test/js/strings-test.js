@@ -4,17 +4,20 @@ const test     = require('tap').test
 
 
 test('FromV8String', function (t) {
-  t.plan(6);
+  t.plan(8);
 
   var a = bindings.returnAsciiString;
   var b = bindings.returnUtf8String;
   var c = bindings.returnUcs2String;
+  var d = bindings.heapString;
 
   t.type(a, 'function');
   t.type(b, 'function');
   t.type(c, 'function');
+  t.type(d, 'function');
 
   t.equal(a('an ascii string'), 'an ascii string');
   t.equal(b('an utf8 strïng'), 'an utf8 strïng');
   t.equal(c('an ucs2 strïng'), 'an ucs2 strïng');
+  t.equal(d('an utf8 strïng'), 'an utf8 strïng');
 });

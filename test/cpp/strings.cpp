@@ -23,9 +23,18 @@ NAN_METHOD(ReturnUcs2String) {
   NanReturnValue(NanNew(*NanUcs2String(args[0])));
 }
 
+NAN_METHOD(HeapString) {
+  NanScope();
+  NanUcs2String *s = new NanUcs2String(args[0]);
+  v8::Local<v8::String> res = NanNew(**s);
+  delete s;
+  NanReturnValue(res);
+}
+
 v8::Persistent<v8::FunctionTemplate> returnAsciiString_persistent;
 v8::Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
 v8::Persistent<v8::FunctionTemplate> returnUcs2String_persistent;
+v8::Persistent<v8::FunctionTemplate> heapString_persistent;
 
 void Init (v8::Handle<v8::Object> target) {
   NanScope();
@@ -67,6 +76,19 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew("returnUcs2String")
     , returnUcs2String->GetFunction()
+  );
+
+  v8::Local<v8::FunctionTemplate> heapString =
+    NanNew<v8::FunctionTemplate>(HeapString);
+
+  NanAssignPersistent(
+    heapString_persistent
+  , heapString
+  );
+
+  target->Set(
+      NanNew("heapString")
+    , heapString->GetFunction()
   );
 }
 
