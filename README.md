@@ -429,6 +429,12 @@ NAN_INLINE int foo(int bar) {
 
 Use `NanNew` to construct almost all v8 objects and make new local handles.
 
+Note: Using NanNew with an std::string is possible, however, you should ensure
+to use the overload version (`NanNew(stdString)`) rather than the template
+version (`NanNew<v8::String>(stdString)`) as there is an unnecessary
+performance penalty to using the template version because of the inability for
+compilers to appropriately deduce to reference types on template specialization. 
+
 ```c++
 Local<String> s = NanNew<String>("value");
 
@@ -534,7 +540,7 @@ This method is not directly exposed to V8, nor does it return a handle, so it us
 ```c++
 bool Foo::Bar() {
   NanScope();
-  
+
   Local<Boolean> val = NanFalse();
   ...
   return val->Value();
@@ -952,13 +958,13 @@ public:
 
   // Fetch a stored V8 object (don't call from within `Execute()`)
   Local<Object> GetFromPersistent(const char *key);
-  
+
   // Get the error message (or NULL)
   const char *ErrorMessage();
-  
+
   // Set an error message
   void SetErrorMessage(const char *msg);
-  
+
 protected:
   // Default implementation calls the callback function with no arguments.
   // Override this to return meaningful data

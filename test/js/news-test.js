@@ -3,7 +3,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'news' });
 
 test('news', function (t) {
-  t.plan(44);
+  t.plan(46);
   t.type(bindings.newNumber, 'function');
   t.type(bindings.newPositiveInteger, 'function');
   t.type(bindings.newNegativeInteger, 'function');
@@ -14,6 +14,7 @@ test('news', function (t) {
   t.type(bindings.newUtf8String, 'function');
   t.type(bindings.newLatin1String, 'function');
   t.type(bindings.newUcs2String, 'function');
+  t.type(bindings.newStdString, 'function');
   t.type(bindings.newRegExp, 'function');
   t.type(bindings.newStringObject, 'function');
   t.type(bindings.newNumberObject, 'function');
@@ -37,6 +38,7 @@ test('news', function (t) {
   t.equal(bindings.newUtf8String(), 'strïng');
   t.equal(bindings.newLatin1String(), 'strïng');
   t.equal(bindings.newUcs2String(), 'strïng');
+  t.equal(bindings.newStdString(), 'strïng');
   t.deepEquals(bindings.newRegExp(), /foo/g);
   t.deepEquals(bindings.newStringObject(), new String("foo"));
   t.deepEquals(bindings.newNumberObject(), new Number(0.5));

@@ -181,6 +181,7 @@
 #include <node_object_wrap.h>
 #include <string.h>
 #include <limits.h>
+#include <string>
 
 #if defined(__GNUC__) && !defined(DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
@@ -579,6 +580,12 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   }
 
   template<>
+  NAN_INLINE v8::Local<v8::String> NanNew<v8::String, std::string>(
+      std::string arg) {
+    return NanNew<v8::String>(arg.c_str(), arg.size());
+  }
+
+  template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String>() {
     return v8::String::Empty(v8::Isolate::GetCurrent());
   }
@@ -597,6 +604,11 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
       const uint16_t* arg
     , int length = -1) {
     return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      const std::string& arg) {
+    return NanNew<v8::String>(arg.c_str(), arg.size());
   }
 
   NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
@@ -1286,6 +1298,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template<>
+  NAN_INLINE v8::Local<v8::String> NanNew<v8::String, std::string>(
+      std::string arg) {
+    return NanNew<v8::String>(arg.c_str(), arg.size());
+  }
+
+  template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String>() {
     return v8::String::Empty();
   }
@@ -1304,6 +1322,11 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       const uint16_t* arg
     , int length = -1) {
     return NanNew<v8::String>(arg, length);
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      std::string& arg) {
+    return NanNew<v8::String>(arg.c_str(), arg.size());
   }
 
   NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
@@ -1802,33 +1825,34 @@ class NanCallback {
     return NanNew(handle)->Get(kCallbackIndex)->IsUndefined();
   }
 
-  void Call(int argc, v8::Handle<v8::Value> argv[]) const {
-    NanScope();
+  v8::Handle<v8::Value> Call(int argc, v8::Handle<v8::Value> argv[]) const {
+    NanEscapableScope();
 #if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    node::MakeCallback(
+    return NanEscapeScope(node::MakeCallback(
         isolate
       , isolate->GetCurrentContext()->Global()
       , callback
       , argc
       , argv
-    );
+    ));
 #else
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
-    node::MakeCallback(
+    return NanEscapeScope(node::MakeCallback(
         v8::Context::GetCurrent()->Global()
       , callback
       , argc
       , argv
-    );
+    ));
 #else
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
-    NanMakeCallback(v8::Context::GetCurrent()->Global(), callback, argc, argv);
+    return NanEscapeScope(NanMakeCallback(
+        v8::Context::GetCurrent()->Global(), callback, argc, argv));
 #endif
 #endif
   }

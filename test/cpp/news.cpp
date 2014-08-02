@@ -7,6 +7,7 @@
  **********************************************************************************/
 
 #include <nan.h>
+#include <string>
 
 static int magic = 1337;
 
@@ -61,6 +62,12 @@ NAN_METHOD(NewUcs2String) {
   NanScope();
   const uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
   NanReturnValue(NanNew(s));
+}
+
+NAN_METHOD(NewStdString) {
+  NanScope();
+  const std::string s = "strïng";
+  NanReturnValue(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewRegExp) {
@@ -176,6 +183,10 @@ void Init(v8::Handle<v8::Object> target) {
   );
   target->Set(
       NanNew<v8::String>("newUcs2String")
+    , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("newStdString")
     , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
   );
   target->Set(
