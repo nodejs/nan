@@ -12,9 +12,9 @@ test('bufferworkerpersistent', function (t) {
   t.type(worker, 'function')
 
   setTimeout(function () {
-    t.ok(called)
+    t.ok(called, 'callback fired')
     t.end()
-  }, 300)
+  }, 500)
 
   worker(200, buf, function (_buf) {
     called = true
