@@ -131,4 +131,11 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+    , {
+      "target_name" : "asyncworkerprogress"
+    , "sources"     : [ "cpp/asyncworkerprogress.cpp" ]
+    , "include_dirs": [
+          "<!(node -e \"require('..')\")"
+      ]
+  }
 ]}

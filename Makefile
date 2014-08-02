@@ -13,6 +13,7 @@ SOURCES = \
 	nan.h \
 	nauv.h \
 	test/cpp/asyncworker.cpp \
+        test/cpp/asyncworkerprogress.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
         test/cpp/morenews.cpp \
