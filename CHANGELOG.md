@@ -1,6 +1,25 @@
 # NAN ChangeLog
 
-### Version 1.2.0 (current Node unstable: 0.11.13, Node stable: 0.10.28)
+### Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30
+
+
+**1.3.0 Aug 2 2014**
+
+ - Added NanNew<v8::String, std::string>(std::string)
+ - Added NanNew<v8::String, std::string&>(std::string&)
+ - Added NanAsciiString helper class
+ - Added NanUtf8String helper class
+ - Added NanUcs2String helper class
+ - Deprecated NanRawString()
+ - Deprecated NanCString()
+ - Added NanGetIsolateData(v8::Isolate *isolate)
+ - Added NanMakeCallback(v8::Handle<v8::Object> target, v8::Handle<v8::Function> func, int argc, v8::Handle<v8::Value>* argv)
+ - Added NanMakeCallback(v8::Handle<v8::Object> target, v8::Handle<v8::String> symbol, int argc, v8::Handle<v8::Value>* argv)
+ - Added NanMakeCallback(v8::Handle<v8::Object> target, const char* method, int argc, v8::Handle<v8::Value>* argv)
+ - Added NanSetTemplate(v8::Handle<v8::Template> templ, v8::Handle<v8::String> name , v8::Handle<v8::Data> value, v8::PropertyAttribute attributes)
+ - Added NanSetPrototypeTemplate(v8::Local<v8::FunctionTemplate> templ, v8::Handle<v8::String> name, v8::Handle<v8::Data> value, v8::PropertyAttribute attributes)
+ - Added NanSetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ, const char *name, v8::Handle<v8::Data> value)
+ - Added NanSetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ, v8::Handle<v8::String> name, v8::Handle<v8::Data> value, v8::PropertyAttribute attributes)
 
 **1.2.0 Jun 5 2014**
 

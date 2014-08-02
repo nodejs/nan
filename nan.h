@@ -11,6 +11,8 @@
  *
  * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
  *
+ * Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30
+ *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/
 

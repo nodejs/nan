@@ -3,7 +3,9 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 1.2.0*** *(See [nan.h](https://github.com/rvagg/nan/blob/master/nan.h) for complete ChangeLog)*
+***Current version: 1.3.0***
+
+*(See [nan.h](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
 
@@ -21,6 +23,13 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Aug-2014: 1.3.0 release
+
+* `NanCString()` and `NanRawString()` have been deprecated in favour of new <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>, <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a> and <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>. These classes manage the underlying memory for you in a safer way than just handing off an allocated array. You should now `*NanAsciiString(handle)` to access the raw `char` data, you can also allocate on the heap if you need to keep a reference.
+* Two more <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a> overloads have been added to for parity with Node core.
+* You can now `NanNew(std::string)` (use `NanNew<std::string&>(std::string&)` to pass by reference)
+* <a href="#api_nan_set_template"><b><code>NanSetTemplate</code></b></a>, <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a> and <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a> have been added.
 
 ### May-2014: 1.1.0 release
 
