@@ -15,12 +15,12 @@ notifications:
 before_install:
   - npm install npm
   - mv node_modules npm
-  - rm -rf ~/.nvm
-  - git clone https://github.com/creationix/nvm.git ~/.nvm
-  - source ~/.nvm/nvm.sh
   - npm/.bin/npm --version
   - npm/.bin/npm install
   - npm/.bin/npm run rebuild-tests
+  - rm -rf ~/.nvm
+  - git clone https://github.com/creationix/nvm.git ~/.nvm
+  - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - node --version
 install:
