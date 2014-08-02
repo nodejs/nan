@@ -16,11 +16,11 @@ before_install:
   - mv node_modules npm
   - npm/.bin/npm --version
   - npm/.bin/npm install
-  - node_modules/.bin/node-gyp rebuild --directory test --target=$(node --version)
   - rm -rf ~/.nvm
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - node --version
+  - node_modules/.bin/node-gyp rebuild --directory test
 install:
 script: tap --gc test/js/*-test.js
