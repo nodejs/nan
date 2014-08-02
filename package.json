@@ -20,10 +20,10 @@
     "Ben Noordhuis <info@bnoordhuis.nl> (https://github.com/bnoordhuis)"
   ],
   "devDependencies": {
-    "bindings": "~1.2.0",
-    "node-gyp": "~0.13.1",
-    "tap": "~0.4.3",
-    "xtend": "~2.1.1"
+    "bindings": "~1.2.1",
+    "node-gyp": "~1.0.1",
+    "tap": "~0.4.12",
+    "xtend": "~4.0.0"
   },
   "license": "MIT"
 }
