@@ -500,6 +500,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
+# define NanReturnUndefined() return
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnHolder()
 # define NanReturnNull() return args.GetReturnValue().SetNull()
