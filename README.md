@@ -7,7 +7,7 @@ Native Abstractions for Node.js
 
 *(See [nan.h](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
-[![NPM](https://nodei.co/npm/nan.png?downloads=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6)](https://nodei.co/npm/nan/)
+[![NPM](https://nodei.co/npm/nan.png?downloads=true&downloadRank=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6&height=3)](https://nodei.co/npm/nan/)
 
 [![Build Status](https://secure.travis-ci.org/rvagg/nan.png)](http://travis-ci.org/rvagg/nan)
 [![Build status](https://ci.appveyor.com/api/projects/status/kh73pbm9dsju7fgh)](https://ci.appveyor.com/project/RodVagg/nan)
