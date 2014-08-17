@@ -11,7 +11,9 @@ SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
+	nauv.h \
 	test/cpp/asyncworker.cpp \
+        test/cpp/asyncworkerprogress.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
         test/cpp/morenews.cpp \
@@ -29,7 +31,7 @@ SOURCES = \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
         test/cpp/weak.cpp \
-	test/node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
+	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
 FILTER = -whitespace/parens
 
