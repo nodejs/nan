@@ -181,7 +181,6 @@
 #include <string.h>
 #include <limits.h>
 #include <string>
-#include "./nauv.h"
 
 #if defined(__GNUC__) && !defined(DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
@@ -1874,7 +1873,7 @@ class NanCallback {
     uv_async_init(
         uv_default_loop()
       , async
-      , AsyncProgress_
+      , *reinterpret_cast<uv_async_cb>(AsyncProgress_)
     );
     uv_mutex_init(&async_lock);
 
@@ -1993,7 +1992,7 @@ class NanCallback {
   }
 
  private:
-  NAN_INLINE static NAUV_WORK_CB(AsyncProgress_) {
+  NAN_INLINE static void AsyncProgress_(uv_async_t *async, int dummy) {
     NanAsyncWorker *worker = static_cast<NanAsyncWorker*>(async->data);
     worker->WorkProgress();
   }
