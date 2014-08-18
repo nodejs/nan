@@ -563,6 +563,9 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     object->SetAlignedPointerInInternalField(index, value);
   }
 
+# define NAN_GC_CALLBACK(name)                                                 \
+    void name(v8::Isolate *isolate, v8::GCType type, v8::GCCallbackFlags flags)
+
   NAN_INLINE void NanAddGCEpilogueCallback(
       v8::Isolate::GCEpilogueCallback callback
     , v8::GCType gc_type_filter = v8::kGCTypeAll) {
@@ -1339,6 +1342,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     , void* value) {
     object->SetPointerInInternalField(index, value);
   }
+
+# define NAN_GC_CALLBACK(name)                                                 \
+    void name(v8::GCType type, v8::GCCallbackFlags flags)
 
   NAN_INLINE void NanAddGCEpilogueCallback(
     v8::GCEpilogueCallback callback
