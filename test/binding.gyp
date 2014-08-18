@@ -131,4 +131,11 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+    , {
+        "target_name" : "gc"
+      , "sources"     : [ "cpp/gc.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
