@@ -1002,7 +1002,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
-    return v8::Local<T>::New(T::New());
+    return T::New();
   }
 
   template<typename T>
@@ -1033,12 +1033,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg) {
-    return v8::Local<T>::New(T::New(arg));
+    return T::New(arg);
   }
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg, int length) {
-    return v8::Local<T>::New(T::New(arg, length));
+    return T::New(arg, length);
   }
 
   template<typename T>
@@ -1083,6 +1083,11 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
     return v8::Date::New(time).As<v8::Date>();
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Boolean> NanNew<v8::Boolean>(bool value) {
+    return v8::Local<v8::Boolean>::New(v8::Boolean::New(value));
   }
 
   typedef v8::Script NanUnboundScript;
