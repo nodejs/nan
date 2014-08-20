@@ -144,6 +144,11 @@ NAN_METHOD(NewArray) {
   NanReturnValue(NanNew<v8::Array>());
 }
 
+NAN_METHOD(NewBoolean) {
+  NanScope();
+  NanReturnValue(NanNew<v8::Boolean>(true));
+}
+
 void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("newNumber")
@@ -236,6 +241,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("newArray")
     , NanNew<v8::FunctionTemplate>(NewArray)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("newBoolean")
+    , NanNew<v8::FunctionTemplate>(NewBoolean)->GetFunction()
   );
 }
 
