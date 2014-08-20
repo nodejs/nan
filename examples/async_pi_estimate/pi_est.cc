@@ -42,7 +42,7 @@ double Estimate (int points) {
 
   // unique seed for each run, for threaded use
   unsigned int seed = randall(&randseed);
-  
+
 #ifdef _WIN32
   srand(seed);
 #endif
