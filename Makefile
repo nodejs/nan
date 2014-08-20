@@ -14,6 +14,7 @@ SOURCES = \
 	test/cpp/asyncworker.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
+        test/cpp/gc.cpp \
         test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
