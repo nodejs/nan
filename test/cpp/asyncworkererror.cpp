@@ -25,8 +25,8 @@ NAN_METHOD(Work) {
   NanReturnUndefined();
 }
 
-void Init (v8::Handle<v8::Object> exports) {
+NAN_REGFUNC(Init) {
   exports->Set(NanNew("a"), NanNew<v8::FunctionTemplate>(Work)->GetFunction());
 }
 
-NODE_MODULE(asyncworkererror, Init)
+NAN_MODULE(asyncworkererror, Init)

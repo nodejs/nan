@@ -10,7 +10,7 @@
 
 class MyObject : public node::ObjectWrap {
 public:
-    static void Init(v8::Handle<v8::Object> exports);
+    static NAN_REGFUNC(Init);
 
 private:
     MyObject();
@@ -29,7 +29,7 @@ MyObject::MyObject() {
 MyObject::~MyObject() {
 }
 
-void MyObject::Init(v8::Handle<v8::Object> exports) {
+NAN_REGFUNC(MyObject::Init) {
     NanScope();
 
     // Prepare constructor template
@@ -67,8 +67,8 @@ NAN_METHOD(MyObject::CallEmit) {
     NanReturnUndefined();
 }
 
-void Init(v8::Handle<v8::Object> exports) {
+NAN_REGFUNC(Init) {
     MyObject::Init(exports);
 }
 
-NODE_MODULE(makecallback, Init)
+NAN_MODULE(makecallback, Init)

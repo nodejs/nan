@@ -33,10 +33,10 @@ NAN_METHOD(DoSleep) {
   NanReturnUndefined();
 }
 
-void Init(v8::Handle<v8::Object> exports) {
+NAN_REGFUNC(Init) {
   exports->Set(
       NanNew<v8::String>("a")
     , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
-NODE_MODULE(asyncworker, Init)
+NAN_MODULE(asyncworker, Init)

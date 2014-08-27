@@ -13,12 +13,12 @@ NAN_METHOD(ReturnUndefined) {
   NanReturnUndefined();
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
+NAN_REGFUNC(Init) {
+  exports->Set(
       NanNew<v8::String>("r")
     , NanNew<v8::FunctionTemplate>(ReturnUndefined)->GetFunction()
   );
 }
 
-NODE_MODULE(returnundefined, Init)
+NAN_MODULE(returnundefined, Init)
 

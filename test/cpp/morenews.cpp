@@ -71,40 +71,40 @@ NAN_METHOD(NewExternalAsciiStringResource) {
   NanReturnValue(ext);
 }
 
-void Init(v8::Handle<v8::Object> target) {
-  target->Set(
+NAN_REGFUNC(Init) {
+  exports->Set(
       NanNew("newNumber")
     , NanNew<v8::FunctionTemplate>(NewNumber)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newNegativeInteger")
     , NanNew<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newPositiveInteger")
     , NanNew<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newUtf8String")
     , NanNew<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newLatin1String")
     , NanNew<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newUcs2String")
     , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newExternalStringResource")
     , NanNew<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew("newExternalAsciiStringResource")
     , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)
     ->GetFunction()
   );
 }
 
-NODE_MODULE(morenews, Init)
+NAN_MODULE(morenews, Init)

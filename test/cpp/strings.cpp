@@ -36,7 +36,7 @@ v8::Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
 v8::Persistent<v8::FunctionTemplate> returnUcs2String_persistent;
 v8::Persistent<v8::FunctionTemplate> heapString_persistent;
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_REGFUNC(Init) {
   NanScope();
 
   v8::Local<v8::FunctionTemplate> returnAsciiString =
@@ -47,7 +47,7 @@ void Init (v8::Handle<v8::Object> target) {
   , returnAsciiString
   );
 
-  target->Set(
+  exports->Set(
       NanNew("returnAsciiString")
     , returnAsciiString->GetFunction()
   );
@@ -60,7 +60,7 @@ void Init (v8::Handle<v8::Object> target) {
   , returnUtf8String
   );
 
-  target->Set(
+  exports->Set(
       NanNew("returnUtf8String")
     , returnUtf8String->GetFunction()
   );
@@ -73,7 +73,7 @@ void Init (v8::Handle<v8::Object> target) {
   , returnUcs2String
   );
 
-  target->Set(
+  exports->Set(
       NanNew("returnUcs2String")
     , returnUcs2String->GetFunction()
   );
@@ -86,10 +86,10 @@ void Init (v8::Handle<v8::Object> target) {
   , heapString
   );
 
-  target->Set(
+  exports->Set(
       NanNew("heapString")
     , heapString->GetFunction()
   );
 }
 
-NODE_MODULE(strings, Init)
+NAN_MODULE(strings, Init)

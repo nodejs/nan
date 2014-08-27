@@ -11,7 +11,7 @@
 
 class SetterGetter : public node::ObjectWrap {
  public:
-  static void Init (v8::Handle<v8::Object> target);
+  static NAN_REGFUNC(Init);
   static v8::Handle<v8::Value> NewInstance ();
   static NAN_METHOD(New);
   static NAN_METHOD(Log);
@@ -40,7 +40,7 @@ SetterGetter::SetterGetter() {
   prop2[0] = '\0';
 }
 
-void SetterGetter::Init(v8::Handle<v8::Object> target) {
+NAN_REGFUNC(SetterGetter::Init) {
   v8::Local<v8::FunctionTemplate> tpl =
     NanNew<v8::FunctionTemplate>(SetterGetter::New);
   NanAssignPersistent(settergetter_constructor, tpl);
@@ -57,7 +57,7 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
 
   v8::Local<v8::Function> createnew =
     NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
-  target->Set(NanNew<v8::String>("create"), createnew);
+  exports->Set(NanNew<v8::String>("create"), createnew);
 }
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
@@ -166,4 +166,4 @@ NAN_METHOD(SetterGetter::Log) {
   NanReturnValue(NanNew(settergetter->log));
 }
 
-NODE_MODULE(settergetter, SetterGetter::Init)
+NAN_MODULE(settergetter, SetterGetter::Init)

@@ -33,11 +33,11 @@ NAN_METHOD(OptionValues) {
   NanReturnValue(outobj);
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
+NAN_REGFUNC(Init) {
+  exports->Set(
       NanNew("o")
     , NanNew<v8::FunctionTemplate>(OptionValues)->GetFunction()
   );
 }
 
-NODE_MODULE(optionvalues, Init)
+NAN_MODULE(optionvalues, Init)

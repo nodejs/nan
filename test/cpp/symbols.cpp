@@ -8,8 +8,8 @@
 
 #include <nan.h>
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(NanNew<v8::String>("key"), NanNew<v8::String>("a property"));
+NAN_REGFUNC(Init) {
+  exports->Set(NanNew<v8::String>("key"), NanNew<v8::String>("a property"));
 }
 
-NODE_MODULE(symbols, Init)
+NAN_MODULE(symbols, Init)

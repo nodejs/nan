@@ -33,7 +33,10 @@ SOURCES = \
 
 FILTER = -whitespace/parens
 
-.PHONY: lint
+.PHONY: lint test
 
 lint:
 	cd $(TOPLEVEL) && $(PYTHON) $(CPPLINT) --filter=$(FILTER) $(SOURCES)
+
+test:
+	cd $(TOPLEVEL)test && node-gyp rebuild && cd .. && npm test

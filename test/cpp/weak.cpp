@@ -30,11 +30,11 @@ NAN_METHOD(Hustle) {
   NanReturnValue(wrap(args[0].As<v8::Function>()));
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
+NAN_REGFUNC(Init) {
+  exports->Set(
       NanNew<v8::String>("hustle")
     , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 
-NODE_MODULE(weak, Init)
+NAN_MODULE(weak, Init)

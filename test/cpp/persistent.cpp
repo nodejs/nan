@@ -57,27 +57,27 @@ NAN_METHOD(PersistentToPersistent) {
   NanReturnUndefined();
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
+NAN_REGFUNC(Init) {
+  exports->Set(
       NanNew<v8::String>("save1")
     , NanNew<v8::FunctionTemplate>(Save1)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew<v8::String>("get1")
     , NanNew<v8::FunctionTemplate>(Get1)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew<v8::String>("dispose1")
     , NanNew<v8::FunctionTemplate>(Dispose1)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew<v8::String>("toPersistentAndBackAgain")
     , NanNew<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
   );
-  target->Set(
+  exports->Set(
       NanNew<v8::String>("persistentToPersistent")
     , NanNew<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
   );
 }
 
-NODE_MODULE(persistent, Init)
+NAN_MODULE(persistent, Init)
