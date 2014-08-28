@@ -781,7 +781,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE bool NanHasInstance(
-      v8::Persistent<v8::FunctionTemplate>& function_template
+      const v8::Persistent<v8::FunctionTemplate>& function_template
     , v8::Handle<v8::Value> value
   ) {
     return NanNew(function_template)->HasInstance(value);
@@ -1578,7 +1578,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE bool NanHasInstance(
-      v8::Persistent<v8::FunctionTemplate>& function_template
+      const v8::Persistent<v8::FunctionTemplate>& function_template
     , v8::Handle<v8::Value> value
   ) {
     return function_template->HasInstance(value);
