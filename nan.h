@@ -1621,7 +1621,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return NanNew(node::MakeCallback(target, func, argc, argv));
 # else
     v8::TryCatch try_catch;
-    v8::Local<v8::Value> result = NanNew(func->Call(target, argc, argv));
+    v8::Local<v8::Value> result = func->Call(target, argc, argv);
     if (try_catch.HasCaught()) {
         node::FatalException(try_catch);
     }
