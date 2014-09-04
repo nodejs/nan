@@ -1,8 +1,12 @@
 TOPLEVEL ?= $(dir $(lastword $(MAKEFILE_LIST)))
 CPPLINT ?= $(TOPLEVEL)/cpplint.py
 PYTHON ?= python
+BUILDTYPE ?= Release
+MODULES = symbols strings optionvalues
+SOURCES = $(MODULES:%=test/cpp/%.cpp)
+ADDONS = $(MODULES:%=test/build/$(BUILDTYPE)/%.node)
 
-SOURCES = \
+LINT_SOURCES = \
 	examples/async_pi_estimate/addon.cc \
 	examples/async_pi_estimate/async.cc \
 	examples/async_pi_estimate/async.h \
@@ -37,4 +41,10 @@ FILTER = -whitespace/parens
 .PHONY: lint
 
 lint:
-	cd $(TOPLEVEL) && $(PYTHON) $(CPPLINT) --filter=$(FILTER) $(SOURCES)
+	cd $(TOPLEVEL) && $(PYTHON) $(CPPLINT) --filter=$(FILTER) $(LINT_SOURCES)
+
+test: $(ADDONS)
+	npm test
+
+$(ADDONS): nan.h test/binding.gyp $(SOURCES)
+	cd test/ && node-gyp rebuild
