@@ -33,7 +33,7 @@
 
 #define notset(x) (!defined(x) || !x)
 
-#if defined(__GNUC__) && notset(DEBUG)
+#if (defined(__GNUC__) || defined(__clang__)) && notset(DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
 #elif defined(_MSC_VER) && notset(DEBUG)
 # define NAN_INLINE __forceinline
@@ -41,7 +41,7 @@
 # define NAN_INLINE inline
 #endif
 
-#if defined(__GNUC__) && notset(V8_DISABLE_DEPRECATIONS)
+#if (defined(__GNUC__) || defined(__clang__)) && notset(V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER) && notset(V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __declspec(deprecated)
