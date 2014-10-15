@@ -26,6 +26,9 @@
 #include <node_object_wrap.h>
 #include <string.h>
 #include <limits.h>
+#if defined(_MSC_VER)
+# pragma warning( disable : 4530 )
+#endif
 #include <string>
 
 #if defined(__GNUC__) && !defined(DEBUG)
@@ -427,7 +430,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, std::string>(
       std::string arg) {
-    return NanNew<v8::String>(arg.c_str(), arg.size());
+    return NanNew<v8::String>(arg.c_str(), static_cast<int>(arg.size()));
   }
 
   template<>
@@ -453,7 +456,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 
   NAN_INLINE v8::Local<v8::String> NanNew(
       const std::string& arg) {
-    return NanNew<v8::String>(arg.c_str(), arg.size());
+    return NanNew<v8::String>(arg.c_str(), static_cast<int>(arg.size()));
   }
 
   NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
@@ -1226,7 +1229,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, std::string>(
       std::string arg) {
-    return NanNew<v8::String>(arg.c_str(), arg.size());
+    return NanNew<v8::String>(arg.c_str(), static_cast<int>(arg.size()));
   }
 
   template<>
@@ -1252,7 +1255,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
   NAN_INLINE v8::Local<v8::String> NanNew(
       const std::string& arg) {
-    return NanNew<v8::String>(arg.c_str(), arg.size());
+    return NanNew<v8::String>(arg.c_str(), static_cast<int>(arg.size()));
   }
 
   NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
