@@ -1872,8 +1872,8 @@ class NanCallback {
 
 /* abstract */ class NanAsyncWorker {
  public:
-  explicit NanAsyncWorker(NanCallback *callback)
-      : callback(callback), errmsg_(NULL) {
+  explicit NanAsyncWorker(NanCallback *callback_)
+      : callback(callback_), errmsg_(NULL) {
     request.data = this;
 
     NanScope();
@@ -2194,15 +2194,15 @@ namespace Nan {
       {
         uint16_t* twobytebuf = new uint16_t[sz_ + term_len];
 
-        size_t len = toStr->Write(twobytebuf, 0,
+        size_t somelen = toStr->Write(twobytebuf, 0,
           static_cast<int>(sz_ + term_len), flags);
 
-        for (size_t i = 0; i < sz_ + term_len && i < len + term_len; i++) {
+        for (size_t i = 0; i < sz_ + term_len && i < somelen + term_len; i++) {
           unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
           to[i] = *b;
         }
 
-        NanSetPointerSafe<size_t>(datalen, len);
+        NanSetPointerSafe<size_t>(datalen, somelen);
 
         delete[] twobytebuf;
         return to;
