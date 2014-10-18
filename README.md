@@ -771,7 +771,7 @@ NAN_METHOD(bar) {
 
 ...
 
-printf(*str);
+printf(**str);
 ```
 
 <a name="api_nan_utf8_string"></a>
@@ -817,7 +817,7 @@ NAN_METHOD(bar) {
 
 ...
 
-printf(*str);
+printf(**str);
 ```
 
 
@@ -864,7 +864,7 @@ NAN_METHOD(bar) {
 
 ...
 
-printf(*str);
+printf(**str);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
