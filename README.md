@@ -238,6 +238,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_index_enumerator"><b><code>NAN_INDEX_ENUMERATOR</code></b></a>
  * <a href="#api_nan_index_deleter"><b><code>NAN_INDEX_DELETER</code></b></a>
  * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
+ * <a href="#api_nan_gc_callback"><b><code>NAN_GC_CALLBACK</code></b></a>
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
@@ -398,6 +399,26 @@ You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` 
 Use `NAN_INDEX_QUERY` to declare your V8 accessible index queries. Same as `NAN_INDEX_GETTER`.
 
 You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_QUERY`.
+
+<a name="api_nan_gc_callback"></a>
+### NAN_GC_CALLBACK(cbname)
+Use `NAN_GC_CALLBACK` to declare your callbacks for `NanAddGCEpilogueCallback` and `NanAddGCPrologueCallback`. You get arguments `GCType type` and `GCCallbackFlags flags`.
+
+```c++
+static Persistent<Function> callback;
+
+NAN_GC_CALLBACK(gcPrologueCallback) {
+  Local<Value> argv[] = {NanNew("prologue")};
+  NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
+}
+
+NAN_METHOD(Hook) {
+  NanScope();
+  NanAssignPersistent(callback, args[0].As<Function>());
+  NanAddGCPrologueCallback(gcPrologueCallback);
+  NanReturnValue(args.Holder());
+}
+```
 
 <a name="api_nan_weak_callback"></a>
 ### NAN_WEAK_CALLBACK(cbname)
@@ -634,10 +655,10 @@ NanObjectWrapHandle(iterator)->Get(NanNew<String>("end"))
 ```
 
 <a name="api_nan_symbol"></a>
-### <del>Local&lt;String&gt; NanSymbol(const char *)</del>
+### ~~Local&lt;String&gt; NanSymbol(const char *)~~
 
 Deprecated. Use `NanNew<String>` instead.
-<del>Use to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.</del>
+~~Use to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.~~
 
 ```c++
 bool foo = false;
@@ -678,12 +699,12 @@ const char *plugh(size_t *outputsize) {
 ```
 
 <a name="api_nan_raw_string"></a>
-### <del>void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)</del>
+### ~~void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)~~
 
 Deprecated. Use something else.
 
-<del>When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:</del>
+~~When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
+Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:~~
 
 ```c++
 size_t count;
@@ -693,12 +714,12 @@ delete[] reinterpret_cast<char*>(decoded);
 ```
 
 <a name="api_nan_c_string"></a>
-### <del>char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])</del>
+### ~~char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])~~
 
-Deprecated. Use `NanUtf8String` instead.
+Deprecated. Use `String::Utf8Value` or `NanUtf8String` instead.
 
-<del>When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:</del>
+~~When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
+Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:~~
 
 ```c++
 size_t count;
@@ -710,7 +731,8 @@ delete[] name;
 <a name="api_nan_ascii_string"></a>
 ### NanAsciiString
 
-Convert a `String` to zero-terminated, Ascii-encoded `char *`.
+Contrary to the name, this is not actually an ASCII string, it is a one-byte string with no particular encoding. Do not use unless you actually need this incorrect legacy behavior. Consider fixing your broken code instead. If you actually have a proper ASCII-string, use UTF-8, which is a proper superset of ASCII.
+Convert a `String` to zero-terminated, sort-of Ascii-encoded `char *`. The underlying buffer is freed when the owner object goes out of scope, so make a copy or heap allocation if you need it to stick around.
 
 ```c++
 NAN_METHOD(foo) {
@@ -719,10 +741,44 @@ NAN_METHOD(foo) {
 }
 ```
 
+####*WRONG*:
+the buffer `str` points to has been freed when `baz` was destroyed:
+```c++
+static char *str;
+
+NAN_METHOD(bar) {
+  NanScope();
+  NanAsciiString baz(arg[0]);
+
+  str = *baz;
+  NanReturnUndefined(); // baz goes out of scope, freeing str
+}
+
+...
+
+printf(str); // use-after-free error
+```
+
+####*RIGHT*:
+```c++
+static NanAsciiString *str;
+
+NAN_METHOD(bar) {
+  NanScope();
+  str = new NanAsciiString(arg[0]);
+  NanReturnUndefined();
+}
+
+...
+
+printf(*str);
+```
+
 <a name="api_nan_utf8_string"></a>
 ### NanUtf8String
 
-Convert a `String` to zero-terminated, Utf8-encoded `char *`.
+Equivalent to `String::Utf8Value`, it only exists for the sake of completeness.
+Convert a `String` to zero-terminated, Utf8-encoded `char *`. The underlying buffer is freed when the owner object goes out of scope, so make a copy or heap allocation if you need it to stick around.
 
 ```c++
 NAN_METHOD(foo) {
@@ -731,16 +787,84 @@ NAN_METHOD(foo) {
 }
 ```
 
+####*WRONG*:
+the buffer `str` points to has been freed when `baz` was destroyed:
+```c++
+static char *str;
+
+NAN_METHOD(bar) {
+  NanScope();
+  NanUtf8String baz(arg[0]);
+
+  str = *baz;
+  NanReturnUndefined(); // baz goes out of scope, freeing str
+}
+
+...
+
+printf(str); // use-after-free error
+```
+
+####*RIGHT*:
+```c++
+static NanUtf8String *str;
+
+NAN_METHOD(bar) {
+  NanScope();
+  str = new NanUtf8String(arg[0]);
+  NanReturnUndefined();
+}
+
+...
+
+printf(*str);
+```
+
+
 <a name="api_nan_ucs2_string"></a>
 ### NanUcs2String
 
-Convert a `String` to zero-terminated, Ucs2-encoded `uint16_t *`.
+Equivalent to `String::Value`, it only exists for the sake of completeness.
+Convert a `String` to zero-terminated, Ucs2-encoded `uint16_t *`. The underlying buffer is freed when the owner object goes out of scope, so make a copy or heap allocation if you need it to stick around.
 
 ```c++
 NAN_METHOD(foo) {
   NanScope();
   NanReturnValue(NanNew(*NanUcs2String(arg[0])));
 }
+```
+
+####*WRONG*:
+the buffer `str` points to has been freed when `baz` was destroyed:
+```c++
+static char *str;
+
+NAN_METHOD(bar) {
+  NanScope();
+  NanUcs2String baz(arg[0]);
+
+  str = *baz;
+  NanReturnUndefined(); // baz goes out of scope, freeing str
+}
+
+...
+
+printf(str); // use-after-free error
+```
+
+####*RIGHT*:
+```c++
+static NanUcs2String *str;
+
+NAN_METHOD(bar) {
+  NanScope();
+  str = new NanUcs2String(arg[0]);
+  NanReturnUndefined();
+}
+
+...
+
+printf(*str);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
@@ -901,7 +1025,7 @@ Use to add instance properties on function templates.
 <a name="api_nan_make_callback"></a>
 ### NanMakeCallback(target, func, argc, argv)
 
-Use instead of `node::MakeCallback` to call javascript functions. This is the only proper way of calling functions.
+Use instead of `node::MakeCallback` to call javascript functions. This (or `NanCallback`) is the only proper way of calling functions. You must _*never, ever*_ directly use `Function::Call`, it will lead to run-time failures.
 
 <a name="api_nan_compile_script"></a>
 ### NanCompileScript(Handle<String> s [, const ScriptOrigin&amp; origin])
