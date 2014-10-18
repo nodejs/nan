@@ -879,23 +879,32 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
    public:
     NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
       v8::Local<v8::String> toStr = from->ToString();
-      int buf_size = toStr->Length() + 1;
-      buf = new char[buf_size];
-      size = toStr->WriteOneByte(
-          reinterpret_cast<unsigned char*>(buf), 0, buf_size);
+      size = toStr->Length();
+      buf = new char[size + 1];
+      size = toStr->WriteOneByte(reinterpret_cast<unsigned char*>(buf));
     }
 
-    NAN_INLINE int Size() const {
+    NAN_DEPRECATED NAN_INLINE int Size() const {
       return size;
     }
 
+    NAN_INLINE int length() const {
+      return size;
+    }
+
+
     NAN_INLINE char* operator*() { return buf; }
+    NAN_INLINE const char* operator*() const { return buf; }
 
     NAN_INLINE ~NanAsciiString() {
       delete[] buf;
     }
 
    private:
+    // disallow copying and assigning
+    NanAsciiString(const NanAsciiString&);
+    void operator=(const NanAsciiString&);
+
     char *buf;
     int size;
   };
@@ -904,22 +913,31 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
    public:
     NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
       v8::Local<v8::String> toStr = from->ToString();
-      int buf_size = toStr->Utf8Length() + 1;
-      buf = new char[buf_size];
-      size = toStr->WriteUtf8(buf, buf_size);
+      size = toStr->Utf8Length();
+      buf = new char[size + 1];
+      toStr->WriteUtf8(buf);
     }
 
-    NAN_INLINE int Size() const {
+    NAN_DEPRECATED NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE int length() const {
       return size;
     }
 
     NAN_INLINE char* operator*() { return buf; }
+    NAN_INLINE const char* operator*() const { return buf; }
 
     NAN_INLINE ~NanUtf8String() {
       delete[] buf;
     }
 
    private:
+    // disallow copying and assigning
+    NanUtf8String(const NanUtf8String&);
+    void operator=(const NanUtf8String&);
+
     char *buf;
     int size;
   };
@@ -928,22 +946,31 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
    public:
     NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
       v8::Local<v8::String> toStr = from->ToString();
-      int buf_size = toStr->Length() + 1;
-      buf = new uint16_t[buf_size];
-      size = toStr->Write(buf, 0, buf_size);
+      size = toStr->Length();
+      buf = new uint16_t[size + 1];
+      toStr->Write(buf);
     }
 
-    NAN_INLINE int Size() const {
+    NAN_DEPRECATED NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE int length() const {
       return size;
     }
 
     NAN_INLINE uint16_t* operator*() { return buf; }
+    NAN_INLINE const uint16_t* operator*() const { return buf; }
 
     NAN_INLINE ~NanUcs2String() {
       delete[] buf;
     }
 
    private:
+    // disallow copying and assigning
+    NanUcs2String(const NanUcs2String&);
+    void operator=(const NanUcs2String&);
+
     uint16_t *buf;
     int size;
   };
@@ -1680,22 +1707,32 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
    public:
     NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
       v8::Local<v8::String> toStr = from->ToString();
-      int buf_size = toStr->Length() + 1;
-      buf = new char[buf_size];
-      size = toStr->WriteAscii(buf, 0, buf_size);
+      size = toStr->Length();
+      buf = new char[size + 1];
+      size = toStr->WriteAscii(buf);
     }
 
-    NAN_INLINE int Size() const {
+    NAN_DEPRECATED NAN_INLINE int Size() const {
       return size;
     }
 
+    NAN_INLINE int length() const {
+      return size;
+    }
+
+
     NAN_INLINE char* operator*() { return buf; }
+    NAN_INLINE const char* operator*() const { return buf; }
 
     NAN_INLINE ~NanAsciiString() {
       delete[] buf;
     }
 
    private:
+    // disallow copying and assigning
+    NanAsciiString(const NanAsciiString&);
+    void operator=(const NanAsciiString&);
+
     char *buf;
     int size;
   };
@@ -1704,22 +1741,31 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
    public:
     NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
       v8::Local<v8::String> toStr = from->ToString();
-      int buf_size = toStr->Utf8Length() + 1;
-      buf = new char[buf_size];
-      size = toStr->WriteUtf8(buf, buf_size);
+      size = toStr->Utf8Length();
+      buf = new char[size + 1];
+      toStr->WriteUtf8(buf);
     }
 
-    NAN_INLINE int Size() const {
+    NAN_DEPRECATED NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE int length() const {
       return size;
     }
 
     NAN_INLINE char* operator*() { return buf; }
+    NAN_INLINE const char* operator*() const { return buf; }
 
     NAN_INLINE ~NanUtf8String() {
       delete[] buf;
     }
 
    private:
+    // disallow copying and assigning
+    NanUtf8String(const NanUtf8String&);
+    void operator=(const NanUtf8String&);
+
     char *buf;
     int size;
   };
@@ -1728,22 +1774,31 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
    public:
     NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
       v8::Local<v8::String> toStr = from->ToString();
-      int buf_size = toStr->Length() + 1;
-      buf = new uint16_t[buf_size];
-      size = toStr->Write(buf, 0, buf_size);
+      size = toStr->Length();
+      buf = new uint16_t[size + 1];
+      toStr->Write(buf);
     }
 
-    NAN_INLINE int Size() const {
+    NAN_DEPRECATED NAN_INLINE int Size() const {
+      return size;
+    }
+
+    NAN_INLINE int length() const {
       return size;
     }
 
     NAN_INLINE uint16_t* operator*() { return buf; }
+    NAN_INLINE const uint16_t* operator*() const { return buf; }
 
     NAN_INLINE ~NanUcs2String() {
       delete[] buf;
     }
 
    private:
+    // disallow copying and assigning
+    NanUcs2String(const NanUcs2String&);
+    void operator=(const NanUcs2String&);
+
     uint16_t *buf;
     int size;
   };
