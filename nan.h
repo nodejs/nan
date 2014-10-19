@@ -1979,8 +1979,6 @@ class NanCallback {
   NanCallback *callback;
 
   virtual void HandleOKCallback() {
-    NanScope();
-
     callback->Call(0, NULL);
   }
 
