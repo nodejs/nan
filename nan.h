@@ -1928,8 +1928,18 @@ class NanCallback {
 /* abstract */ class NanAsyncWorker {
  public:
   explicit NanAsyncWorker(NanCallback *callback_)
-      : callback(callback_), errmsg_(NULL) {
+      : callback(callback_), errmsg_(NULL), asyncdata_(NULL) {
+    async = new uv_async_t;
+
     request.data = this;
+    async->data = this;
+
+    uv_async_init(
+        uv_default_loop()
+      , async
+      , *reinterpret_cast<uv_async_cb>(AsyncProgress_)
+    );
+    uv_mutex_init(&async_lock);
 
     NanScope();
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
@@ -1939,12 +1949,28 @@ class NanCallback {
   virtual ~NanAsyncWorker() {
     NanScope();
 
+    uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
+    uv_mutex_destroy(&async_lock);
+
     if (!persistentHandle.IsEmpty())
       NanDisposePersistent(persistentHandle);
     if (callback)
       delete callback;
     if (errmsg_)
       delete[] errmsg_;
+    if (asyncdata_)
+      delete[] asyncdata_;
+  }
+
+  void WorkProgress() {
+    uv_mutex_lock(&async_lock);
+    char *data = asyncdata_;
+    int size = asyncsize_;
+    asyncdata_ = NULL;
+    uv_mutex_unlock(&async_lock);
+
+    HandleProgressCallback(data, size);
+    delete[] data;
   }
 
   virtual void WorkComplete() {
@@ -1973,6 +1999,8 @@ class NanCallback {
   virtual void Execute() = 0;
 
   uv_work_t request;
+  uv_async_t *async;
+  uv_mutex_t async_lock;
 
  protected:
   v8::Persistent<v8::Object> persistentHandle;
@@ -1993,6 +2021,10 @@ class NanCallback {
     callback->Call(1, argv);
   }
 
+  virtual void HandleProgressCallback(const char *data, size_t size) {
+    // By default, we don't do anything with progress information
+  }
+
   void SetErrorMessage(const char *msg) {
     if (errmsg_) {
       delete[] errmsg_;
@@ -2007,8 +2039,35 @@ class NanCallback {
     return errmsg_;
   }
 
+  void SendProgress(const char *data, size_t size) {
+    char *new_data = new char[size];
+    memcpy(new_data, data, size);
+
+    uv_mutex_lock(&async_lock);
+    char *old_data = asyncdata_;
+    asyncdata_ = new_data;
+    asyncsize_ = size;
+    uv_mutex_unlock(&async_lock);
+
+    if (old_data) {
+      delete[] old_data;
+    }
+    uv_async_send(async);
+  }
+
  private:
+  NAN_INLINE static void AsyncProgress_(uv_async_t *async, int dummy) {
+    NanAsyncWorker *worker = static_cast<NanAsyncWorker*>(async->data);
+    worker->WorkProgress();
+  }
+
+  NAN_INLINE static void AsyncClose_(uv_handle_t* handle) {
+    delete reinterpret_cast<uv_async_t*>(handle);
+  }
+
   char *errmsg_;
+  char *asyncdata_;
+  size_t asyncsize_;
 };
 
 NAN_INLINE void NanAsyncExecute (uv_work_t* req) {
