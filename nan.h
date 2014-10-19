@@ -174,6 +174,7 @@
 #ifndef NAN_H_
 #define NAN_H_
 
+#include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
 #include <node_version.h>
