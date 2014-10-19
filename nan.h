@@ -24,6 +24,7 @@
 #include <node_buffer.h>
 #include <node_version.h>
 #include <node_object_wrap.h>
+#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #if defined(_MSC_VER)
@@ -1950,6 +1951,9 @@ class NanCallback {
     NanScope();
 
     uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
+    if (uv_mutex_trylock(&async_lock))
+      abort();
+    uv_mutex_unlock(&async_lock);
     uv_mutex_destroy(&async_lock);
 
     if (!persistentHandle.IsEmpty())
@@ -1965,7 +1969,7 @@ class NanCallback {
   void WorkProgress() {
     uv_mutex_lock(&async_lock);
     char *data = asyncdata_;
-    int size = asyncsize_;
+    size_t size = asyncsize_;
     asyncdata_ = NULL;
     uv_mutex_unlock(&async_lock);
 
