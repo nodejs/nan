@@ -253,6 +253,8 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
  * <a href="#api_nan_return_null"><b><code>NanReturnNull</code></b></a>
  * <a href="#api_nan_return_empty_string"><b><code>NanReturnEmptyString</code></b></a>
+ * <a href="#api_nan_return_this"><b><code>NanReturnThis</code></b></a>
+ * <a href="#api_nan_return_holder"><b><code>NanReturnHolder</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
  * <a href="#api_nan_escapable_scope"><b><code>NanEscapableScope</code></b></a>
  * <a href="#api_nan_escape_scope"><b><code>NanEscapeScope</code></b></a>
@@ -554,6 +556,32 @@ NAN_METHOD(Foo::Baz) {
   ...
 
   NanReturnEmptyString();
+}
+```
+
+<a name="api_nan_return_this"></a>
+### NanReturnThis()
+
+Use `NanReturnThis` when you want to return `This` from your V8 accessible method:
+
+```c++
+NAN_METHOD(Foo::Baz) {
+  ...
+
+  NanReturnThis();
+}
+```
+
+<a name="api_nan_return_holder"></a>
+### NanReturnHolder()
+
+Use `NanReturnHolder` when you want to return `Holder` from your V8 accessible method:
+
+```c++
+NAN_METHOD(Foo::Baz) {
+  ...
+
+  NanReturnHolder();
 }
 ```
 
