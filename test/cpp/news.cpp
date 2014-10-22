@@ -26,6 +26,11 @@ NAN_METHOD(NewPositiveInteger) {
   NanReturnValue(NanNew<v8::Integer>(1));
 }
 
+NAN_METHOD(NewUnsignedInteger) {
+  NanScope();
+  NanReturnValue(NanNew<v8::Integer>(0xFFFFFFFFu));
+}
+
 NAN_METHOD(NewInt32FromPositive) {
   NanScope();
   NanReturnValue(NanNew<v8::Int32>(0xFFFFFFFF));
@@ -161,6 +166,10 @@ void Init(v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("newPositiveInteger")
     , NanNew<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("newUnsignedInteger")
+    , NanNew<v8::FunctionTemplate>(NewUnsignedInteger)->GetFunction()
   );
   target->Set(
       NanNew<v8::String>("newInt32FromPositive")
