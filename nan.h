@@ -333,6 +333,11 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   }
 
   template<>
+  NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, uint32_t>(uint32_t val) {
+    return v8::Integer::NewFromUnsigned(v8::Isolate::GetCurrent(), val);
+  }
+
+  template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, char *>(
       char *arg
     , int length) {
@@ -1187,6 +1192,11 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::Int32> NanNew<v8::Int32, uint32_t>(uint32_t val) {
     return v8::Int32::New(val)->ToInt32();
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, uint32_t>(uint32_t val) {
+    return v8::Integer::NewFromUnsigned(val);
   }
 
   template<>

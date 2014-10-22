@@ -11,10 +11,11 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'news' });
 
 test('news', function (t) {
-  t.plan(48);
+  t.plan(50);
   t.type(bindings.newNumber, 'function');
   t.type(bindings.newPositiveInteger, 'function');
   t.type(bindings.newNegativeInteger, 'function');
+  t.type(bindings.newUnsignedInteger, 'function');
   t.type(bindings.newInt32FromPositive, 'function');
   t.type(bindings.newInt32FromNegative, 'function');
   t.type(bindings.newUint32FromPositive, 'function');
@@ -40,6 +41,7 @@ test('news', function (t) {
   t.equal(bindings.newNumber(), 0.5);
   t.equal(bindings.newPositiveInteger(), 1);
   t.equal(bindings.newNegativeInteger(), -1);
+  t.equal(bindings.newUnsignedInteger(), 0xFFFFFFFF);
   t.equal(bindings.newInt32FromPositive(), -1);
   t.equal(bindings.newInt32FromNegative(), -1);
   t.equal(bindings.newUint32FromPositive(), 0xFFFFFFFF);
