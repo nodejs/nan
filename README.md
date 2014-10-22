@@ -1129,7 +1129,7 @@ Handle<Value> argv[] = {
 callback->Call(2, argv);
 ```
 
-`NanCallback` also has a `Local<Function> GetCallback()` method that you can use
+`NanCallback` also has a `Local<Function> GetFunction()` method that you can use
 to fetch a local handle to the underlying callback function, as well  as a
 `void SetFunction(Handle<Function>)` for setting the callback on the
 `NanCallback`. You can check if a `NanCallback` is empty with the `bool IsEmpty()` method. Additionally a generic constructor is available for using
