@@ -5,7 +5,7 @@ Native Abstractions for Node.js
 
 ***Current version: 1.3.0***
 
-*(See [nan.h](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
+*(See [CHANGELOG.md](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true&downloadRank=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6&height=3)](https://nodei.co/npm/nan/)
 
