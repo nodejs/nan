@@ -51,6 +51,27 @@
 
 #undef notset
 
+// uv helpers
+#ifdef UV_VERSION_MAJOR
+#ifndef UV_VERSION_PATCH
+#define UV_VERSION_PATCH 0
+#endif
+#define NAUV_UVVERSION  ((UV_VERSION_MAJOR << 16) | \
+                     (UV_VERSION_MINOR <<  8) | \
+                     (UV_VERSION_PATCH))
+#else
+#define NAUV_UVVERSION 0x000b00
+#endif
+
+
+#if NAUV_UVVERSION < 0x000b00
+#define NAUV_WORK_CB(func) \
+    void func(uv_async_t *async, int)
+#else
+#define NAUV_WORK_CB(func) \
+    void func(uv_async_t *async)
+#endif
+
 // some generic helpers
 
 template<typename T> NAN_INLINE bool NanSetPointerSafe(
@@ -1988,6 +2009,10 @@ class NanCallback {
 
   uv_work_t request;
 
+  virtual void Destroy() {
+      delete this;
+  }
+
  protected:
   v8::Persistent<v8::Object> persistentHandle;
   NanCallback *callback;
@@ -2023,6 +2048,112 @@ class NanCallback {
   char *errmsg_;
 };
 
+/* abstract */ class NanAsyncProgressWorker : public NanAsyncWorker {
+ public:
+  explicit NanAsyncProgressWorker(NanCallback *callback_)
+      : NanAsyncWorker(callback_), asyncdata_(NULL), asyncsize_(0) {
+    async = new uv_async_t;
+    uv_async_init(
+        uv_default_loop()
+      , async
+      , AsyncProgress_
+    );
+    async->data = this;
+
+    uv_mutex_init(&async_lock);
+  }
+
+  virtual ~NanAsyncProgressWorker() {
+    uv_mutex_destroy(&async_lock);
+
+    if (asyncdata_) {
+      delete[] asyncdata_;
+    }
+  }
+
+  void WorkProgress() {
+    uv_mutex_lock(&async_lock);
+    char *data = asyncdata_;
+    size_t size = asyncsize_;
+    asyncdata_ = NULL;
+    uv_mutex_unlock(&async_lock);
+
+    // Dont send progress events after we've already completed.
+    if (callback) {
+        HandleProgressCallback(data, size);
+    }
+    delete[] data;
+  }
+
+  class ExecutionProgress {
+   friend class NanAsyncProgressWorker;
+   public:
+    // You could do fancy generics with templates here.
+    void Send(const char* data, size_t size) const {
+        that_->SendProgress_(data, size);
+    }
+
+   private:
+    explicit ExecutionProgress(NanAsyncProgressWorker* that) : that_(that) {}
+    // Prohibit copying and assignment.
+    ExecutionProgress(const ExecutionProgress&);
+    void operator=(const ExecutionProgress&);
+  #if __cplusplus >= 201103L
+    // Prohibit C++11 move semantics.
+    ExecutionProgress(ExecutionProgress&&) = delete;
+    void operator=(ExecutionProgress&&) = delete;
+  #endif
+    NanAsyncProgressWorker* const that_;
+  };
+
+  virtual void Execute(const ExecutionProgress& progress) = 0;
+  virtual void HandleProgressCallback(const char *data, size_t size) = 0;
+
+  virtual void Destroy() {
+      uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
+  }
+
+ private:
+  void Execute() /*final override*/ {
+      ExecutionProgress progress(this);
+      Execute(progress);
+  }
+
+  void SendProgress_(const char *data, size_t size) {
+    char *new_data = new char[size];
+    memcpy(new_data, data, size);
+
+    uv_mutex_lock(&async_lock);
+    char *old_data = asyncdata_;
+    asyncdata_ = new_data;
+    asyncsize_ = size;
+    uv_mutex_unlock(&async_lock);
+
+    if (old_data) {
+      delete[] old_data;
+    }
+    uv_async_send(async);
+  }
+
+  NAN_INLINE static NAUV_WORK_CB(AsyncProgress_) {
+    NanAsyncProgressWorker *worker =
+            static_cast<NanAsyncProgressWorker*>(async->data);
+    worker->WorkProgress();
+  }
+
+  NAN_INLINE static void AsyncClose_(uv_handle_t* handle) {
+    NanAsyncProgressWorker *worker =
+            static_cast<NanAsyncProgressWorker*>(handle->data);
+    delete reinterpret_cast<uv_async_t*>(handle);
+    delete worker;
+  }
+
+  uv_async_t *async;
+  uv_mutex_t async_lock;
+  char *asyncdata_;
+  size_t asyncsize_;
+};
+
 NAN_INLINE void NanAsyncExecute (uv_work_t* req) {
   NanAsyncWorker *worker = static_cast<NanAsyncWorker*>(req->data);
   worker->Execute();
@@ -2031,7 +2162,7 @@ NAN_INLINE void NanAsyncExecute (uv_work_t* req) {
 NAN_INLINE void NanAsyncExecuteComplete (uv_work_t* req) {
   NanAsyncWorker* worker = static_cast<NanAsyncWorker*>(req->data);
   worker->WorkComplete();
-  delete worker;
+  worker->Destroy();
 }
 
 NAN_INLINE void NanAsyncQueueWorker (NanAsyncWorker* worker) {

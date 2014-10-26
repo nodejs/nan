@@ -16,6 +16,7 @@ LINT_SOURCES = \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
 	test/cpp/asyncworker.cpp \
+        test/cpp/asyncprogressworker.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
         test/cpp/gc.cpp \
