@@ -244,12 +244,12 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 
   template<>
   NAN_INLINE v8::Local<v8::Number> NanNew<v8::Number, double>(double value) {
-      return v8::Number::New(v8::Isolate::GetCurrent(), value);
+    return v8::Number::New(v8::Isolate::GetCurrent(), value);
   }
 
   template <>
-  NAN_INLINE v8::Local<v8::External> NanNew<v8::External>(void * value) {
-      return v8::External::New(v8::Isolate::GetCurrent(), value);
+  NAN_INLINE v8::Local<v8::External> NanNew<v8::External>(void *value) {
+    return v8::External::New(v8::Isolate::GetCurrent(), value);
   }
 
   typedef v8::UnboundScript NanUnboundScript;
@@ -352,7 +352,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 
   template <>
   NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, int32_t>(int32_t val) {
-      return v8::Integer::New(v8::Isolate::GetCurrent(), val);
+    return v8::Integer::New(v8::Isolate::GetCurrent(), val);
   }
 
   template<>
