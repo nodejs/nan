@@ -184,9 +184,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   }
 
   template<typename T, typename P>
-  NAN_INLINE v8::Local<T> NanNew(P arg1) {
-    return T::New(v8::Isolate::GetCurrent(), arg1);
-  }
+  NAN_INLINE v8::Local<T> NanNew(P arg1);
 
   template<typename T>
   NAN_INLINE v8::Local<v8::Signature> NanNew(
@@ -237,6 +235,21 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
     return v8::Date::New(v8::Isolate::GetCurrent(), time).As<v8::Date>();
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Boolean> NanNew<v8::Boolean>(bool value) {
+    return v8::Boolean::New(v8::Isolate::GetCurrent(), value);
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Number> NanNew<v8::Number, double>(double value) {
+      return v8::Number::New(v8::Isolate::GetCurrent(), value);
+  }
+
+  template <>
+  NAN_INLINE v8::Local<v8::External> NanNew<v8::External>(void * value) {
+      return v8::External::New(v8::Isolate::GetCurrent(), value);
   }
 
   typedef v8::UnboundScript NanUnboundScript;
@@ -335,6 +348,11 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   template<>
   NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, uint32_t>(uint32_t val) {
     return v8::Integer::NewFromUnsigned(v8::Isolate::GetCurrent(), val);
+  }
+
+  template <>
+  NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, int32_t>(int32_t val) {
+      return v8::Integer::New(v8::Isolate::GetCurrent(), val);
   }
 
   template<>
@@ -469,11 +487,11 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   }
 
   NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
-    return NanNew<v8::Number>(val);
+    return v8::Number::New(v8::Isolate::GetCurrent(), val);
   }
 
   NAN_INLINE v8::Local<v8::Integer> NanNew(int val) {
-    return NanNew<v8::Integer>(val);
+    return v8::Integer::New(v8::Isolate::GetCurrent(), val);
   }
 
   NAN_INLINE v8::Local<v8::Uint32> NanNew(unsigned int val) {
@@ -1076,9 +1094,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template<typename T, typename P>
-  NAN_INLINE v8::Local<T> NanNew(P arg) {
-    return T::New(arg);
-  }
+  NAN_INLINE v8::Local<T> NanNew(P arg);
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg, int length) {
@@ -1130,8 +1146,23 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template<>
+  NAN_INLINE v8::Local<v8::Number> NanNew<v8::Number, double>(double val) {
+    return v8::Number::New(val);
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, int>(int val) {
+    return v8::Integer::New(val);
+  }
+
+  template<>
   NAN_INLINE v8::Local<v8::Boolean> NanNew<v8::Boolean>(bool value) {
     return v8::Local<v8::Boolean>::New(v8::Boolean::New(value));
+  }
+
+  template <>
+  NAN_INLINE v8::Local<v8::External> NanNew<v8::External>(void * value) {
+      return v8::External::New(value);
   }
 
   typedef v8::Script NanUnboundScript;
@@ -1269,6 +1300,19 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return retval;
   }
 
+
+  template<>
+  NAN_INLINE v8::Local<v8::String> NanNew<v8::String, char *>(
+      char *arg) {
+    return v8::String::New(arg);
+  }
+
+  template<>
+  NAN_INLINE v8::Local<v8::String> NanNew<v8::String, const char *>(
+      const char *arg) {
+    return v8::String::New(arg);
+  }
+
   template<>
   NAN_INLINE v8::Local<v8::String> NanNew<v8::String, std::string>(
       std::string arg) {
@@ -1302,11 +1346,11 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE v8::Local<v8::Number> NanNew(double val) {
-    return NanNew<v8::Number>(val);
+    return v8::Number::New(val);
   }
 
   NAN_INLINE v8::Local<v8::Integer> NanNew(int val) {
-    return NanNew<v8::Integer>(val);
+    return v8::Integer::New(val);
   }
 
   NAN_INLINE v8::Local<v8::Uint32> NanNew(unsigned int val) {
