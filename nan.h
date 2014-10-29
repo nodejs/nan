@@ -1151,7 +1151,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template<>
-  NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, int>(int val) {
+  NAN_INLINE v8::Local<v8::Integer> NanNew<v8::Integer, int32_t>(int32_t val) {
     return v8::Integer::New(val);
   }
 
@@ -1161,7 +1161,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template <>
-  NAN_INLINE v8::Local<v8::External> NanNew<v8::External>(void * value) {
+  NAN_INLINE v8::Local<v8::External> NanNew<v8::External>(void *value) {
       return v8::External::New(value);
   }
 
