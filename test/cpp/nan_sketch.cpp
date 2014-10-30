@@ -162,5 +162,5 @@ void Init(v8::Handle<v8::Object> exports) {
     NAN_EXPORT(exports, newExternal);
 }
 
-NODE_MODULE(nan2sketch, Init)
+NODE_MODULE(nan_sketch, Init)
 
