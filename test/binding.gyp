@@ -138,4 +138,11 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+    , {
+        "target_name" : "nan_sketch"
+      , "sources"     : [ "cpp/nan_sketch.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
 ]}
