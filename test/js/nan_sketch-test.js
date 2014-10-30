@@ -20,5 +20,8 @@ test('nan2', function (t) {
   t.equals(bindings.newStringFromChars(), "hello?");
   t.equals(bindings.newStringFromCharsWithLength(), "hell");
   t.equals(bindings.newStringFromStdString(), "hello!");
+
+  bindings.demoDateAndNumber();
+
 });
 

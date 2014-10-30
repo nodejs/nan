@@ -69,14 +69,29 @@ struct Factory<v8::Number> : public FactoryBase<v8::Number> {
     }
 };
 
+template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
+
+template <>
+v8::Local<v8::Integer>
+To<v8::Integer>(v8::Handle<v8::Integer> i) { return i; }
+
+template <> 
+v8::Local<v8::Int32> 
+To<v8::Int32>(v8::Handle<v8::Integer> i)   { return i->ToInt32(); }
+
+template <>
+v8::Local<v8::Uint32>
+To<v8::Uint32>(v8::Handle<v8::Integer> i)  { return i->ToUint32(); }
+
+
 template <typename T>
-struct IntegerFactory {
-    typedef v8::Local<v8::Integer> return_t;
+struct IntegerFactory : public FactoryBase<T>{
+    typedef typename FactoryBase<T>::return_t return_t;
     static inline return_t New(int32_t value)  {
-        return T::New(v8::Isolate::GetCurrent(), value);
+        return To<T>(T::New(v8::Isolate::GetCurrent(), value));
     }
     static inline return_t New(uint32_t value) {
-        return T::NewFromUnsigned(v8::Isolate::GetCurrent(), value);
+        return To<T>(T::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
     }
 };
 
@@ -177,6 +192,7 @@ void Init(v8::Handle<v8::Object> exports) {
     NAN_EXPORT(exports, newStringFromChars);
     NAN_EXPORT(exports, newStringFromCharsWithLength);
     NAN_EXPORT(exports, newStringFromStdString);
+    NAN_EXPORT(exports, demoDateAndNumber);
 
     NAN_EXPORT(exports, newExternal);
 }
