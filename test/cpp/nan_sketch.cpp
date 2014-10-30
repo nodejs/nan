@@ -1,5 +1,9 @@
 #include <nan.h>
 
+// toys used in testing
+#include <cmath>
+#include <time.h>
+
 //==============================================================================
 // Implementation sketch
 //==============================================================================
@@ -31,6 +35,13 @@ template <>
 struct Factory<v8::External> : public FactoryBase<v8::External> {
     static inline return_t New(void *value) {
         return v8::External::New(v8::Isolate::GetCurrent(), value);
+    }
+};
+
+template <>
+struct Factory<v8::Date> : public FactoryBase<v8::Date> {
+    static inline return_t New(double value) {
+        return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
     }
 };
 
@@ -143,6 +154,14 @@ NAN_METHOD(newStringFromCharsWithLength) {
 NAN_METHOD(newStringFromStdString) {
     NanScope();
     return_NanValue(NanNew2<v8::String>(std::string("hello!")));
+}
+
+NAN_METHOD(demoDateAndNumber) {
+    NanScope();
+    v8::Local<v8::Value> number = NanNew<v8::Number>(M_PI);
+    v8::Local<v8::Value> date   = NanNew<v8::Date>(double(time(NULL)));
+    (void)number; (void)date; // unused
+    NanReturnUndefined();
 }
 
 int ttt = 23;
