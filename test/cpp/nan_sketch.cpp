@@ -37,6 +37,21 @@ struct NanTap {
 
 #define NAN_TEST_EXPRESSION(expression) ( expression ), "C++: '" #expression "' is false"
 
+template <typename T, typename U>
+struct is_same {
+  static const bool value = false;
+};
+
+template <typename T>
+struct is_same<T, T> {
+  static const bool value = true;
+};
+
+template <typename T, typename U>
+bool
+assertType(U value) {
+  return is_same<v8::Local<T>, U>::value;
+}
 
 #define _(e) NAN_TEST_EXPRESSION(e)
 
@@ -44,9 +59,30 @@ NAN_METHOD(testNumbers) {
   NanScope();
   NanTap t(args[0]->ToObject());
 
-  t.plan(1);
-  t.ok(_( NanNew2(5)->Value() == 5 ));
+  t.plan(14);
 
+  t.ok(_( NanNew2<Int32>(5)->Value() == 5 ));
+  t.ok(_( assertType<Int32>( NanNew2<Int32>(23) )));
+
+  t.ok(_( NanNew2<Uint32>(5u)->Value() == 5u ));
+  t.ok(_( assertType<Uint32>( NanNew2<Uint32>(23u) )));
+
+  t.ok(_( NanNew2<Integer>(5)->Value() == 5 ));
+  t.ok(_( assertType<Integer>( NanNew2<Integer>(23) )));
+
+  t.ok(_( NanNew2<Number>(M_PI)->Value() == M_PI ));
+  t.ok(_( assertType<Number>( NanNew2<Number>(M_E) )));
+
+  //=== Convenience ============================================================
+
+  t.ok(_( NanNew2(5)->Value() == 5 ));
+  t.ok(_( assertType<Int32>( NanNew2(23) )));
+
+  t.ok(_( NanNew2(5u)->Value() == 5u ));
+  t.ok(_( assertType<Uint32>( NanNew2(23u) )));
+
+  t.ok(_( NanNew2(M_PI)->Value() == M_PI ));
+  t.ok(_( assertType<Number>( NanNew2(M_E) )));
   
   NanReturnUndefined();
 }

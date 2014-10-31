@@ -2,6 +2,13 @@ const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'nan_sketch' });
 
+
+for (var symbol in bindings) {
+  if (typeof bindings[symbol] == 'function' && /^test.*/.test(symbol)) {
+      test('C++: ' + symbol, bindings[symbol]);
+  }
+}
+
 test('numbers', function (t) {
   t.plan(12);
 
@@ -22,7 +29,6 @@ test('numbers', function (t) {
   t.end();
 });
 
-test('numbers C++', bindings.testNumbers);
 
 test('strings', function (t) {
   t.plan(3);
