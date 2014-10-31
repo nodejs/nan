@@ -65,7 +65,7 @@ Factory<v8::Number>::New(double value) {
   return v8::Number::New(v8::Isolate::GetCurrent(), value);
 }
 
-//=== Integer, Int32 amd Uint32 ================================================
+//=== Integer, Int32 and Uint32 ================================================
 
 template <typename T>
 typename IntegerFactory<T>::return_t
