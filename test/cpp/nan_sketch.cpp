@@ -8,72 +8,14 @@
 // Implementation sketch
 //==============================================================================
 
-//namespace NanIntern { // scnr
+namespace NanIntern { // scnr
 
-template <typename T> struct FactoryBase { typedef v8::Local<T> return_t; };
-
-template <typename T> struct Factory;
-
-template <>
-struct Factory<v8::Array> : public FactoryBase<v8::Array> {
-  static inline return_t New() {
-    return v8::Array::New(v8::Isolate::GetCurrent());
-  }
-  static inline return_t New(int length) {
-    return v8::Array::New(v8::Isolate::GetCurrent(), length);
-  }
-};
-
-template <>
-struct Factory<v8::Boolean> : public FactoryBase<v8::Boolean> {
-  static inline return_t New(bool value) {
-    return v8::Boolean::New(v8::Isolate::GetCurrent(), value);
-  }
-};
-
-template <>
-struct Factory<v8::External> : public FactoryBase<v8::External> {
-  static inline return_t New(void *value) {
-    return v8::External::New(v8::Isolate::GetCurrent(), value);
-  }
-};
-
-template <>
-struct Factory<v8::Date> : public FactoryBase<v8::Date> {
-  static inline return_t New(double value) {
-    return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
-  }
-};
-
-template <>
-struct Factory<v8::String> : public FactoryBase<v8::String> {
-  static inline return_t New(const char * value) {
-    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value);
-  }
-  static inline return_t New(const char * value, int length) {
-    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value,
-        v8::String::kNormalString, length);
-  }
-  static inline return_t New(std::string const & value) {
-    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(),
-        &*value.begin(), v8::String::kNormalString, value.size());
-  }
-};
-
-//=== Numeric Types ============================================================
-
-template <>
-struct Factory<v8::Number> : public FactoryBase<v8::Number> {
-  static inline return_t New(double value) {
-    return v8::Number::New(v8::Isolate::GetCurrent(), value);
-  }
-};
-
+// TODO: Generalize
 template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
 
 template <>
 v8::Local<v8::Integer>
-To<v8::Integer>(v8::Handle<v8::Integer> i) { return i; }
+To<v8::Integer>(v8::Handle<v8::Integer> i) { return i->ToInteger(); }
 
 template <> 
 v8::Local<v8::Int32> 
@@ -83,16 +25,51 @@ template <>
 v8::Local<v8::Uint32>
 To<v8::Uint32>(v8::Handle<v8::Integer> i)  { return i->ToUint32(); }
 
+template <typename T> struct FactoryBase { typedef v8::Local<T> return_t; };
+
+template <typename T> struct Factory;
+
+template <>
+struct Factory<v8::Array> : public FactoryBase<v8::Array> {
+  static inline return_t New();
+  static inline return_t New(int length);
+};
+
+template <>
+struct Factory<v8::Boolean> : public FactoryBase<v8::Boolean> {
+  static inline return_t New(bool value);
+};
+
+template <>
+struct Factory<v8::External> : public FactoryBase<v8::External> {
+  static inline return_t New(void *value);
+};
+
+template <>
+struct Factory<v8::Date> : public FactoryBase<v8::Date> {
+  static inline return_t New(double value);
+};
+
+template <>
+struct Factory<v8::String> : public FactoryBase<v8::String> {
+  static inline return_t New(const char *value);
+  static inline return_t New(const char *value, int length);
+  static inline return_t New(std::string const& value);
+};
+
+//=== Numeric Types ============================================================
+
+template <>
+struct Factory<v8::Number> : public FactoryBase<v8::Number> {
+  static inline return_t New(double value);
+};
+
 
 template <typename T>
 struct IntegerFactory : public FactoryBase<T>{
   typedef typename FactoryBase<T>::return_t return_t;
-  static inline return_t New(int32_t value)  {
-    return To<T>(T::New(v8::Isolate::GetCurrent(), value));
-  }
-  static inline return_t New(uint32_t value) {
-    return To<T>(T::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
-  }
+  static inline return_t New(int32_t value);
+  static inline return_t New(uint32_t value);
 };
 
 template <>
@@ -104,7 +81,13 @@ struct Factory<v8::Int32> : public IntegerFactory<v8::Int32> {};
 template <>
 struct Factory<v8::Uint32> : public IntegerFactory<v8::Uint32> {};
 
-//} // end of namespace NanIntern
+} // end of namespace NanIntern
+
+#if (NODE_MODULE_VERSION < 12)
+# include "nan_implementation_pre_12.inl"
+#else
+# include "nan_implementation_12.inl"
+#endif
 
 //=== API ======================================================================
 
@@ -126,7 +109,7 @@ NanNew2(A0 arg0, A1 arg1) {
   return NanIntern::Factory<T>::New(arg0, arg1);
 }
 
-  void
+void
 NanExport(v8::Handle<v8::Object> target, const char * name,
     NanFunctionCallback f)
 {
