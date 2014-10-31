@@ -1,12 +1,15 @@
-#include <nan.h>
-
-#include "nan_new.hpp"
-
 // toys used in testing
+// included first, so windows actually defines M_PI
 #ifdef _WIN32
 # define _USE_MATH_DEFINES
 #endif
 #include <cmath>
+
+
+#include <nan.h>
+
+#include "nan_new.hpp"
+
 #include <time.h>
 
 using namespace v8;
