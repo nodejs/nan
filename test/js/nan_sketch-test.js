@@ -3,6 +3,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'nan_sketch' });
 
 
+// register c++ functions as tests...
 for (var symbol in bindings) {
   if (typeof bindings[symbol] == 'function' && /^test.*/.test(symbol)) {
       test('C++: ' + symbol, bindings[symbol]);

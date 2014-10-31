@@ -126,6 +126,12 @@ NanNew2(A0 arg0, A1 arg1) {
 // Convenience
 
 inline
+NanIntern::Factory<v8::Boolean>::return_t
+NanNew2(bool value) {
+  return NanNew2<v8::Boolean>(value);
+}
+
+inline
 NanIntern::Factory<v8::Int32>::return_t
 NanNew2(int32_t value) {
   return NanNew2<v8::Int32>(value);
