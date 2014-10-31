@@ -39,6 +39,20 @@ Factory<v8::Date>::New(double value) {
   return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
 }
 
+//=== Script ===================================================================
+
+Factory<v8::Script>::return_t
+Factory<v8::Script>::New(v8::Local<v8::String> source) {
+  v8::ScriptCompiler::Source src(source);
+  return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
+}
+
+Factory<v8::UnboundScript>::return_t
+Factory<v8::UnboundScript>::New(v8::Local<v8::String> source) {
+  v8::ScriptCompiler::Source src(source);
+  return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
+}
+
 //=== String ===================================================================
 
 Factory<v8::String>::return_t

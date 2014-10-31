@@ -1,5 +1,7 @@
 #include <nan.h>
 
+#include "nan_new.hpp"
+
 // toys used in testing
 #ifdef _WIN32
 # define _USE_MATH_DEFINES
@@ -7,160 +9,82 @@
 #include <cmath>
 #include <time.h>
 
-//==============================================================================
-// Implementation sketch
-//==============================================================================
+using namespace v8;
 
-namespace NanIntern { // scnr
+struct NanTap {
+  NanTap(Handle<Object> t) : t_() {
+    NanAssignPersistent(t_, t);
+  };
 
-// TODO: Generalize
-template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
+  void plan(int i) {
+    NanScope();
+    v8::Handle<Value> arg = NanNew2(i);
+    NanMakeCallback(NanNew(t_), "plan", 1, &arg);
+  }
 
-template <>
-v8::Local<v8::Integer>
-To<v8::Integer>(v8::Handle<v8::Integer> i) { return i->ToInteger(); }
+  void ok(bool isOk, const char * msg = NULL) {
+    NanScope();
+    v8::Handle<Value> args[2];
+    args[0] = NanNew2(isOk);
+    if (msg) args[1] = NanNew2(msg);
+    NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
+  }
 
-template <> 
-v8::Local<v8::Int32> 
-To<v8::Int32>(v8::Handle<v8::Integer> i)   { return i->ToInt32(); }
-
-template <>
-v8::Local<v8::Uint32>
-To<v8::Uint32>(v8::Handle<v8::Integer> i)  { return i->ToUint32(); }
-
-template <typename T> struct FactoryBase { typedef v8::Local<T> return_t; };
-
-template <typename T> struct Factory;
-
-template <>
-struct Factory<v8::Array> : public FactoryBase<v8::Array> {
-  static inline return_t New();
-  static inline return_t New(int length);
+  private:
+  
+  Persistent<Object> t_;
 };
 
-template <>
-struct Factory<v8::Boolean> : public FactoryBase<v8::Boolean> {
-  static inline return_t New(bool value);
-};
-
-template <>
-struct Factory<v8::External> : public FactoryBase<v8::External> {
-  static inline return_t New(void *value);
-};
-
-template <>
-struct Factory<v8::Date> : public FactoryBase<v8::Date> {
-  static inline return_t New(double value);
-};
-
-template <>
-struct Factory<v8::String> : public FactoryBase<v8::String> {
-  static inline return_t New(const char *value);
-  static inline return_t New(const char *value, int length);
-  static inline return_t New(std::string const& value);
-};
-
-//=== Numeric Types ============================================================
-
-template <>
-struct Factory<v8::Number> : public FactoryBase<v8::Number> {
-  static inline return_t New(double value);
-};
+#define NAN_TEST_EXPRESSION(expression) ( expression ), "C++: '" #expression "' is false"
 
 
-template <typename T>
-struct IntegerFactory : public FactoryBase<T>{
-  typedef typename FactoryBase<T>::return_t return_t;
-  static inline return_t New(int32_t value);
-  static inline return_t New(uint32_t value);
-};
+#define _(e) NAN_TEST_EXPRESSION(e)
 
-template <>
-struct Factory<v8::Integer> : public IntegerFactory<v8::Integer> {};
+NAN_METHOD(testNumbers) {
+  NanScope();
+  NanTap t(args[0]->ToObject());
 
-template <>
-struct Factory<v8::Int32> : public IntegerFactory<v8::Int32> {};
+  t.plan(1);
+  t.ok(_( NanNew2(5)->Value() == 5 ));
 
-template <>
-struct Factory<v8::Uint32> : public IntegerFactory<v8::Uint32> {};
-
-} // end of namespace NanIntern
-
-#if (NODE_MODULE_VERSION < 12)
-# include "nan_implementation_pre_12.inl"
-#else
-# include "nan_implementation_12.inl"
-#endif
-
-//=== API ======================================================================
-
-template <typename T>
-typename NanIntern::Factory<T>::return_t
-NanNew2() {
-  return NanIntern::Factory<T>::New();
+  
+  NanReturnUndefined();
 }
-
-template <typename T, typename A0>
-typename NanIntern::Factory<T>::return_t
-NanNew2(A0 arg0) {
-  return NanIntern::Factory<T>::New(arg0);
-}
-
-template <typename T, typename A0, typename A1>
-typename NanIntern::Factory<T>::return_t
-NanNew2(A0 arg0, A1 arg1) {
-  return NanIntern::Factory<T>::New(arg0, arg1);
-}
-
-void
-NanExport(v8::Handle<v8::Object> target, const char * name,
-    NanFunctionCallback f)
-{
-  target->Set(NanNew<v8::String>(name), 
-      NanNew<v8::FunctionTemplate>(f)->GetFunction());
-}
-
-#define return_NanValue(v) NanReturnValue(v)
-#define NAN_EXPORT(target, function) NanExport(target, #function, function)
-
-//==============================================================================
-// Sample Module
-//==============================================================================
 
 NAN_METHOD(newIntegerWithValue) {
   NanScope();
-  return_NanValue(NanNew2<v8::Integer>(args[0]->Int32Value()));
+  return_NanValue(NanNew2<Integer>(args[0]->Int32Value()));
 }
 
 NAN_METHOD(newNumberWithValue) {
   NanScope();
-  return_NanValue(NanNew2<v8::Number>(args[0]->NumberValue()));
+  return_NanValue(NanNew2<Number>(args[0]->NumberValue()));
 }
 
 NAN_METHOD(newUint32WithValue) {
   NanScope();
-  return_NanValue(NanNew2<v8::Uint32>(args[0]->Uint32Value()));
+  return_NanValue(NanNew2<Uint32>(args[0]->Uint32Value()));
 }
 
 NAN_METHOD(newStringFromChars) {
   NanScope();
-  return_NanValue(NanNew2<v8::String>("hello?"));
+  return_NanValue(NanNew2<String>("hello?"));
 }
 
 NAN_METHOD(newStringFromCharsWithLength) {
   NanScope();
-  return_NanValue(NanNew2<v8::String>("hello?", 4));
+  return_NanValue(NanNew2<String>("hello?", 4));
 }
 
 NAN_METHOD(newStringFromStdString) {
   NanScope();
-  return_NanValue(NanNew2<v8::String>(std::string("hello!")));
+  return_NanValue(NanNew2<String>(std::string("hello!")));
 }
 
 NAN_METHOD(demoDateAndNumber) {
   NanScope();
-  v8::Local<v8::Value> number = NanNew<v8::Number>(M_PI);
-  v8::Local<v8::Value> date   = NanNew<v8::Date>(double(time(NULL)));
+  Local<Value> number = NanNew<Number>(M_PI);
+  Local<Value> date   = NanNew<Date>(double(time(NULL)));
   (void)number; (void)date; // unused
   NanReturnUndefined();
 }
@@ -169,9 +93,9 @@ int ttt = 23;
 
 NAN_METHOD(newExternal) {
   NanScope();
-  return_NanValue(NanNew2<v8::External>(&ttt));
+  return_NanValue(NanNew2<External>(&ttt));
 }
-void Init(v8::Handle<v8::Object> exports) {
+void Init(Handle<Object> exports) {
   NanExport(exports, "newIntegerWithValue", newIntegerWithValue);
   NAN_EXPORT(exports, newNumberWithValue);
   NAN_EXPORT(exports, newUint32WithValue);
@@ -181,6 +105,8 @@ void Init(v8::Handle<v8::Object> exports) {
   NAN_EXPORT(exports, demoDateAndNumber);
 
   NAN_EXPORT(exports, newExternal);
+
+  NAN_EXPORT(exports, testNumbers);
 }
 
 NODE_MODULE(nan_sketch, Init)
