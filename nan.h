@@ -11,7 +11,7 @@
  *
  * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  *
- * Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30
+ * Version 1.4.0: current Node unstable: 0.11.14, Node stable: 0.10.33
  *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/

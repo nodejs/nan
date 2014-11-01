@@ -1,7 +1,19 @@
 # NAN ChangeLog
 
-**Version 1.3.0: current Node unstable: 0.11.13, Node stable: 0.10.30**
+**Version 1.4.0: current Node unstable: 0.11.14, Node stable: 0.10.33**
 
+### 1.4.0 Nov 1 2014
+
+ - Feature: Cdded NAN_GC_CALLBACK 6a5c245
+ - Performance: Removed unnecessary local handle creation 18a7243, 41fe2f8
+ - Correctness: Added constness to references in NanHasInstance 02c61cd
+ - Warnings: Fixed spurious warnings from -Wundef and -Wshadow, 541b122, 99d8cb6
+ - Windoze: Shut Visual Studio up when compiling 8d558c1
+ - License: Switch to plain MIT from custom hacked MIT license 11de983
+ - Build: Added test target to Makefile e232e46
+ - Performance: Removed superfluous scope in NanAsyncWorker f4b7821
+ - Sugar/Feature: Added NanReturnThis() and NanReturnHolder() shorthands 237a5ff, d697208
+ - Feature: Added suitable overload of NanNew for v8::Integer::NewFromUnsigned b27b450"
 
 ### 1.3.0 Aug 2 2014
 
