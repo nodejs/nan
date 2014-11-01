@@ -33,13 +33,22 @@ struct Factory<v8::Boolean> : public FactoryBase<v8::Boolean> {
 };
 
 template <>
+struct Factory<v8::Date> : public FactoryBase<v8::Date> {
+  static inline return_t New(double value);
+};
+
+template <>
 struct Factory<v8::External> : public FactoryBase<v8::External> {
   static inline return_t New(void *value);
 };
 
 template <>
-struct Factory<v8::Date> : public FactoryBase<v8::Date> {
-  static inline return_t New(double value);
+struct Factory<v8::FunctionTemplate> : public FactoryBase<v8::FunctionTemplate> {
+  static inline
+  return_t
+  New( NanFunctionCallback callback = NULL
+     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+     , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>());
 };
 
 template <>
@@ -49,7 +58,7 @@ struct Factory<v8::Number> : public FactoryBase<v8::Number> {
 
 
 template <typename T>
-struct IntegerFactory : public FactoryBase<T>{
+struct IntegerFactory : public FactoryBase<T> {
   typedef typename FactoryBase<T>::return_t return_t;
   static inline return_t New(int32_t value);
   static inline return_t New(uint32_t value);
@@ -70,6 +79,14 @@ struct Factory<v8::Script> : public FactoryBase<v8::Script> {
 };
 
 template <>
+struct Factory<v8::Signature> : public FactoryBase<v8::Signature> {
+  typedef v8::Handle<v8::FunctionTemplate> FTH;
+  static inline
+  return_t
+  New( FTH receiver = FTH(), int argc = 0, FTH argv[] = NULL );
+};
+
+template <>
 struct Factory<v8::String> : public FactoryBase<v8::String> {
   static inline return_t New(const char *value);
   static inline return_t New(const char *value, int length);
@@ -80,13 +97,9 @@ struct Factory<v8::String> : public FactoryBase<v8::String> {
 
 #if (NODE_MODULE_VERSION < 12)
 
-typedef v8::Script NanUnboundScript;
-
 # include "nan_implementation_pre_12.inl"
 
 #else // NODE_MODULE_VERSION >= 12
-
-typedef v8::UnboundScript NanUnboundScript;
 
 namespace NanIntern {
 
@@ -119,6 +132,18 @@ template <typename T, typename A0, typename A1>
 typename NanIntern::Factory<T>::return_t
 NanNew2(A0 arg0, A1 arg1) {
   return NanIntern::Factory<T>::New(arg0, arg1);
+}
+
+template <typename T, typename A0, typename A1, typename A2>
+typename NanIntern::Factory<T>::return_t
+NanNew2(A0 arg0, A1 arg1, A2 arg2) {
+  return NanIntern::Factory<T>::New(arg0, arg1, arg2);
+}
+
+template <typename T, typename A0, typename A1, typename A2, typename A3>
+typename NanIntern::Factory<T>::return_t
+NanNew2(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
+  return NanIntern::Factory<T>::New(arg0, arg1, arg2, arg3);
 }
 
 // Convenience

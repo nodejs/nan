@@ -25,6 +25,13 @@ Factory<v8::Boolean>::New(bool value) {
   return v8::Boolean::New(v8::Isolate::GetCurrent(), value);
 }
 
+//=== Date =====================================================================
+
+Factory<v8::Date>::return_t
+Factory<v8::Date>::New(double value) {
+  return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
+}
+
 //=== External =================================================================
 
 Factory<v8::External>::return_t
@@ -32,11 +39,15 @@ Factory<v8::External>::New(void * value) {
   return v8::External::New(v8::Isolate::GetCurrent(), value);
 }
 
-//=== Date =====================================================================
+//=== FunctionTemplate =========================================================
 
-Factory<v8::Date>::return_t
-Factory<v8::Date>::New(double value) {
-  return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
+Factory<v8::FunctionTemplate>::return_t
+Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
+                                  , v8::Handle<v8::Value> data
+                                  , v8::Handle<v8::Signature> signature)
+{
+  return v8::FunctionTemplate::New(v8::Isolate::GetCurrent(), callback, data, 
+      signature);
 }
 
 //=== Number ===================================================================
@@ -72,6 +83,16 @@ Factory<v8::UnboundScript>::return_t
 Factory<v8::UnboundScript>::New(v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
   return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
+}
+
+//=== Signature ================================================================
+
+Factory<v8::Signature>::return_t
+Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
+                           , int argc
+                           , Factory<v8::Signature>::FTH argv[])
+{
+  return v8::Signature::New(v8::Isolate::GetCurrent(), receiver, argc, argv);
 }
 
 //=== String ===================================================================

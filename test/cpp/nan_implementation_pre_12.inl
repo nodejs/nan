@@ -25,6 +25,13 @@ Factory<v8::Boolean>::New(bool value) {
   return v8::Boolean::New(value)->ToBoolean();
 }
 
+//=== Date =====================================================================
+
+Factory<v8::Date>::return_t
+Factory<v8::Date>::New(double value) {
+  return v8::Date::New(value).As<v8::Date>();
+}
+
 //=== External =================================================================
 
 Factory<v8::External>::return_t
@@ -32,11 +39,14 @@ Factory<v8::External>::New(void * value) {
   return v8::External::New(value);
 }
 
-//=== Date =====================================================================
+//=== FunctionTemplate =========================================================
 
-Factory<v8::Date>::return_t
-Factory<v8::Date>::New(double value) {
-  return v8::Date::New(value).As<v8::Date>();
+Factory<v8::FunctionTemplate>::return_t
+Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
+                                  , v8::Handle<v8::Value> data
+                                  , v8::Handle<v8::Signature> signature)
+{
+  return v8::FunctionTemplate::New(callback, data, signature);
 }
 
 //=== Number ===================================================================
@@ -65,6 +75,16 @@ IntegerFactory<T>::New(uint32_t value) {
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New(v8::Local<v8::String> source) {
   return v8::Script::Compile(source);
+}
+
+//=== Signature ================================================================
+
+Factory<v8::Signature>::return_t
+Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
+                           , int argc
+                           , Factory<v8::Signature>::FTH argv[])
+{
+  return v8::Signature::New(receiver, argc, argv);
 }
 
 //=== String ===================================================================

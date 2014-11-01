@@ -78,6 +78,38 @@ NAN_METHOD(testDate) {
   return_NanUndefined();
 }
 
+int ttt = 23;
+
+NAN_METHOD(testExternal) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(2);
+
+  t.ok(_(NanNew2<External>(&ttt)->Value() == &ttt));
+  t.ok(_( assertType<External>(NanNew2<External>(&ttt))));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testFunctionTemplate) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(3);
+
+  t.ok(_( assertType<FunctionTemplate>(
+          NanNew2<FunctionTemplate>(testFunctionTemplate))));
+  v8::Local<String> data = NanNew2("plonk"); 
+  t.ok(_( assertType<FunctionTemplate>(
+          NanNew2<FunctionTemplate>( testFunctionTemplate, data))));
+  v8::Local<Signature> signature = NanNew2<Signature>(); 
+  t.ok(_( assertType<FunctionTemplate>(
+          NanNew2<FunctionTemplate>( testFunctionTemplate, data, signature))));
+
+  return_NanUndefined();
+}
+
 NAN_METHOD(testNumber) {
   NanScope();
   NanTap t(args[0]);
@@ -126,6 +158,26 @@ NAN_METHOD(testScript) {
   // for the fans of the bound script
   t.ok(_( NanRunScript( NanNew2<NanBoundScript>(NanNew2("2 + 3")))->Int32Value() == 5));
   t.ok(_( NanRunScript( NanNew2<NanUnboundScript>(NanNew2("2 + 3")))->Int32Value() == 5));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testSignature) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(3);
+
+  typedef v8::Handle<v8::FunctionTemplate> FTH;
+  t.ok(_( assertType<Signature>( NanNew2<Signature>())));
+  t.ok(_( assertType<Signature>(
+          NanNew2<Signature>(NanNew2<FunctionTemplate>(testSignature)))));
+
+  Local<FunctionTemplate> arg = NanNew2<FunctionTemplate>(testSignature);
+  t.ok(_( assertType<Signature>(
+          NanNew2<Signature>( NanNew2<FunctionTemplate>(testSignature)
+                            , 1
+                            , &arg))));
 
   return_NanUndefined();
 }
@@ -187,21 +239,20 @@ NAN_METHOD(newStringFromStdString) {
   return_NanValue(NanNew2<String>(std::string("hello!")));
 }
 
-int ttt = 23;
-
 NAN_METHOD(newExternal) {
   NanScope();
   return_NanValue(NanNew2<External>(&ttt));
 }
 
-} // end of anonymous namespace
-
 void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testArray);
   NAN_EXPORT(exports, testBoolean);
   NAN_EXPORT(exports, testDate);
+  NAN_EXPORT(exports, testExternal);
+  NAN_EXPORT(exports, testFunctionTemplate);
   NAN_EXPORT(exports, testNumber);
   NAN_EXPORT(exports, testScript);
+  NAN_EXPORT(exports, testSignature);
   NAN_EXPORT(exports, testString);
 
   NAN_EXPORT(exports, newIntegerWithValue);
@@ -213,6 +264,8 @@ void Init(Handle<Object> exports) {
 
   NAN_EXPORT(exports, newExternal);
 }
+
+} // end of anonymous namespace
 
 NODE_MODULE(nan_sketch, Init)
 
