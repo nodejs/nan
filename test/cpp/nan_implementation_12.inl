@@ -1,6 +1,6 @@
 
 //==============================================================================
-// v0.11 Implementation
+// node v0.11 implementation
 //==============================================================================
 
 
@@ -39,6 +39,27 @@ Factory<v8::Date>::New(double value) {
   return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
 }
 
+//=== Number ===================================================================
+
+Factory<v8::Number>::return_t
+Factory<v8::Number>::New(double value) {
+  return v8::Number::New(v8::Isolate::GetCurrent(), value);
+}
+
+//=== Integer, Int32 and Uint32 ================================================
+
+template <typename T>
+typename IntegerFactory<T>::return_t
+IntegerFactory<T>::New(int32_t value) {
+  return To<T>(T::New(v8::Isolate::GetCurrent(), value));
+}
+
+template <typename T>
+typename IntegerFactory<T>::return_t
+IntegerFactory<T>::New(uint32_t value) {
+  return To<T>(T::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
+}
+
 //=== Script ===================================================================
 
 Factory<v8::Script>::return_t
@@ -70,27 +91,6 @@ Factory<v8::String>::return_t
 Factory<v8::String>::New(std::string const& value) {
   return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(),
       &*value.begin(), v8::String::kNormalString, value.size());
-}
-
-//=== Number ===================================================================
-
-Factory<v8::Number>::return_t
-Factory<v8::Number>::New(double value) {
-  return v8::Number::New(v8::Isolate::GetCurrent(), value);
-}
-
-//=== Integer, Int32 and Uint32 ================================================
-
-template <typename T>
-typename IntegerFactory<T>::return_t
-IntegerFactory<T>::New(int32_t value) {
-    return To<T>(T::New(v8::Isolate::GetCurrent(), value));
-}
-
-template <typename T>
-typename IntegerFactory<T>::return_t
-IntegerFactory<T>::New(uint32_t value) {
-    return To<T>(T::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
 }
 
 } // end of namespace NanIntern

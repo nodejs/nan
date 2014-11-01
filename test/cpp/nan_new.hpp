@@ -43,20 +43,6 @@ struct Factory<v8::Date> : public FactoryBase<v8::Date> {
 };
 
 template <>
-struct Factory<v8::Script> : public FactoryBase<v8::Script> {
-  static inline return_t New(v8::Local<v8::String> source);
-};
-
-template <>
-struct Factory<v8::String> : public FactoryBase<v8::String> {
-  static inline return_t New(const char *value);
-  static inline return_t New(const char *value, int length);
-  static inline return_t New(std::string const& value);
-};
-
-//=== Numeric Types ============================================================
-
-template <>
 struct Factory<v8::Number> : public FactoryBase<v8::Number> {
   static inline return_t New(double value);
 };
@@ -77,6 +63,18 @@ struct Factory<v8::Int32> : public IntegerFactory<v8::Int32> {};
 
 template <>
 struct Factory<v8::Uint32> : public IntegerFactory<v8::Uint32> {};
+
+template <>
+struct Factory<v8::Script> : public FactoryBase<v8::Script> {
+  static inline return_t New(v8::Local<v8::String> source);
+};
+
+template <>
+struct Factory<v8::String> : public FactoryBase<v8::String> {
+  static inline return_t New(const char *value);
+  static inline return_t New(const char *value, int length);
+  static inline return_t New(std::string const& value);
+};
 
 } // end of namespace NanIntern
 
