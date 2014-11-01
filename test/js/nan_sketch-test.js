@@ -5,7 +5,7 @@ const test     = require('tap').test
 
 // register c++ functions as tests...
 for (var symbol in bindings) {
-  if (typeof bindings[symbol] == 'function' && /^test.*/.test(symbol)) {
+  if (typeof bindings[symbol] == 'function' && symbol.match(/^test.*/)) {
       test('C++: ' + symbol, bindings[symbol]);
   }
 }

@@ -35,6 +35,19 @@ stringMatches(Local<Value> value, const char * match) {
 
 #define _(e) NAN_TEST_EXPRESSION(e)
 
+NAN_METHOD(testArray) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(3);
+
+  t.ok(_( NanNew2<Array>()->Length() == 0));
+  t.ok(_( NanNew2<Array>(7)->Length() == 7));
+  t.ok(_( assertType<Array>(NanNew2<Array>(7))));
+
+  return_NanUndefined();
+}
+
 NAN_METHOD(testBoolean) {
   NanScope();
   NanTap t(args[0]);
@@ -49,10 +62,33 @@ NAN_METHOD(testBoolean) {
   t.ok(_( NanNew2(false)->Value() == false));
   t.ok(_( assertType<Boolean>( NanNew2(true))));
 
-  NanReturnUndefined();
+  return_NanUndefined();
 }
 
-NAN_METHOD(testStrings) {
+NAN_METHOD(testDate) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  t.ok(_( assertType<Date>( NanNew2<Date>(double(time(NULL))))));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testScript) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(2);
+
+  t.ok(_( assertType<Script>(NanNew2<Script>(NanNew2("2 + 3")))));
+  t.ok(_( assertType<NanUnboundScript>(NanNew2<NanUnboundScript>(NanNew2("2 + 3")))));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testString) {
   NanScope();
   NanTap t(args[0]);
 
@@ -72,10 +108,10 @@ NAN_METHOD(testStrings) {
   t.ok(_( stringMatches( NanNew2(std::string("bar")), "bar")));
   t.ok(_( assertType<String>( NanNew2(std::string("plonk.")))));
 
-  NanReturnUndefined();
+  return_NanUndefined();
 }
 
-NAN_METHOD(testNumbers) {
+NAN_METHOD(testNumber) {
   NanScope();
   NanTap t(args[0]);
 
@@ -108,7 +144,7 @@ NAN_METHOD(testNumbers) {
   t.ok(_( NanNew2(M_PI)->Value() - M_PI < epsilon));
   t.ok(_( assertType<Number>( NanNew2(M_E) )));
 
-  NanReturnUndefined();
+  return_NanUndefined();
 }
 
 NAN_METHOD(newIntegerWithValue) {
@@ -146,7 +182,7 @@ NAN_METHOD(demoDateAndNumber) {
   Local<Value> number = NanNew<Number>(M_PI);
   Local<Value> date   = NanNew<Date>(double(time(NULL)));
   (void)number; (void)date; // unused
-  NanReturnUndefined();
+  return_NanUndefined();
 }
 
 int ttt = 23;
@@ -157,9 +193,12 @@ NAN_METHOD(newExternal) {
 }
 
 void Init(Handle<Object> exports) {
+  NAN_EXPORT(exports, testArray);
   NAN_EXPORT(exports, testBoolean);
-  NAN_EXPORT(exports, testStrings);
-  NAN_EXPORT(exports, testNumbers);
+  NAN_EXPORT(exports, testDate);
+  NAN_EXPORT(exports, testScript);
+  NAN_EXPORT(exports, testString);
+  NAN_EXPORT(exports, testNumber);
 
   NAN_EXPORT(exports, newIntegerWithValue);
   NAN_EXPORT(exports, newNumberWithValue);

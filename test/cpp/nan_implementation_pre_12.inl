@@ -39,6 +39,13 @@ Factory<v8::Date>::New(double value) {
   return v8::Date::New(value).As<v8::Date>();
 }
 
+//=== Script ===================================================================
+
+Factory<v8::Script>::return_t
+Factory<v8::Script>::New(v8::Local<v8::String> source) {
+  return v8::Script::Compile(source);
+}
+
 //=== String ===================================================================
 
 Factory<v8::String>::return_t
