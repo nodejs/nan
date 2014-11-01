@@ -25,6 +25,13 @@ Factory<v8::Boolean>::New(bool value) {
   return v8::Boolean::New(v8::Isolate::GetCurrent(), value);
 }
 
+//=== Boolean Object ===========================================================
+
+Factory<v8::BooleanObject>::return_t
+Factory<v8::BooleanObject>::New(bool value) {
+  return v8::BooleanObject::New(value).As<v8::BooleanObject>();
+}
+
 //=== Date =====================================================================
 
 Factory<v8::Date>::return_t
@@ -39,7 +46,7 @@ Factory<v8::External>::New(void * value) {
   return v8::External::New(v8::Isolate::GetCurrent(), value);
 }
 
-//=== FunctionTemplate =========================================================
+//=== Function Template ========================================================
 
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
@@ -55,6 +62,14 @@ Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
 Factory<v8::Number>::return_t
 Factory<v8::Number>::New(double value) {
   return v8::Number::New(v8::Isolate::GetCurrent(), value);
+}
+
+//=== Number Object ============================================================
+
+Factory<v8::NumberObject>::return_t
+Factory<v8::NumberObject>::New(double value) {
+  return v8::NumberObject::New( v8::Isolate::GetCurrent()
+                              , value).As<v8::NumberObject>();
 }
 
 //=== Integer, Int32 and Uint32 ================================================
@@ -112,6 +127,13 @@ Factory<v8::String>::return_t
 Factory<v8::String>::New(std::string const& value) {
   return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(),
       &*value.begin(), v8::String::kNormalString, value.size());
+}
+
+//=== String Object ============================================================
+
+Factory<v8::StringObject>::return_t
+Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
+  return v8::StringObject::New(value).As<v8::StringObject>();
 }
 
 } // end of namespace NanIntern

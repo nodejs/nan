@@ -67,6 +67,25 @@ NAN_METHOD(testBoolean) {
   return_NanUndefined();
 }
 
+#if (NODE_MODULE_VERSION < 12)
+# define V(x) x->BooleanValue() 
+#else
+# define V(x) x->ValueOf() 
+#endif
+NAN_METHOD(testBooleanObject) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(3);
+
+  t.ok(_( assertType<BooleanObject>( NanNew2<BooleanObject>(true))));
+  t.ok(_( V(NanNew2<BooleanObject>(true)) == true));
+  t.ok(_( V(NanNew2<BooleanObject>(false)) == false));
+
+  return_NanUndefined();
+}
+#undef V
+
 NAN_METHOD(testDate) {
   NanScope();
   NanTap t(args[0]);
@@ -110,6 +129,8 @@ NAN_METHOD(testFunctionTemplate) {
   return_NanUndefined();
 }
 
+const double epsilon = 1e-9;
+
 NAN_METHOD(testNumber) {
   NanScope();
   NanTap t(args[0]);
@@ -127,7 +148,6 @@ NAN_METHOD(testNumber) {
   t.ok(_( NanNew2<Integer>(-1337)->Value() == -1337 ));
   t.ok(_( assertType<Integer>( NanNew2<Integer>(-42) )));
 
-  const double epsilon = 1e-9;
   t.ok(_( fabs(NanNew2<Number>(M_PI)->Value() - M_PI) < epsilon));
   t.ok(_( fabs(NanNew2<Number>(-M_PI)->Value() + M_PI) < epsilon));
   t.ok(_( assertType<Number>( NanNew2<Number>(M_E) )));
@@ -142,6 +162,18 @@ NAN_METHOD(testNumber) {
 
   t.ok(_( fabs(NanNew2(M_PI)->Value() - M_PI) < epsilon));
   t.ok(_( assertType<Number>( NanNew2(M_E) )));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testNumberObject) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(2);
+
+  t.ok(_( assertType<NumberObject>( NanNew2<NumberObject>(M_PI))));
+  t.ok(_( fabs(NanNew2<NumberObject>(M_PI)->NumberValue() - M_PI) < epsilon));
 
   return_NanUndefined();
 }
@@ -205,6 +237,27 @@ NAN_METHOD(testString) {
   return_NanUndefined();
 }
 
+#if (NODE_MODULE_VERSION < 12)
+# define V(x) x->StringValue() 
+#else
+# define V(x) x->ValueOf() 
+#endif
+NAN_METHOD(testStringObject) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(2);
+
+  t.ok(_( stringMatches(
+          V(NanNew2<StringObject>(NanNew2<String>("plonk"))),
+          "plonk")));
+  t.ok(_( assertType<StringObject>(
+          NanNew2<StringObject>(NanNew2<String>("plonk")))));
+
+  return_NanUndefined();
+}
+#undef V
+
 //==============================================================================
 // JavaScript Tests
 //==============================================================================
@@ -247,13 +300,16 @@ NAN_METHOD(newExternal) {
 void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testArray);
   NAN_EXPORT(exports, testBoolean);
+  NAN_EXPORT(exports, testBooleanObject);
   NAN_EXPORT(exports, testDate);
   NAN_EXPORT(exports, testExternal);
   NAN_EXPORT(exports, testFunctionTemplate);
   NAN_EXPORT(exports, testNumber);
+  NAN_EXPORT(exports, testNumberObject);
   NAN_EXPORT(exports, testScript);
   NAN_EXPORT(exports, testSignature);
   NAN_EXPORT(exports, testString);
+  NAN_EXPORT(exports, testStringObject);
 
   NAN_EXPORT(exports, newIntegerWithValue);
   NAN_EXPORT(exports, newNumberWithValue);

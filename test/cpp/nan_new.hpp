@@ -33,6 +33,11 @@ struct Factory<v8::Boolean> : public FactoryBase<v8::Boolean> {
 };
 
 template <>
+struct Factory<v8::BooleanObject> : public FactoryBase<v8::BooleanObject> {
+  static inline return_t New(bool value);
+};
+
+template <>
 struct Factory<v8::Date> : public FactoryBase<v8::Date> {
   static inline return_t New(double value);
 };
@@ -56,6 +61,10 @@ struct Factory<v8::Number> : public FactoryBase<v8::Number> {
   static inline return_t New(double value);
 };
 
+template <>
+struct Factory<v8::NumberObject> : public FactoryBase<v8::NumberObject> {
+  static inline return_t New(double value);
+};
 
 template <typename T>
 struct IntegerFactory : public FactoryBase<T> {
@@ -91,6 +100,11 @@ struct Factory<v8::String> : public FactoryBase<v8::String> {
   static inline return_t New(const char *value);
   static inline return_t New(const char *value, int length);
   static inline return_t New(std::string const& value);
+};
+
+template <>
+struct Factory<v8::StringObject> : public FactoryBase<v8::StringObject> {
+  static inline return_t New(v8::Handle<v8::String> value);
 };
 
 } // end of namespace NanIntern
