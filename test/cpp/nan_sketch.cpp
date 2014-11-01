@@ -11,33 +11,6 @@
 
 using namespace v8;
 
-// reverse binding for tap
-struct NanTap {
-  NanTap(Handle<Value> t) : t_() {
-    NanAssignPersistent(t_, t->ToObject());
-  };
-
-  void plan(int i) {
-    NanScope();
-    v8::Handle<Value> arg = NanNew2(i);
-    NanMakeCallback(NanNew(t_), "plan", 1, &arg);
-  }
-
-  void ok(bool isOk, const char * msg = NULL) {
-    NanScope();
-    v8::Handle<Value> args[2];
-    args[0] = NanNew2(isOk);
-    if (msg) args[1] = NanNew2(msg);
-    NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
-  }
-
-private:
-  
-  Persistent<Object> t_;
-};
-
-#define NAN_TEST_EXPRESSION(expression) ( expression ), "C++: '" #expression "' is false"
-
 template <typename T, typename U>
 struct is_same {
   static const bool value = false;

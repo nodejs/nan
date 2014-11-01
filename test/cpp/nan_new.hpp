@@ -169,7 +169,38 @@ NanExport(v8::Handle<v8::Object> target, const char * name,
       NanNew<v8::FunctionTemplate>(f)->GetFunction());
 }
 
+//=== Tap Reverse Binding =====================================================
+
+struct NanTap {
+  NanTap(v8::Handle<v8::Value> t) : t_() {
+    NanAssignPersistent(t_, t->ToObject());
+  };
+  ~NanTap() { NanDisposePersistent(t_); } // not sure if neccessary
+
+  inline void plan(int i) {
+    v8::Handle<v8::Value> arg = NanNew2(i);
+    NanMakeCallback(NanNew(t_), "plan", 1, &arg);
+  }
+
+  inline void ok(bool isOk, const char * msg = NULL) {
+    v8::Handle<v8::Value> args[2];
+    args[0] = NanNew2(isOk);
+    if (msg) args[1] = NanNew2(msg);
+    NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
+  }
+
+private:
+  
+  v8::Persistent<v8::Object> t_;
+};
+
+#define NAN_STRINGIZE2(x) #x
+#define NAN_STRINGIZE(x) NAN_STRINGIZE2(x)
+#define NAN_TEST_EXPRESSION(expression) \
+  ( expression ), __FILE__ ":" NAN_STRINGIZE(__LINE__) ": " #expression
+
 #define return_NanValue(v) NanReturnValue(v)
+#define return_NanUndefined() NanReturnUndefined()
 #define NAN_EXPORT(target, function) NanExport(target, #function, function)
 
 
