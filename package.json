@@ -21,8 +21,8 @@
   ],
   "devDependencies": {
     "bindings": "~1.2.1",
-    "node-gyp": "~1.0.1",
-    "tap": "~0.4.12",
+    "node-gyp": "~1.0.2",
+    "tap": "~0.4.13",
     "xtend": "~4.0.0"
   },
   "license": "MIT"
