@@ -110,6 +110,19 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
       : def;
 }
 
+template<typename T>
+v8::Local<T> NanNew(v8::Handle<T>);
+
+template<typename T>
+NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Handle<T> val) {
+  return NanNew(val);
+}
+
+template<typename T>
+NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
+  return val;
+}
+
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.3 and below won't compile with these)
 
@@ -498,17 +511,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 # define NanEscapableScope()                                                   \
   v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
 
-  template<typename T>
-  NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Handle<T> val) {
-    return NanNew(val);
-  }
-
-  template<typename T>
-  NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
-    return val;
-  }
-
-# define NanEscapeScope(val) scope.Escape(_NanEscapeScopeHelper(val))
+# define NanEscapeScope(val) scope.Escape(_NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
@@ -1077,12 +1080,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg) {
-    return T::New(arg);
+    return _NanEnsureLocal(T::New(arg));
   }
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg, int length) {
-    return T::New(arg, length);
+    return _NanEnsureLocal(T::New(arg, length));
   }
 
   template<typename T>
@@ -1127,11 +1130,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
     return v8::Date::New(time).As<v8::Date>();
-  }
-
-  template<>
-  NAN_INLINE v8::Local<v8::Boolean> NanNew<v8::Boolean>(bool value) {
-    return v8::Local<v8::Boolean>::New(v8::Boolean::New(value));
   }
 
   typedef v8::Script NanUnboundScript;
