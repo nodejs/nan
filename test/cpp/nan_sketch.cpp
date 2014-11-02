@@ -258,6 +258,27 @@ NAN_METHOD(testStringObject) {
 }
 #undef V
 
+
+//==============================================================================
+// Regression Tests
+//==============================================================================
+
+
+// See https://github.com/rvagg/nan/issues/212
+NAN_METHOD(testRegression212) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  typedef int  gint;
+  typedef gint gboolean;
+  t.ok(_( assertType<Boolean>( NanNew2<Boolean>(gboolean(23)))));
+
+  return_NanUndefined();
+}
+
+
 //==============================================================================
 // JavaScript Tests
 //==============================================================================
@@ -310,6 +331,9 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testSignature);
   NAN_EXPORT(exports, testString);
   NAN_EXPORT(exports, testStringObject);
+
+
+  NAN_EXPORT(exports, testRegression212);
 
   NAN_EXPORT(exports, newIntegerWithValue);
   NAN_EXPORT(exports, newNumberWithValue);
