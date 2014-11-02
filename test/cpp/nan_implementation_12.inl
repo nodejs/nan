@@ -137,3 +137,19 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
 }
 
 } // end of namespace NanIntern
+
+//=== Presistents and Handles ==================================================
+
+template <typename T>
+v8::Local<T>
+NanNew2(v8::Handle<T> h) {
+  return v8::Local<T>::New(v8::Isolate::GetCurrent(), h);
+}
+
+template <typename T>
+v8::Local<T>
+NanNew2(v8::Persistent<T> const& p) {
+  return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
+}
+
+

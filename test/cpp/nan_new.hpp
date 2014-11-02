@@ -1,5 +1,6 @@
 #ifndef NAN_NAN_NEW_INCLUDED
 #define NAN_NAN_NEW_INCLUDED
+
 namespace NanIntern { // scnr
 
 // TODO: Generalize
@@ -161,6 +162,9 @@ NanNew2(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
 }
 
 // Convenience
+
+template <typename T> inline v8::Local<T> NanNew2(v8::Handle<T> h);
+template <typename T> inline v8::Local<T> NanNew2(v8::Persistent<T> const& p);
 
 inline
 NanIntern::Factory<v8::Boolean>::return_t

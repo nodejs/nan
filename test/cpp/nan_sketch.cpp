@@ -258,6 +258,32 @@ NAN_METHOD(testStringObject) {
 }
 #undef V
 
+template <typename T> Handle<T> asHandle(Local<T> l) { return l; }
+NAN_METHOD(testHandles) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(2);
+
+  t.ok(_( assertType<String>( NanNew2( asHandle(NanNew2("foo"))))));
+  t.ok(_( assertType<Uint32>( NanNew2( asHandle(NanNew2(5u))))));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testPersistents) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  Persistent<String> p;
+  NanAssignPersistent(p, NanNew2("foo"));
+  t.ok(_( assertType<String>( NanNew2(p))));
+  NanDisposePersistent(p);
+
+  return_NanUndefined();
+}
 
 //==============================================================================
 // Regression Tests
@@ -332,6 +358,8 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testString);
   NAN_EXPORT(exports, testStringObject);
 
+  NAN_EXPORT(exports, testHandles);
+  NAN_EXPORT(exports, testPersistents);
 
   NAN_EXPORT(exports, testRegression212);
 
