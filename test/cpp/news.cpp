@@ -97,7 +97,7 @@ NAN_METHOD(NewBooleanObject) {
 
 NAN_METHOD(NewExternal) {
   NanScope();
-  v8::Local<v8::External> ext = NanNew<v8::External>(&magic);
+  v8::Local<v8::External> ext = NanNew<v8::External>(static_cast<void*>(&magic));
   assert(*static_cast<int *>(ext->Value()) == 1337);
   NanReturnValue(NanNew<v8::String>("passed"));
 }
