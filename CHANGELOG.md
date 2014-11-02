@@ -4,7 +4,7 @@
 
 ### 1.4.0 Nov 1 2014
 
- - Feature: Cdded NAN_GC_CALLBACK 6a5c245
+ - Feature: Added NAN_GC_CALLBACK 6a5c245
  - Performance: Removed unnecessary local handle creation 18a7243, 41fe2f8
  - Correctness: Added constness to references in NanHasInstance 02c61cd
  - Warnings: Fixed spurious warnings from -Wundef and -Wshadow, 541b122, 99d8cb6
@@ -13,7 +13,7 @@
  - Build: Added test target to Makefile e232e46
  - Performance: Removed superfluous scope in NanAsyncWorker f4b7821
  - Sugar/Feature: Added NanReturnThis() and NanReturnHolder() shorthands 237a5ff, d697208
- - Feature: Added suitable overload of NanNew for v8::Integer::NewFromUnsigned b27b450"
+ - Feature: Added suitable overload of NanNew for v8::Integer::NewFromUnsigned b27b450
 
 ### 1.3.0 Aug 2 2014
 
