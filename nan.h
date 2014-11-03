@@ -31,25 +31,23 @@
 #endif
 #include <string>
 
-#define notset(x) (!defined(x) || !x)
-
-#if defined(__GNUC__) && notset(DEBUG)
+#if defined(__GNUC__) && !(defined(DEBUG) && DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
-#elif defined(_MSC_VER) && notset(DEBUG)
+#elif defined(_MSC_VER) && !(defined(DEBUG) && DEBUG)
 # define NAN_INLINE __forceinline
 #else
 # define NAN_INLINE inline
 #endif
 
-#if defined(__GNUC__) && notset(V8_DISABLE_DEPRECATIONS)
+#if defined(__GNUC__) && \
+    !(defined(V8_DISABLE_DEPRECATIONS) && V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER) && notset(V8_DISABLE_DEPRECATIONS)
+#elif defined(_MSC_VER) && \
+    !(defined(V8_DISABLE_DEPRECATIONS) && V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __declspec(deprecated)
 #else
 # define NAN_DEPRECATED
 #endif
-
-#undef notset
 
 // some generic helpers
 
