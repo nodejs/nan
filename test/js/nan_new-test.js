@@ -1,6 +1,6 @@
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'nan_sketch' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'test_nan_new' });
 
 
 // register c++ functions as tests...

@@ -6,8 +6,10 @@
 #include <cmath>
 #include <time.h>
 
+
+#define NAN_NEW_NAN_NEW
 #include <nan.h>
-#include "nan_new.hpp"
+//#include "nan_new.hpp"
 
 namespace {
 
@@ -43,9 +45,9 @@ NAN_METHOD(testArray) {
 
   t.plan(3);
 
-  t.ok(_( NanNew2<Array>()->Length() == 0));
-  t.ok(_( NanNew2<Array>(7)->Length() == 7));
-  t.ok(_( assertType<Array>(NanNew2<Array>(7))));
+  t.ok(_( NanNew<Array>()->Length() == 0));
+  t.ok(_( NanNew<Array>(7)->Length() == 7));
+  t.ok(_( assertType<Array>(NanNew<Array>(7))));
 
   return_NanUndefined();
 }
@@ -56,13 +58,13 @@ NAN_METHOD(testBoolean) {
 
   t.plan(6);
 
-  t.ok(_( NanNew2<Boolean>(true)->Value() == true));
-  t.ok(_( NanNew2<Boolean>(false)->Value() == false));
-  t.ok(_( assertType<Boolean>( NanNew2<Boolean>(true))));
+  t.ok(_( NanNew<Boolean>(true)->Value() == true));
+  t.ok(_( NanNew<Boolean>(false)->Value() == false));
+  t.ok(_( assertType<Boolean>( NanNew<Boolean>(true))));
 
-  t.ok(_( NanNew2(true)->Value() == true));
-  t.ok(_( NanNew2(false)->Value() == false));
-  t.ok(_( assertType<Boolean>( NanNew2(true))));
+  t.ok(_( NanNew(true)->Value() == true));
+  t.ok(_( NanNew(false)->Value() == false));
+  t.ok(_( assertType<Boolean>( NanNew(true))));
 
   return_NanUndefined();
 }
@@ -78,9 +80,9 @@ NAN_METHOD(testBooleanObject) {
 
   t.plan(3);
 
-  t.ok(_( assertType<BooleanObject>( NanNew2<BooleanObject>(true))));
-  t.ok(_( V(NanNew2<BooleanObject>(true)) == true));
-  t.ok(_( V(NanNew2<BooleanObject>(false)) == false));
+  t.ok(_( assertType<BooleanObject>( NanNew<BooleanObject>(true))));
+  t.ok(_( V(NanNew<BooleanObject>(true)) == true));
+  t.ok(_( V(NanNew<BooleanObject>(false)) == false));
 
   return_NanUndefined();
 }
@@ -92,7 +94,7 @@ NAN_METHOD(testDate) {
 
   t.plan(1);
 
-  t.ok(_( assertType<Date>( NanNew2<Date>(double(time(NULL))))));
+  t.ok(_( assertType<Date>( NanNew<Date>(double(time(NULL))))));
 
   return_NanUndefined();
 }
@@ -105,8 +107,8 @@ NAN_METHOD(testExternal) {
 
   t.plan(2);
 
-  t.ok(_(NanNew2<External>(&ttt)->Value() == &ttt));
-  t.ok(_( assertType<External>(NanNew2<External>(&ttt))));
+  t.ok(_(NanNew<External>(&ttt)->Value() == &ttt));
+  t.ok(_( assertType<External>(NanNew<External>(&ttt))));
 
   return_NanUndefined();
 }
@@ -118,13 +120,13 @@ NAN_METHOD(testFunctionTemplate) {
   t.plan(3);
 
   t.ok(_( assertType<FunctionTemplate>(
-          NanNew2<FunctionTemplate>(testFunctionTemplate))));
-  v8::Local<String> data = NanNew2("plonk"); 
+          NanNew<FunctionTemplate>(testFunctionTemplate))));
+  v8::Local<String> data = NanNew("plonk"); 
   t.ok(_( assertType<FunctionTemplate>(
-          NanNew2<FunctionTemplate>( testFunctionTemplate, data))));
-  v8::Local<Signature> signature = NanNew2<Signature>(); 
+          NanNew<FunctionTemplate>( testFunctionTemplate, data))));
+  v8::Local<Signature> signature = NanNew<Signature>(); 
   t.ok(_( assertType<FunctionTemplate>(
-          NanNew2<FunctionTemplate>( testFunctionTemplate, data, signature))));
+          NanNew<FunctionTemplate>( testFunctionTemplate, data, signature))));
 
   return_NanUndefined();
 }
@@ -137,31 +139,31 @@ NAN_METHOD(testNumber) {
 
   t.plan(17);
 
-  t.ok(_( NanNew2<Int32>(5)->Value() == 5 ));
-  t.ok(_( NanNew2<Int32>(-42)->Value() == -42 ));
-  t.ok(_( assertType<Int32>( NanNew2<Int32>(23) )));
+  t.ok(_( NanNew<Int32>(5)->Value() == 5 ));
+  t.ok(_( NanNew<Int32>(-42)->Value() == -42 ));
+  t.ok(_( assertType<Int32>( NanNew<Int32>(23) )));
 
-  t.ok(_( NanNew2<Uint32>(5u)->Value() == 5u ));
-  t.ok(_( assertType<Uint32>( NanNew2<Uint32>(23u) )));
+  t.ok(_( NanNew<Uint32>(5u)->Value() == 5u ));
+  t.ok(_( assertType<Uint32>( NanNew<Uint32>(23u) )));
 
-  t.ok(_( NanNew2<Integer>(5)->Value() == 5 ));
-  t.ok(_( NanNew2<Integer>(-1337)->Value() == -1337 ));
-  t.ok(_( assertType<Integer>( NanNew2<Integer>(-42) )));
+  t.ok(_( NanNew<Integer>(5)->Value() == 5 ));
+  t.ok(_( NanNew<Integer>(-1337)->Value() == -1337 ));
+  t.ok(_( assertType<Integer>( NanNew<Integer>(-42) )));
 
-  t.ok(_( fabs(NanNew2<Number>(M_PI)->Value() - M_PI) < epsilon));
-  t.ok(_( fabs(NanNew2<Number>(-M_PI)->Value() + M_PI) < epsilon));
-  t.ok(_( assertType<Number>( NanNew2<Number>(M_E) )));
+  t.ok(_( fabs(NanNew<Number>(M_PI)->Value() - M_PI) < epsilon));
+  t.ok(_( fabs(NanNew<Number>(-M_PI)->Value() + M_PI) < epsilon));
+  t.ok(_( assertType<Number>( NanNew<Number>(M_E) )));
 
   //=== Convenience
 
-  t.ok(_( NanNew2(5)->Value() == 5 ));
-  t.ok(_( assertType<Int32>( NanNew2(23) )));
+  t.ok(_( NanNew(5)->Value() == 5 ));
+  t.ok(_( assertType<Int32>( NanNew(23) )));
 
-  t.ok(_( NanNew2(5u)->Value() == 5u ));
-  t.ok(_( assertType<Uint32>( NanNew2(23u) )));
+  t.ok(_( NanNew(5u)->Value() == 5u ));
+  t.ok(_( assertType<Uint32>( NanNew(23u) )));
 
-  t.ok(_( fabs(NanNew2(M_PI)->Value() - M_PI) < epsilon));
-  t.ok(_( assertType<Number>( NanNew2(M_E) )));
+  t.ok(_( fabs(NanNew(M_PI)->Value() - M_PI) < epsilon));
+  t.ok(_( assertType<Number>( NanNew(M_E) )));
 
   return_NanUndefined();
 }
@@ -172,8 +174,8 @@ NAN_METHOD(testNumberObject) {
 
   t.plan(2);
 
-  t.ok(_( assertType<NumberObject>( NanNew2<NumberObject>(M_PI))));
-  t.ok(_( fabs(NanNew2<NumberObject>(M_PI)->NumberValue() - M_PI) < epsilon));
+  t.ok(_( assertType<NumberObject>( NanNew<NumberObject>(M_PI))));
+  t.ok(_( fabs(NanNew<NumberObject>(M_PI)->NumberValue() - M_PI) < epsilon));
 
   return_NanUndefined();
 }
@@ -184,17 +186,17 @@ NAN_METHOD(testScript) {
 
   t.plan(6);
 
-  ScriptOrigin origin(NanNew2("foo"), NanNew2(5));
+  ScriptOrigin origin(NanNew("foo"), NanNew(5));
 
-  t.ok(_( assertType<Script>( NanNew2<Script>(NanNew2("2 + 3")))));
-  t.ok(_( assertType<Script>( NanNew2<Script>(NanNew2("2 + 3"), origin))));
-  t.ok(_( assertType<NanUnboundScript>( NanNew2<NanUnboundScript>(NanNew2("2 + 3")))));
+  t.ok(_( assertType<Script>( NanNew<Script>(NanNew("2 + 3")))));
+  t.ok(_( assertType<Script>( NanNew<Script>(NanNew("2 + 3"), origin))));
+  t.ok(_( assertType<NanUnboundScript>( NanNew<NanUnboundScript>(NanNew("2 + 3")))));
   t.ok(_( assertType<NanUnboundScript>(
-          NanNew2<NanUnboundScript>(NanNew2("2 + 3"), origin))));
+          NanNew<NanUnboundScript>(NanNew("2 + 3"), origin))));
 
   // for the fans of the bound script
-  t.ok(_( NanRunScript( NanNew2<NanBoundScript>(NanNew2("2 + 3")))->Int32Value() == 5));
-  t.ok(_( NanRunScript( NanNew2<NanUnboundScript>(NanNew2("2 + 3")))->Int32Value() == 5));
+  t.ok(_( NanRunScript( NanNew<NanBoundScript>(NanNew("2 + 3")))->Int32Value() == 5));
+  t.ok(_( NanRunScript( NanNew<NanUnboundScript>(NanNew("2 + 3")))->Int32Value() == 5));
 
   return_NanUndefined();
 }
@@ -207,11 +209,11 @@ NAN_METHOD(testSignature) {
 
   typedef FunctionTemplate FT;
   typedef Signature Sig;
-  t.ok(_( assertType<Sig>(NanNew2<Sig>())));
-  t.ok(_( assertType<Sig>(NanNew2<Sig>(NanNew2<FT>(testSignature)))));
+  t.ok(_( assertType<Sig>(NanNew<Sig>())));
+  t.ok(_( assertType<Sig>(NanNew<Sig>(NanNew<FT>(testSignature)))));
 
-  Local<FT> arg = NanNew2<FT>(testSignature);
-  t.ok(_( assertType<Sig>( NanNew2<Sig>(NanNew2<FT>(testSignature), 1 ,&arg))));
+  Local<FT> arg = NanNew<FT>(testSignature);
+  t.ok(_( assertType<Sig>( NanNew<Sig>(NanNew<FT>(testSignature), 1 ,&arg))));
 
   return_NanUndefined();
 }
@@ -222,24 +224,24 @@ NAN_METHOD(testString) {
 
   t.plan(10);
 
-  t.ok(_( stringMatches( NanNew2<String>("Hello World"), "Hello World")));
-  t.ok(_( stringMatches( NanNew2<String>("Hello World", 4), "Hell")));
-  t.ok(_( stringMatches( NanNew2<String>(std::string("foo")), "foo")));
-  t.ok(_( assertType<String>( NanNew2<String>("plonk."))));
+  t.ok(_( stringMatches( NanNew<String>("Hello World"), "Hello World")));
+  t.ok(_( stringMatches( NanNew<String>("Hello World", 4), "Hell")));
+  t.ok(_( stringMatches( NanNew<String>(std::string("foo")), "foo")));
+  t.ok(_( assertType<String>( NanNew<String>("plonk."))));
 
   // These should be deprecated
   uint8_t * ustring = (uint8_t*)"unsigned chars";
-  t.ok(_( stringMatches( NanNew2<String>(ustring), "unsigned chars")));
-  t.ok(_( stringMatches( NanNew2<String>(ustring, 8), "unsigned")));
+  t.ok(_( stringMatches( NanNew<String>(ustring), "unsigned chars")));
+  t.ok(_( stringMatches( NanNew<String>(ustring, 8), "unsigned")));
 
   //=== Convenience
 
-  t.ok(_( stringMatches( NanNew2("using namespace nan; // is poetry"),
+  t.ok(_( stringMatches( NanNew("using namespace nan; // is poetry"),
           "using namespace nan; // is poetry")));
-  t.ok(_( assertType<String>( NanNew2("plonk."))));
+  t.ok(_( assertType<String>( NanNew("plonk."))));
 
-  t.ok(_( stringMatches( NanNew2(std::string("bar")), "bar")));
-  t.ok(_( assertType<String>( NanNew2(std::string("plonk.")))));
+  t.ok(_( stringMatches( NanNew(std::string("bar")), "bar")));
+  t.ok(_( assertType<String>( NanNew(std::string("plonk.")))));
 
   return_NanUndefined();
 }
@@ -256,10 +258,10 @@ NAN_METHOD(testStringObject) {
   t.plan(2);
 
   t.ok(_( stringMatches(
-          V(NanNew2<StringObject>(NanNew2<String>("plonk"))),
+          V(NanNew<StringObject>(NanNew<String>("plonk"))),
           "plonk")));
   t.ok(_( assertType<StringObject>(
-          NanNew2<StringObject>(NanNew2<String>("plonk")))));
+          NanNew<StringObject>(NanNew<String>("plonk")))));
 
   return_NanUndefined();
 }
@@ -272,8 +274,8 @@ NAN_METHOD(testHandles) {
 
   t.plan(2);
 
-  t.ok(_( assertType<String>( NanNew2( asHandle(NanNew2("foo"))))));
-  t.ok(_( assertType<Uint32>( NanNew2( asHandle(NanNew2(5u))))));
+  t.ok(_( assertType<String>( NanNew( asHandle(NanNew("foo"))))));
+  t.ok(_( assertType<Uint32>( NanNew( asHandle(NanNew(5u))))));
 
   return_NanUndefined();
 }
@@ -285,8 +287,8 @@ NAN_METHOD(testPersistents) {
   t.plan(1);
 
   Persistent<String> p;
-  NanAssignPersistent(p, NanNew2("foo"));
-  t.ok(_( assertType<String>( NanNew2(p))));
+  NanAssignPersistent(p, NanNew("foo"));
+  t.ok(_( assertType<String>( NanNew(p))));
   NanDisposePersistent(p);
 
   return_NanUndefined();
@@ -306,7 +308,7 @@ NAN_METHOD(testRegression212) {
 
   typedef int  gint;
   typedef gint gboolean;
-  t.ok(_( assertType<Boolean>( NanNew2<Boolean>(gboolean(23)))));
+  t.ok(_( assertType<Boolean>( NanNew<Boolean>(gboolean(23)))));
 
   return_NanUndefined();
 }
@@ -318,37 +320,37 @@ NAN_METHOD(testRegression212) {
 
 NAN_METHOD(newIntegerWithValue) {
   NanScope();
-  return_NanValue(NanNew2<Integer>(args[0]->Int32Value()));
+  return_NanValue(NanNew<Integer>(args[0]->Int32Value()));
 }
 
 NAN_METHOD(newNumberWithValue) {
   NanScope();
-  return_NanValue(NanNew2<Number>(args[0]->NumberValue()));
+  return_NanValue(NanNew<Number>(args[0]->NumberValue()));
 }
 
 NAN_METHOD(newUint32WithValue) {
   NanScope();
-  return_NanValue(NanNew2<Uint32>(args[0]->Uint32Value()));
+  return_NanValue(NanNew<Uint32>(args[0]->Uint32Value()));
 }
 
 NAN_METHOD(newStringFromChars) {
   NanScope();
-  return_NanValue(NanNew2<String>("hello?"));
+  return_NanValue(NanNew<String>("hello?"));
 }
 
 NAN_METHOD(newStringFromCharsWithLength) {
   NanScope();
-  return_NanValue(NanNew2<String>("hello?", 4));
+  return_NanValue(NanNew<String>("hello?", 4));
 }
 
 NAN_METHOD(newStringFromStdString) {
   NanScope();
-  return_NanValue(NanNew2<String>(std::string("hello!")));
+  return_NanValue(NanNew<String>(std::string("hello!")));
 }
 
 NAN_METHOD(newExternal) {
   NanScope();
-  return_NanValue(NanNew2<External>(&ttt));
+  return_NanValue(NanNew<External>(&ttt));
 }
 
 void Init(Handle<Object> exports) {
@@ -382,5 +384,5 @@ void Init(Handle<Object> exports) {
 
 } // end of anonymous namespace
 
-NODE_MODULE(nan_sketch, Init)
+NODE_MODULE(test_nan_new, Init)
 

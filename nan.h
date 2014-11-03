@@ -51,6 +51,23 @@
 
 #undef notset
 
+
+#if (NODE_MODULE_VERSION < 12)
+typedef v8::InvocationCallback NanFunctionCallback;
+typedef v8::Script             NanUnboundScript;
+typedef v8::Script             NanBoundScript;
+#else
+typedef v8::FunctionCallback   NanFunctionCallback;
+typedef v8::UnboundScript      NanUnboundScript;
+typedef v8::Script             NanBoundScript;
+#endif
+
+//#define NAN_NEW_NAN_NEW
+
+#ifdef NAN_NEW_NAN_NEW
+# include <nan_new.h>
+#endif
+
 // some generic helpers
 
 template<typename T> NAN_INLINE bool NanSetPointerSafe(
@@ -176,8 +193,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE void
 
-  typedef v8::FunctionCallback NanFunctionCallback;
-
+#ifndef NAN_NEW_NAN_NEW
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
     return T::New(v8::Isolate::GetCurrent());
@@ -238,9 +254,6 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
     return v8::Date::New(v8::Isolate::GetCurrent(), time).As<v8::Date>();
   }
-
-  typedef v8::UnboundScript NanUnboundScript;
-  typedef v8::Script NanBoundScript;
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(
@@ -493,6 +506,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
       v8::String::ExternalAsciiStringResource *resource) {
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
+#endif
 
 # define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
 # define NanEscapableScope()                                                   \
@@ -1037,13 +1051,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
 
-  typedef v8::InvocationCallback NanFunctionCallback;
-
   NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
       const char* data, int length = -1) {
     return v8::String::NewSymbol(data, length);
   }
 
+#ifndef NAN_NEW_NAN_NEW
   template<typename T>
   NAN_INLINE v8::Local<T> NanNew() {
     return T::New();
@@ -1133,9 +1146,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   NAN_INLINE v8::Local<v8::Boolean> NanNew<v8::Boolean>(bool value) {
     return v8::Local<v8::Boolean>::New(v8::Boolean::New(value));
   }
-
-  typedef v8::Script NanUnboundScript;
-  typedef v8::Script NanBoundScript;
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(
@@ -1326,6 +1336,8 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       v8::String::ExternalAsciiStringResource *resource) {
     return v8::String::NewExternal(resource);
   }
+
+#endif
 
 # define NanScope() v8::HandleScope scope
 # define NanEscapableScope() v8::HandleScope scope
@@ -2412,5 +2424,39 @@ NAN_INLINE void NanSetInstanceTemplate(
 ) {
   NanSetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
+
+//=== Tap Reverse Binding =====================================================
+
+struct NanTap {
+  NanTap(v8::Handle<v8::Value> t) : t_() {
+    NanAssignPersistent(t_, t->ToObject());
+  };
+  ~NanTap() { NanDisposePersistent(t_); } // not sure if neccessary
+
+  inline void plan(int i) {
+    v8::Handle<v8::Value> arg = NanNew(i);
+    NanMakeCallback(NanNew(t_), "plan", 1, &arg);
+  }
+
+  inline void ok(bool isOk, const char * msg = NULL) {
+    v8::Handle<v8::Value> args[2];
+    args[0] = NanNew(isOk);
+    if (msg) args[1] = NanNew(msg);
+    NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
+  }
+
+private:
+  
+  v8::Persistent<v8::Object> t_;
+};
+
+#define NAN_STRINGIZE2(x) #x
+#define NAN_STRINGIZE(x) NAN_STRINGIZE2(x)
+#define NAN_TEST_EXPRESSION(expression) \
+  ( expression ), __FILE__ ":" NAN_STRINGIZE(__LINE__) ": " #expression
+
+#define return_NanValue(v) NanReturnValue(v)
+#define return_NanUndefined() NanReturnUndefined()
+#define NAN_EXPORT(target, function) NanExport(target, #function, function)
 
 #endif  // NAN_H_

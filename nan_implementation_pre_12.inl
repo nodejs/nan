@@ -85,6 +85,13 @@ IntegerFactory<T>::New(uint32_t value) {
   return To<T>(T::NewFromUnsigned(value));
 }
 
+//=== Object ===================================================================
+
+Factory<v8::Object>::return_t
+Factory<v8::Object>::New() {
+  return v8::Object::New();
+}
+
 //=== Script ===================================================================
 
 Factory<v8::Script>::return_t
@@ -162,13 +169,13 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
 
 template <typename T>
 v8::Local<T>
-NanNew2(v8::Handle<T> h) {
+NanNew(v8::Handle<T> h) {
   return v8::Local<T>::New(h);
 }
 
 template <typename T>
 v8::Local<T>
-NanNew2(v8::Persistent<T> const& p) {
+NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(p);
 }
 

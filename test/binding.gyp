@@ -139,8 +139,8 @@
         ]
     }
     , {
-        "target_name" : "nan_sketch"
-      , "sources"     : [ "cpp/nan_sketch.cpp" ]
+        "target_name" : "test_nan_new"
+      , "sources"     : [ "cpp/test_nan_new.cpp" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
         ]

@@ -86,6 +86,13 @@ IntegerFactory<T>::New(uint32_t value) {
   return To<T>(T::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
 }
 
+//=== Object ===================================================================
+
+Factory<v8::Object>::return_t
+Factory<v8::Object>::New() {
+  return v8::Object::New(v8::Isolate::GetCurrent());
+}
+
 //=== Script ===================================================================
 
 Factory<v8::Script>::return_t
@@ -170,13 +177,13 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
 
 template <typename T>
 v8::Local<T>
-NanNew2(v8::Handle<T> h) {
+NanNew(v8::Handle<T> h) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), h);
 }
 
 template <typename T>
 v8::Local<T>
-NanNew2(v8::Persistent<T> const& p) {
+NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 

@@ -1,5 +1,5 @@
-#ifndef NAN_NAN_NEW_INCLUDED
-#define NAN_NAN_NEW_INCLUDED
+#ifndef NAN_NAN_NEW_INCLUDED_
+#define NAN_NAN_NEW_INCLUDED_
 
 namespace NanIntern { // scnr
 
@@ -84,6 +84,11 @@ template <>
 struct Factory<v8::Uint32> : public IntegerFactory<v8::Uint32> {};
 
 template <>
+struct Factory<v8::Object> : public FactoryBase<v8::Object> {
+  static inline return_t New();
+};
+
+template <>
 struct Factory<v8::Script> : public FactoryBase<v8::Script> {
   static inline return_t New( v8::Local<v8::String> source);
   static inline return_t New( v8::Local<v8::String> source
@@ -141,73 +146,73 @@ struct Factory<v8::UnboundScript> : public FactoryBase<v8::UnboundScript> {
 
 template <typename T>
 typename NanIntern::Factory<T>::return_t
-NanNew2() {
+NanNew() {
   return NanIntern::Factory<T>::New();
 }
 
 template <typename T, typename A0>
 typename NanIntern::Factory<T>::return_t
-NanNew2(A0 arg0) {
+NanNew(A0 arg0) {
   return NanIntern::Factory<T>::New(arg0);
 }
 
 template <typename T, typename A0, typename A1>
 typename NanIntern::Factory<T>::return_t
-NanNew2(A0 arg0, A1 arg1) {
+NanNew(A0 arg0, A1 arg1) {
   return NanIntern::Factory<T>::New(arg0, arg1);
 }
 
 template <typename T, typename A0, typename A1, typename A2>
 typename NanIntern::Factory<T>::return_t
-NanNew2(A0 arg0, A1 arg1, A2 arg2) {
+NanNew(A0 arg0, A1 arg1, A2 arg2) {
   return NanIntern::Factory<T>::New(arg0, arg1, arg2);
 }
 
 template <typename T, typename A0, typename A1, typename A2, typename A3>
 typename NanIntern::Factory<T>::return_t
-NanNew2(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
+NanNew(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
   return NanIntern::Factory<T>::New(arg0, arg1, arg2, arg3);
 }
 
 // Convenience
 
-template <typename T> inline v8::Local<T> NanNew2(v8::Handle<T> h);
-template <typename T> inline v8::Local<T> NanNew2(v8::Persistent<T> const& p);
+template <typename T> inline v8::Local<T> NanNew(v8::Handle<T> h);
+template <typename T> inline v8::Local<T> NanNew(v8::Persistent<T> const& p);
 
 inline
 NanIntern::Factory<v8::Boolean>::return_t
-NanNew2(bool value) {
-  return NanNew2<v8::Boolean>(value);
+NanNew(bool value) {
+  return NanNew<v8::Boolean>(value);
 }
 
 inline
 NanIntern::Factory<v8::Int32>::return_t
-NanNew2(int32_t value) {
-  return NanNew2<v8::Int32>(value);
+NanNew(int32_t value) {
+  return NanNew<v8::Int32>(value);
 }
 
 inline
 NanIntern::Factory<v8::Uint32>::return_t
-NanNew2(uint32_t value) {
-  return NanNew2<v8::Uint32>(value);
+NanNew(uint32_t value) {
+  return NanNew<v8::Uint32>(value);
 }
 
 inline
 NanIntern::Factory<v8::Number>::return_t
-NanNew2(double value) {
-  return NanNew2<v8::Number>(value);
+NanNew(double value) {
+  return NanNew<v8::Number>(value);
 }
 
 inline
 NanIntern::Factory<v8::String>::return_t
-NanNew2(std::string const& value) {
-  return NanNew2<v8::String>(value);
+NanNew(std::string const& value) {
+  return NanNew<v8::String>(value);
 }
 
 inline
 NanIntern::Factory<v8::String>::return_t
-NanNew2(const char * value) {
-  return NanNew2<v8::String>(value);
+NanNew(const char * value) {
+  return NanNew<v8::String>(value);
 }
 
 void
@@ -217,40 +222,6 @@ NanExport(v8::Handle<v8::Object> target, const char * name,
   target->Set(NanNew<v8::String>(name), 
       NanNew<v8::FunctionTemplate>(f)->GetFunction());
 }
-
-//=== Tap Reverse Binding =====================================================
-
-struct NanTap {
-  NanTap(v8::Handle<v8::Value> t) : t_() {
-    NanAssignPersistent(t_, t->ToObject());
-  };
-  ~NanTap() { NanDisposePersistent(t_); } // not sure if neccessary
-
-  inline void plan(int i) {
-    v8::Handle<v8::Value> arg = NanNew2(i);
-    NanMakeCallback(NanNew(t_), "plan", 1, &arg);
-  }
-
-  inline void ok(bool isOk, const char * msg = NULL) {
-    v8::Handle<v8::Value> args[2];
-    args[0] = NanNew2(isOk);
-    if (msg) args[1] = NanNew2(msg);
-    NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
-  }
-
-private:
-  
-  v8::Persistent<v8::Object> t_;
-};
-
-#define NAN_STRINGIZE2(x) #x
-#define NAN_STRINGIZE(x) NAN_STRINGIZE2(x)
-#define NAN_TEST_EXPRESSION(expression) \
-  ( expression ), __FILE__ ":" NAN_STRINGIZE(__LINE__) ": " #expression
-
-#define return_NanValue(v) NanReturnValue(v)
-#define return_NanUndefined() NanReturnUndefined()
-#define NAN_EXPORT(target, function) NanExport(target, #function, function)
 
 
 #endif // NAN_NAN_NEW_INCLUDED
