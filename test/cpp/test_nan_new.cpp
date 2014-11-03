@@ -7,9 +7,8 @@
 #include <time.h>
 
 
-#define NAN_NEW_NAN_NEW
+//#define NAN_NEW_NAN_NEW
 #include <nan.h>
-//#include "nan_new.hpp"
 
 namespace {
 

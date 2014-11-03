@@ -7,14 +7,17 @@ namespace NanIntern { // scnr
 template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
 
 template <>
+inline
 v8::Local<v8::Integer>
 To<v8::Integer>(v8::Handle<v8::Integer> i) { return i->ToInteger(); }
 
 template <> 
+inline
 v8::Local<v8::Int32> 
 To<v8::Int32>(v8::Handle<v8::Integer> i)   { return i->ToInt32(); }
 
 template <>
+inline
 v8::Local<v8::Uint32>
 To<v8::Uint32>(v8::Handle<v8::Integer> i)  { return i->ToUint32(); }
 
@@ -81,11 +84,19 @@ template <>
 struct Factory<v8::Int32> : public IntegerFactory<v8::Int32> {};
 
 template <>
-struct Factory<v8::Uint32> : public IntegerFactory<v8::Uint32> {};
+struct Factory<v8::Uint32> : public FactoryBase<v8::Uint32> {
+  static inline return_t New(int32_t value);
+  static inline return_t New(uint32_t value);
+};
 
 template <>
 struct Factory<v8::Object> : public FactoryBase<v8::Object> {
   static inline return_t New();
+};
+
+template <>
+struct Factory<v8::RegExp> : public FactoryBase<v8::RegExp> {
+  static inline return_t New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);
 };
 
 template <>
@@ -105,13 +116,15 @@ struct Factory<v8::Signature> : public FactoryBase<v8::Signature> {
 
 template <>
 struct Factory<v8::String> : public FactoryBase<v8::String> {
-  static inline return_t New(const char *value);
-  static inline return_t New(const char *value, int length);
+  static inline return_t New(const char *value, int length = -1);
+  static inline return_t New(const uint16_t *value, int length = -1);
   static inline return_t New(std::string const& value);
 
+  static inline return_t New(v8::String::ExternalStringResource * value);
+  static inline return_t New(v8::String::ExternalAsciiStringResource * value);
+
   // TODO: Deprecate.
-  static inline return_t New(const uint8_t * value);
-  static inline return_t New(const uint8_t * value, int length);
+  static inline return_t New(const uint8_t * value, int length = -1);
 };
 
 template <>
@@ -215,6 +228,37 @@ NanNew(const char * value) {
   return NanNew<v8::String>(value);
 }
 
+inline
+NanIntern::Factory<v8::String>::return_t
+NanNew(const uint8_t * value) {
+  return NanNew<v8::String>(value);
+}
+
+inline
+NanIntern::Factory<v8::String>::return_t
+NanNew(const uint16_t * value) {
+  return NanNew<v8::String>(value);
+}
+
+inline
+NanIntern::Factory<v8::String>::return_t
+NanNew(v8::String::ExternalStringResource * value) {
+  return NanNew<v8::String>(value);
+}
+
+inline
+NanIntern::Factory<v8::String>::return_t
+NanNew(v8::String::ExternalAsciiStringResource * value) {
+  return NanNew<v8::String>(value);
+}
+
+inline
+NanIntern::Factory<v8::RegExp>::return_t
+NanNew(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+  return NanNew<v8::RegExp>(pattern, flags);
+}
+
+inline
 void
 NanExport(v8::Handle<v8::Object> target, const char * name,
     NanFunctionCallback f)

@@ -86,11 +86,28 @@ IntegerFactory<T>::New(uint32_t value) {
   return To<T>(T::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
 }
 
+Factory<v8::Uint32>::return_t
+Factory<v8::Uint32>::New(int32_t value) {
+  return To<v8::Uint32>(v8::Uint32::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
+}
+
+Factory<v8::Uint32>::return_t
+Factory<v8::Uint32>::New(uint32_t value) {
+  return To<v8::Uint32>(v8::Uint32::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
+}
+
 //=== Object ===================================================================
 
 Factory<v8::Object>::return_t
 Factory<v8::Object>::New() {
   return v8::Object::New(v8::Isolate::GetCurrent());
+}
+
+//=== RegExp ===================================================================
+
+Factory<v8::RegExp>::return_t
+Factory<v8::RegExp>::New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+  return v8::RegExp::New(pattern, flags);
 }
 
 //=== Script ===================================================================
@@ -122,11 +139,6 @@ Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
 //=== String ===================================================================
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(const char * value) {
-  return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value);
-}
-
-Factory<v8::String>::return_t
 Factory<v8::String>::New(const char * value, int length) {
   return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value,
       v8::String::kNormalString, length);
@@ -139,14 +151,25 @@ Factory<v8::String>::New(std::string const& value) {
 }
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(const uint8_t * value) {
-  return v8::String::NewFromOneByte(v8::Isolate::GetCurrent(), value);
-}
-
-Factory<v8::String>::return_t
 Factory<v8::String>::New(const uint8_t * value, int length) {
   return v8::String::NewFromOneByte(v8::Isolate::GetCurrent(), value,
         v8::String::kNormalString, length);
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint16_t * value, int length) {
+  return v8::String::NewFromTwoByte(v8::Isolate::GetCurrent(), value,
+        v8::String::kNormalString, length);
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
+  return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(v8::String::ExternalAsciiStringResource * value) {
+  return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
 }
 
 //=== String Object ============================================================

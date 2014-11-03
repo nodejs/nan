@@ -85,11 +85,29 @@ IntegerFactory<T>::New(uint32_t value) {
   return To<T>(T::NewFromUnsigned(value));
 }
 
+Factory<v8::Uint32>::return_t
+Factory<v8::Uint32>::New(int32_t value) {
+  return To<v8::Uint32>(v8::Uint32::NewFromUnsigned(value));
+}
+
+Factory<v8::Uint32>::return_t
+Factory<v8::Uint32>::New(uint32_t value) {
+  return To<v8::Uint32>(v8::Uint32::NewFromUnsigned(value));
+}
+
+
 //=== Object ===================================================================
 
 Factory<v8::Object>::return_t
 Factory<v8::Object>::New() {
   return v8::Object::New();
+}
+
+//=== RegExp ===================================================================
+
+Factory<v8::RegExp>::return_t
+Factory<v8::RegExp>::New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+  return v8::RegExp::New(pattern, flags);
 }
 
 //=== Script ===================================================================
@@ -118,11 +136,6 @@ Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
 //=== String ===================================================================
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(const char * value) {
-  return v8::String::New(value);
-}
-
-Factory<v8::String>::return_t
 Factory<v8::String>::New(const char * value, int length) {
   return v8::String::New(value, length);
 }
@@ -132,7 +145,9 @@ Factory<v8::String>::New(std::string const& value) {
   return v8::String::New( &*value.begin(), value.size());
 }
 
-void widenString(std::vector<uint16_t> & ws, const uint8_t * s, int l = -1) {
+inline
+void
+widenString(std::vector<uint16_t> & ws, const uint8_t * s, int l = -1) {
   if (l < 0) {
     size_t foundLength = strlen(reinterpret_cast<const char*>(s));
     assert(foundLength <= INT_MAX && "string to long");
@@ -143,10 +158,8 @@ void widenString(std::vector<uint16_t> & ws, const uint8_t * s, int l = -1) {
 }
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(const uint8_t * value) {
-  std::vector<uint16_t> wideString;
-  widenString(wideString, value);
-  return v8::String::New(&*wideString.begin(), wideString.size());
+Factory<v8::String>::New(const uint16_t * value, int length) {
+  return v8::String::New(value, length);
 }
 
 Factory<v8::String>::return_t
@@ -154,6 +167,16 @@ Factory<v8::String>::New(const uint8_t * value, int length) {
   std::vector<uint16_t> wideString;
   widenString(wideString, value, length);
   return v8::String::New(&*wideString.begin(), wideString.size());
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
+  return v8::String::NewExternal(value);
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(v8::String::ExternalAsciiStringResource * value) {
+  return v8::String::NewExternal(value);
 }
 
 //=== String Object ============================================================

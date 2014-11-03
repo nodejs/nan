@@ -62,7 +62,7 @@ typedef v8::UnboundScript      NanUnboundScript;
 typedef v8::Script             NanBoundScript;
 #endif
 
-//#define NAN_NEW_NAN_NEW
+#define NAN_NEW_NAN_NEW
 
 #ifdef NAN_NEW_NAN_NEW
 # include <nan_new.h>
