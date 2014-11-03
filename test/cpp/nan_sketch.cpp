@@ -182,10 +182,15 @@ NAN_METHOD(testScript) {
   NanScope();
   NanTap t(args[0]);
 
-  t.plan(4);
+  t.plan(6);
+
+  ScriptOrigin origin(NanNew2("foo"), NanNew2(5));
 
   t.ok(_( assertType<Script>( NanNew2<Script>(NanNew2("2 + 3")))));
+  t.ok(_( assertType<Script>( NanNew2<Script>(NanNew2("2 + 3"), origin))));
   t.ok(_( assertType<NanUnboundScript>( NanNew2<NanUnboundScript>(NanNew2("2 + 3")))));
+  t.ok(_( assertType<NanUnboundScript>(
+          NanNew2<NanUnboundScript>(NanNew2("2 + 3"), origin))));
 
   // for the fans of the bound script
   t.ok(_( NanRunScript( NanNew2<NanBoundScript>(NanNew2("2 + 3")))->Int32Value() == 5));
@@ -200,16 +205,13 @@ NAN_METHOD(testSignature) {
 
   t.plan(3);
 
-  typedef v8::Handle<v8::FunctionTemplate> FTH;
-  t.ok(_( assertType<Signature>( NanNew2<Signature>())));
-  t.ok(_( assertType<Signature>(
-          NanNew2<Signature>(NanNew2<FunctionTemplate>(testSignature)))));
+  typedef FunctionTemplate FT;
+  typedef Signature Sig;
+  t.ok(_( assertType<Sig>(NanNew2<Sig>())));
+  t.ok(_( assertType<Sig>(NanNew2<Sig>(NanNew2<FT>(testSignature)))));
 
-  Local<FunctionTemplate> arg = NanNew2<FunctionTemplate>(testSignature);
-  t.ok(_( assertType<Signature>(
-          NanNew2<Signature>( NanNew2<FunctionTemplate>(testSignature)
-                            , 1
-                            , &arg))));
+  Local<FT> arg = NanNew2<FT>(testSignature);
+  t.ok(_( assertType<Sig>( NanNew2<Sig>(NanNew2<FT>(testSignature), 1 ,&arg))));
 
   return_NanUndefined();
 }
@@ -218,12 +220,17 @@ NAN_METHOD(testString) {
   NanScope();
   NanTap t(args[0]);
 
-  t.plan(8);
+  t.plan(10);
 
   t.ok(_( stringMatches( NanNew2<String>("Hello World"), "Hello World")));
   t.ok(_( stringMatches( NanNew2<String>("Hello World", 4), "Hell")));
   t.ok(_( stringMatches( NanNew2<String>(std::string("foo")), "foo")));
   t.ok(_( assertType<String>( NanNew2<String>("plonk."))));
+
+  // These should be deprecated
+  uint8_t * ustring = (uint8_t*)"unsigned chars";
+  t.ok(_( stringMatches( NanNew2<String>(ustring), "unsigned chars")));
+  t.ok(_( stringMatches( NanNew2<String>(ustring, 8), "unsigned")));
 
   //=== Convenience
 

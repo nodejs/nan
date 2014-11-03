@@ -1,4 +1,6 @@
 
+#include <vector>
+
 //==============================================================================
 // node v0.10 implementation
 //==============================================================================
@@ -86,8 +88,14 @@ IntegerFactory<T>::New(uint32_t value) {
 //=== Script ===================================================================
 
 Factory<v8::Script>::return_t
-Factory<v8::Script>::New(v8::Local<v8::String> source) {
+Factory<v8::Script>::New( v8::Local<v8::String> source) {
   return v8::Script::Compile(source);
+}
+Factory<v8::Script>::return_t
+Factory<v8::Script>::New( v8::Local<v8::String> source
+                        , v8::ScriptOrigin const& origin)
+{
+  return v8::Script::Compile(source, const_cast<v8::ScriptOrigin*>(&origin));
 }
 
 //=== Signature ================================================================
@@ -115,6 +123,30 @@ Factory<v8::String>::New(const char * value, int length) {
 Factory<v8::String>::return_t
 Factory<v8::String>::New(std::string const& value) {
   return v8::String::New( &*value.begin(), value.size());
+}
+
+void widenString(std::vector<uint16_t> & ws, const uint8_t * s, int l = -1) {
+  if (l < 0) {
+    size_t foundLength = strlen(reinterpret_cast<const char*>(s));
+    assert(foundLength <= INT_MAX && "string to long");
+    l = foundLength;
+  }
+  ws.resize(l);
+  std::copy(s, s + l, ws.begin());
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint8_t * value) {
+  std::vector<uint16_t> wideString;
+  widenString(wideString, value);
+  return v8::String::New(&*wideString.begin(), wideString.size());
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint8_t * value, int length) {
+  std::vector<uint16_t> wideString;
+  widenString(wideString, value, length);
+  return v8::String::New(&*wideString.begin(), wideString.size());
 }
 
 //=== String Object ============================================================

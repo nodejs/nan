@@ -89,15 +89,17 @@ IntegerFactory<T>::New(uint32_t value) {
 //=== Script ===================================================================
 
 Factory<v8::Script>::return_t
-Factory<v8::Script>::New(v8::Local<v8::String> source) {
+Factory<v8::Script>::New( v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
   return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
 
-Factory<v8::UnboundScript>::return_t
-Factory<v8::UnboundScript>::New(v8::Local<v8::String> source) {
-  v8::ScriptCompiler::Source src(source);
-  return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
+Factory<v8::Script>::return_t
+Factory<v8::Script>::New( v8::Local<v8::String> source
+                        , v8::ScriptOrigin const& origin)
+{
+  v8::ScriptCompiler::Source src(source, origin);
+  return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
 
 //=== Signature ================================================================
@@ -129,11 +131,37 @@ Factory<v8::String>::New(std::string const& value) {
       &*value.begin(), v8::String::kNormalString, value.size());
 }
 
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint8_t * value) {
+  return v8::String::NewFromOneByte(v8::Isolate::GetCurrent(), value);
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint8_t * value, int length) {
+  return v8::String::NewFromOneByte(v8::Isolate::GetCurrent(), value,
+        v8::String::kNormalString, length);
+}
+
 //=== String Object ============================================================
 
 Factory<v8::StringObject>::return_t
 Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
   return v8::StringObject::New(value).As<v8::StringObject>();
+}
+
+//=== Unbound Script ===========================================================
+
+Factory<v8::UnboundScript>::return_t
+Factory<v8::UnboundScript>::New(v8::Local<v8::String> source) {
+  v8::ScriptCompiler::Source src(source);
+  return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
+}
+
+Factory<v8::UnboundScript>::return_t
+Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
+                               , v8::ScriptOrigin const& origin) {
+  v8::ScriptCompiler::Source src(source, origin);
+  return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
 }
 
 } // end of namespace NanIntern

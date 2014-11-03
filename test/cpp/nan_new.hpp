@@ -85,7 +85,9 @@ struct Factory<v8::Uint32> : public IntegerFactory<v8::Uint32> {};
 
 template <>
 struct Factory<v8::Script> : public FactoryBase<v8::Script> {
-  static inline return_t New(v8::Local<v8::String> source);
+  static inline return_t New( v8::Local<v8::String> source);
+  static inline return_t New( v8::Local<v8::String> source
+                            , v8::ScriptOrigin const& origin);
 };
 
 template <>
@@ -101,6 +103,10 @@ struct Factory<v8::String> : public FactoryBase<v8::String> {
   static inline return_t New(const char *value);
   static inline return_t New(const char *value, int length);
   static inline return_t New(std::string const& value);
+
+  // TODO: Deprecate.
+  static inline return_t New(const uint8_t * value);
+  static inline return_t New(const uint8_t * value, int length);
 };
 
 template <>
@@ -120,7 +126,9 @@ namespace NanIntern {
 
 template <>
 struct Factory<v8::UnboundScript> : public FactoryBase<v8::UnboundScript> {
-  static inline return_t New(v8::Local<v8::String> source);
+  static inline return_t New( v8::Local<v8::String> source);
+  static inline return_t New( v8::Local<v8::String> source
+                            , v8::ScriptOrigin const& origin);
 };
 
 } // end of namespace NanIntern
