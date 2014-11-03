@@ -258,14 +258,4 @@ NanNew(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
   return NanNew<v8::RegExp>(pattern, flags);
 }
 
-inline
-void
-NanExport(v8::Handle<v8::Object> target, const char * name,
-    NanFunctionCallback f)
-{
-  target->Set(NanNew<v8::String>(name), 
-      NanNew<v8::FunctionTemplate>(f)->GetFunction());
-}
-
-
 #endif // NAN_NAN_NEW_INCLUDED

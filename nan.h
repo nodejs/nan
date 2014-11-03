@@ -2425,6 +2425,17 @@ NAN_INLINE void NanSetInstanceTemplate(
   NanSetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
 
+//=== Export ==================================================================
+
+inline
+void
+NanExport(v8::Handle<v8::Object> target, const char * name,
+    NanFunctionCallback f)
+{
+  target->Set(NanNew<v8::String>(name), 
+      NanNew<v8::FunctionTemplate>(f)->GetFunction());
+}
+
 //=== Tap Reverse Binding =====================================================
 
 struct NanTap {
