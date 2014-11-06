@@ -15,6 +15,9 @@ LINT_SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
+	nan_implementation_12.inl \
+	nan_implementation_pre_12.inl \
+	nan_new.h \
 	test/cpp/asyncworker.cpp \
         test/cpp/asyncprogressworker.cpp \
         test/cpp/asyncworkererror.cpp \
@@ -34,6 +37,7 @@ LINT_SOURCES = \
 	test/cpp/settergetter.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
+	test/cpp/test_nan_new.cpp \
         test/cpp/weak.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
