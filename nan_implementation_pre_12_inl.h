@@ -1,4 +1,16 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
+#ifndef NAN_IMPLEMENTATION_PRE_12_INL_H_
+#define NAN_IMPLEMENTATION_PRE_12_INL_H_
+
+#include <algorithm>
+#include <string>
 #include <vector>
 
 //==============================================================================
@@ -52,8 +64,7 @@ Factory<v8::External>::New(void * value) {
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Value> data
-                                  , v8::Handle<v8::Signature> signature)
-{
+                                  , v8::Handle<v8::Signature> signature) {
   return v8::FunctionTemplate::New(callback, data, signature);
 }
 
@@ -106,7 +117,9 @@ Factory<v8::Object>::New() {
 //=== RegExp ===================================================================
 
 Factory<v8::RegExp>::return_t
-Factory<v8::RegExp>::New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+Factory<v8::RegExp>::New(
+    v8::Handle<v8::String> pattern
+  , v8::RegExp::Flags flags) {
   return v8::RegExp::New(pattern, flags);
 }
 
@@ -118,8 +131,7 @@ Factory<v8::Script>::New( v8::Local<v8::String> source) {
 }
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
-                        , v8::ScriptOrigin const& origin)
-{
+                        , v8::ScriptOrigin const& origin) {
   return v8::Script::New(source, const_cast<v8::ScriptOrigin*>(&origin));
 }
 
@@ -128,8 +140,7 @@ Factory<v8::Script>::New( v8::Local<v8::String> source
 Factory<v8::Signature>::return_t
 Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
                            , int argc
-                           , Factory<v8::Signature>::FTH argv[])
-{
+                           , Factory<v8::Signature>::FTH argv[]) {
   return v8::Signature::New(receiver, argc, argv);
 }
 
@@ -147,14 +158,14 @@ Factory<v8::String>::New(std::string const& value) {
 
 inline
 void
-widenString(std::vector<uint16_t> & ws, const uint8_t * s, int l = -1) {
+widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l = -1) {
   if (l < 0) {
     size_t foundLength = strlen(reinterpret_cast<const char*>(s));
     assert(foundLength <= INT_MAX && "string to long");
     l = foundLength;
   }
-  ws.resize(l);
-  std::copy(s, s + l, ws.begin());
+  ws->resize(l);
+  std::copy(s, s + l, ws->begin());
 }
 
 Factory<v8::String>::return_t
@@ -165,7 +176,7 @@ Factory<v8::String>::New(const uint16_t * value, int length) {
 Factory<v8::String>::return_t
 Factory<v8::String>::New(const uint8_t * value, int length) {
   std::vector<uint16_t> wideString;
-  widenString(wideString, value, length);
+  widenString(&wideString, value, length);
   return v8::String::New(&*wideString.begin(), wideString.size());
 }
 
@@ -186,7 +197,7 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
   return v8::StringObject::New(value).As<v8::StringObject>();
 }
 
-} // end of namespace NanIntern
+}  // end of namespace NanIntern
 
 //=== Presistents and Handles ==================================================
 
@@ -202,3 +213,4 @@ NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(p);
 }
 
+#endif  // NAN_IMPLEMENTATION_PRE_12_INL_H_

@@ -1,18 +1,24 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
+
 // toys used in testing
 // included first, so windows actually defines M_PI
 #ifdef _WIN32
 # define _USE_MATH_DEFINES
 #endif
-#include <cmath>
 #include <time.h>
-
-
-#define NAN_NEW_NAN_NEW
 #include <nan.h>
+#include <cmath>
+#include <string>
+
+using namespace v8;  // NOLINT(build/namespaces)
 
 namespace {
-
-using namespace v8;
 
 template <typename T, typename U>
 struct is_same {
@@ -69,9 +75,9 @@ NAN_METHOD(testBoolean) {
 }
 
 #if (NODE_MODULE_VERSION < 12)
-# define V(x) x->BooleanValue() 
+# define V(x) x->BooleanValue()
 #else
-# define V(x) x->ValueOf() 
+# define V(x) x->ValueOf()
 #endif
 NAN_METHOD(testBooleanObject) {
   NanScope();
@@ -93,7 +99,7 @@ NAN_METHOD(testDate) {
 
   t.plan(1);
 
-  t.ok(_( assertType<Date>( NanNew<Date>(double(time(NULL))))));
+  t.ok(_( assertType<Date>( NanNew<Date>(static_cast<double>(time(NULL))))));
 
   return_NanUndefined();
 }
@@ -120,10 +126,10 @@ NAN_METHOD(testFunctionTemplate) {
 
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>(testFunctionTemplate))));
-  v8::Local<String> data = NanNew("plonk"); 
+  v8::Local<String> data = NanNew("plonk");
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>( testFunctionTemplate, data))));
-  v8::Local<Signature> signature = NanNew<Signature>(); 
+  v8::Local<Signature> signature = NanNew<Signature>();
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>( testFunctionTemplate, data, signature))));
 
@@ -153,7 +159,7 @@ NAN_METHOD(testNumber) {
   t.ok(_( fabs(NanNew<Number>(-M_PI)->Value() + M_PI) < epsilon));
   t.ok(_( assertType<Number>( NanNew<Number>(M_E) )));
 
-  //=== Convenience
+  // === Convenience
 
   t.ok(_( NanNew(5)->Value() == 5 ));
   t.ok(_( assertType<Int32>( NanNew(23) )));
@@ -189,13 +195,16 @@ NAN_METHOD(testScript) {
 
   t.ok(_( assertType<Script>( NanNew<Script>(NanNew("2 + 3")))));
   t.ok(_( assertType<Script>( NanNew<Script>(NanNew("2 + 3"), origin))));
-  t.ok(_( assertType<NanUnboundScript>( NanNew<NanUnboundScript>(NanNew("2 + 3")))));
+  t.ok(_( assertType<NanUnboundScript>(
+      NanNew<NanUnboundScript>(NanNew("2 + 3")))));
   t.ok(_( assertType<NanUnboundScript>(
           NanNew<NanUnboundScript>(NanNew("2 + 3"), origin))));
 
   // for the fans of the bound script
-  t.ok(_( NanRunScript( NanNew<NanBoundScript>(NanNew("2 + 3")))->Int32Value() == 5));
-  t.ok(_( NanRunScript( NanNew<NanUnboundScript>(NanNew("2 + 3")))->Int32Value() == 5));
+  t.ok(_( NanRunScript(
+      NanNew<NanBoundScript>(NanNew("2 + 3")))->Int32Value() == 5));
+  t.ok(_( NanRunScript(
+      NanNew<NanUnboundScript>(NanNew("2 + 3")))->Int32Value() == 5));
 
   return_NanUndefined();
 }
@@ -212,7 +221,8 @@ NAN_METHOD(testSignature) {
   t.ok(_( assertType<Sig>(NanNew<Sig>(NanNew<FT>(testSignature)))));
 
   Local<FT> arg = NanNew<FT>(testSignature);
-  t.ok(_( assertType<Sig>( NanNew<Sig>(NanNew<FT>(testSignature), 1 ,&arg))));
+  t.ok(_( assertType<Sig>(
+      NanNew<Sig>(NanNew<FT>(testSignature), 1 , &arg))));
 
   return_NanUndefined();
 }
@@ -229,11 +239,11 @@ NAN_METHOD(testString) {
   t.ok(_( assertType<String>( NanNew<String>("plonk."))));
 
   // These should be deprecated
-  uint8_t * ustring = (uint8_t*)"unsigned chars";
+  const uint8_t *ustring = reinterpret_cast<const uint8_t *>("unsigned chars");
   t.ok(_( stringMatches( NanNew<String>(ustring), "unsigned chars")));
   t.ok(_( stringMatches( NanNew<String>(ustring, 8), "unsigned")));
 
-  //=== Convenience
+  // === Convenience
 
   t.ok(_( stringMatches( NanNew("using namespace nan; // is poetry"),
           "using namespace nan; // is poetry")));
@@ -246,9 +256,9 @@ NAN_METHOD(testString) {
 }
 
 #if (NODE_MODULE_VERSION < 12)
-# define V(x) x->StringValue() 
+# define V(x) x->StringValue()
 #else
-# define V(x) x->ValueOf() 
+# define V(x) x->ValueOf()
 #endif
 NAN_METHOD(testStringObject) {
   NanScope();
@@ -381,7 +391,6 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, newExternal);
 }
 
-} // end of anonymous namespace
+}  // end of anonymous namespace
 
-NODE_MODULE(test_nan_new, Init)
-
+NODE_MODULE(nannew, Init)

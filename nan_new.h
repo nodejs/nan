@@ -1,9 +1,19 @@
-#ifndef NAN_NAN_NEW_INCLUDED_
-#define NAN_NAN_NEW_INCLUDED_
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
-namespace NanIntern { // scnr
+#ifndef NAN_NEW_H_
+#define NAN_NEW_H_
 
-// TODO: Generalize
+#include <string>
+
+namespace NanIntern {  // scnr
+
+// TODO(agnat): Generalize
 template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
 
 template <>
@@ -11,9 +21,9 @@ inline
 v8::Local<v8::Integer>
 To<v8::Integer>(v8::Handle<v8::Integer> i) { return i->ToInteger(); }
 
-template <> 
+template <>
 inline
-v8::Local<v8::Int32> 
+v8::Local<v8::Int32>
 To<v8::Int32>(v8::Handle<v8::Integer> i)   { return i->ToInt32(); }
 
 template <>
@@ -26,33 +36,33 @@ template <typename T> struct FactoryBase { typedef v8::Local<T> return_t; };
 template <typename T> struct Factory;
 
 template <>
-struct Factory<v8::Array> : public FactoryBase<v8::Array> {
+struct Factory<v8::Array> : FactoryBase<v8::Array> {
   static inline return_t New();
   static inline return_t New(int length);
 };
 
 template <>
-struct Factory<v8::Boolean> : public FactoryBase<v8::Boolean> {
+struct Factory<v8::Boolean> : FactoryBase<v8::Boolean> {
   static inline return_t New(bool value);
 };
 
 template <>
-struct Factory<v8::BooleanObject> : public FactoryBase<v8::BooleanObject> {
+struct Factory<v8::BooleanObject> : FactoryBase<v8::BooleanObject> {
   static inline return_t New(bool value);
 };
 
 template <>
-struct Factory<v8::Date> : public FactoryBase<v8::Date> {
+struct Factory<v8::Date> : FactoryBase<v8::Date> {
   static inline return_t New(double value);
 };
 
 template <>
-struct Factory<v8::External> : public FactoryBase<v8::External> {
+struct Factory<v8::External> : FactoryBase<v8::External> {
   static inline return_t New(void *value);
 };
 
 template <>
-struct Factory<v8::FunctionTemplate> : public FactoryBase<v8::FunctionTemplate> {
+struct Factory<v8::FunctionTemplate> : FactoryBase<v8::FunctionTemplate> {
   static inline
   return_t
   New( NanFunctionCallback callback = NULL
@@ -61,53 +71,54 @@ struct Factory<v8::FunctionTemplate> : public FactoryBase<v8::FunctionTemplate> 
 };
 
 template <>
-struct Factory<v8::Number> : public FactoryBase<v8::Number> {
+struct Factory<v8::Number> : FactoryBase<v8::Number> {
   static inline return_t New(double value);
 };
 
 template <>
-struct Factory<v8::NumberObject> : public FactoryBase<v8::NumberObject> {
+struct Factory<v8::NumberObject> : FactoryBase<v8::NumberObject> {
   static inline return_t New(double value);
 };
 
 template <typename T>
-struct IntegerFactory : public FactoryBase<T> {
+struct IntegerFactory : FactoryBase<T> {
   typedef typename FactoryBase<T>::return_t return_t;
   static inline return_t New(int32_t value);
   static inline return_t New(uint32_t value);
 };
 
 template <>
-struct Factory<v8::Integer> : public IntegerFactory<v8::Integer> {};
+struct Factory<v8::Integer> : IntegerFactory<v8::Integer> {};
 
 template <>
-struct Factory<v8::Int32> : public IntegerFactory<v8::Int32> {};
+struct Factory<v8::Int32> : IntegerFactory<v8::Int32> {};
 
 template <>
-struct Factory<v8::Uint32> : public FactoryBase<v8::Uint32> {
+struct Factory<v8::Uint32> : FactoryBase<v8::Uint32> {
   static inline return_t New(int32_t value);
   static inline return_t New(uint32_t value);
 };
 
 template <>
-struct Factory<v8::Object> : public FactoryBase<v8::Object> {
+struct Factory<v8::Object> : FactoryBase<v8::Object> {
   static inline return_t New();
 };
 
 template <>
-struct Factory<v8::RegExp> : public FactoryBase<v8::RegExp> {
-  static inline return_t New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);
+struct Factory<v8::RegExp> : FactoryBase<v8::RegExp> {
+  static inline return_t New(
+      v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);
 };
 
 template <>
-struct Factory<v8::Script> : public FactoryBase<v8::Script> {
+struct Factory<v8::Script> : FactoryBase<v8::Script> {
   static inline return_t New( v8::Local<v8::String> source);
   static inline return_t New( v8::Local<v8::String> source
                             , v8::ScriptOrigin const& origin);
 };
 
 template <>
-struct Factory<v8::Signature> : public FactoryBase<v8::Signature> {
+struct Factory<v8::Signature> : FactoryBase<v8::Signature> {
   typedef v8::Handle<v8::FunctionTemplate> FTH;
   static inline
   return_t
@@ -115,7 +126,7 @@ struct Factory<v8::Signature> : public FactoryBase<v8::Signature> {
 };
 
 template <>
-struct Factory<v8::String> : public FactoryBase<v8::String> {
+struct Factory<v8::String> : FactoryBase<v8::String> {
   static inline return_t New(const char *value, int length = -1);
   static inline return_t New(const uint16_t *value, int length = -1);
   static inline return_t New(std::string const& value);
@@ -123,35 +134,35 @@ struct Factory<v8::String> : public FactoryBase<v8::String> {
   static inline return_t New(v8::String::ExternalStringResource * value);
   static inline return_t New(v8::String::ExternalAsciiStringResource * value);
 
-  // TODO: Deprecate.
+  // TODO(agnat): Deprecate.
   static inline return_t New(const uint8_t * value, int length = -1);
 };
 
 template <>
-struct Factory<v8::StringObject> : public FactoryBase<v8::StringObject> {
+struct Factory<v8::StringObject> : FactoryBase<v8::StringObject> {
   static inline return_t New(v8::Handle<v8::String> value);
 };
 
-} // end of namespace NanIntern
+}  // end of namespace NanIntern
 
-#if (NODE_MODULE_VERSION < 12)
-
-# include "nan_implementation_pre_12.inl"
-
-#else // NODE_MODULE_VERSION >= 12
+#if (NODE_MODULE_VERSION >= 12)
 
 namespace NanIntern {
 
 template <>
-struct Factory<v8::UnboundScript> : public FactoryBase<v8::UnboundScript> {
+struct Factory<v8::UnboundScript> : FactoryBase<v8::UnboundScript> {
   static inline return_t New( v8::Local<v8::String> source);
   static inline return_t New( v8::Local<v8::String> source
                             , v8::ScriptOrigin const& origin);
 };
 
-} // end of namespace NanIntern
+}  // end of namespace NanIntern
 
-# include "nan_implementation_12.inl"
+# include "nan_implementation_12_inl.h"
+
+#else  // NODE_MODULE_VERSION >= 12
+
+# include "nan_implementation_pre_12_inl.h"
 
 #endif
 
@@ -258,4 +269,4 @@ NanNew(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
   return NanNew<v8::RegExp>(pattern, flags);
 }
 
-#endif // NAN_NAN_NEW_INCLUDED
+#endif  // NAN_NEW_H_

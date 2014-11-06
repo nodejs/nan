@@ -1,8 +1,18 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
+#ifndef NAN_IMPLEMENTATION_12_INL_H_
+#define NAN_IMPLEMENTATION_12_INL_H_
 //==============================================================================
 // node v0.11 implementation
 //==============================================================================
 
+#include <string>
 
 namespace NanIntern {
 
@@ -51,9 +61,8 @@ Factory<v8::External>::New(void * value) {
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Value> data
-                                  , v8::Handle<v8::Signature> signature)
-{
-  return v8::FunctionTemplate::New(v8::Isolate::GetCurrent(), callback, data, 
+                                  , v8::Handle<v8::Signature> signature) {
+  return v8::FunctionTemplate::New(v8::Isolate::GetCurrent(), callback, data,
       signature);
 }
 
@@ -88,12 +97,14 @@ IntegerFactory<T>::New(uint32_t value) {
 
 Factory<v8::Uint32>::return_t
 Factory<v8::Uint32>::New(int32_t value) {
-  return To<v8::Uint32>(v8::Uint32::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
+  return To<v8::Uint32>(
+      v8::Uint32::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
 }
 
 Factory<v8::Uint32>::return_t
 Factory<v8::Uint32>::New(uint32_t value) {
-  return To<v8::Uint32>(v8::Uint32::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
+  return To<v8::Uint32>(
+      v8::Uint32::NewFromUnsigned(v8::Isolate::GetCurrent(), value));
 }
 
 //=== Object ===================================================================
@@ -106,7 +117,9 @@ Factory<v8::Object>::New() {
 //=== RegExp ===================================================================
 
 Factory<v8::RegExp>::return_t
-Factory<v8::RegExp>::New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+Factory<v8::RegExp>::New(
+    v8::Handle<v8::String> pattern
+  , v8::RegExp::Flags flags) {
   return v8::RegExp::New(pattern, flags);
 }
 
@@ -120,8 +133,7 @@ Factory<v8::Script>::New( v8::Local<v8::String> source) {
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
-                        , v8::ScriptOrigin const& origin)
-{
+                        , v8::ScriptOrigin const& origin) {
   v8::ScriptCompiler::Source src(source, origin);
   return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
@@ -131,8 +143,7 @@ Factory<v8::Script>::New( v8::Local<v8::String> source
 Factory<v8::Signature>::return_t
 Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
                            , int argc
-                           , Factory<v8::Signature>::FTH argv[])
-{
+                           , Factory<v8::Signature>::FTH argv[]) {
   return v8::Signature::New(v8::Isolate::GetCurrent(), receiver, argc, argv);
 }
 
@@ -194,7 +205,7 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
   return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
 }
 
-} // end of namespace NanIntern
+}  // end of namespace NanIntern
 
 //=== Presistents and Handles ==================================================
 
@@ -210,4 +221,4 @@ NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 
-
+#endif  // NAN_IMPLEMENTATION_12_INL_H_
