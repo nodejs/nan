@@ -114,13 +114,13 @@ Factory<v8::RegExp>::New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
-  return v8::Script::Compile(source);
+  return v8::Script::New(source);
 }
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin)
 {
-  return v8::Script::Compile(source, const_cast<v8::ScriptOrigin*>(&origin));
+  return v8::Script::New(source, const_cast<v8::ScriptOrigin*>(&origin));
 }
 
 //=== Signature ================================================================
