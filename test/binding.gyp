@@ -139,8 +139,8 @@
         ]
     }
     , {
-        "target_name" : "test_nan_new"
-      , "sources"     : [ "cpp/test_nan_new.cpp" ]
+        "target_name" : "nannew"
+      , "sources"     : [ "cpp/nannew.cpp" ]
       , "include_dirs": [
             "<!(node -e \"require('..')\")"
         ]

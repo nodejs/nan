@@ -27,6 +27,7 @@ LINT_SOURCES = \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
 	test/cpp/multifile2.h \
+	test/cpp/nannew.cpp \
         test/cpp/news.cpp \
 	test/cpp/optionvalues.cpp \
 	test/cpp/persistent.cpp \
@@ -37,7 +38,6 @@ LINT_SOURCES = \
 	test/cpp/settergetter.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
-	test/cpp/test_nan_new.cpp \
         test/cpp/weak.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
