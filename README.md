@@ -24,6 +24,12 @@ This project also contains some helper utilities that make addon development a b
 <a name="news"></a>
 ## News & Updates
 
+### Nov-2014: 1.5.0 release
+
+*
+*
+*
+
 ### Aug-2014: 1.3.0 release
 
 * `NanCString()` and `NanRawString()` have been deprecated in favour of new <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>, <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a> and <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>. These classes manage the underlying memory for you in a safer way than just handing off an allocated array. You should now `*NanAsciiString(handle)` to access the raw `char` data, you can also allocate on the heap if you need to keep a reference.
@@ -464,13 +470,7 @@ NAN_INLINE int foo(int bar) {
 <a name="api_nan_new"></a>
 ### Local&lt;T&gt; NanNew&lt;T&gt;( ... )
 
-Use `NanNew` to construct almost all v8 objects and make new local handles.
-
-Note: Using NanNew with an std::string is possible, however, you should ensure
-to use the overload version (`NanNew(stdString)`) rather than the template
-version (`NanNew<v8::String>(stdString)`) as there is an unnecessary
-performance penalty to using the template version because of the inability for
-compilers to appropriately deduce to reference types on template specialization. 
+Use `NanNew` to construct almost all v8 objects (bound `Script`s are constructed with <a href="#api_nan_compile_script">`NanCompileScript(Handle)`</a>) and make new local handles.
 
 ```c++
 Local<String> s = NanNew<String>("value");
