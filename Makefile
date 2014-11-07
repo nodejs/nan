@@ -46,5 +46,9 @@ lint:
 test: $(ADDONS)
 	npm test
 
+forcetest:
+	cd test/ && node-gyp rebuild && cd ..
+	npm test
+
 $(ADDONS): nan.h test/binding.gyp $(SOURCES)
 	cd test/ && node-gyp rebuild

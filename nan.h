@@ -31,25 +31,23 @@
 #endif
 #include <string>
 
-#define notset(x) (!defined(x) || !x)
-
-#if defined(__GNUC__) && notset(DEBUG)
+#if defined(__GNUC__) && !(defined(DEBUG) && DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
-#elif defined(_MSC_VER) && notset(DEBUG)
+#elif defined(_MSC_VER) && !(defined(DEBUG) && DEBUG)
 # define NAN_INLINE __forceinline
 #else
 # define NAN_INLINE inline
 #endif
 
-#if defined(__GNUC__) && notset(V8_DISABLE_DEPRECATIONS)
+#if defined(__GNUC__) && \
+    !(defined(V8_DISABLE_DEPRECATIONS) && V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER) && notset(V8_DISABLE_DEPRECATIONS)
+#elif defined(_MSC_VER) && \
+    !(defined(V8_DISABLE_DEPRECATIONS) && V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __declspec(deprecated)
 #else
 # define NAN_DEPRECATED
 #endif
-
-#undef notset
 
 // some generic helpers
 
@@ -108,6 +106,19 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
     && optionsObj->Get(opt)->IsNumber()
       ? optionsObj->Get(opt)->Uint32Value()
       : def;
+}
+
+template<typename T>
+v8::Local<T> NanNew(v8::Handle<T>);
+
+template<typename T>
+NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Handle<T> val) {
+  return NanNew(val);
+}
+
+template<typename T>
+NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
+  return val;
 }
 
 #if (NODE_MODULE_VERSION > 0x000B)
@@ -498,17 +509,7 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 # define NanEscapableScope()                                                   \
   v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
 
-  template<typename T>
-  NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Handle<T> val) {
-    return NanNew(val);
-  }
-
-  template<typename T>
-  NAN_INLINE v8::Local<T> _NanEscapeScopeHelper(v8::Local<T> val) {
-    return val;
-  }
-
-# define NanEscapeScope(val) scope.Escape(_NanEscapeScopeHelper(val))
+# define NanEscapeScope(val) scope.Escape(_NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value) return args.GetReturnValue().Set(value)
@@ -1077,12 +1078,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg) {
-    return T::New(arg);
+    return _NanEnsureLocal(T::New(arg));
   }
 
   template<typename T, typename P>
   NAN_INLINE v8::Local<T> NanNew(P arg, int length) {
-    return T::New(arg, length);
+    return _NanEnsureLocal(T::New(arg, length));
   }
 
   template<typename T>
@@ -1127,11 +1128,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<>
   NAN_INLINE v8::Local<v8::Date> NanNew<v8::Date>(int time) {
     return v8::Date::New(time).As<v8::Date>();
-  }
-
-  template<>
-  NAN_INLINE v8::Local<v8::Boolean> NanNew<v8::Boolean>(bool value) {
-    return v8::Local<v8::Boolean>::New(v8::Boolean::New(value));
   }
 
   typedef v8::Script NanUnboundScript;
