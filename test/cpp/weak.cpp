@@ -8,7 +8,8 @@
 
 #include <nan.h>
 
-NAN_WEAK_CALLBACK(weakCallback) {
+void weakCallback(
+NanWeakCallbackData<v8::Function, int> & data) {  // NOLINT(runtime/references)
   int *parameter = data.GetParameter();
   NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
   if ((*parameter)++ == 0) {
@@ -19,10 +20,11 @@ NAN_WEAK_CALLBACK(weakCallback) {
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
+  NanEscapableScope();
   v8::Local<v8::String> lstring = NanNew<v8::String>("result");
   int *parameter = new int(0);
-  NanMakeWeakPersistent(func, parameter, &weakCallback);
-  return lstring;
+  NanMakeWeakPersistent(func, parameter, weakCallback);
+  return NanEscapeScope(lstring);
 }
 
 NAN_METHOD(Hustle) {
