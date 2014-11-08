@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 1.4.0: current Node unstable: 0.11.14, Node stable: 0.10.33**
+**Version 1.4.1: current Node unstable: 0.11.14, Node stable: 0.10.33**
+
+### 1.4.1 Nov 8 2014
+ - Bugfix: Handle DEBUG definition correctly
+ - Bugfix: Accept int as Boolean
 
 ### 1.4.0 Nov 1 2014
 
