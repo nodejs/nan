@@ -11,9 +11,9 @@
 #ifdef _WIN32
 # define _USE_MATH_DEFINES
 #endif
-#include <time.h>
 #include <nan.h>
 #include <cmath>
+#include <ctime>
 #include <string>
 
 using namespace v8;  // NOLINT(build/namespaces)

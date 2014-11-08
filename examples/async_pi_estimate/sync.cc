@@ -6,7 +6,6 @@
  * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
-#include <node.h>
 #include <nan.h>
 #include "./pi_est.h"
 #include "./sync.h"

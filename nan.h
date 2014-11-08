@@ -25,8 +25,8 @@
 #include <node_buffer.h>
 #include <node_version.h>
 #include <node_object_wrap.h>
-#include <string.h>
-#include <limits.h>
+#include <cstring>
+#include <climits>
 #if defined(_MSC_VER)
 # pragma warning( disable : 4530 )
 #endif

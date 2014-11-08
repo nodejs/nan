@@ -9,7 +9,6 @@
 #ifndef TEST_CPP_MULTIFILE2_H_
 #define TEST_CPP_MULTIFILE2_H_
 
-#include <node.h>
 #include <nan.h>
 
 NAN_METHOD(ReturnString);

@@ -7,7 +7,7 @@
  ********************************************************************/
 
 #include <nan.h>
-#include <string.h>  // memset()
+#include <cstring>  // memset()
 
 static v8::Persistent<v8::String> persistentTest1;
 
