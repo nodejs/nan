@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+//==============================================================================
+
 NAN_WEAK_CALLBACK(weakCallback) {
   int *parameter = data.GetParameter();
   NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
