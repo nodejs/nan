@@ -2247,7 +2247,7 @@ NAN_INLINE void NanSetInstanceTemplate(
 
 #if (NODE_MODULE_VERSION > 0x000B)
 # define NAN_WEAK_CALLBACK_DATA_TYPE_ \
-    v8::WeakCallbackData<T, NanWeakCallbackData<T,P> > const&
+    v8::WeakCallbackData<T, NanWeakCallbackData<T, P> > const&
 # define NAN_WEAK_CALLBACK_SIG_ \
     NAN_WEAK_CALLBACK_DATA_TYPE_
 #else
@@ -2258,42 +2258,44 @@ NAN_INLINE void NanSetInstanceTemplate(
 
 template <typename T, typename P>
 class NanWeakCallbackData {
- public: // constructors
-    typedef void (*Callback)(NanWeakCallbackData & data);
-    NanWeakCallbackData(v8::Handle<T> handle, P* param, Callback cb)
-      : parameter(param), callback(cb) {
-       NanAssignPersistent(persistent, handle);
-       Revive();
+ public:  // constructors
+  typedef void (*Callback)(
+      NanWeakCallbackData & data  // NOLINT(runtime/references)
+      );
+  NanWeakCallbackData(v8::Handle<T> handle, P* param, Callback cb)
+    : parameter(param), callback(cb) {
+    NanAssignPersistent(persistent, handle);
+    Revive();
+  }
+  inline ~NanWeakCallbackData();
+
+ public:  // member functions
+  v8::Local<T> GetValue() const { return NanNew(persistent); }
+  P* GetParameter() const { return parameter; }
+  bool IsNearDeath() const { return persistent.IsNearDeath(); }
+  inline void Revive();
+
+  NAN_DEPRECATED void Dispose() const {}
+
+ private:  // static member functions
+  static
+  void
+  invoke(NAN_WEAK_CALLBACK_SIG_ data) {
+    NanWeakCallbackData * wcbd = unwrap(data);
+    wcbd->callback(*wcbd);
+    if (wcbd->IsNearDeath()) {
+      delete wcbd;
     }
-    inline ~NanWeakCallbackData();
-    
- public: // member functions
-    v8::Local<T> GetValue() const { return NanNew(persistent); }
-    P* GetParameter() const { return parameter; }
-    bool IsNearDeath() const { return persistent.IsNearDeath(); }
-    inline void Revive();
+  }
 
-    NAN_DEPRECATED void Dispose() const {}
+  static inline
+  NanWeakCallbackData *
+  unwrap(NAN_WEAK_CALLBACK_DATA_TYPE_ data);
 
- private: // static member functions
-    static
-    void
-    invoke(NAN_WEAK_CALLBACK_SIG_ data) {
-      NanWeakCallbackData * wcbd = unwrap(data);
-      wcbd->callback(*wcbd);
-      if (wcbd->IsNearDeath()) {
-        delete wcbd;
-      }
-    }
-
-    static inline
-    NanWeakCallbackData *
-    unwrap(NAN_WEAK_CALLBACK_DATA_TYPE_ data);
-
- private: // data members
-    P* const parameter;
-    Callback const callback;
-    v8::Persistent<T> persistent;
+ private:  // data members
+  P* const parameter;
+  Callback const callback;
+  v8::Persistent<T> persistent;
 };
 
 #undef NAN_WEAK_CALLBACK_DATA_TYPE_
@@ -2302,35 +2304,35 @@ class NanWeakCallbackData {
 #if (NODE_MODULE_VERSION > 0x000B)
 
 template <typename T, typename P>
-NanWeakCallbackData<T,P>::~NanWeakCallbackData() { persistent.Reset(); }
+NanWeakCallbackData<T, P>::~NanWeakCallbackData() { persistent.Reset(); }
 
 template <typename T, typename P>
 void
-NanWeakCallbackData<T,P>::Revive() { persistent.SetWeak(this, &invoke); }
+NanWeakCallbackData<T, P>::Revive() { persistent.SetWeak(this, &invoke); }
 
 template <typename T, typename P>
-NanWeakCallbackData<T,P> *
-NanWeakCallbackData<T,P>::unwrap(
+NanWeakCallbackData<T, P> *
+NanWeakCallbackData<T, P>::unwrap(
     v8::WeakCallbackData<T, NanWeakCallbackData> const& data) {
-    return data.GetParameter();
+  return data.GetParameter();
 }
 
 #else
 
 template <typename T, typename P>
-NanWeakCallbackData<T,P>::~NanWeakCallbackData() {
-    persistent.Dispose();
-    persistent.Clear();
+NanWeakCallbackData<T, P>::~NanWeakCallbackData() {
+  persistent.Dispose();
+  persistent.Clear();
 }
 
 template <typename T, typename P>
 void
-NanWeakCallbackData<T,P>::Revive() { persistent.MakeWeak(this, &invoke); }
+NanWeakCallbackData<T, P>::Revive() { persistent.MakeWeak(this, &invoke); }
 
 template <typename T, typename P>
-NanWeakCallbackData<T,P> *
-NanWeakCallbackData<T,P>::unwrap(void * data) {
-    return static_cast<NanWeakCallbackData*>(data);
+NanWeakCallbackData<T, P> *
+NanWeakCallbackData<T, P>::unwrap(void * data) {
+  return static_cast<NanWeakCallbackData*>(data);
 }
 #endif
 
@@ -2341,11 +2343,11 @@ NanMakeWeakPersistent(
     v8::Handle<T> handle
   , P* parameter
   , typename NanWeakCallbackData<T, P>::Callback callback) {
-    return new NanWeakCallbackData<T, P>(handle, parameter, callback);
+  return new NanWeakCallbackData<T, P>(handle, parameter, callback);
 }
 
-# define NAN_WEAK_CALLBACK(name)                                               \
-    template<typename T, typename P>                                           \
-    static void name(const NanWeakCallbackData<T, P> &data)
+# define NAN_WEAK_CALLBACK(name)                                             \
+  template<typename T, typename P>                                           \
+  static void name(const NanWeakCallbackData<T, P> &data)
 
 #endif  // NAN_H_

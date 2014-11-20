@@ -10,7 +10,8 @@
 
 //==============================================================================
 
-void weakCallback(NanWeakCallbackData<v8::Function, int> & data) {
+void weakCallback(
+NanWeakCallbackData<v8::Function, int> & data) {  // NOLINT(runtime/references)
   int *parameter = data.GetParameter();
   NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
   if ((*parameter)++ == 0) {
