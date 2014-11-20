@@ -2248,8 +2248,7 @@ NAN_INLINE void NanSetInstanceTemplate(
 #if (NODE_MODULE_VERSION > 0x000B)
 # define NAN_WEAK_CALLBACK_DATA_TYPE_ \
     v8::WeakCallbackData<T, NanWeakCallbackData<T, P> > const&
-# define NAN_WEAK_CALLBACK_SIG_ \
-    NAN_WEAK_CALLBACK_DATA_TYPE_
+# define NAN_WEAK_CALLBACK_SIG_ NAN_WEAK_CALLBACK_DATA_TYPE_
 #else
 # define NAN_WEAK_CALLBACK_DATA_TYPE_ void *
 # define NAN_WEAK_CALLBACK_SIG_ \
