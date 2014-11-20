@@ -153,7 +153,7 @@ Factory<v8::String>::New(const char * value, int length) {
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(std::string const& value) {
-  return v8::String::New( &*value.begin(), value.size());
+  return v8::String::New( value.data(), value.size());
 }
 
 inline
@@ -177,7 +177,11 @@ Factory<v8::String>::return_t
 Factory<v8::String>::New(const uint8_t * value, int length) {
   std::vector<uint16_t> wideString;
   widenString(&wideString, value, length);
-  return v8::String::New(&*wideString.begin(), wideString.size());
+  if (wideString.size() == 0) {
+    return v8::String::Empty();
+  } else {
+    return v8::String::New(&wideString.front(), wideString.size());
+  }
 }
 
 Factory<v8::String>::return_t

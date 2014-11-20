@@ -158,7 +158,7 @@ Factory<v8::String>::New(const char * value, int length) {
 Factory<v8::String>::return_t
 Factory<v8::String>::New(std::string const& value) {
   return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(),
-      &*value.begin(), v8::String::kNormalString, value.size());
+      value.data(), v8::String::kNormalString, value.size());
 }
 
 Factory<v8::String>::return_t
