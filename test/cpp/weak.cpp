@@ -10,7 +10,7 @@
 
 //==============================================================================
 
-NAN_WEAK_CALLBACK(weakCallback) {
+void weakCallback(_NanWeakCallbackData<v8::Function, int> const& data) {
   int *parameter = data.GetParameter();
   NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
   if ((*parameter)++ == 0) {
