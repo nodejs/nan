@@ -52,7 +52,11 @@ class ExtString : public v8::String::ExternalStringResource {
 };
 
 
+#if NODE_VERSION_AT_LEAST(1, 0, 0)
+class ExtAsciiString : public v8::String::ExternalOneByteStringResource {
+#else
 class ExtAsciiString : public v8::String::ExternalAsciiStringResource {
+#endif
  public:
   ~ExtAsciiString() { }
   const char *data() const { return s; }
