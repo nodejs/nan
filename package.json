@@ -1,6 +1,6 @@
 {
   "name": "nan",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Native Abstractions for Node.js: C++ header for Node 0.8->0.12 compatibility",
   "main": "include_dirs.js",
   "repository": {
@@ -17,7 +17,8 @@
     "Trevor Norris <trev.norris@gmail.com> (https://github.com/trevnorris)",
     "Nathan Rajlich <nathan@tootallnate.net> (https://github.com/TooTallNate)",
     "Brett Lawson <brett19@gmail.com> (https://github.com/brett19)",
-    "Ben Noordhuis <info@bnoordhuis.nl> (https://github.com/bnoordhuis)"
+    "Ben Noordhuis <info@bnoordhuis.nl> (https://github.com/bnoordhuis)",
+    "David Siegel <david@artcom.de> (https://github.com/agnat)"
   ],
   "devDependencies": {
     "bindings": "~1.2.1",
