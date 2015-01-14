@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 1.4.1***
+***Current version: 1.5.0***
 
 *(See [CHANGELOG.md](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -23,6 +23,12 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Jan-2015: 1.5.0 release
+
+* Support [io.js](https://github.com/iojs/io.js) thanks to [Ben Noordhuis](bnoordhuis)
+* Rewritten NanNew internals thanks to [David Siegel](agnat)
+* NanAsyncWorker now supports progress reporting thanks to [Brett Lawson](brett19)
 
 ### Aug-2014: 1.3.0 release
 
@@ -464,13 +470,7 @@ NAN_INLINE int foo(int bar) {
 <a name="api_nan_new"></a>
 ### Local&lt;T&gt; NanNew&lt;T&gt;( ... )
 
-Use `NanNew` to construct almost all v8 objects and make new local handles.
-
-Note: Using NanNew with an std::string is possible, however, you should ensure
-to use the overload version (`NanNew(stdString)`) rather than the template
-version (`NanNew<v8::String>(stdString)`) as there is an unnecessary
-performance penalty to using the template version because of the inability for
-compilers to appropriately deduce to reference types on template specialization. 
+Use `NanNew` to construct almost all v8 objects (bound `Script`s are constructed with <a href="#api_nan_compile_script">`NanCompileScript(Handle)`</a>) and make new local handles.
 
 ```c++
 Local<String> s = NanNew<String>("value");
@@ -1198,6 +1198,7 @@ NAN is only possible due to the excellent work of the following contributors:
 <tr><th align="left">Nathan Rajlich</th><td><a href="https://github.com/TooTallNate">GitHub/TooTallNate</a></td><td><a href="http://twitter.com/TooTallNate">Twitter/@TooTallNate</a></td></tr>
 <tr><th align="left">Brett Lawson</th><td><a href="https://github.com/brett19">GitHub/brett19</a></td><td><a href="http://twitter.com/brett19x">Twitter/@brett19x</a></td></tr>
 <tr><th align="left">Ben Noordhuis</th><td><a href="https://github.com/bnoordhuis">GitHub/bnoordhuis</a></td><td><a href="http://twitter.com/bnoordhuis">Twitter/@bnoordhuis</a></td></tr>
+<tr><th align="left">David Siegel</th><td><a href="https://github.com/agnat">GitHub/agnat</a></td><td>-</td></tr>
 </tbody></table>
 
 Licence &amp; copyright

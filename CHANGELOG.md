@@ -1,6 +1,12 @@
 # NAN ChangeLog
 
-**Version 1.4.1: current Node unstable: 0.11.14, Node stable: 0.10.33**
+**Version 1.5.0: current Node unstable: 0.11.14, Node stable: 0.10.35, io.js: 1.0.1**
+
+### 1.5.0 Jan 14 2015
+
+ - Feature: Support io.js b003843
+ - Correctness: Improved NanNew internals 9cd4f6a
+ - Feature: Implement progress to NanAsyncWorker 8d6a160
 
 ### 1.4.1 Nov 8 2014
  - Bugfix: Handle DEBUG definition correctly

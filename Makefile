@@ -15,7 +15,11 @@ LINT_SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
+	nan_implementation_12_inl.h \
+	nan_implementation_pre_12_inl.h \
+	nan_new.h \
 	test/cpp/asyncworker.cpp \
+        test/cpp/asyncprogressworker.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
         test/cpp/gc.cpp \
@@ -23,6 +27,7 @@ LINT_SOURCES = \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
 	test/cpp/multifile2.h \
+	test/cpp/nannew.cpp \
         test/cpp/news.cpp \
 	test/cpp/optionvalues.cpp \
 	test/cpp/persistent.cpp \
@@ -50,5 +55,5 @@ forcetest:
 	cd test/ && node-gyp rebuild && cd ..
 	npm test
 
-$(ADDONS): nan.h test/binding.gyp $(SOURCES)
+$(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h test/binding.gyp $(SOURCES)
 	cd test/ && node-gyp rebuild

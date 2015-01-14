@@ -52,7 +52,11 @@ class ExtString : public v8::String::ExternalStringResource {
 };
 
 
+#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
+class ExtAsciiString : public v8::String::ExternalOneByteStringResource {
+#else
 class ExtAsciiString : public v8::String::ExternalAsciiStringResource {
+#endif
  public:
   ~ExtAsciiString() { }
   const char *data() const { return s; }

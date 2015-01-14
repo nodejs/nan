@@ -138,4 +138,18 @@
             "<!(node -e \"require('..')\")"
         ]
     }
+    , {
+        "target_name" : "nannew"
+      , "sources"     : [ "cpp/nannew.cpp" ]
+      , "include_dirs": [
+            "<!(node -e \"require('..')\")"
+        ]
+    }
+	, {
+	   "target_name" : "asyncprogressworker"
+	  , "sources"     : [ "cpp/asyncprogressworker.cpp" ]
+	  , "include_dirs": [
+	        "<!(node -e \"require('..')\")"
+	  ]
+	}
 ]}
