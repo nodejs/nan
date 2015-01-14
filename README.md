@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 1.4.0***
+***Current version: 1.5.0***
 
 *(See [CHANGELOG.md](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -24,11 +24,11 @@ This project also contains some helper utilities that make addon development a b
 <a name="news"></a>
 ## News & Updates
 
-### Nov-2014: 1.5.0 release
+### Jan-2015: 1.5.0 release
 
-*
-*
-*
+* Support [io.js](https://github.com/iojs/io.js) thanks to [Ben Noordhuis](bnoordhuis)
+* Rewritten NanNew internals thanks to [David Siegel](agnat)
+* NanAsyncWorker now supports progress reporting thanks to [Brett Lawson](brett19)
 
 ### Aug-2014: 1.3.0 release
 
