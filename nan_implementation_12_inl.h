@@ -214,14 +214,12 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
 //=== Presistents and Handles ==================================================
 
 template <typename T>
-v8::Local<T>
-NanNew(v8::Handle<T> h) {
+inline v8::Local<T> NanNew(v8::Handle<T> h) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), h);
 }
 
 template <typename T>
-v8::Local<T>
-NanNew(v8::Persistent<T> const& p) {
+inline v8::Local<T> NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 
