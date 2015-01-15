@@ -2,8 +2,12 @@
 ## see https://github.com/rvagg/dnt
 
 NODE_VERSIONS="\
-  master   \
+  v0.11.14 \
   v0.11.13 \
+  v0.10.34 \
+  v0.10.33 \
+  v0.10.32 \
+  v0.10.31 \
   v0.10.30 \
   v0.10.29 \
   v0.10.28 \
@@ -19,6 +23,9 @@ NODE_VERSIONS="\
   v0.8.27  \
   v0.8.26  \
   v0.8.24  \
+"
+IOJS_VERSIONS="\
+  v1.0.1-release
 "
 OUTPUT_PREFIX="nan-"
 TEST_CMD="                                                                        \
