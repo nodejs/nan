@@ -500,8 +500,13 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
 
+#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
+  NAN_INLINE v8::Local<v8::String> NanNew(
+      v8::String::ExternalOneByteStringResource *resource) {
+#else
   NAN_INLINE v8::Local<v8::String> NanNew(
       v8::String::ExternalAsciiStringResource *resource) {
+#endif
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
 
@@ -2181,14 +2186,25 @@ static bool _NanGetExternalParts(
   assert(val->IsString());
   v8::Local<v8::String> str = NanNew(val.As<v8::String>());
 
+#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
+  if (str->IsExternalOneByte()) {
+    const v8::String::ExternalOneByteStringResource* ext;
+    ext = str->GetExternalOneByteStringResource();
+    *data = ext->data();
+    *len = ext->length();
+    return true;
+  }
+#else
   if (str->IsExternalAscii()) {
     const v8::String::ExternalAsciiStringResource* ext;
     ext = str->GetExternalAsciiStringResource();
     *data = ext->data();
     *len = ext->length();
     return true;
+  }
+#endif
 
-  } else if (str->IsExternal()) {
+  if (str->IsExternal()) {
     const v8::String::ExternalStringResource* ext;
     ext = str->GetExternalStringResource();
     *data = reinterpret_cast<const char*>(ext->data());
