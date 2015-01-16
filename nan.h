@@ -155,6 +155,62 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
   return val;
 }
 
+#if NODE_MODULE_VERSION >= 42 // io.js 1.0
+  NAN_INLINE
+  void NanSetCounterFunction(v8::CounterLookupCallback cb) {
+    v8::Isolate::GetCurrent()->SetCounterFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetCreateHistogramFunction(v8::CreateHistogramCallback cb) {
+    v8::Isolate::GetCurrent()->SetCreateHistogramFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetAddHistogramSampleFunction(v8::AddHistogramSampleCallback cb) {
+    v8::Isolate::GetCurrent()->SetAddHistogramSampleFunction(cb);
+  }
+
+  NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
+    return v8::Isolate::GetCurrent()->IdleNotification(idle_time_in_ms);
+  }
+
+  NAN_INLINE void NanLowMemoryNotification() {
+    v8::Isolate::GetCurrent()->LowMemoryNotification();
+  }
+
+  NAN_INLINE void NanContextDisposedNotification() {
+    v8::Isolate::GetCurrent()->ContextDisposedNotification();
+  }
+#else
+  NAN_INLINE
+  void NanSetCounterFunction(v8::CounterLookupCallback cb) {
+    v8::V8::SetCounterFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetCreateHistogramFunction(v8::CreateHistogramCallback cb) {
+    v8::V8::SetCreateHistogramFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetAddHistogramSampleFunction(v8::AddHistogramSampleCallback cb) {
+    v8::V8::SetAddHistogramSampleFunction(cb);
+  }
+
+  NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
+    return v8::V8::IdleNotification(idle_time_in_ms);
+  }
+
+  NAN_INLINE void NanLowMemoryNotification() {
+    v8::V8::LowMemoryNotification();
+  }
+
+  NAN_INLINE void NanContextDisposedNotification() {
+    v8::V8::ContextDisposedNotification();
+  }
+#endif
+
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.12 and below won't compile with these)
 

@@ -301,6 +301,12 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_remove_gc_epilogue_callback"><b><code>NanRemoveGCEpilogueCallback</code></b></a>
  * <a href="#api_nan_remove_gc_prologue_callback"><b><code>NanRemoveGCPrologueCallback</code></b></a>
  * <a href="#api_nan_get_heap_statistics"><b><code>NanGetHeapStatistics</code></b></a>
+ * <a href="#api_nan_set_counter_function"><b><code>NanSetCounterFunction</code></b></a>
+ * <a href="#api_nan_set_create_histogram_function"><b><code>NanSetCreateHistogramFunction</code></b></a>
+ * <a href="#api_nan_set_add_histogram_sample_function"><b><code>NanSetAddHistogramSampleFunction</code></b></a>
+ * <a href="#api_nan_idle_notification"><b><code>NanIdleNotification</code></b></a>
+ * <a href="#api_nan_low_memory_notification"><b><code>NanLowMemoryNotification</code></b></a>
+ * <a href="#api_nan_context_disposed_notification"><b><code>NanContextDisposedNotification</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
@@ -1096,6 +1102,36 @@ Simply does `RemoveGCPrologueCallback`
 ### NanGetHeapStatistics(HeapStatistics *heap_statistics)
 
 Simply does `GetHeapStatistics`
+
+<a name="api_nan_set_counter_function"></a>
+### NanSetCounterFunction(CounterLookupCallback cb)
+
+Simply does `SetCounterFunction`
+
+<a name="api_nan_set_create_histogram_function"></a>
+### NanSetCreateHistogramFunction(CreateHistogramCallback cb)
+
+Simply does `SetCreateHistogramFunction`
+
+<a name="api_nan_set_add_histogram_sample_function"></a>
+### NanSetAddHistogramSampleFunction(AddHistogramSampleCallback cb)
+
+Simply does `SetAddHistogramSampleFunction`
+
+<a name="api_nan_idle_notification"></a>
+### NanIdleNotification(int idle_time_in_ms)
+
+Simply does `IdleNotification`
+
+<a name="api_nan_low_memory_notification"></a>
+### NanLowMemoryNotification()
+
+Simply does `LowMemoryNotification`
+
+<a name="api_nan_context_disposed_notification"></a>
+### NanContextDisposedNotification()
+
+Simply does `ContextDisposedNotification`
 
 <a name="api_nan_callback"></a>
 ### NanCallback
