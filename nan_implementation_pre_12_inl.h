@@ -206,14 +206,12 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
 //=== Presistents and Handles ==================================================
 
 template <typename T>
-v8::Local<T>
-NanNew(v8::Handle<T> h) {
+inline v8::Local<T> NanNew(v8::Handle<T> h) {
   return v8::Local<T>::New(h);
 }
 
 template <typename T>
-v8::Local<T>
-NanNew(v8::Persistent<T> const& p) {
+inline v8::Local<T> NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(p);
 }
 
