@@ -231,12 +231,15 @@ NAN_METHOD(testString) {
   NanScope();
   NanTap t(args[0]);
 
-  t.plan(10);
+  t.plan(14);
 
   t.ok(_( stringMatches( NanNew<String>("Hello World"), "Hello World")));
   t.ok(_( stringMatches( NanNew<String>("Hello World", 4), "Hell")));
   t.ok(_( stringMatches( NanNew<String>(std::string("foo")), "foo")));
   t.ok(_( assertType<String>( NanNew<String>("plonk."))));
+
+  t.ok(_( stringMatches( NanNew<String>(), "")));
+  t.ok(_( assertType<String>( NanNew<String>())));
 
   // These should be deprecated
   const uint8_t *ustring = reinterpret_cast<const uint8_t *>("unsigned chars");
@@ -248,6 +251,9 @@ NAN_METHOD(testString) {
   t.ok(_( stringMatches( NanNew("using namespace nan; // is poetry"),
           "using namespace nan; // is poetry")));
   t.ok(_( assertType<String>( NanNew("plonk."))));
+
+  t.ok(_( stringMatches( NanNew("Hello World", 4), "Hell")));
+  t.ok(_( assertType<String>( NanNew("plonk.", 4))));
 
   t.ok(_( stringMatches( NanNew(std::string("bar")), "bar")));
   t.ok(_( assertType<String>( NanNew(std::string("plonk.")))));

@@ -147,6 +147,11 @@ Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
 //=== String ===================================================================
 
 Factory<v8::String>::return_t
+Factory<v8::String>::New() {
+  return v8::String::Empty();
+}
+
+Factory<v8::String>::return_t
 Factory<v8::String>::New(const char * value, int length) {
   return v8::String::New(value, length);
 }
