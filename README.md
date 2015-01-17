@@ -1193,9 +1193,17 @@ protected:
 
 To run the NAN tests do:
 
-``` javascript
+``` sh
+npm install
 npm run-script rebuild-tests
 npm test
+```
+
+Or just:
+
+``` sh
+npm install
+make test
 ```
 
 ### Contributors
