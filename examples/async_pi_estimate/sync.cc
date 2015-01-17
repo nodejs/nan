@@ -7,8 +7,8 @@
  ********************************************************************/
 
 #include <nan.h>
-#include "./pi_est.h"
-#include "./sync.h"
+#include "pi_est.h"  // NOLINT(build/include)
+#include "sync.h"  // NOLINT(build/include)
 
 using v8::Number;
 
