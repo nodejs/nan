@@ -127,6 +127,7 @@ struct Factory<v8::Signature> : FactoryBase<v8::Signature> {
 
 template <>
 struct Factory<v8::String> : FactoryBase<v8::String> {
+  static inline return_t New();
   static inline return_t New(const char *value, int length = -1);
   static inline return_t New(const uint16_t *value, int length = -1);
   static inline return_t New(std::string const& value);
@@ -235,6 +236,12 @@ inline
 NanIntern::Factory<v8::String>::return_t
 NanNew(std::string const& value) {
   return NanNew<v8::String>(value);
+}
+
+inline
+NanIntern::Factory<v8::String>::return_t
+NanNew(const char * value, int length) {
+  return NanNew<v8::String>(value, length);
 }
 
 inline
