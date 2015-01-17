@@ -1204,6 +1204,6 @@ NAN is only possible due to the excellent work of the following contributors:
 Licence &amp; copyright
 -----------------------
 
-Copyright (c) 2014 NAN contributors (listed above).
+Copyright (c) 2015 NAN contributors (listed above).
 
 Native Abstractions for Node.js is licensed under an MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
