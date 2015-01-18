@@ -283,7 +283,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
- * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
+ * <del><a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a></del>
  * <a href="#api_nan_get_current_context"><b><code>NanGetCurrentContext</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_dispose_persistent"><b><code>NanDisposePersistent</code></b></a>
@@ -979,8 +979,11 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_new_context_handle"></a>
-### Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
-Creates a new `Local<Context>` handle.
+### ~~Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
+
+Deprecated. Use `NanNew<Context>` instead.
+
+~~Creates a new `Local<Context>` handle.
 
 ```c++
 Local<FunctionTemplate> ftmpl = NanNew<FunctionTemplate>();

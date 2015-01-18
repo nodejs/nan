@@ -574,7 +574,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return NanNew(function_template)->HasInstance(value);
   }
 
-  NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
       v8::ExtensionConfiguration* extensions = NULL
     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
@@ -1120,7 +1120,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return function_template->HasInstance(value);
   }
 
-  NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
       v8::ExtensionConfiguration* extensions = NULL
     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
