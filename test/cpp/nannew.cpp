@@ -128,8 +128,9 @@ NAN_METHOD(testFunctionTemplate) {
   NanScope();
   NanTap t(args[0]);
 
-  t.plan(3);
+  t.plan(4);
 
+  t.ok(_( assertType<FunctionTemplate>( NanNew<FunctionTemplate>())));
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>(testFunctionTemplate))));
   v8::Local<String> data = NanNew("plonk");
