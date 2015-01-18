@@ -99,6 +99,23 @@ NAN_METHOD(testBooleanObject) {
 }
 #undef V
 
+NAN_METHOD(testContext) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(4);
+  t.ok(_( assertType<Context>( NanNew<Context>())));
+  ExtensionConfiguration extensions(0, NULL);
+  t.ok(_( assertType<Context>( NanNew<Context>(&extensions))));
+  t.ok(_( assertType<Context>(
+          NanNew<Context>(&extensions, Handle<ObjectTemplate>()))));
+  t.ok(_( assertType<Context>(
+          NanNew<Context>(&extensions
+          , Handle<ObjectTemplate>(), Handle<Value>()))));
+
+  return_NanUndefined();
+}
+
 NAN_METHOD(testDate) {
   NanScope();
   NanTap t(args[0]);
@@ -409,6 +426,7 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testArray);
   NAN_EXPORT(exports, testBoolean);
   NAN_EXPORT(exports, testBooleanObject);
+  NAN_EXPORT(exports, testContext);
   NAN_EXPORT(exports, testDate);
   NAN_EXPORT(exports, testExternal);
   NAN_EXPORT(exports, testFunctionTemplate);

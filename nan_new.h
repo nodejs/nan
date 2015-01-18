@@ -58,6 +58,15 @@ struct Factory<v8::BooleanObject> : FactoryBase<v8::BooleanObject> {
 };
 
 template <>
+struct Factory<v8::Context> : FactoryBase<v8::Context> {
+  static inline
+  return_t
+  New( v8::ExtensionConfiguration* extensions = NULL
+     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
+     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>());
+};
+
+template <>
 struct Factory<v8::Date> : FactoryBase<v8::Date> {
   static inline return_t New(double value);
 };

@@ -48,6 +48,15 @@ Factory<v8::BooleanObject>::New(bool value) {
   return v8::BooleanObject::New(value).As<v8::BooleanObject>();
 }
 
+//=== Context ==================================================================
+
+Factory<v8::Context>::return_t
+Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
+                         , v8::Handle<v8::ObjectTemplate> tmpl
+                         , v8::Handle<v8::Value> obj) {
+  return v8::Context::New(v8::Isolate::GetCurrent(), extensions, tmpl, obj);
+}
+
 //=== Date =====================================================================
 
 Factory<v8::Date>::return_t
