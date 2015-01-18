@@ -328,6 +328,31 @@ NAN_METHOD(testRegression212) {
   return_NanUndefined();
 }
 
+/* Compile time regression test for https://github.com/rvagg/nan/issues/242
+ * In the presence of overloaded functions NaN should be able to pick the one
+ * matching NanFunctionCallback. 
+ */
+void overloaded() {}
+NAN_METHOD(overloaded) {
+    overloaded();  // not unused
+    return_NanUndefined();
+}
+
+NAN_METHOD(testRegression242) {
+  NanScope();
+  NanTap t(args[0]);
+
+  // This line needs to *compile*. Not much to test at runtime.
+  Local<FunctionTemplate> ft = NanNew<FunctionTemplate>(overloaded);
+  (void)ft;  // not unused
+
+  t.plan(1);
+
+  t.ok(true, "compile-time regression test #242");
+
+  return_NanUndefined();
+}
+
 
 //==============================================================================
 // JavaScript Tests
@@ -386,6 +411,7 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testPersistents);
 
   NAN_EXPORT(exports, testRegression212);
+  NAN_EXPORT(exports, testRegression242);
 
   NAN_EXPORT(exports, newIntegerWithValue);
   NAN_EXPORT(exports, newNumberWithValue);

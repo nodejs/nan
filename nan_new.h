@@ -203,6 +203,14 @@ NanNew(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
   return NanIntern::Factory<T>::New(arg0, arg1, arg2, arg3);
 }
 
+template <typename T>
+typename NanIntern::Factory<T>::return_t
+NanNew( NanFunctionCallback callback
+      , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+      , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
+    return NanIntern::Factory<T>::New(callback, data, signature);
+}
+
 // Convenience
 
 template <typename T> inline v8::Local<T> NanNew(v8::Handle<T> h);
