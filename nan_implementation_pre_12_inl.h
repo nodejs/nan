@@ -158,19 +158,20 @@ Factory<v8::String>::New(const char * value, int length) {
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(std::string const& value) {
-  return v8::String::New( value.data(), value.size());
+  assert(value.size() <= INT_MAX && "string too long");
+  return v8::String::New( value.data(), static_cast<int>(value.size()));
 }
 
 inline
 void
 widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l = -1) {
+  size_t len = static_cast<size_t>(l);
   if (l < 0) {
-    size_t foundLength = strlen(reinterpret_cast<const char*>(s));
-    assert(foundLength <= INT_MAX && "string to long");
-    l = foundLength;
+    len = strlen(reinterpret_cast<const char*>(s));
   }
-  ws->resize(l);
-  std::copy(s, s + l, ws->begin());
+  assert(len <= INT_MAX && "string too long");
+  ws->resize(len);
+  std::copy(s, s + len, ws->begin());
 }
 
 Factory<v8::String>::return_t
@@ -185,7 +186,8 @@ Factory<v8::String>::New(const uint8_t * value, int length) {
   if (wideString.size() == 0) {
     return v8::String::Empty();
   } else {
-    return v8::String::New(&wideString.front(), wideString.size());
+    return v8::String::New(&wideString.front()
+         , static_cast<int>(wideString.size()));
   }
 }
 
