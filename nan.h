@@ -75,7 +75,7 @@ typedef v8::Script             NanBoundScript;
 #endif
 
 
-#if NAUV_UVVERSION < 0x000b00
+#if NAUV_UVVERSION < 0x000b17
 #define NAUV_WORK_CB(func) \
     void func(uv_async_t *async, int)
 #else
