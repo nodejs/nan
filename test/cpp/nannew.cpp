@@ -323,14 +323,20 @@ NAN_METHOD(testRegression212) {
 
   typedef int  gint;
   typedef gint gboolean;
+#if defined(_MSC_VER)
+# pragma warning( disable : 4800 )
+#endif
   t.ok(_( assertType<Boolean>( NanNew<Boolean>(gboolean(23)))));
+#if defined(_MSC_VER)
+# pragma warning( default : 4800 )
+#endif
 
   return_NanUndefined();
 }
 
 /* Compile time regression test for https://github.com/rvagg/nan/issues/242
  * In the presence of overloaded functions NaN should be able to pick the one
- * matching NanFunctionCallback. 
+ * matching NanFunctionCallback.
  */
 void overloaded() {}
 NAN_METHOD(overloaded) {
