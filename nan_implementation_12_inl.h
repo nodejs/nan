@@ -123,6 +123,13 @@ Factory<v8::Object>::New() {
   return v8::Object::New(v8::Isolate::GetCurrent());
 }
 
+//=== Object Template ==========================================================
+
+Factory<v8::ObjectTemplate>::return_t
+Factory<v8::ObjectTemplate>::New() {
+  return v8::ObjectTemplate::New(v8::Isolate::GetCurrent());
+}
+
 //=== RegExp ===================================================================
 
 Factory<v8::RegExp>::return_t

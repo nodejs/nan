@@ -204,6 +204,28 @@ NAN_METHOD(testNumberObject) {
   return_NanUndefined();
 }
 
+NAN_METHOD(testObject) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  t.ok(_(assertType<Object>( NanNew<Object>())));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testObjectTemplate) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  t.ok(_(assertType<ObjectTemplate>( NanNew<ObjectTemplate>())));
+
+  return_NanUndefined();
+}
+
 NAN_METHOD(testScript) {
   NanScope();
   NanTap t(args[0]);
@@ -426,6 +448,8 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testFunctionTemplate);
   NAN_EXPORT(exports, testNumber);
   NAN_EXPORT(exports, testNumberObject);
+  NAN_EXPORT(exports, testObject);
+  NAN_EXPORT(exports, testObjectTemplate);
   NAN_EXPORT(exports, testScript);
   NAN_EXPORT(exports, testSignature);
   NAN_EXPORT(exports, testString);

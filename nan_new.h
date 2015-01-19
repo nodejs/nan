@@ -105,6 +105,11 @@ struct Factory<v8::Object> : FactoryBase<v8::Object> {
 };
 
 template <>
+struct Factory<v8::ObjectTemplate> : FactoryBase<v8::ObjectTemplate> {
+  static inline return_t New();
+};
+
+template <>
 struct Factory<v8::RegExp> : FactoryBase<v8::RegExp> {
   static inline return_t New(
       v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);

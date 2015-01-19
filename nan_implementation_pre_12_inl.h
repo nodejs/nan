@@ -114,6 +114,13 @@ Factory<v8::Object>::New() {
   return v8::Object::New();
 }
 
+//=== Object Template ==========================================================
+
+Factory<v8::ObjectTemplate>::return_t
+Factory<v8::ObjectTemplate>::New() {
+  return v8::ObjectTemplate::New();
+}
+
 //=== RegExp ===================================================================
 
 Factory<v8::RegExp>::return_t
