@@ -294,6 +294,9 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a>
  * <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
+ * <a href="#api_nan_encode"><b><code>NanEncode</code></b></a>
+ * <a href="#api_nan_decode_bytes"><b><code>NanDecodeBytes</code></b></a>
+ * <a href="#api_nan_decode_write"><b><code>NanDecodeWrite</code></b></a>
  * <a href="#api_nan_compile_script"><b><code>NanCompileScript</code></b></a>
  * <a href="#api_nan_run_script"><b><code>NanRunScript</code></b></a>
  * <a href="#api_nan_adjust_external_memory"><b><code>NanAdjustExternalMemory</code></b></a>
@@ -1066,6 +1069,21 @@ Use to add instance properties on function templates.
 ### NanMakeCallback(target, func, argc, argv)
 
 Use instead of `node::MakeCallback` to call javascript functions. This (or `NanCallback`) is the only proper way of calling functions. You must _*never, ever*_ directly use `Function::Call`, it will lead to run-time failures.
+
+<a name="api_nan_encode"></a>
+### NanEncode(const void*, size_t[, enum Nan::Encoding])
+
+Replaces `node::Encode`.
+
+<a name="api_nan_decode_bytes"></a>
+### NanDecodeBytes(v8::Handle&lt;v8::Value&gt;[, enum Nan::Encoding])
+
+Replaces `node::DecodeBytes`.
+
+<a name="api_nan_decode_write"></a>
+### NanDecodeWrite(char *, size_t, v8::Handle&lt;v8::Value&gt;[, enum Nan::Encoding])
+
+Replaces `node::DecodeWrite`.
 
 <a name="api_nan_compile_script"></a>
 ### NanCompileScript(Handle<String> s [, const ScriptOrigin&amp; origin])
