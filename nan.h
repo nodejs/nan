@@ -29,8 +29,11 @@
 #include <climits>
 #if defined(_MSC_VER)
 # pragma warning( disable : 4530 )
-#endif
+# include <string>
+# pragma warning( default : 4530 )
+#else
 #include <string>
+#endif
 
 #if defined(__GNUC__) && !(defined(DEBUG) && DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
