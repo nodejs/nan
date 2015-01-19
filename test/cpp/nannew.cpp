@@ -118,6 +118,25 @@ NAN_METHOD(testExternal) {
   return_NanUndefined();
 }
 
+NAN_METHOD(testFunction) {
+  NanScope();
+  NanTap t(args[0]);
+// Direct Function construction is only available in newer v8
+#if (NODE_MODULE_VERSION < 12)
+  t.plan(0);
+#else
+  t.plan(3);
+
+  t.ok(_( assertType<Function>(NanNew<Function>(testFunction))));
+  v8::Local<String> data = NanNew("plonk");
+  t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data))));
+  int length = 5;
+  t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data, length))));
+#endif
+
+  return_NanUndefined();
+}
+
 NAN_METHOD(testFunctionTemplate) {
   NanScope();
   NanTap t(args[0]);
@@ -342,9 +361,13 @@ NAN_METHOD(testRegression242) {
   NanScope();
   NanTap t(args[0]);
 
-  // This line needs to *compile*. Not much to test at runtime.
+  // These lines must *compile*. Not much to test at runtime.
   Local<FunctionTemplate> ft = NanNew<FunctionTemplate>(overloaded);
   (void)ft;  // not unused
+#if (NODE_MODULE_VERSION >= 12)
+  Local<Function> f = NanNew<Function>(overloaded);
+  (void)f;  // not unused
+#endif
 
   t.plan(1);
 
@@ -399,6 +422,7 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testBooleanObject);
   NAN_EXPORT(exports, testDate);
   NAN_EXPORT(exports, testExternal);
+  NAN_EXPORT(exports, testFunction);
   NAN_EXPORT(exports, testFunctionTemplate);
   NAN_EXPORT(exports, testNumber);
   NAN_EXPORT(exports, testNumberObject);

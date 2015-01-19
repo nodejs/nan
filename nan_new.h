@@ -155,6 +155,15 @@ struct Factory<v8::StringObject> : FactoryBase<v8::StringObject> {
 namespace NanIntern {
 
 template <>
+struct Factory<v8::Function> : FactoryBase<v8::Function> {
+  static inline
+  return_t
+  New( NanFunctionCallback callback
+     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+     , int length = 0);
+};
+
+template <>
 struct Factory<v8::UnboundScript> : FactoryBase<v8::UnboundScript> {
   static inline return_t New( v8::Local<v8::String> source);
   static inline return_t New( v8::Local<v8::String> source
@@ -203,12 +212,26 @@ NanNew(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
   return NanIntern::Factory<T>::New(arg0, arg1, arg2, arg3);
 }
 
+// Note(agnat): When passing overloaded function pointers to template functions
+// as generic arguments the compiler needs help in picking the right overload.
+// These two functions handle NanNew<Function> and NanNew<FunctionTemplate> with
+// all argument variations.
+
+// v8::Function and v8::FunctionTemplate with one or two arguments
 template <typename T>
 typename NanIntern::Factory<T>::return_t
 NanNew( NanFunctionCallback callback
+      , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+    return NanIntern::Factory<T>::New(callback, data);
+}
+
+// v8::Function and v8::FunctionTemplate with three arguments
+template <typename T, typename A2>
+typename NanIntern::Factory<T>::return_t
+NanNew( NanFunctionCallback callback
       , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
-      , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
-    return NanIntern::Factory<T>::New(callback, data, signature);
+      , A2 a2 = A2()) {
+    return NanIntern::Factory<T>::New(callback, data, a2);
 }
 
 // Convenience

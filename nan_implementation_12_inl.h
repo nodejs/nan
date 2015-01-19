@@ -56,6 +56,15 @@ Factory<v8::External>::New(void * value) {
   return v8::External::New(v8::Isolate::GetCurrent(), value);
 }
 
+//=== Function =================================================================
+
+Factory<v8::Function>::return_t
+Factory<v8::Function>::New( NanFunctionCallback callback
+                          , v8::Handle<v8::Value> data
+                          , int length) {
+  return v8::Function::New(v8::Isolate::GetCurrent(), callback, data, length);
+}
+
 //=== Function Template ========================================================
 
 Factory<v8::FunctionTemplate>::return_t
