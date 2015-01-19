@@ -200,11 +200,7 @@ Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
 }
 
 Factory<v8::String>::return_t
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-Factory<v8::String>::New(v8::String::ExternalOneByteStringResource * value) {
-#else
-Factory<v8::String>::New(v8::String::ExternalAsciiStringResource * value) {
-#endif
+Factory<v8::String>::New(NanExternalOneByteStringResource * value) {
   return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
 }
 

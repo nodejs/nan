@@ -138,11 +138,7 @@ struct Factory<v8::String> : FactoryBase<v8::String> {
   static inline return_t New(std::string const& value);
 
   static inline return_t New(v8::String::ExternalStringResource * value);
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-  static inline return_t New(v8::String::ExternalOneByteStringResource * value);
-#else
-  static inline return_t New(v8::String::ExternalAsciiStringResource * value);
-#endif
+  static inline return_t New(NanExternalOneByteStringResource * value);
 
   // TODO(agnat): Deprecate.
   static inline return_t New(const uint8_t * value, int length = -1);
@@ -306,11 +302,7 @@ NanNew(v8::String::ExternalStringResource * value) {
 
 inline
 NanIntern::Factory<v8::String>::return_t
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-NanNew(v8::String::ExternalOneByteStringResource * value) {
-#else
-NanNew(v8::String::ExternalAsciiStringResource * value) {
-#endif
+NanNew(NanExternalOneByteStringResource * value) {
   return NanNew<v8::String>(value);
 }
 
