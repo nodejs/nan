@@ -9,7 +9,13 @@
 #ifndef NAN_NEW_H_
 #define NAN_NEW_H_
 
-#include <string>
+#if defined(_MSC_VER)
+# pragma warning( disable : 4530 )
+# include <string>
+# pragma warning( default : 4530 )
+#else
+# include <string>
+#endif
 
 namespace NanIntern {  // scnr
 
