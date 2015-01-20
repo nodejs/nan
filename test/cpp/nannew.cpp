@@ -14,7 +14,13 @@
 #include <nan.h>
 #include <cmath>
 #include <ctime>
-#include <string>
+#if defined(_MSC_VER)
+# pragma warning( disable : 4530 )
+# include <string>
+# pragma warning( default : 4530 )
+#else
+# include <string>
+#endif
 
 using namespace v8;  // NOLINT(build/namespaces)
 

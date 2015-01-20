@@ -32,7 +32,7 @@
 # include <string>
 # pragma warning( default : 4530 )
 #else
-#include <string>
+# include <string>
 #endif
 
 #if defined(__GNUC__) && !(defined(DEBUG) && DEBUG)

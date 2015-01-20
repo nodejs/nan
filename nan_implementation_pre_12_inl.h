@@ -10,8 +10,16 @@
 #define NAN_IMPLEMENTATION_PRE_12_INL_H_
 
 #include <algorithm>
-#include <string>
-#include <vector>
+
+#if defined(_MSC_VER)
+# pragma warning( disable : 4530 )
+# include <string>
+# include <vector>
+# pragma warning( default : 4530 )
+#else
+# include <string>
+# include <vector>
+#endif
 
 //==============================================================================
 // node v0.10 implementation
