@@ -157,7 +157,13 @@ NAN_METHOD(NewBoolean) {
 // #212
 NAN_METHOD(NewBoolean2) {
   NanScope();
+  #if defined(_MSC_VER)
+  # pragma warning( disable : 4800 )
+  #endif
   NanReturnValue(NanNew<v8::Boolean>(1));
+  #if defined(_MSC_VER)
+  # pragma warning( default : 4800 )
+  #endif
 }
 
 void Init(v8::Handle<v8::Object> target) {
