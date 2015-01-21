@@ -56,4 +56,4 @@ forcetest:
 	npm test
 
 $(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h test/binding.gyp $(SOURCES)
-	cd test/ && node-gyp rebuild
+	cd test/ && ../node_modules/.bin/node-gyp rebuild

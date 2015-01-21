@@ -20,6 +20,7 @@ This project also contains some helper utilities that make addon development a b
  * **[Usage](#usage)**
  * **[Example](#example)**
  * **[API](#api)**
+ * **[Tests](#tests)**
 
 <a name="news"></a>
 ## News & Updates
@@ -1186,6 +1187,24 @@ protected:
 ### NanAsyncQueueWorker(NanAsyncWorker *)
 
 `NanAsyncQueueWorker` will run a `NanAsyncWorker` asynchronously via libuv. Both the *execute* and *after_work* steps are taken care of for you&mdash;most of the logic for this is embedded in `NanAsyncWorker`.
+
+<a name="api"></a>
+### Tests
+
+To run the NAN tests do:
+
+``` sh
+npm install
+npm run-script rebuild-tests
+npm test
+```
+
+Or just:
+
+``` sh
+npm install
+make test
+```
 
 ### Contributors
 
