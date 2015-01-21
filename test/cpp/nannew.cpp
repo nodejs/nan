@@ -121,18 +121,11 @@ NAN_METHOD(testExternal) {
 NAN_METHOD(testFunction) {
   NanScope();
   NanTap t(args[0]);
-// Direct Function construction is only available in newer v8
-#if (NODE_MODULE_VERSION < 12)
-  t.plan(0);
-#else
-  t.plan(3);
+  t.plan(2);
 
   t.ok(_( assertType<Function>(NanNew<Function>(testFunction))));
   v8::Local<String> data = NanNew("plonk");
   t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data))));
-  int length = 5;
-  t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data, length))));
-#endif
 
   return_NanUndefined();
 }

@@ -45,5 +45,7 @@ test('strings', function (t) {
   t.equals(bindings.newStringFromChars(), "hello?");
   t.equals(bindings.newStringFromCharsWithLength(), "hell");
   t.equals(bindings.newStringFromStdString(), "hello!");
+
+  t.end();
 });
 

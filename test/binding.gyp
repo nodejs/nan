@@ -152,4 +152,12 @@
 	        "<!(node -e \"require('..')\")"
 	  ]
 	}
+    , {
+        "target_name" : "nannew_function_length"
+      , "sources"     : [ "cpp/nannew_function_length.cpp" ]
+	  , "include_dirs": [
+	        "<!(node -e \"require('..')\")"
+	  ]
+    }
+    
 ]}
