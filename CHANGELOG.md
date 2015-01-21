@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 1.5.2: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3**
+**Version 1.6.0: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3**
+
+### 1.6.0 Jan 23 2015
+ - Deprecated `NanNewContextHandle` in favor of `NanNew<Context>` 49259af
+ - Support utility functions moved in newer v8 versions (Node 0.11.15, io.js 1.0) a0aa179
+ - Added `NanEncode`, `NanDecodeBytes` and `NanDecodeWrite` 75e6fb9
 
 ### 1.5.2 Jan 23 2015
 
@@ -13,7 +18,6 @@
   - Correctness: Lifted an io.js related typedef c9490be
   - Correctness: Make explicit downcasts of String lengths 00074e6
   - Windows: Limit the scope of disabled warning C4530 83d7deb
-
 
 ### 1.5.1 Jan 15 2015
 

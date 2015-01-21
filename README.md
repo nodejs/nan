@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 1.5.2***
+***Current version: 1.6.0***
 
 *(See [CHANGELOG.md](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -24,6 +24,13 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Jan-2015: 1.6.0 release
+
+* Deprecated `NanNewContextHandle` in favor of `NanNew<Context>`
+* Added `NanSetCounterFunction`, `NanSetCreateHistogramFunction`, `NanSetAddHistogramSampleFunction`
+* Added `NanIdleNotification`, `NanLowMemoryNotification`, `NanContextDisposedNotification`
+* Added `NanEncode`, `NanDecodeBytes` and `NanDecodeWrite`
 
 ### Jan-2015: 1.5.0 release
 

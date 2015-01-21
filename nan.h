@@ -12,7 +12,7 @@
  *
  * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  *
- * Version 1.5.2: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3
+ * Version 1.6.0: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3
  *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/
