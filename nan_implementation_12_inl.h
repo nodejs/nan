@@ -62,14 +62,26 @@ Factory<v8::External>::New(void * value) {
   return v8::External::New(v8::Isolate::GetCurrent(), value);
 }
 
+//=== Function =================================================================
+
+Factory<v8::Function>::return_t
+Factory<v8::Function>::New( NanFunctionCallback callback
+                          , v8::Handle<v8::Value> data) {
+  return v8::Function::New( v8::Isolate::GetCurrent()
+                          , callback
+                          , data);
+}
+
 //=== Function Template ========================================================
 
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Value> data
                                   , v8::Handle<v8::Signature> signature) {
-  return v8::FunctionTemplate::New(v8::Isolate::GetCurrent(), callback, data,
-      signature);
+  return v8::FunctionTemplate::New( v8::Isolate::GetCurrent()
+                                  , callback
+                                  , data
+                                  , signature);
 }
 
 //=== Number ===================================================================
@@ -118,6 +130,13 @@ Factory<v8::Uint32>::New(uint32_t value) {
 Factory<v8::Object>::return_t
 Factory<v8::Object>::New() {
   return v8::Object::New(v8::Isolate::GetCurrent());
+}
+
+//=== Object Template ==========================================================
+
+Factory<v8::ObjectTemplate>::return_t
+Factory<v8::ObjectTemplate>::New() {
+  return v8::ObjectTemplate::New(v8::Isolate::GetCurrent());
 }
 
 //=== RegExp ===================================================================
@@ -191,11 +210,7 @@ Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
 }
 
 Factory<v8::String>::return_t
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-Factory<v8::String>::New(v8::String::ExternalOneByteStringResource * value) {
-#else
-Factory<v8::String>::New(v8::String::ExternalAsciiStringResource * value) {
-#endif
+Factory<v8::String>::New(NanExternalOneByteStringResource * value) {
   return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
 }
 

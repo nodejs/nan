@@ -68,6 +68,14 @@ struct Factory<v8::External> : FactoryBase<v8::External> {
 };
 
 template <>
+struct Factory<v8::Function> : FactoryBase<v8::Function> {
+  static inline
+  return_t
+  New( NanFunctionCallback callback
+     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>());
+};
+
+template <>
 struct Factory<v8::FunctionTemplate> : FactoryBase<v8::FunctionTemplate> {
   static inline
   return_t
@@ -111,6 +119,11 @@ struct Factory<v8::Object> : FactoryBase<v8::Object> {
 };
 
 template <>
+struct Factory<v8::ObjectTemplate> : FactoryBase<v8::ObjectTemplate> {
+  static inline return_t New();
+};
+
+template <>
 struct Factory<v8::RegExp> : FactoryBase<v8::RegExp> {
   static inline return_t New(
       v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);
@@ -139,11 +152,7 @@ struct Factory<v8::String> : FactoryBase<v8::String> {
   static inline return_t New(std::string const& value);
 
   static inline return_t New(v8::String::ExternalStringResource * value);
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-  static inline return_t New(v8::String::ExternalOneByteStringResource * value);
-#else
-  static inline return_t New(v8::String::ExternalAsciiStringResource * value);
-#endif
+  static inline return_t New(NanExternalOneByteStringResource * value);
 
   // TODO(agnat): Deprecate.
   static inline return_t New(const uint8_t * value, int length = -1);
@@ -209,12 +218,26 @@ NanNew(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
   return NanIntern::Factory<T>::New(arg0, arg1, arg2, arg3);
 }
 
+// Note(agnat): When passing overloaded function pointers to template functions
+// as generic arguments the compiler needs help in picking the right overload.
+// These two functions handle NanNew<Function> and NanNew<FunctionTemplate> with
+// all argument variations.
+
+// v8::Function and v8::FunctionTemplate with one or two arguments
 template <typename T>
 typename NanIntern::Factory<T>::return_t
 NanNew( NanFunctionCallback callback
+      , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+    return NanIntern::Factory<T>::New(callback, data);
+}
+
+// v8::Function and v8::FunctionTemplate with three arguments
+template <typename T, typename A2>
+typename NanIntern::Factory<T>::return_t
+NanNew( NanFunctionCallback callback
       , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
-      , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()) {
-    return NanIntern::Factory<T>::New(callback, data, signature);
+      , A2 a2 = A2()) {
+    return NanIntern::Factory<T>::New(callback, data, a2);
 }
 
 // Convenience
@@ -284,11 +307,7 @@ NanNew(v8::String::ExternalStringResource * value) {
 
 inline
 NanIntern::Factory<v8::String>::return_t
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-NanNew(v8::String::ExternalOneByteStringResource * value) {
-#else
-NanNew(v8::String::ExternalAsciiStringResource * value) {
-#endif
+NanNew(NanExternalOneByteStringResource * value) {
   return NanNew<v8::String>(value);
 }
 

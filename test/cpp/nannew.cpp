@@ -124,6 +124,18 @@ NAN_METHOD(testExternal) {
   return_NanUndefined();
 }
 
+NAN_METHOD(testFunction) {
+  NanScope();
+  NanTap t(args[0]);
+  t.plan(2);
+
+  t.ok(_( assertType<Function>(NanNew<Function>(testFunction))));
+  v8::Local<String> data = NanNew("plonk");
+  t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data))));
+
+  return_NanUndefined();
+}
+
 NAN_METHOD(testFunctionTemplate) {
   NanScope();
   NanTap t(args[0]);
@@ -188,6 +200,28 @@ NAN_METHOD(testNumberObject) {
 
   t.ok(_( assertType<NumberObject>( NanNew<NumberObject>(M_PI))));
   t.ok(_( fabs(NanNew<NumberObject>(M_PI)->NumberValue() - M_PI) < epsilon));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testObject) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  t.ok(_(assertType<Object>( NanNew<Object>())));
+
+  return_NanUndefined();
+}
+
+NAN_METHOD(testObjectTemplate) {
+  NanScope();
+  NanTap t(args[0]);
+
+  t.plan(1);
+
+  t.ok(_(assertType<ObjectTemplate>( NanNew<ObjectTemplate>())));
 
   return_NanUndefined();
 }
@@ -355,9 +389,11 @@ NAN_METHOD(testRegression242) {
   NanScope();
   NanTap t(args[0]);
 
-  // This line needs to *compile*. Not much to test at runtime.
+  // These lines must *compile*. Not much to test at runtime.
   Local<FunctionTemplate> ft = NanNew<FunctionTemplate>(overloaded);
   (void)ft;  // not unused
+  Local<Function> f = NanNew<Function>(overloaded);
+  (void)f;  // not unused
 
   t.plan(1);
 
@@ -412,9 +448,12 @@ void Init(Handle<Object> exports) {
   NAN_EXPORT(exports, testBooleanObject);
   NAN_EXPORT(exports, testDate);
   NAN_EXPORT(exports, testExternal);
+  NAN_EXPORT(exports, testFunction);
   NAN_EXPORT(exports, testFunctionTemplate);
   NAN_EXPORT(exports, testNumber);
   NAN_EXPORT(exports, testNumberObject);
+  NAN_EXPORT(exports, testObject);
+  NAN_EXPORT(exports, testObjectTemplate);
   NAN_EXPORT(exports, testScript);
   NAN_EXPORT(exports, testSignature);
   NAN_EXPORT(exports, testString);

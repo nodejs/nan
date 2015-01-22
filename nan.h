@@ -63,6 +63,14 @@ typedef v8::UnboundScript      NanUnboundScript;
 typedef v8::Script             NanBoundScript;
 #endif
 
+#if (NODE_MODULE_VERSION < 42)
+typedef v8::String::ExternalAsciiStringResource
+    NanExternalOneByteStringResource;
+#else  // io.js v1.0.0
+typedef v8::String::ExternalOneByteStringResource
+    NanExternalOneByteStringResource;
+#endif
+
 #include "nan_new.h"  // NOLINT(build/include)
 
 // uv helpers
@@ -1716,6 +1724,30 @@ template<typename T> static size_t _nan_hex_decode(
   return i;
 }
 
+namespace NanIntern {
+
+inline
+NanExternalOneByteStringResource const*
+GetExternalResource(v8::Local<v8::String> str) {
+#if NODE_MODULE_VERSION < 42
+    return str->GetExternalAsciiStringResource();
+#else  // io.js v1.0.0
+    return str->GetExternalOneByteStringResource();
+#endif
+}
+
+inline
+bool
+IsExternal(v8::Local<v8::String> str) {
+#if NODE_MODULE_VERSION < 42
+    return str->IsExternalAscii();
+#else  // io.js v1.0.0
+    return str->IsExternalOneByte();
+#endif
+}
+
+}  // end of namespace NanIntern
+
 static bool _NanGetExternalParts(
     v8::Handle<v8::Value> val
   , const char** data
@@ -1730,23 +1762,13 @@ static bool _NanGetExternalParts(
   assert(val->IsString());
   v8::Local<v8::String> str = NanNew(val.As<v8::String>());
 
-#if NODE_MODULE_VERSION >= 42  // io.js v1.0.0
-  if (str->IsExternalOneByte()) {
-    const v8::String::ExternalOneByteStringResource* ext;
-    ext = str->GetExternalOneByteStringResource();
+  if (NanIntern::IsExternal(str)) {
+    const NanExternalOneByteStringResource* ext;
+    ext = NanIntern::GetExternalResource(str);
     *data = ext->data();
     *len = ext->length();
     return true;
   }
-#else
-  if (str->IsExternalAscii()) {
-    const v8::String::ExternalAsciiStringResource* ext;
-    ext = str->GetExternalAsciiStringResource();
-    *data = ext->data();
-    *len = ext->length();
-    return true;
-  }
-#endif
 
   if (str->IsExternal()) {
     const v8::String::ExternalStringResource* ext;
