@@ -63,12 +63,11 @@ Factory<v8::External>::New(void * value) {
 
 Factory<v8::Function>::return_t
 Factory<v8::Function>::New( NanFunctionCallback callback
-                          , v8::Handle<v8::Value> data
-                          NAN_FUNCTION_LENGTH_ARG_) {
+                          , v8::Handle<v8::Value> data) {
   return Factory<v8::FunctionTemplate>::New( callback
                                            , data
                                            , v8::Handle<v8::Signature>()
-                                           NAN_FUNCTION_LENGTH_)->GetFunction();
+                                           )->GetFunction();
 }
 
 
@@ -77,14 +76,12 @@ Factory<v8::Function>::New( NanFunctionCallback callback
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Value> data
-                                  , v8::Handle<v8::Signature> signature
-                                  NAN_FUNCTION_LENGTH_ARG_) {
+                                  , v8::Handle<v8::Signature> signature) {
   // Note(agnat): Emulate length argument here. Unfortunately, I couldn't find
   // a way. Have at it though...
   return v8::FunctionTemplate::New( callback
                                   , data
-                                  , signature
-                                  NAN_FUNCTION_LENGTH_);
+                                  , signature);
 }
 
 //=== Number ===================================================================

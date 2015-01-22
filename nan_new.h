@@ -61,26 +61,12 @@ struct Factory<v8::External> : FactoryBase<v8::External> {
   static inline return_t New(void *value);
 };
 
-# ifdef NAN_ENABLE_FUNCTION_LENGTH
-#  if (NODE_MODULE_VERSION < 12)
-#   error Function.length is not supported
-#  endif
-#  define NAN_FUNCTION_LENGTH_ARG_WITH_DEFAULT_ , int length = 0
-#  define NAN_FUNCTION_LENGTH_ARG_ , int length
-#  define NAN_FUNCTION_LENGTH_ , length
-# else
-#  define NAN_FUNCTION_LENGTH_ARG_WITH_DEFAULT_
-#  define NAN_FUNCTION_LENGTH_ARG_
-#  define NAN_FUNCTION_LENGTH_
-# endif
-
 template <>
 struct Factory<v8::Function> : FactoryBase<v8::Function> {
   static inline
   return_t
   New( NanFunctionCallback callback
-     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
-     NAN_FUNCTION_LENGTH_ARG_WITH_DEFAULT_);
+     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>());
 };
 
 template <>
@@ -89,8 +75,7 @@ struct Factory<v8::FunctionTemplate> : FactoryBase<v8::FunctionTemplate> {
   return_t
   New( NanFunctionCallback callback = NULL
      , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
-     , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>()
-     NAN_FUNCTION_LENGTH_ARG_WITH_DEFAULT_);
+     , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>());
 };
 
 template <>

@@ -60,12 +60,10 @@ Factory<v8::External>::New(void * value) {
 
 Factory<v8::Function>::return_t
 Factory<v8::Function>::New( NanFunctionCallback callback
-                          , v8::Handle<v8::Value> data
-                          NAN_FUNCTION_LENGTH_ARG_) {
+                          , v8::Handle<v8::Value> data) {
   return v8::Function::New( v8::Isolate::GetCurrent()
                           , callback
-                          , data
-                          NAN_FUNCTION_LENGTH_);
+                          , data);
 }
 
 //=== Function Template ========================================================
@@ -73,13 +71,11 @@ Factory<v8::Function>::New( NanFunctionCallback callback
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Value> data
-                                  , v8::Handle<v8::Signature> signature
-                                  NAN_FUNCTION_LENGTH_ARG_) {
+                                  , v8::Handle<v8::Signature> signature) {
   return v8::FunctionTemplate::New( v8::Isolate::GetCurrent()
                                   , callback
                                   , data
-                                  , signature
-                                  NAN_FUNCTION_LENGTH_);
+                                  , signature);
 }
 
 //=== Number ===================================================================
