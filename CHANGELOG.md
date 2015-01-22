@@ -1,6 +1,31 @@
 # NAN ChangeLog
 
-**Version 1.5.0: current Node unstable: 0.11.14, Node stable: 0.10.35, io.js: 1.0.1**
+**Version 1.5.2: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3**
+
+### 1.5.2 Jan 23 2015
+
+  - Bugfix: Fix non-inline definition build error with clang++ 21d96a1, 60fadd4
+  - Bugfix: Readded missing String constructors 18d828f
+  - Bugfix: Add overload handling NanNew<FunctionTemplate>(..) 5ef813b
+  - Bugfix: Fix uv_work_cb versioning 997e4ae
+  - Bugfix: Add function factory and test 4eca89c
+  - Bugfix: Add object template factory and test cdcb951
+  - Correctness: Lifted an io.js related typedef c9490be
+  - Correctness: Make explicit downcasts of String lengths 00074e6
+  - Windows: Limit the scope of disabled warning C4530 83d7deb
+
+
+### 1.5.1 Jan 15 2015
+
+  - Build: version bump
+
+### 1.4.3 Jan 15 2015
+
+  - Build: version bump
+
+### 1.4.2 Jan 15 2015
+
+  - Feature: Support io.js 0dbc5e8
 
 ### 1.5.0 Jan 14 2015
 
@@ -9,6 +34,7 @@
  - Feature: Implement progress to NanAsyncWorker 8d6a160
 
 ### 1.4.1 Nov 8 2014
+
  - Bugfix: Handle DEBUG definition correctly
  - Bugfix: Accept int as Boolean
 
