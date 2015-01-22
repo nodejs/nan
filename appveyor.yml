@@ -14,22 +14,22 @@ environment:
 install:
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
-  - IF NOT %nodejs_version% == "1.0" npm install npm
-  - IF NOT %nodejs_version% == "1.0" move node_modules npm
+  - IF NOT %nodejs_version% == 1.0 npm -g install npm
+  - IF NOT %nodejs_version% == 1.0 set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
-  - npm/.bin/npm install
-  - npm/.bin/npm run rebuild-tests
+  - npm install
+  - npm run rebuild-tests
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
   - node --version
   - npm --version
-  - cmd: npm test
+  # run tests
+  - npm test
 
 # Don't actually build.
 build: off
 
 # Set build version format here instead of in the admin panel.
 version: "{build}"
-
