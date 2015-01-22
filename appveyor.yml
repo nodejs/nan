@@ -13,9 +13,9 @@ environment:
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node 0.STABLE.latest
-  - npm install npm
-  - move node_modules npm
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
+  - IF NOT %nodejs_version% == "1.0" npm install npm
+  - IF NOT %nodejs_version% == "1.0" move node_modules npm
   # Typical npm stuff.
   - npm/.bin/npm install
   - npm/.bin/npm run rebuild-tests
