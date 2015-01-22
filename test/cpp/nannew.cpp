@@ -379,10 +379,8 @@ NAN_METHOD(testRegression242) {
   // These lines must *compile*. Not much to test at runtime.
   Local<FunctionTemplate> ft = NanNew<FunctionTemplate>(overloaded);
   (void)ft;  // not unused
-#if (NODE_MODULE_VERSION >= 12)
   Local<Function> f = NanNew<Function>(overloaded);
   (void)f;  // not unused
-#endif
 
   t.plan(1);
 
