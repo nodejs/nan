@@ -6,7 +6,7 @@ env:
   - NODE_VERSION="0.10.31"
   - NODE_VERSION="0.10.32"
   - NODE_VERSION="0.11.14"
-  - NODE_WEBKIT="0.11.5" NODE_VERSION="0.10.32"
+#  - NODE_WEBKIT="0.11.5" NODE_VERSION="0.10.32"
 node_js:
   - "0.10"
 notifications:
@@ -23,6 +23,6 @@ before_install:
   - nvm install $NODE_VERSION
   - node --version
   - node_modules/.bin/node-gyp rebuild --directory test
-  - if [[ ${NODE_WEBKIT:-unset} != "unset" ]]; then npm install nw-gyp && ./node_modules/.bin/nw-gyp rebuild --directory test --target=$NODE_WEBKIT; fi;
+#  - if [[ ${NODE_WEBKIT:-unset} != "unset" ]]; then npm install nw-gyp && ./node_modules/.bin/nw-gyp rebuild --directory test --target=$NODE_WEBKIT; fi;
 install:
 script: tap --gc test/js/*-test.js
