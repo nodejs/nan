@@ -1844,20 +1844,27 @@ namespace Nan {
 
 NAN_INLINE v8::Local<v8::Value> NanEncode(
     const void *buf, size_t len, enum Nan::Encoding encoding = Nan::BINARY) {
+#if (NODE_MODULE_VERSION >= 42)
+  return node::Encode(
+      v8::Isolate::GetCurrent()
+    , static_cast<const char *>(buf), len
+    , static_cast<node::encoding>(encoding));
+#else
 #if (NODE_MODULE_VERSION > 0x000B)
   return node::Encode(
       v8::Isolate::GetCurrent()
     , buf, len
     , static_cast<node::encoding>(encoding));
 #else
-# if  (NODE_MODULE_VERSION < 0x000B)
+#if (NODE_MODULE_VERSION < 0x000B)
   if (encoding == Nan::BUFFER) {
     assert(len <= node::Buffer::kMaxLength);
     return v8::Local<v8::Value>::New(node::Buffer::New(
         static_cast<char *>(const_cast<void *>(buf)), len)->handle_);
   }
-# endif
+#endif
   return node::Encode(buf, len, static_cast<node::encoding>(encoding));
+#endif
 #endif
 }
 
