@@ -53,6 +53,18 @@ Factory<v8::BooleanObject>::New(bool value) {
   return v8::BooleanObject::New(value).As<v8::BooleanObject>();
 }
 
+//=== Context ==================================================================
+
+Factory<v8::Context>::return_t
+Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
+                         , v8::Handle<v8::ObjectTemplate> tmpl
+                         , v8::Handle<v8::Value> obj) {
+  v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
+  v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
+  ctx.Dispose();
+  return lctx;
+}
+
 //=== Date =====================================================================
 
 Factory<v8::Date>::return_t

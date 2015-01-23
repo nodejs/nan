@@ -12,7 +12,7 @@
  *
  * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  *
- * Version 1.5.2: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3
+ * Version 1.6.0: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3
  *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/
@@ -165,6 +165,63 @@ template<typename T>
 NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
   return val;
 }
+
+/* io.js 1.0  */
+#if NODE_MODULE_VERSION >= 42 || NODE_VERSION_AT_LEAST(0, 11, 15)
+  NAN_INLINE
+  void NanSetCounterFunction(v8::CounterLookupCallback cb) {
+    v8::Isolate::GetCurrent()->SetCounterFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetCreateHistogramFunction(v8::CreateHistogramCallback cb) {
+    v8::Isolate::GetCurrent()->SetCreateHistogramFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetAddHistogramSampleFunction(v8::AddHistogramSampleCallback cb) {
+    v8::Isolate::GetCurrent()->SetAddHistogramSampleFunction(cb);
+  }
+
+  NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
+    return v8::Isolate::GetCurrent()->IdleNotification(idle_time_in_ms);
+  }
+
+  NAN_INLINE void NanLowMemoryNotification() {
+    v8::Isolate::GetCurrent()->LowMemoryNotification();
+  }
+
+  NAN_INLINE void NanContextDisposedNotification() {
+    v8::Isolate::GetCurrent()->ContextDisposedNotification();
+  }
+#else
+  NAN_INLINE
+  void NanSetCounterFunction(v8::CounterLookupCallback cb) {
+    v8::V8::SetCounterFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetCreateHistogramFunction(v8::CreateHistogramCallback cb) {
+    v8::V8::SetCreateHistogramFunction(cb);
+  }
+
+  NAN_INLINE
+  void NanSetAddHistogramSampleFunction(v8::AddHistogramSampleCallback cb) {
+    v8::V8::SetAddHistogramSampleFunction(cb);
+  }
+
+  NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
+    return v8::V8::IdleNotification(idle_time_in_ms);
+  }
+
+  NAN_INLINE void NanLowMemoryNotification() {
+    v8::V8::LowMemoryNotification();
+  }
+
+  NAN_INLINE void NanContextDisposedNotification() {
+    v8::V8::ContextDisposedNotification();
+  }
+#endif
 
 #if (NODE_MODULE_VERSION > 0x000B)
 // Node 0.11+ (0.11.12 and below won't compile with these)
@@ -529,7 +586,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return NanNew(function_template)->HasInstance(value);
   }
 
-  NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
       v8::ExtensionConfiguration* extensions = NULL
     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
@@ -1075,7 +1132,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return function_template->HasInstance(value);
   }
 
-  NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
       v8::ExtensionConfiguration* extensions = NULL
     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
@@ -1783,6 +1840,68 @@ static bool _NanGetExternalParts(
 
 namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
+}
+
+NAN_INLINE v8::Local<v8::Value> NanEncode(
+    const void *buf, size_t len, enum Nan::Encoding encoding = Nan::BINARY) {
+#if (NODE_MODULE_VERSION > 0x000B)
+  return node::Encode(
+      v8::Isolate::GetCurrent()
+    , buf, len
+    , static_cast<node::encoding>(encoding));
+#else
+# if  (NODE_MODULE_VERSION < 0x000B)
+  if (encoding == Nan::BUFFER) {
+    assert(len <= node::Buffer::kMaxLength);
+    return v8::Local<v8::Value>::New(node::Buffer::New(
+        static_cast<char *>(const_cast<void *>(buf)), len)->handle_);
+  }
+# endif
+  return node::Encode(buf, len, static_cast<node::encoding>(encoding));
+#endif
+}
+
+NAN_INLINE ssize_t NanDecodeBytes(
+    v8::Handle<v8::Value> val, enum Nan::Encoding encoding = Nan::BINARY) {
+#if (NODE_MODULE_VERSION > 0x000B)
+  return node::DecodeBytes(
+      v8::Isolate::GetCurrent()
+    , val
+    , static_cast<node::encoding>(encoding));
+#else
+# if (NODE_MODULE_VERSION < 0x000B)
+  if (encoding == Nan::BUFFER) {
+    return node::DecodeBytes(val, node::BINARY);
+  }
+# endif
+  return node::DecodeBytes(val, static_cast<node::encoding>(encoding));
+#endif
+}
+
+NAN_INLINE ssize_t NanDecodeWrite(
+    char *buf
+  , size_t len
+  , v8::Handle<v8::Value> val
+  , enum Nan::Encoding encoding = Nan::BINARY) {
+#if (NODE_MODULE_VERSION > 0x000B)
+  return node::DecodeWrite(
+      v8::Isolate::GetCurrent()
+    , buf
+    , len
+    , val
+    , static_cast<node::encoding>(encoding));
+#else
+# if (NODE_MODULE_VERSION < 0x000B)
+  if (encoding == Nan::BUFFER) {
+    return node::DecodeWrite(buf, len, val, node::BINARY);
+  }
+# endif
+  return node::DecodeWrite(
+      buf
+    , len
+    , val
+    , static_cast<node::encoding>(encoding));
+#endif
 }
 
 /* NAN_DEPRECATED */ NAN_INLINE void* _NanRawString(

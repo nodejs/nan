@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
 
-***Current version: 1.5.2***
+***Current version: 1.6.0***
 
 *(See [CHANGELOG.md](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -24,6 +24,13 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Jan-2015: 1.6.0 release
+
+* Deprecated `NanNewContextHandle` in favor of `NanNew<Context>`
+* Added `NanSetCounterFunction`, `NanSetCreateHistogramFunction`, `NanSetAddHistogramSampleFunction`
+* Added `NanIdleNotification`, `NanLowMemoryNotification`, `NanContextDisposedNotification`
+* Added `NanEncode`, `NanDecodeBytes` and `NanDecodeWrite`
 
 ### Jan-2015: 1.5.0 release
 
@@ -284,7 +291,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
- * <a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a>
+ * <del><a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a></del>
  * <a href="#api_nan_get_current_context"><b><code>NanGetCurrentContext</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_dispose_persistent"><b><code>NanDisposePersistent</code></b></a>
@@ -294,6 +301,9 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a>
  * <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
+ * <a href="#api_nan_encode"><b><code>NanEncode</code></b></a>
+ * <a href="#api_nan_decode_bytes"><b><code>NanDecodeBytes</code></b></a>
+ * <a href="#api_nan_decode_write"><b><code>NanDecodeWrite</code></b></a>
  * <a href="#api_nan_compile_script"><b><code>NanCompileScript</code></b></a>
  * <a href="#api_nan_run_script"><b><code>NanRunScript</code></b></a>
  * <a href="#api_nan_adjust_external_memory"><b><code>NanAdjustExternalMemory</code></b></a>
@@ -302,6 +312,12 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_remove_gc_epilogue_callback"><b><code>NanRemoveGCEpilogueCallback</code></b></a>
  * <a href="#api_nan_remove_gc_prologue_callback"><b><code>NanRemoveGCPrologueCallback</code></b></a>
  * <a href="#api_nan_get_heap_statistics"><b><code>NanGetHeapStatistics</code></b></a>
+ * <a href="#api_nan_set_counter_function"><b><code>NanSetCounterFunction</code></b></a>
+ * <a href="#api_nan_set_create_histogram_function"><b><code>NanSetCreateHistogramFunction</code></b></a>
+ * <a href="#api_nan_set_add_histogram_sample_function"><b><code>NanSetAddHistogramSampleFunction</code></b></a>
+ * <a href="#api_nan_idle_notification"><b><code>NanIdleNotification</code></b></a>
+ * <a href="#api_nan_low_memory_notification"><b><code>NanLowMemoryNotification</code></b></a>
+ * <a href="#api_nan_context_disposed_notification"><b><code>NanContextDisposedNotification</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
@@ -974,8 +990,11 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_new_context_handle"></a>
-### Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
-Creates a new `Local<Context>` handle.
+### ~~Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
+
+Deprecated. Use `NanNew<Context>` instead.
+
+~~Creates a new `Local<Context>` handle.
 
 ```c++
 Local<FunctionTemplate> ftmpl = NanNew<FunctionTemplate>();
@@ -1058,6 +1077,21 @@ Use to add instance properties on function templates.
 
 Use instead of `node::MakeCallback` to call javascript functions. This (or `NanCallback`) is the only proper way of calling functions. You must _*never, ever*_ directly use `Function::Call`, it will lead to run-time failures.
 
+<a name="api_nan_encode"></a>
+### NanEncode(const void*, size_t[, enum Nan::Encoding])
+
+Replaces `node::Encode`.
+
+<a name="api_nan_decode_bytes"></a>
+### NanDecodeBytes(v8::Handle&lt;v8::Value&gt;[, enum Nan::Encoding])
+
+Replaces `node::DecodeBytes`.
+
+<a name="api_nan_decode_write"></a>
+### NanDecodeWrite(char *, size_t, v8::Handle&lt;v8::Value&gt;[, enum Nan::Encoding])
+
+Replaces `node::DecodeWrite`.
+
 <a name="api_nan_compile_script"></a>
 ### NanCompileScript(Handle<String> s [, const ScriptOrigin&amp; origin])
 
@@ -1097,6 +1131,36 @@ Simply does `RemoveGCPrologueCallback`
 ### NanGetHeapStatistics(HeapStatistics *heap_statistics)
 
 Simply does `GetHeapStatistics`
+
+<a name="api_nan_set_counter_function"></a>
+### NanSetCounterFunction(CounterLookupCallback cb)
+
+Simply does `SetCounterFunction`
+
+<a name="api_nan_set_create_histogram_function"></a>
+### NanSetCreateHistogramFunction(CreateHistogramCallback cb)
+
+Simply does `SetCreateHistogramFunction`
+
+<a name="api_nan_set_add_histogram_sample_function"></a>
+### NanSetAddHistogramSampleFunction(AddHistogramSampleCallback cb)
+
+Simply does `SetAddHistogramSampleFunction`
+
+<a name="api_nan_idle_notification"></a>
+### NanIdleNotification(int idle_time_in_ms)
+
+Simply does `IdleNotification`
+
+<a name="api_nan_low_memory_notification"></a>
+### NanLowMemoryNotification()
+
+Simply does `LowMemoryNotification`
+
+<a name="api_nan_context_disposed_notification"></a>
+### NanContextDisposedNotification()
+
+Simply does `ContextDisposedNotification`
 
 <a name="api_nan_callback"></a>
 ### NanCallback
