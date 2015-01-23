@@ -1847,7 +1847,7 @@ NAN_INLINE v8::Local<v8::Value> NanEncode(
 #if (NODE_MODULE_VERSION > 0x000B)
   return node::Encode(
       v8::Isolate::GetCurrent()
-    , buf, len
+    , (const char *)buf, len
     , static_cast<node::encoding>(encoding));
 #else
 # if  (NODE_MODULE_VERSION < 0x000B)
