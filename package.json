@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "tap --gc test/js/*-test.js",
-    "rebuild-tests": "node-gyp rebuild --directory test"
+    "rebuild-tests": "pangyp rebuild --directory test"
   },
   "contributors": [
     "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "bindings": "~1.2.1",
     "node-gyp": "~1.0.2",
+    "pangyp": "~2.0.1",
     "tap": "~0.5.0",
     "xtend": "~4.0.0"
   },
