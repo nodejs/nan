@@ -15,6 +15,7 @@ LINT_SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
+	nan_string_bytes.h \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
 	nan_new.h \
@@ -55,5 +56,5 @@ forcetest:
 	cd test/ && node-gyp rebuild && cd ..
 	npm test
 
-$(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h test/binding.gyp $(SOURCES)
+$(ADDONS): nan.h nan_string_bytes.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h test/binding.gyp $(SOURCES)
 	cd test/ && ../node_modules/.bin/node-gyp rebuild

@@ -1842,22 +1842,39 @@ namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 }
 
+#if !NODE_VERSION_AT_LEAST(0, 10, 0)
+# include "nan_string_bytes.h"  // NOLINT(build/include)
+#endif
+
 NAN_INLINE v8::Local<v8::Value> NanEncode(
     const void *buf, size_t len, enum Nan::Encoding encoding = Nan::BINARY) {
-#if (NODE_MODULE_VERSION > 0x000B)
+#if (NODE_MODULE_VERSION >= 42)
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  node::encoding node_enc = static_cast<node::encoding>(encoding);
+
+  if (encoding == Nan::UCS2) {
+    return node::Encode(
+        isolate
+      , reinterpret_cast<const uint16_t *>(buf)
+      , len / 2);
+  } else {
+    return node::Encode(
+        isolate
+      , reinterpret_cast<const char *>(buf)
+      , len
+      , node_enc);
+  }
+#elif (NODE_MODULE_VERSION > 0x000B)
   return node::Encode(
       v8::Isolate::GetCurrent()
     , buf, len
     , static_cast<node::encoding>(encoding));
 #else
-# if  (NODE_MODULE_VERSION < 0x000B)
-  if (encoding == Nan::BUFFER) {
-    assert(len <= node::Buffer::kMaxLength);
-    return v8::Local<v8::Value>::New(node::Buffer::New(
-        static_cast<char *>(const_cast<void *>(buf)), len)->handle_);
-  }
-# endif
+# if NODE_VERSION_AT_LEAST(0, 10, 0)
   return node::Encode(buf, len, static_cast<node::encoding>(encoding));
+# else
+  return NanIntern::Encode(reinterpret_cast<const char*>(buf), len, encoding);
+# endif
 #endif
 }
 
