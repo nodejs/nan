@@ -1,6 +1,6 @@
 # http://www.appveyor.com/docs/appveyor-yml
 
-# Test against these versions of Node.js.
+# Test against these versions of Io.js and Node.js.
 environment:
   matrix:
   # node.js
@@ -8,15 +8,15 @@ environment:
     - nodejs_version: "0.10"
     - nodejs_version: "0.11"
   # io.js
-    - nodejs_version: "1.1"
+    - nodejs_version: "1"
 
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: if($env:nodejs_version -eq "0.8") {Install-Product node $env:nodejs_version}
   - ps: if($env:nodejs_version -ne "0.8") {Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)}
-  - IF NOT %nodejs_version% == 1.0 npm -g install npm
-  - IF NOT %nodejs_version% == 1.0 set PATH=%APPDATA%\npm;%PATH%
+  - IF NOT %nodejs_version% == 1 npm -g install npm
+  - IF NOT %nodejs_version% == 1 set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
   - npm install
   - IF %nodejs_version% == 0.8 node node_modules\node-gyp\bin\node-gyp.js rebuild --directory test
