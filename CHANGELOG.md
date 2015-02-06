@@ -1,8 +1,21 @@
 # NAN ChangeLog
 
-**Version 1.6.0: current Node unstable: 0.11.15, Node stable: 0.10.35, io.js: 1.0.3**
+**Version 1.6.2: current Node unstable: 0.11.16, Node stable: 0.10.36, io.js: 1.1.0**
+
+### 1.6.2 Feb 6 2015
+
+  - Bugfix: NanEncode: fix argument type for node::Encode on io.js 2be8639
+
+### 1.6.1 Jan 23 2015
+
+  - Build: version bump
+
+### 1.5.3 Jan 23 2015
+
+  - Build: repackage
 
 ### 1.6.0 Jan 23 2015
+
  - Deprecated `NanNewContextHandle` in favor of `NanNew<Context>` 49259af
  - Support utility functions moved in newer v8 versions (Node 0.11.15, io.js 1.0) a0aa179
  - Added `NanEncode`, `NanDecodeBytes` and `NanDecodeWrite` 75e6fb9
