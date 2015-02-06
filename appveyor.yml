@@ -19,7 +19,7 @@ install:
   - IF NOT %nodejs_version% == 1.0 set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
   - npm install
-  - IF %nodejs_version% == 0.8 node-gyp rebuild --directory test
+  - IF %nodejs_version% == 0.8 node node_modules\node-gyp\bin\node-gyp.js rebuild --directory test
   - IF NOT %nodejs_version% == 0.8 npm run rebuild-tests
 
 # Post-install test scripts.
