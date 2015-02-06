@@ -12,7 +12,7 @@ const test     = require('tap').test
 
 
 test('FromV8String', function (t) {
-  t.plan(8);
+  t.plan(10);
 
   var a = bindings.returnAsciiString;
   var b = bindings.returnUtf8String;
@@ -28,4 +28,7 @@ test('FromV8String', function (t) {
   t.equal(b('an utf8 strïng'), 'an utf8 strïng');
   t.equal(c('an ucs2 strïng'), 'an ucs2 strïng');
   t.equal(d('an utf8 strïng'), 'an utf8 strïng');
+
+  t.equal(bindings.encodeHex(), new Buffer('hello').toString('hex'));
+  t.equal(bindings.encodeUCS2(), 'hello');
 });

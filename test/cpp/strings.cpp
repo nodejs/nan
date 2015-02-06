@@ -31,10 +31,22 @@ NAN_METHOD(HeapString) {
   NanReturnValue(res);
 }
 
+NAN_METHOD(EncodeHex) {
+  NanScope();
+  NanReturnValue(NanEncode("hello", 5, Nan::HEX));
+}
+
+NAN_METHOD(EncodeUCS2) {
+  NanScope();
+  NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
+}
+
 v8::Persistent<v8::FunctionTemplate> returnAsciiString_persistent;
 v8::Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
 v8::Persistent<v8::FunctionTemplate> returnUcs2String_persistent;
 v8::Persistent<v8::FunctionTemplate> heapString_persistent;
+v8::Persistent<v8::FunctionTemplate> encodeHex_persistent;
+v8::Persistent<v8::FunctionTemplate> encodeUCS2_persistent;
 
 void Init (v8::Handle<v8::Object> target) {
   NanScope();
@@ -89,6 +101,32 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew("heapString")
     , heapString->GetFunction()
+  );
+
+  v8::Local<v8::FunctionTemplate> encodeHex =
+    NanNew<v8::FunctionTemplate>(EncodeHex);
+
+  NanAssignPersistent(
+    encodeHex_persistent
+  , encodeHex
+  );
+
+  target->Set(
+      NanNew("encodeHex")
+    , encodeHex->GetFunction()
+  );
+
+  v8::Local<v8::FunctionTemplate> encodeUCS2 =
+    NanNew<v8::FunctionTemplate>(EncodeUCS2);
+
+  NanAssignPersistent(
+    encodeUCS2_persistent
+  , encodeUCS2
+  );
+
+  target->Set(
+      NanNew("encodeUCS2")
+    , encodeUCS2->GetFunction()
   );
 }
 
