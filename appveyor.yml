@@ -28,7 +28,8 @@ test_script:
   - node --version
   - npm --version
   # run tests
-  - npm test
+  - IF NOT %nodejs_version% == 1 npm test
+  - IF %nodejs_version% == 1 iojs node_modules\tap\bin\tap.js --gc test\js\*-test.js
 
 # Don't actually build.
 build: off
