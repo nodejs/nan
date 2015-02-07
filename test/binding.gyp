@@ -92,4 +92,8 @@
         "target_name" : "asyncprogressworker"
       , "sources"     : [ "cpp/asyncprogressworker.cpp" ]
     }
+    , {
+        "target_name" : "nancallback"
+      , "sources"     : [ "cpp/nancallback.cpp" ]
+    }
 ]}

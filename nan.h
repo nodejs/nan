@@ -1402,15 +1402,49 @@ class NanCallback {
     return NanNew(handle)->Get(kCallbackIndex)->IsUndefined();
   }
 
-  v8::Handle<v8::Value> Call(int argc, v8::Handle<v8::Value> argv[]) const {
+  NAN_INLINE v8::Handle<v8::Value>
+  Call(v8::Handle<v8::Object> target
+     , int argc
+     , v8::Handle<v8::Value> argv[]) const {
+#if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    return Call_(isolate, target, argc, argv);
+#else
+    return Call_(target, argc, argv);
+#endif
+  }
+
+  NAN_INLINE v8::Handle<v8::Value>
+  Call(int argc, v8::Handle<v8::Value> argv[]) const {
+#if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    return Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv);
+#else
+    return Call_(v8::Context::GetCurrent()->Global(), argc, argv);
+#endif
+  }
+
+ private:
+  v8::Persistent<v8::Object> handle;
+  static const uint32_t kCallbackIndex = 0;
+
+#if (NODE_MODULE_VERSION > 0x000B)
+  v8::Handle<v8::Value> Call_(v8::Isolate *isolate
+                           , v8::Handle<v8::Object> target
+                           , int argc
+                           , v8::Handle<v8::Value> argv[]) const {
+#else
+  v8::Handle<v8::Value> Call_(v8::Handle<v8::Object> target
+                           , int argc
+                           , v8::Handle<v8::Value> argv[]) const {
+#endif
     NanEscapableScope();
 #if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
     return NanEscapeScope(node::MakeCallback(
         isolate
-      , isolate->GetCurrentContext()->Global()
+      , target
       , callback
       , argc
       , argv
@@ -1420,7 +1454,7 @@ class NanCallback {
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
     return NanEscapeScope(node::MakeCallback(
-        v8::Context::GetCurrent()->Global()
+        target
       , callback
       , argc
       , argv
@@ -1429,15 +1463,12 @@ class NanCallback {
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
     return NanEscapeScope(NanMakeCallback(
-        v8::Context::GetCurrent()->Global(), callback, argc, argv));
+        target, callback, argc, argv));
 #endif
 #endif
   }
-
- private:
-  v8::Persistent<v8::Object> handle;
-  static const uint32_t kCallbackIndex = 0;
 };
+
 
 /* abstract */ class NanAsyncWorker {
  public:
