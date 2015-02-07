@@ -53,7 +53,13 @@
 # define NAN_DEPRECATED
 #endif
 
-#if (NODE_MODULE_VERSION < 12)
+#define NODE_0_10_MODULE_VERSION 11
+#define NODE_0_12_MODULE_VERSION 12
+#define ATOM_0_21_MODULE_VERSION 41
+#define IOJS_1_0_MODULE_VERSION  42
+#define IOJS_1_1_MODULE_VERSION  43
+
+#if (NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION)
 typedef v8::InvocationCallback NanFunctionCallback;
 typedef v8::Script             NanUnboundScript;
 typedef v8::Script             NanBoundScript;
@@ -63,10 +69,10 @@ typedef v8::UnboundScript      NanUnboundScript;
 typedef v8::Script             NanBoundScript;
 #endif
 
-#if (NODE_MODULE_VERSION < 42)
+#if (NODE_MODULE_VERSION < ATOM_0_21_MODULE_VERSION)
 typedef v8::String::ExternalAsciiStringResource
     NanExternalOneByteStringResource;
-#else  // io.js v1.0.0
+#else
 typedef v8::String::ExternalOneByteStringResource
     NanExternalOneByteStringResource;
 #endif
@@ -167,7 +173,8 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
 }
 
 /* io.js 1.0  */
-#if NODE_MODULE_VERSION >= 42 || NODE_VERSION_AT_LEAST(0, 11, 15)
+#if NODE_MODULE_VERSION >= IOJS_1_0_MODULE_VERSION \
+ || NODE_VERSION_AT_LEAST(0, 11, 15)
   NAN_INLINE
   void NanSetCounterFunction(v8::CounterLookupCallback cb) {
     v8::Isolate::GetCurrent()->SetCounterFunction(cb);
@@ -223,7 +230,7 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
   }
 #endif
 
-#if (NODE_MODULE_VERSION > 0x000B)
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
 // Node 0.11+ (0.11.12 and below won't compile with these)
 
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
@@ -1101,7 +1108,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       const char *data
     , uint32_t size
   ) {
-#if NODE_MODULE_VERSION >= 0x000B
+#if NODE_MODULE_VERSION >= NODE_0_10_MODULE_VERSION
     return NanNew(node::Buffer::New(data, size)->handle_);
 #else
     return NanNew(
@@ -1406,7 +1413,7 @@ class NanCallback {
   Call(v8::Handle<v8::Object> target
      , int argc
      , v8::Handle<v8::Value> argv[]) const {
-#if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     return Call_(isolate, target, argc, argv);
 #else
@@ -1416,7 +1423,7 @@ class NanCallback {
 
   NAN_INLINE v8::Handle<v8::Value>
   Call(int argc, v8::Handle<v8::Value> argv[]) const {
-#if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     return Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv);
 #else
@@ -1428,7 +1435,7 @@ class NanCallback {
   v8::Persistent<v8::Object> handle;
   static const uint32_t kCallbackIndex = 0;
 
-#if (NODE_MODULE_VERSION > 0x000B)
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   v8::Handle<v8::Value> Call_(v8::Isolate *isolate
                            , v8::Handle<v8::Object> target
                            , int argc
@@ -1439,7 +1446,7 @@ class NanCallback {
                            , v8::Handle<v8::Value> argv[]) const {
 #endif
     NanEscapableScope();
-#if (NODE_MODULE_VERSION > 0x000B)  // 0.11.12+
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
     return NanEscapeScope(node::MakeCallback(
@@ -1817,9 +1824,9 @@ namespace NanIntern {
 inline
 NanExternalOneByteStringResource const*
 GetExternalResource(v8::Local<v8::String> str) {
-#if NODE_MODULE_VERSION < 42
+#if NODE_MODULE_VERSION < ATOM_0_21_MODULE_VERSION
     return str->GetExternalAsciiStringResource();
-#else  // io.js v1.0.0
+#else
     return str->GetExternalOneByteStringResource();
 #endif
 }
@@ -1827,9 +1834,9 @@ GetExternalResource(v8::Local<v8::String> str) {
 inline
 bool
 IsExternal(v8::Local<v8::String> str) {
-#if NODE_MODULE_VERSION < 42
+#if NODE_MODULE_VERSION < ATOM_0_21_MODULE_VERSION
     return str->IsExternalAscii();
-#else  // io.js v1.0.0
+#else
     return str->IsExternalOneByte();
 #endif
 }
@@ -1879,7 +1886,7 @@ namespace Nan {
 
 NAN_INLINE v8::Local<v8::Value> NanEncode(
     const void *buf, size_t len, enum Nan::Encoding encoding = Nan::BINARY) {
-#if (NODE_MODULE_VERSION >= 42)
+#if (NODE_MODULE_VERSION >= ATOM_0_21_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   node::encoding node_enc = static_cast<node::encoding>(encoding);
 
@@ -1895,7 +1902,7 @@ NAN_INLINE v8::Local<v8::Value> NanEncode(
       , len
       , node_enc);
   }
-#elif (NODE_MODULE_VERSION > 0x000B)
+#elif (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::Encode(
       v8::Isolate::GetCurrent()
     , buf, len
@@ -1911,13 +1918,13 @@ NAN_INLINE v8::Local<v8::Value> NanEncode(
 
 NAN_INLINE ssize_t NanDecodeBytes(
     v8::Handle<v8::Value> val, enum Nan::Encoding encoding = Nan::BINARY) {
-#if (NODE_MODULE_VERSION > 0x000B)
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::DecodeBytes(
       v8::Isolate::GetCurrent()
     , val
     , static_cast<node::encoding>(encoding));
 #else
-# if (NODE_MODULE_VERSION < 0x000B)
+# if (NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION)
   if (encoding == Nan::BUFFER) {
     return node::DecodeBytes(val, node::BINARY);
   }
@@ -1931,7 +1938,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
   , size_t len
   , v8::Handle<v8::Value> val
   , enum Nan::Encoding encoding = Nan::BINARY) {
-#if (NODE_MODULE_VERSION > 0x000B)
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::DecodeWrite(
       v8::Isolate::GetCurrent()
     , buf
@@ -1939,7 +1946,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
     , val
     , static_cast<node::encoding>(encoding));
 #else
-# if (NODE_MODULE_VERSION < 0x000B)
+# if (NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION)
   if (encoding == Nan::BUFFER) {
     return node::DecodeWrite(buf, len, val, node::BINARY);
   }
@@ -1982,7 +1989,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
 
   switch (encoding) {
     case Nan::ASCII:
-#if NODE_MODULE_VERSION < 0x000C
+#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
       sz_ = toStr->Length();
       if (to == NULL) {
         to = new char[sz_ + term_len];
@@ -2002,7 +2009,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-#if NODE_MODULE_VERSION < 0x000C
+#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
       {
         uint16_t* twobytebuf = new uint16_t[sz_ + term_len];
 
