@@ -28,6 +28,7 @@ LINT_SOURCES = \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
 	test/cpp/multifile2.h \
+	test/cpp/nancallback.cpp \
 	test/cpp/nannew.cpp \
         test/cpp/news.cpp \
 	test/cpp/optionvalues.cpp \
