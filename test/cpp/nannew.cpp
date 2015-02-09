@@ -103,10 +103,13 @@ NAN_METHOD(testContext) {
   NanScope();
   NanTap t(args[0]);
 
-  t.plan(4);
+  t.plan(5);
   t.ok(_( assertType<Context>( NanNew<Context>())));
   ExtensionConfiguration extensions(0, NULL);
   t.ok(_( assertType<Context>( NanNew<Context>(&extensions))));
+  t.ok(_( assertType<Context>(
+          NanNew<Context>(reinterpret_cast<ExtensionConfiguration *>(NULL)
+          , Handle<ObjectTemplate>()))));
   t.ok(_( assertType<Context>(
           NanNew<Context>(&extensions, Handle<ObjectTemplate>()))));
   t.ok(_( assertType<Context>(
