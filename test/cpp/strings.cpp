@@ -9,22 +9,18 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnAsciiString) {
-  NanScope();
   NanReturnValue(NanNew(*NanAsciiString(args[0])));
 }
 
 NAN_METHOD(ReturnUtf8String) {
-  NanScope();
   NanReturnValue(NanNew(*NanUtf8String(args[0])));
 }
 
 NAN_METHOD(ReturnUcs2String) {
-  NanScope();
   NanReturnValue(NanNew(*NanUcs2String(args[0])));
 }
 
 NAN_METHOD(HeapString) {
-  NanScope();
   NanUcs2String *s = new NanUcs2String(args[0]);
   v8::Local<v8::String> res = NanNew(**s);
   delete s;
@@ -32,12 +28,10 @@ NAN_METHOD(HeapString) {
 }
 
 NAN_METHOD(EncodeHex) {
-  NanScope();
   NanReturnValue(NanEncode("hello", 5, Nan::HEX));
 }
 
 NAN_METHOD(EncodeUCS2) {
-  NanScope();
   NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
 }
 
@@ -49,8 +43,6 @@ v8::Persistent<v8::FunctionTemplate> encodeHex_persistent;
 v8::Persistent<v8::FunctionTemplate> encodeUCS2_persistent;
 
 void Init (v8::Handle<v8::Object> target) {
-  NanScope();
-
   v8::Local<v8::FunctionTemplate> returnAsciiString =
     NanNew<v8::FunctionTemplate>(ReturnAsciiString);
 

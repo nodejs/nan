@@ -11,7 +11,6 @@
 v8::Persistent<v8::Boolean> persistent;
 
 NAN_METHOD(ReturnValue) {
-  NanScope();
   if (args.Length() == 1) {
     NanReturnValue(args[0]);
   } else {
@@ -20,17 +19,14 @@ NAN_METHOD(ReturnValue) {
 }
 
 NAN_METHOD(ReturnPrimitive) {
-  NanScope();
   NanReturnValue(true);
 }
 
 NAN_METHOD(ReturnString) {
-  NanScope();
   NanReturnValue("yes, it works");
 }
 
 NAN_METHOD(ReturnPersistent) {
-  NanScope();
   NanReturnValue(persistent);
 }
 
