@@ -28,7 +28,6 @@ v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
 }
 
 NAN_METHOD(Hustle) {
-  NanScope();
   NanReturnValue(wrap(args[0].As<v8::Function>()));
 }
 
