@@ -106,6 +106,7 @@ struct Factory<v8::NumberObject> : FactoryBase<v8::NumberObject> {
 template <typename T>
 struct IntegerFactory : FactoryBase<T> {
   typedef typename FactoryBase<T>::return_t return_t;
+  static inline return_t New(size_t value);
   static inline return_t New(int32_t value);
   static inline return_t New(uint32_t value);
 };
@@ -118,6 +119,7 @@ struct Factory<v8::Int32> : IntegerFactory<v8::Int32> {};
 
 template <>
 struct Factory<v8::Uint32> : FactoryBase<v8::Uint32> {
+  static inline return_t New(size_t value);
   static inline return_t New(int32_t value);
   static inline return_t New(uint32_t value);
 };
