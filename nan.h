@@ -795,7 +795,7 @@ namespace Nan { namespace imp {
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value)                                                 \
-    return scope.Close(Nan::imp::NanEnsureHandleOrPersistent(value))
+    return Nan::imp::NanEnsureHandleOrPersistent(value)
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
 # define NanReturnUndefined() return v8::Undefined()
