@@ -20,14 +20,12 @@ NAN_GC_CALLBACK(gcEpilogueCallback) {
 }
 
 NAN_METHOD(Hook) {
-  NanScope();
   NanAddGCPrologueCallback(gcPrologueCallback);
   NanAddGCEpilogueCallback(gcEpilogueCallback);
   NanReturnUndefined();
 }
 
 NAN_METHOD(Check) {
-  NanScope();
   NanReturnValue(NanNew(prologue_called && epilogue_called));
 }
 

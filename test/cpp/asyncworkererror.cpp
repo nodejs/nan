@@ -19,7 +19,6 @@ class ErrorWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(Work) {
-  NanScope();
   NanCallback *callback = new NanCallback(args[0].As<v8::Function>());
   NanAsyncQueueWorker(new ErrorWorker(callback));
   NanReturnUndefined();
