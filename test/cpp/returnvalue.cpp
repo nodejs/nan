@@ -9,7 +9,6 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnValue) {
-  NanScope();
   if (args.Length() == 1) {
     NanReturnValue(args[0]);
   } else {

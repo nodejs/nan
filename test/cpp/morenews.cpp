@@ -9,34 +9,28 @@
 #include <nan.h>
 
 NAN_METHOD(NewNumber) {
-  NanScope();
   NanReturnValue(NanNew(0.5));
 }
 
 NAN_METHOD(NewNegativeInteger) {
-  NanScope();
   NanReturnValue(NanNew(-1));
 }
 
 NAN_METHOD(NewPositiveInteger) {
-  NanScope();
   NanReturnValue(NanNew(1));
 }
 
 NAN_METHOD(NewUtf8String) {
-  NanScope();
   const char s[] = "strïng";
   NanReturnValue(NanNew(s));
 }
 
 NAN_METHOD(NewLatin1String) {
-  NanScope();
   const uint8_t s[] = "str\xefng";
   NanReturnValue(NanNew(s));
 }
 
 NAN_METHOD(NewUcs2String) {
-  NanScope();
   uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
   NanReturnValue(NanNew(s));
 }
@@ -64,13 +58,11 @@ class ExtAsciiString : public v8::String::ExternalAsciiStringResource {
 };
 
 NAN_METHOD(NewExternalStringResource) {
-  NanScope();
   v8::Local<v8::String> ext = NanNew(new ExtString());
   NanReturnValue(ext);
 }
 
 NAN_METHOD(NewExternalAsciiStringResource) {
-  NanScope();
   v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
   NanReturnValue(ext);
 }

@@ -51,8 +51,6 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
 }
 
 NAN_METHOD(MyObject::New) {
-	NanScope();
-
 	if (args.IsConstructCall()) {
 		MyObject* obj = new MyObject();
 		obj->Wrap(args.This());

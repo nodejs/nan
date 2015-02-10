@@ -8,17 +8,12 @@
 
 #include <nan.h>
 
-
 NAN_METHOD(GlobalContext) {
-  NanScope();
-
   NanCallback(args[0].As<v8::Function>()).Call(0, NULL);
   NanReturnUndefined();
 }
 
 NAN_METHOD(SpecificContext) {
-  NanScope();
-
   NanCallback cb(args[0].As<v8::Function>());
   cb.Call(NanGetCurrentContext()->Global(), 0, NULL);
   NanReturnUndefined();
