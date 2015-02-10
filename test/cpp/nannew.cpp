@@ -182,13 +182,16 @@ NAN_METHOD(testNumber) {
 
   t.ok(_( NanNew<Int32>(5)->Value() == 5 ));
   t.ok(_( NanNew<Int32>(-42)->Value() == -42 ));
+  t.ok(_( NanNew<Int32>(sizeof(uint8_t))->Value() == 1 ));
   t.ok(_( assertType<Int32>( NanNew<Int32>(23) )));
 
   t.ok(_( NanNew<Uint32>(5u)->Value() == 5u ));
+  t.ok(_( NanNew<Uint32>(sizeof(uint8_t))->Value() == 1 ));
   t.ok(_( assertType<Uint32>( NanNew<Uint32>(23u) )));
 
   t.ok(_( NanNew<Integer>(5)->Value() == 5 ));
   t.ok(_( NanNew<Integer>(-1337)->Value() == -1337 ));
+  t.ok(_( NanNew<Integer>(sizeof(uint8_t))->Value() == 1 ));
   t.ok(_( assertType<Integer>( NanNew<Integer>(-42) )));
 
   t.ok(_( fabs(NanNew<Number>(M_PI)->Value() - M_PI) < epsilon));
