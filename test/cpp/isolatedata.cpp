@@ -13,8 +13,6 @@ struct Dummy {
 };
 
 NAN_METHOD(SetAndGet) {
-  NanScope();
-
   Dummy *d0 = new Dummy;
   Dummy *d1 = NULL;
 

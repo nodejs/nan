@@ -51,8 +51,6 @@ class PiWorker : public NanAsyncWorker {
 
 // Asynchronous access to the `Estimate()` function
 NAN_METHOD(CalculateAsync) {
-  NanScope();
-
   int points = args[0]->Uint32Value();
   NanCallback *callback = new NanCallback(args[1].As<Function>());
 
