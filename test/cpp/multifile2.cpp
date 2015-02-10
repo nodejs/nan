@@ -9,7 +9,6 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnString) {
-  NanScope();
   v8::Local<v8::String> s = NanNew<v8::String>(*NanUtf8String(args[0]));
   NanReturnValue(s);
 }
