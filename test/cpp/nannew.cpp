@@ -52,7 +52,6 @@ stringMatches(Local<Value> value, const char * match) {
 #define _(e) NAN_TEST_EXPRESSION(e)
 
 NAN_METHOD(testArray) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(3);
@@ -65,7 +64,6 @@ NAN_METHOD(testArray) {
 }
 
 NAN_METHOD(testBoolean) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(6);
@@ -87,7 +85,6 @@ NAN_METHOD(testBoolean) {
 # define V(x) x->ValueOf()
 #endif
 NAN_METHOD(testBooleanObject) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(3);
@@ -101,7 +98,6 @@ NAN_METHOD(testBooleanObject) {
 #undef V
 
 NAN_METHOD(testContext) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(5);
@@ -121,7 +117,6 @@ NAN_METHOD(testContext) {
 }
 
 NAN_METHOD(testDate) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(1);
@@ -134,7 +129,6 @@ NAN_METHOD(testDate) {
 int ttt = 23;
 
 NAN_METHOD(testExternal) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(2);
@@ -146,7 +140,6 @@ NAN_METHOD(testExternal) {
 }
 
 NAN_METHOD(testFunction) {
-  NanScope();
   NanTap t(args[0]);
   t.plan(2);
 
@@ -158,7 +151,6 @@ NAN_METHOD(testFunction) {
 }
 
 NAN_METHOD(testFunctionTemplate) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(4);
@@ -179,7 +171,6 @@ NAN_METHOD(testFunctionTemplate) {
 const double epsilon = 1e-9;
 
 NAN_METHOD(testNumber) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(17);
@@ -214,7 +205,6 @@ NAN_METHOD(testNumber) {
 }
 
 NAN_METHOD(testNumberObject) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(2);
@@ -226,7 +216,6 @@ NAN_METHOD(testNumberObject) {
 }
 
 NAN_METHOD(testObject) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(1);
@@ -237,7 +226,6 @@ NAN_METHOD(testObject) {
 }
 
 NAN_METHOD(testObjectTemplate) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(1);
@@ -248,7 +236,6 @@ NAN_METHOD(testObjectTemplate) {
 }
 
 NAN_METHOD(testScript) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(6);
@@ -272,7 +259,6 @@ NAN_METHOD(testScript) {
 }
 
 NAN_METHOD(testSignature) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(3);
@@ -289,7 +275,6 @@ NAN_METHOD(testSignature) {
 }
 
 NAN_METHOD(testString) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(14);
@@ -328,7 +313,6 @@ NAN_METHOD(testString) {
 # define V(x) x->ValueOf()
 #endif
 NAN_METHOD(testStringObject) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(2);
@@ -345,7 +329,6 @@ NAN_METHOD(testStringObject) {
 
 template <typename T> Handle<T> asHandle(Local<T> l) { return l; }
 NAN_METHOD(testHandles) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(2);
@@ -357,7 +340,6 @@ NAN_METHOD(testHandles) {
 }
 
 NAN_METHOD(testPersistents) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(1);
@@ -377,7 +359,6 @@ NAN_METHOD(testPersistents) {
 
 // See https://github.com/nodejs/nan/issues/212
 NAN_METHOD(testRegression212) {
-  NanScope();
   NanTap t(args[0]);
 
   t.plan(1);
@@ -407,7 +388,6 @@ NAN_METHOD(overloaded) {
 }
 
 NAN_METHOD(testRegression242) {
-  NanScope();
   NanTap t(args[0]);
 
   // These lines must *compile*. Not much to test at runtime.
@@ -429,37 +409,30 @@ NAN_METHOD(testRegression242) {
 //==============================================================================
 
 NAN_METHOD(newIntegerWithValue) {
-  NanScope();
   return_NanValue(NanNew<Integer>(args[0]->Int32Value()));
 }
 
 NAN_METHOD(newNumberWithValue) {
-  NanScope();
   return_NanValue(NanNew<Number>(args[0]->NumberValue()));
 }
 
 NAN_METHOD(newUint32WithValue) {
-  NanScope();
   return_NanValue(NanNew<Uint32>(args[0]->Uint32Value()));
 }
 
 NAN_METHOD(newStringFromChars) {
-  NanScope();
   return_NanValue(NanNew<String>("hello?"));
 }
 
 NAN_METHOD(newStringFromCharsWithLength) {
-  NanScope();
   return_NanValue(NanNew<String>("hello?", 4));
 }
 
 NAN_METHOD(newStringFromStdString) {
-  NanScope();
   return_NanValue(NanNew<String>(std::string("hello!")));
 }
 
 NAN_METHOD(newExternal) {
-  NanScope();
   return_NanValue(NanNew<External>(&ttt));
 }
 
