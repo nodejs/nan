@@ -990,11 +990,11 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
 
 <a name="api_nan_new_context_handle"></a>
-### ~~Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])
+### ~~Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])~~
 
 Deprecated. Use `NanNew<Context>` instead.
 
-~~Creates a new `Local<Context>` handle.
+~~Creates a new `Local<Context>` handle.~~
 
 ```c++
 Local<FunctionTemplate> ftmpl = NanNew<FunctionTemplate>();
