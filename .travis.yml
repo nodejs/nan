@@ -4,7 +4,7 @@ env:
   - NODE_VERSION="0.10.36"
   - NODE_VERSION="0.12.0"
   - NODE_VERSION="iojs-v1.1.0"
-  - NODE_WEBKIT="0.11.6" NODE_VERSION="0.11.13"
+#  - NODE_WEBKIT="0.11.6" NODE_VERSION="0.11.13"
 node_js:
   - "0.10"
 notifications:
@@ -21,6 +21,6 @@ before_install:
   - nvm install $NODE_VERSION
   - node --version
   - if [[ ${NODE_VERSION} == "0.8" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
-  - if [[ ${NODE_WEBKIT:-unset} != "unset" ]]; then npm install nw-gyp && ./node_modules/.bin/nw-gyp rebuild --directory test --target=$NODE_WEBKIT; fi
+#  - if [[ ${NODE_WEBKIT:-unset} != "unset" ]]; then npm install nw-gyp && ./node_modules/.bin/nw-gyp rebuild --directory test --target=$NODE_WEBKIT; fi
 install:
 script: tap --gc test/js/*-test.js
