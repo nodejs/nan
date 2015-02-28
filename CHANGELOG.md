@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 1.6.2: current Node unstable: 0.11.16, Node stable: 0.10.36, io.js: 1.1.0**
+**Version 1.7.0: current Node 12: 0.12.0, Node 10: 0.10.36, io.js: 1.4.1**
+
+### 1.7.0 Feb 28 2015
+
+  - Feature: Made NanCallback::Call accept optional target 8d54da7
+  - Feature: Support atom-shell 0.21 0b7f1bb
 
 ### 1.6.2 Feb 6 2015
 

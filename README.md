@@ -1,9 +1,9 @@
 Native Abstractions for Node.js
 ===============================
 
-**A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.11, and eventually 0.12.**
+**A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.12 as well as io.js.**
 
-***Current version: 1.6.2***
+***Current version: 1.7.0***
 
 *(See [CHANGELOG.md](https://github.com/rvagg/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -12,7 +12,7 @@ Native Abstractions for Node.js
 [![Build Status](https://secure.travis-ci.org/rvagg/nan.png)](http://travis-ci.org/rvagg/nan)
 [![Build status](https://ci.appveyor.com/api/projects/status/kh73pbm9dsju7fgh)](https://ci.appveyor.com/project/RodVagg/nan)
 
-Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.11/0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
+Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
 
 This project also contains some helper utilities that make addon development a bit more pleasant.
 
@@ -24,6 +24,13 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Feb-2015: 1.7.0 release
+
+* Made `NanCallback::Call` accept optional target
+* Support atom-shell 0.21
+
+Node 0.12.0 is out and supported by NAN. So is atom-shell 0.21. `NanCallback::Call` now accepts an optional `target` argument like `NanMakeCallback`.
 
 ### Jan-2015: 1.6.0 release
 
