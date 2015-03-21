@@ -22,6 +22,7 @@ This project also contains some helper utilities that make addon development a b
  * **[API](#api)**
  * **[Tests](#tests)**
  * **[Porting](#porting)**
+ * **[Governance & Contributing](#governance)**
 
 <a name="news"></a>
 ## News & Updates
@@ -1287,7 +1288,7 @@ npm install
 make test
 ```
 
-### Porting
+## Porting
 
 Follows is a guide to porting your C++ node to NAN.
 
@@ -1329,9 +1330,54 @@ NAN_METHOD(MyClass::ToString)
 
 </tbody></table>
 
-### Contributors
+## Contributors
 
-NAN is only possible due to the excellent work of the following contributors:
+<a name="governance"></a>
+
+## Governance & Contributing
+
+NAN is governed by the [io.js](https://iojs.org/) Addon API Working Group
+
+### Addon API Working Group (WG)
+
+The NAN project is jointly governed by a Working Group which is responsible for high-level guidance of the project.
+
+Members of the WG are also known as Collaborators, there is no distinction between the two, unlike other io.js projects.
+
+The WG has final authority over this project including:
+
+* Technical direction
+* Project governance and process (including this policy)
+* Contribution policy
+* GitHub repository hosting
+* Maintaining the list of additional Collaborators
+
+For the current list of WG members, see the project [README.md](./README.md#collaborators).
+
+Individuals making significant and valuable contributions are made members of the WG and given commit-access to the project. These individuals are identified by the WG and their addition to the WG is discussed via GitHub and requires unanimous consensus amongst those WG members participating in the discussion with a quorum of 50% of WG members required for acceptance of the vote.
+
+_Note:_ If you make a significant contribution and are not considered for commit-access log an issue or contact a WG member directly.
+
+For the current list of WG members / Collaborators, see the project [README.md](./README.md#collaborators).
+
+### Consensus Seeking Process
+
+The WG follows a [Consensus Seeking](http://en.wikipedia.org/wiki/Consensus-seeking_decision-making) decision making model.
+
+Modifications of the contents of the NAN repository are made on a collaborative basis. Anybody with a GitHub account may propose a modification via pull request and it will be considered by the WG. All pull requests must be reviewed and accepted by a WG member with sufficient expertise who is able to take full responsibility for the change. In the case of pull requests proposed by an existing WG member, an additional WG member is required for sign-off. Consensus should be sought if additional WG members participate and there is disagreement around a particular modification.
+
+If a change proposal cannot reach a consensus, a WG member can call for a vote amongst the members of the WG. Simple majority wins.
+
+### Developer's Certificate of Origin 1.0
+
+By making a contribution to this project, I certify that:
+
+* (a) The contribution was created in whole or in part by me and I have the right to submit it under the open source license indicated in the file; or
+* (b) The contribution is based upon previous work that, to the best of my knowledge, is covered under an appropriate open source license and I have the right under that license to submit that work with modifications, whether created in whole or in part by me, under the same open source license (unless I am permitted to submit under a different license), as indicated in the file; or
+* (c) The contribution was provided directly to me by some other person who certified (a), (b) or (c) and I have not modified it.
+
+<a name="collaborators"></a>
+### WG Members / Collaborators
 
 <table><tbody>
 <tr><th align="left">Rod Vagg</th><td><a href="https://github.com/rvagg">GitHub/rvagg</a></td><td><a href="http://twitter.com/rvagg">Twitter/@rvagg</a></td></tr>
@@ -1343,9 +1389,8 @@ NAN is only possible due to the excellent work of the following contributors:
 <tr><th align="left">David Siegel</th><td><a href="https://github.com/agnat">GitHub/agnat</a></td><td>-</td></tr>
 </tbody></table>
 
-Licence &amp; copyright
------------------------
+## Licence &amp; copyright
 
-Copyright (c) 2015 NAN contributors (listed above).
+Copyright (c) 2015 NAN WG Members / Collaborators (listed above).
 
 Native Abstractions for Node.js is licensed under an MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
