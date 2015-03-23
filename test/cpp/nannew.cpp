@@ -108,7 +108,7 @@ NAN_METHOD(testContext) {
   ExtensionConfiguration extensions(0, NULL);
   t.ok(_( assertType<Context>( NanNew<Context>(&extensions))));
   t.ok(_( assertType<Context>(
-          NanNew<Context>(reinterpret_cast<ExtensionConfiguration *>(NULL)
+          NanNew<Context>(static_cast<ExtensionConfiguration *>(NULL)
           , Handle<ObjectTemplate>()))));
   t.ok(_( assertType<Context>(
           NanNew<Context>(&extensions, Handle<ObjectTemplate>()))));

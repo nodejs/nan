@@ -174,7 +174,7 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
 
 /* io.js 1.0  */
 #if NODE_MODULE_VERSION >= IOJS_1_0_MODULE_VERSION \
- || NODE_VERSION_AT_LEAST(0, 11, 15)
+  || NODE_VERSION_AT_LEAST(0, 11, 15)
   NAN_INLINE
   void NanSetCounterFunction(v8::CounterLookupCallback cb) {
     v8::Isolate::GetCurrent()->SetCounterFunction(cb);
@@ -1475,7 +1475,6 @@ class NanCallback {
 #endif
   }
 };
-
 
 /* abstract */ class NanAsyncWorker {
  public:
