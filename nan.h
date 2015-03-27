@@ -1572,15 +1572,15 @@ class NanCallback {
   }
 
   NAN_INLINE void SaveToPersistent(
-      const char *key, const v8::Local<v8::Object> &obj) {
+      const char *key, const v8::Local<v8::Value> &value) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    handle->Set(NanNew<v8::String>(key), obj);
+    handle->Set(NanNew<v8::String>(key), value);
   }
 
-  v8::Local<v8::Object> GetFromPersistent(const char *key) const {
+  v8::Local<v8::Value> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return NanEscapeScope(handle->Get(NanNew(key)).As<v8::Object>());
+    return NanEscapeScope(handle->Get(NanNew(key)));
   }
 
   virtual void Execute() = 0;
