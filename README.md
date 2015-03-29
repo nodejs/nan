@@ -168,8 +168,6 @@ using v8::Number;
 
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {
-  NanScope();
-
   // expect a number as the first argument
   int points = args[0]->Uint32Value();
   double est = Estimate(points);
@@ -235,8 +233,6 @@ class PiWorker : public NanAsyncWorker {
 
 // Asynchronous access to the `Estimate()` function
 NAN_METHOD(CalculateAsync) {
-  NanScope();
-
   int points = args[0]->Uint32Value();
   NanCallback *callback = new NanCallback(args[1].As<Function>());
 
@@ -447,7 +443,6 @@ NAN_GC_CALLBACK(gcPrologueCallback) {
 }
 
 NAN_METHOD(Hook) {
-  NanScope();
   NanAssignPersistent(callback, args[0].As<Function>());
   NanAddGCPrologueCallback(gcPrologueCallback);
   NanReturnValue(args.Holder());
@@ -612,12 +607,10 @@ NAN_METHOD(Foo::Baz) {
 <a name="api_nan_scope"></a>
 ### NanScope()
 
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanScope()` necessary, use it in place of `HandleScope scope` when you do not wish to return handles (`Handle` or `Local`) to the surrounding scope (or in functions directly exposed to V8, as they do not return values in the normal sense):
+The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanScope()` necessary, use it in place of `HandleScope scope` when you do not wish to return handles (`Handle` or `Local`) to the surrounding scope (or in functions directly exposed to V8, as they do not return values in the normal sense). V8-exposed methods (NAN_METHOD, etc.) have implicit handle scopes and do not need extra scopes:
 
 ```c++
 NAN_METHOD(Foo::Bar) {
-  NanScope();
-
   NanReturnValue(NanNew<String>("FooBar!"));
 }
 ```
@@ -790,7 +783,6 @@ Convert a `String` to zero-terminated, sort-of Ascii-encoded `char *`. The under
 
 ```c++
 NAN_METHOD(foo) {
-  NanScope();
   NanReturnValue(NanNew(*NanAsciiString(arg[0])));
 }
 ```
@@ -801,7 +793,6 @@ the buffer `str` points to has been freed when `baz` was destroyed:
 static char *str;
 
 NAN_METHOD(bar) {
-  NanScope();
   NanAsciiString baz(arg[0]);
 
   str = *baz;
@@ -818,7 +809,6 @@ printf(str); // use-after-free error
 static NanAsciiString *str;
 
 NAN_METHOD(bar) {
-  NanScope();
   str = new NanAsciiString(arg[0]);
   NanReturnUndefined();
 }
@@ -836,7 +826,6 @@ Convert a `String` to zero-terminated, Utf8-encoded `char *`. The underlying buf
 
 ```c++
 NAN_METHOD(foo) {
-  NanScope();
   NanReturnValue(NanNew(*NanUtf8String(arg[0])));
 }
 ```
@@ -847,7 +836,6 @@ the buffer `str` points to has been freed when `baz` was destroyed:
 static char *str;
 
 NAN_METHOD(bar) {
-  NanScope();
   NanUtf8String baz(arg[0]);
 
   str = *baz;
@@ -864,7 +852,6 @@ printf(str); // use-after-free error
 static NanUtf8String *str;
 
 NAN_METHOD(bar) {
-  NanScope();
   str = new NanUtf8String(arg[0]);
   NanReturnUndefined();
 }
@@ -883,7 +870,6 @@ Convert a `String` to zero-terminated, Ucs2-encoded `uint16_t *`. The underlying
 
 ```c++
 NAN_METHOD(foo) {
-  NanScope();
   NanReturnValue(NanNew(*NanUcs2String(arg[0])));
 }
 ```
@@ -894,7 +880,6 @@ the buffer `str` points to has been freed when `baz` was destroyed:
 static char *str;
 
 NAN_METHOD(bar) {
-  NanScope();
   NanUcs2String baz(arg[0]);
 
   str = *baz;
@@ -911,7 +896,6 @@ printf(str); // use-after-free error
 static NanUcs2String *str;
 
 NAN_METHOD(bar) {
-  NanScope();
   str = new NanUcs2String(arg[0]);
   NanReturnUndefined();
 }

@@ -9,7 +9,6 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnNull) {
-  NanScope();
   NanReturnNull();
 }
 

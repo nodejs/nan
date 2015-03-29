@@ -46,7 +46,6 @@ class ProgressWorker : public NanAsyncProgressWorker {
 };
 
 NAN_METHOD(DoProgress) {
-  NanScope();
   NanCallback *progress = new NanCallback(args[2].As<v8::Function>());
   NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
   NanAsyncQueueWorker(new ProgressWorker(

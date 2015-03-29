@@ -27,7 +27,6 @@ class SleepWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(DoSleep) {
-  NanScope();
   NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
   NanAsyncQueueWorker(new SleepWorker(callback, args[0]->Uint32Value()));
   NanReturnUndefined();

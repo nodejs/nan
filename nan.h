@@ -839,7 +839,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define NanEscapeScope(val) scope.Close(val)
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
-# define NanReturnValue(value) return scope.Close(value)
+# define NanReturnValue(value) return value
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
 # define NanReturnUndefined() return v8::Undefined()

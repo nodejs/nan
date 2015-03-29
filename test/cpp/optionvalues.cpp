@@ -9,8 +9,6 @@
 #include <nan.h>
 
 NAN_METHOD(OptionValues) {
-  NanScope();
-
   v8::Local<v8::Object> inobj = args[0].As<v8::Object>();
   v8::Local<v8::Object> outobj = NanNew<v8::Object>();
 
