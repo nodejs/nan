@@ -1393,13 +1393,17 @@ class NanCallback {
     NanDisposePersistent(handle);
   }
 
-  friend bool operator==(NanCallback &cb1, NanCallback &cb2) {
-    if(cb1.IsEmpty() && cb2.IsEmpty()) return 1;
-    return cb1.GetFunction() == cb2.GetFunction();
+  bool operator==(const NanCallback &other) const {
+    v8::Local<v8::Value> a = NanNew(handle)->Get(kCallbackIndex);
+    v8::Local<v8::Value> b = NanNew(other.handle)->Get(kCallbackIndex);
+    if (a->IsUndefined() || b->IsUndefined()) {
+      return a->IsUndefined() && b->IsUndefined();
+    }
+    return a->StrictEquals(b);
   }
 
-  friend bool operator!=(NanCallback &cb1, NanCallback &cb2) {
-    return !(cb1 == cb2);
+  bool operator!=(const NanCallback &other) const {
+    return !(this == &other);
   }
 
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
