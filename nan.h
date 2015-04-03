@@ -1396,9 +1396,6 @@ class NanCallback {
   bool operator==(const NanCallback &other) const {
     v8::Local<v8::Value> a = NanNew(handle)->Get(kCallbackIndex);
     v8::Local<v8::Value> b = NanNew(other.handle)->Get(kCallbackIndex);
-    if (a->IsUndefined() || b->IsUndefined()) {
-      return a->IsUndefined() && b->IsUndefined();
-    }
     return a->StrictEquals(b);
   }
 
