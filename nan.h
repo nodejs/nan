@@ -1393,6 +1393,15 @@ class NanCallback {
     NanDisposePersistent(handle);
   }
 
+  friend bool operator==(NanCallback &cb1, NanCallback &cb2) {
+    if(cb1.IsEmpty() && cb2.IsEmpty()) return TRUE;
+    return cb1.GetFunction() == cb2.GetFunction();
+  }
+
+  friend bool operator!=(NanCallback &cb1, NanCallback &cb2) {
+    return !(cb1 == cb2);
+  }
+
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
     NanScope();
     NanNew(handle)->Set(kCallbackIndex, fn);
