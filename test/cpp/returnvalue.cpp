@@ -17,10 +17,28 @@ NAN_METHOD(ReturnValue) {
   }
 }
 
+NAN_METHOD(ReturnPrimitive) {
+  NanScope();
+  NanReturnValue(true);
+}
+
+NAN_METHOD(ReturnString) {
+  NanScope();
+  NanReturnValue("yes, it works");
+}
+
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("r")
     , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("p")
+    , NanNew<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("s")
+    , NanNew<v8::FunctionTemplate>(ReturnString)->GetFunction()
   );
 }
 
