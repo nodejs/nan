@@ -1393,6 +1393,17 @@ class NanCallback {
     NanDisposePersistent(handle);
   }
 
+  bool operator==(const NanCallback &other) const {
+    NanScope();
+    v8::Local<v8::Value> a = NanNew(handle)->Get(kCallbackIndex);
+    v8::Local<v8::Value> b = NanNew(other.handle)->Get(kCallbackIndex);
+    return a->StrictEquals(b);
+  }
+
+  bool operator!=(const NanCallback &other) const {
+    return !this->operator==(other);
+  }
+
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
     NanScope();
     NanNew(handle)->Set(kCallbackIndex, fn);
