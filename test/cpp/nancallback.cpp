@@ -31,7 +31,7 @@ NAN_METHOD(CompareCallbacks) {
   NanCallback cb2(args[1].As<v8::Function>());
   NanCallback cb3(args[3].As<v8::Function>());
 
-  NanReturnValue(cb1 == cb2 && cb1 != cb3);
+  NanReturnValue(NanNew<v8::Boolean>(cb1 == cb2 && cb1 != cb3));
 }
 
 void Init (v8::Handle<v8::Object> target) {
