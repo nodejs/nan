@@ -310,7 +310,9 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 
-# define NanObjectWrapHandle(obj) obj->handle()
+  NAN_INLINE v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap &obj) {
+    return const_cast<node::ObjectWrap &>(obj).handle();
+  }
 
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
     NanEscapableScope();
@@ -845,7 +847,10 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
-# define NanObjectWrapHandle(obj) v8::Local<v8::Object>::New(obj->handle_)
+
+  NAN_INLINE v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap &obj) {
+    return v8::Local<v8::Object>::New(obj.handle_);
+  }
 
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
     NanEscapableScope();
