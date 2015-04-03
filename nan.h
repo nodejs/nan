@@ -1403,7 +1403,7 @@ class NanCallback {
   }
 
   bool operator!=(const NanCallback &other) const {
-    return !(this == &other);
+    return !this->operator==(other);
   }
 
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
