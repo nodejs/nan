@@ -1394,7 +1394,7 @@ class NanCallback {
   }
 
   friend bool operator==(NanCallback &cb1, NanCallback &cb2) {
-    if(cb1.IsEmpty() && cb2.IsEmpty()) return TRUE;
+    if(cb1.IsEmpty() && cb2.IsEmpty()) return 1;
     return cb1.GetFunction() == cb2.GetFunction();
   }
 
