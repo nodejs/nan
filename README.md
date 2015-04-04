@@ -544,6 +544,15 @@ NAN_METHOD(Foo::Bar) {
 
 No `return` statement required.
 
+For convenience, `NanReturnValue` also accepts common primitives directly by implicitly performing an overloaded `NanNew(T)`.
+
+```c++
+NanReturnValue("FooBar!");
+NanReturnValue(true);
+NanReturnValue(12);
+NanReturnValue(3.14);
+```
+
 <a name="api_nan_return_undefined"></a>
 ### NanReturnUndefined()
 
@@ -700,7 +709,7 @@ NanSetInternalFieldPointer(wrapper, 0, this);
 ```
 
 <a name="api_nan_object_wrap_handle"></a>
-### Local&lt;Object&gt; NanObjectWrapHandle(Object)
+### Local&lt;Object&gt; NanObjectWrapHandle(const node::ObjectWrap &amp;obj)
 
 When you want to fetch the V8 object handle from a native object you've wrapped with Node's `ObjectWrap`, you should use `NanObjectWrapHandle`:
 
