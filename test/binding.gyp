@@ -96,4 +96,8 @@
         "target_name" : "nancallback"
       , "sources"     : [ "cpp/nancallback.cpp" ]
     }
+    , {
+        "target_name" : "threadlocal"
+      , "sources"     : [ "cpp/threadlocal.cpp" ]
+    }
 ]}
