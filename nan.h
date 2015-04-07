@@ -100,6 +100,94 @@ typedef v8::String::ExternalOneByteStringResource
     void func(uv_async_t *async)
 #endif
 
+#if NAUV_UVVERSION >= 0x000b0b
+
+typedef uv_key_t nauv_key_t;
+
+inline int nauv_key_create(nauv_key_t *key) {
+  return uv_key_create(key);
+}
+
+inline void nauv_key_delete(nauv_key_t *key) {
+  uv_key_delete(key);
+}
+
+inline void* nauv_key_get(nauv_key_t *key) {
+  return uv_key_get(key);
+}
+
+inline void nauv_key_set(nauv_key_t *key, void *value) {
+  uv_key_set(key, value);
+}
+
+#else
+
+/* Implement thread local storage for older versions of libuv.
+ * This is essentially a backport of libuv commit 5d2434bf
+ * written by Ben Noordhuis, adjusted for names and inline.
+ */
+
+#ifndef WIN32
+
+#include <pthread.h>
+
+typedef pthread_key_t nauv_key_t;
+
+inline int nauv_key_create(nauv_key_t* key) {
+  return -pthread_key_create(key, NULL);
+}
+
+inline void nauv_key_delete(nauv_key_t* key) {
+  if (pthread_key_delete(*key))
+    abort();
+}
+
+inline void* nauv_key_get(nauv_key_t* key) {
+  return pthread_getspecific(*key);
+}
+
+inline void nauv_key_set(nauv_key_t* key, void* value) {
+  if (pthread_setspecific(*key, value))
+    abort();
+}
+
+#else
+
+#include <Windows.h>
+
+typedef struct {
+  DWORD tls_index;
+} nauv_key_t;
+
+inline int nauv_key_create(nauv_key_t* key) {
+  key->tls_index = TlsAlloc();
+  if (key->tls_index == TLS_OUT_OF_INDEXES)
+    return UV_ENOMEM;
+  return 0;
+}
+
+inline void nauv_key_delete(nauv_key_t* key) {
+  if (TlsFree(key->tls_index) == FALSE)
+    abort();
+  key->tls_index = TLS_OUT_OF_INDEXES;
+}
+
+inline void* nauv_key_get(nauv_key_t* key) {
+  void* value = TlsGetValue(key->tls_index);
+  if (value == NULL)
+    if (GetLastError() != ERROR_SUCCESS)
+      abort();
+  return value;
+}
+
+inline void nauv_key_set(nauv_key_t* key, void* value) {
+  if (TlsSetValue(key->tls_index, value) == FALSE)
+    abort();
+}
+
+#endif
+#endif
+
 // some generic helpers
 
 template<typename T> NAN_INLINE bool NanSetPointerSafe(
