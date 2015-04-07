@@ -153,7 +153,7 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 
 #else
 
-#include <Windows.h>
+#include <windows.h>
 
 typedef struct {
   DWORD tls_index;
