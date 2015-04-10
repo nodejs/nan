@@ -1295,11 +1295,11 @@ Follows is a guide to porting your C++ node to NAN.
 
 <tr><th>Aspect</th><th>Without NAN</th><th>With NAN</th></tr>
 
-<tr><td>Function declaration</td><td><pre>class MyClass : ObjectWrap {
+<tr><td>Function declaration</td><td><pre>class MyClass : public ObjectWrap {
     ....
     static Handle<Value> ToString(const Arguments& args);
     ....
-}</pre></td></th><td><pre>class MyClass : ObjectWrap {
+}</pre></td></th><td><pre>class MyClass : public ObjectWrap {
     ....
     static NAN_METHOD(ToString);
     ....
@@ -1323,7 +1323,7 @@ NAN_METHOD(MyClass::ToString)
 
 <tr><td>Throw an error</td><td><pre>return ThrowException(
   Exception::Error(
-    String::New("Error text...")));</pre></td></th><td><pre>NanThrowError("Error text...");</pre></td></tr>
+    String::New("Error text...")));</pre></td></th><td><pre>return NanThrowError("Error text...");</pre></td></tr>
 
 <tr><td>New v8 string literal</td><td><pre>String::NewSymbol("my text")</pre></td></th><td><pre>NanNew("my text")</pre></td></tr>
 
