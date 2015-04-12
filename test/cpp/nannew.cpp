@@ -384,7 +384,15 @@ NAN_METHOD(testRegression212) {
 
   typedef int  gint;
   typedef gint gboolean;
+#if defined(_MSC_VER)
+# pragma warning( push )
+# pragma warning( disable : 4800 )
+#endif
   t.ok(_( assertType<Boolean>( NanNew<Boolean>(gboolean(23)))));
+#if defined(_MSC_VER)
+# pragma warning( pop )
+#endif
+
   return_NanUndefined();
 }
 

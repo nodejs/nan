@@ -202,19 +202,11 @@ NanNew() {
   return NanIntern::Factory<T>::New();
 }
 
-#if defined(_MSC_VER)
-# pragma warning( push )
-# pragma warning( disable : 4800 )
-#endif
 template <typename T, typename A0>
 typename NanIntern::Factory<T>::return_t
 NanNew(A0 arg0) {
   return NanIntern::Factory<T>::New(arg0);
 }
-#if defined(_MSC_VER)
-# pragma warning( pop )
-#endif
-
 
 template <typename T, typename A0, typename A1>
 typename NanIntern::Factory<T>::return_t
