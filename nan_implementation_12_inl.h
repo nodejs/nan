@@ -13,9 +13,10 @@
 //==============================================================================
 
 #if defined(_MSC_VER)
+# pragma warning( push )
 # pragma warning( disable : 4530 )
 # include <string>
-# pragma warning( default : 4530 )
+# pragma warning( pop )
 #else
 # include <string>
 #endif

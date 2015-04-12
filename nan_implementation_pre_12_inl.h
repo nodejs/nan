@@ -12,10 +12,11 @@
 #include <algorithm>
 
 #if defined(_MSC_VER)
+# pragma warning( push )
 # pragma warning( disable : 4530 )
 # include <string>
 # include <vector>
-# pragma warning( default : 4530 )
+# pragma warning( pop )
 #else
 # include <string>
 # include <vector>
