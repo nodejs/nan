@@ -10,6 +10,7 @@
 
 NAN_METHOD(ReturnNull) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnNull();
 }
 

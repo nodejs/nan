@@ -15,6 +15,8 @@ struct Dummy {
 NAN_METHOD(SetAndGet) {
   NanScope();
 
+  (void) args;  // suppress unused warning
+
   Dummy *d0 = new Dummy;
   Dummy *d1 = NULL;
 

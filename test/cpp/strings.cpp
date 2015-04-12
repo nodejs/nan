@@ -33,11 +33,13 @@ NAN_METHOD(HeapString) {
 
 NAN_METHOD(EncodeHex) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanEncode("hello", 5, Nan::HEX));
 }
 
 NAN_METHOD(EncodeUCS2) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
 }
 

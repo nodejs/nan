@@ -21,15 +21,14 @@ NAN_METHOD(Save1) {
 
 NAN_METHOD(Get1) {
   NanScope();
-
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew(persistentTest1));
 }
 
 NAN_METHOD(Dispose1) {
   NanScope();
-
+  (void) args;  // suppress unused warning
   NanDisposePersistent(persistentTest1);
-
   NanReturnUndefined();
 }
 

@@ -20,90 +20,107 @@ static int magic = 1337;
 
 NAN_METHOD(NewNumber) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Number>(0.5));
 }
 
 NAN_METHOD(NewNegativeInteger) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Integer>(-1));
 }
 
 NAN_METHOD(NewPositiveInteger) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Integer>(1));
 }
 
 NAN_METHOD(NewUnsignedInteger) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Integer>(0xFFFFFFFFu));
 }
 
 NAN_METHOD(NewInt32FromPositive) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Int32>(0xFFFFFFFF));
 }
 
 NAN_METHOD(NewInt32FromNegative) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Int32>(-1));
 }
 
 NAN_METHOD(NewUint32FromPositive) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Uint32>(0xFFFFFFFF));
 }
 
 NAN_METHOD(NewUint32FromNegative) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Uint32>(-1));
 }
 
 NAN_METHOD(NewUtf8String) {
   NanScope();
+  (void) args;  // suppress unused warning
   const char s[] = "strïng";
   NanReturnValue(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewLatin1String) {
   NanScope();
+  (void) args;  // suppress unused warning
   const uint8_t s[] = "str\xefng";
   NanReturnValue(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewUcs2String) {
   NanScope();
+  (void) args;  // suppress unused warning
   const uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
   NanReturnValue(NanNew(s));
 }
 
 NAN_METHOD(NewStdString) {
   NanScope();
+  (void) args;  // suppress unused warning
   const std::string s = "strïng";
   NanReturnValue(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewRegExp) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::RegExp>(NanNew("foo"), v8::RegExp::kNone));
 }
 
 NAN_METHOD(NewStringObject) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::StringObject>(NanNew<v8::String>("foo")));
 }
 
 NAN_METHOD(NewNumberObject) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::NumberObject>(0.5));
 }
 
 NAN_METHOD(NewBooleanObject) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::BooleanObject>(true));
 }
 
 NAN_METHOD(NewExternal) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::Local<v8::External> ext = NanNew<v8::External>(&magic);
   assert(*static_cast<int *>(ext->Value()) == 1337);
   NanReturnValue(NanNew<v8::String>("passed"));
@@ -111,6 +128,7 @@ NAN_METHOD(NewExternal) {
 
 NAN_METHOD(NewSignature) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::Local<v8::FunctionTemplate> tmpl =
       NanNew<v8::FunctionTemplate>(NewSignature);
   v8::Local<v8::Signature> sig = NanNew<v8::Signature>(tmpl);
@@ -121,12 +139,14 @@ NAN_METHOD(NewSignature) {
 
 NAN_METHOD(NewScript) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew("2+4"));
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(NewScript2) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::ScriptOrigin origin(NanNew<v8::String>("x"));
   v8::Local<NanUnboundScript> script =
       NanNew<NanUnboundScript>(NanNew("2+4"), origin);
@@ -135,12 +155,14 @@ NAN_METHOD(NewScript2) {
 
 NAN_METHOD(CompileScript) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::Local<NanBoundScript> script = NanCompileScript(NanNew("2+4"));
   NanReturnValue(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(CompileScript2) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::ScriptOrigin origin(NanNew<v8::String>("x"));
   v8::Local<NanBoundScript> script = NanCompileScript(NanNew("2+4"), origin);
   NanReturnValue(NanRunScript(script)->ToInt32());
@@ -148,22 +170,26 @@ NAN_METHOD(CompileScript2) {
 
 NAN_METHOD(NewDate) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Date>(1337));
 }
 
 NAN_METHOD(NewArray) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Array>());
 }
 
 NAN_METHOD(NewBoolean) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew<v8::Boolean>(true));
 }
 
 // #212
 NAN_METHOD(NewBoolean2) {
   NanScope();
+  (void) args;  // suppress unused warning
 
 #if defined(_MSC_VER)
 # pragma warning( push )

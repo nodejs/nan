@@ -1089,6 +1089,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<typename T, typename P>
   static void _NanWeakPersistentDispatcher(
       v8::Persistent<v8::Value> object, void *data) {
+    (void) object;  // suppress unused warning
     _NanWeakCallbackInfo<T, P>* info =
         static_cast<_NanWeakCallbackInfo<T, P>*>(data);
     _NanWeakCallbackData<T, P> wcbd(info);

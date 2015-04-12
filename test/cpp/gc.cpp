@@ -11,11 +11,15 @@
 static v8::Persistent<v8::Function> callback;
 
 NAN_GC_CALLBACK(gcPrologueCallback) {
+  (void) type;   // suppress unused warning
+  (void) flags;  // suppress unused warning
   v8::Local<v8::Value> argv[] = {NanNew<v8::String>("prologue")};
   NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
 }
 
 NAN_GC_CALLBACK(gcEpilogueCallback) {
+  (void) type;   // suppress unused warning
+  (void) flags;  // suppress unused warning
   v8::Local<v8::Value> argv[] = {NanNew<v8::String>("epilogue")};
   NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
 }
