@@ -35,16 +35,16 @@ NAN_METHOD(CompareCallbacks) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("globalContext")
+  NanSet(target
+    , NanNew<v8::String>("globalContext").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(GlobalContext)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("specificContext")
+  NanSet(target
+    , NanNew<v8::String>("specificContext").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(SpecificContext)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("compareCallbacks")
+  NanSet(target
+    , NanNew<v8::String>("compareCallbacks").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(CompareCallbacks)->GetFunction()
   );
 }

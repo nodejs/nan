@@ -11,12 +11,14 @@
 static v8::Persistent<v8::Function> callback;
 
 NAN_GC_CALLBACK(gcPrologueCallback) {
-  v8::Local<v8::Value> argv[] = {NanNew<v8::String>("prologue")};
+  v8::Local<v8::Value> argv[] =
+      {NanNew<v8::String>("prologue").ToLocalChecked()};
   NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
 }
 
 NAN_GC_CALLBACK(gcEpilogueCallback) {
-  v8::Local<v8::Value> argv[] = {NanNew<v8::String>("epilogue")};
+  v8::Local<v8::Value> argv[] =
+      {NanNew<v8::String>("epilogue").ToLocalChecked()};
   NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
 }
 
@@ -29,8 +31,8 @@ NAN_METHOD(Hook) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("hook")
+  NanSet(target
+    , NanNew<v8::String>("hook").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Hook)->GetFunction()
   );
 }

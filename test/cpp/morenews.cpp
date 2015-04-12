@@ -26,19 +26,19 @@ NAN_METHOD(NewPositiveInteger) {
 NAN_METHOD(NewUtf8String) {
   NanScope();
   const char s[] = "strïng";
-  NanReturnValue(NanNew(s));
+  NanReturnValue(NanNew(s).ToLocalChecked());
 }
 
 NAN_METHOD(NewLatin1String) {
   NanScope();
   const uint8_t s[] = "str\xefng";
-  NanReturnValue(NanNew(s));
+  NanReturnValue(NanNew(s).ToLocalChecked());
 }
 
 NAN_METHOD(NewUcs2String) {
   NanScope();
   uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
-  NanReturnValue(NanNew(s));
+  NanReturnValue(NanNew(s).ToLocalChecked());
 }
 
 static const uint16_t ws[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
@@ -61,47 +61,47 @@ class ExtAsciiString : public NanExternalOneByteStringResource {
 
 NAN_METHOD(NewExternalStringResource) {
   NanScope();
-  v8::Local<v8::String> ext = NanNew(new ExtString());
+  v8::Local<v8::String> ext = NanNew(new ExtString()).ToLocalChecked();
   NanReturnValue(ext);
 }
 
 NAN_METHOD(NewExternalAsciiStringResource) {
   NanScope();
-  v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
+  v8::Local<v8::String> ext = NanNew(new ExtAsciiString()).ToLocalChecked();
   NanReturnValue(ext);
 }
 
 void Init(v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew("newNumber")
+  NanSet(target
+    , NanNew("newNumber").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewNumber)->GetFunction()
   );
-  target->Set(
-      NanNew("newNegativeInteger")
+  NanSet(target
+    , NanNew("newNegativeInteger").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
   );
-  target->Set(
-      NanNew("newPositiveInteger")
+  NanSet(target
+    , NanNew("newPositiveInteger").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
   );
-  target->Set(
-      NanNew("newUtf8String")
+  NanSet(target
+    , NanNew("newUtf8String").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
   );
-  target->Set(
-      NanNew("newLatin1String")
+  NanSet(target
+    , NanNew("newLatin1String").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
   );
-  target->Set(
-      NanNew("newUcs2String")
+  NanSet(target
+    , NanNew("newUcs2String").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
   );
-  target->Set(
-      NanNew("newExternalStringResource")
+  NanSet(target
+    , NanNew("newExternalStringResource").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
   );
-  target->Set(
-      NanNew("newExternalAsciiStringResource")
+  NanSet(target
+    , NanNew("newExternalAsciiStringResource").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)
     ->GetFunction()
   );

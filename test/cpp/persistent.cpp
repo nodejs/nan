@@ -58,24 +58,24 @@ NAN_METHOD(PersistentToPersistent) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("save1")
+  NanSet(target
+    , NanNew<v8::String>("save1").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Save1)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("get1")
+  NanSet(target
+    , NanNew<v8::String>("get1").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Get1)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("dispose1")
+  NanSet(target
+    , NanNew<v8::String>("dispose1").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Dispose1)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("toPersistentAndBackAgain")
+  NanSet(target
+    , NanNew<v8::String>("toPersistentAndBackAgain").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("persistentToPersistent")
+  NanSet(target
+    , NanNew<v8::String>("persistentToPersistent").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
   );
 }

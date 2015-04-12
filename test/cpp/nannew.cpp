@@ -125,7 +125,8 @@ NAN_METHOD(testDate) {
 
   t.plan(1);
 
-  t.ok(_( assertType<Date>( NanNew<Date>(static_cast<double>(time(NULL))))));
+  t.ok(_( assertType<Date>(
+      NanNew<Date>(static_cast<double>(time(NULL))).ToLocalChecked())));
 
   return_NanUndefined();
 }
@@ -150,7 +151,7 @@ NAN_METHOD(testFunction) {
   t.plan(2);
 
   t.ok(_( assertType<Function>(NanNew<Function>(testFunction))));
-  v8::Local<String> data = NanNew("plonk");
+  v8::Local<String> data = NanNew("plonk").ToLocalChecked();
   t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data))));
 
   return_NanUndefined();
@@ -165,7 +166,7 @@ NAN_METHOD(testFunctionTemplate) {
   t.ok(_( assertType<FunctionTemplate>( NanNew<FunctionTemplate>())));
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>(testFunctionTemplate))));
-  v8::Local<String> data = NanNew("plonk");
+  v8::Local<String> data = NanNew("plonk").ToLocalChecked();
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>( testFunctionTemplate, data))));
   v8::Local<Signature> signature = NanNew<Signature>();
@@ -219,7 +220,10 @@ NAN_METHOD(testNumberObject) {
   t.plan(2);
 
   t.ok(_( assertType<NumberObject>( NanNew<NumberObject>(M_PI))));
-  t.ok(_( fabs(NanNew<NumberObject>(M_PI)->NumberValue() - M_PI) < epsilon));
+  t.ok(_(
+      fabs(
+          NanNumberValue(NanNew<NumberObject>(M_PI)).FromJust() - M_PI
+      ) < epsilon));
 
   return_NanUndefined();
 }
@@ -252,20 +256,26 @@ NAN_METHOD(testScript) {
 
   t.plan(6);
 
-  ScriptOrigin origin(NanNew("foo"), NanNew(5));
+  ScriptOrigin origin(NanNew("foo").ToLocalChecked(), NanNew(5));
 
-  t.ok(_( assertType<Script>( NanNew<Script>(NanNew("2 + 3")))));
-  t.ok(_( assertType<Script>( NanNew<Script>(NanNew("2 + 3"), origin))));
+  t.ok(_( assertType<Script>(NanNew<Script>(
+      NanNew("2 + 3").ToLocalChecked()).ToLocalChecked())));
+  t.ok(_( assertType<Script>(NanNew<Script>(
+      NanNew("2 + 3").ToLocalChecked(), origin).ToLocalChecked())));
+  t.ok(_( assertType<NanUnboundScript>(NanNew<NanUnboundScript>(
+      NanNew("2 + 3").ToLocalChecked()).ToLocalChecked())));
   t.ok(_( assertType<NanUnboundScript>(
-      NanNew<NanUnboundScript>(NanNew("2 + 3")))));
-  t.ok(_( assertType<NanUnboundScript>(
-          NanNew<NanUnboundScript>(NanNew("2 + 3"), origin))));
+      NanNew<NanUnboundScript>(
+          NanNew("2 + 3").ToLocalChecked()
+        , origin).ToLocalChecked())));
 
   // for the fans of the bound script
-  t.ok(_( NanRunScript(
-      NanNew<NanBoundScript>(NanNew("2 + 3")))->Int32Value() == 5));
-  t.ok(_( NanRunScript(
-      NanNew<NanUnboundScript>(NanNew("2 + 3")))->Int32Value() == 5));
+  t.ok(_( NanInt32Value(NanRunScript(
+      NanNew<NanBoundScript>(NanNew("2 + 3").ToLocalChecked()
+    ).ToLocalChecked()).ToLocalChecked()).FromJust() == 5));
+  t.ok(_( NanInt32Value(NanRunScript(
+      NanNew<NanUnboundScript>(NanNew("2 + 3").ToLocalChecked()
+    ).ToLocalChecked()).ToLocalChecked()).FromJust() == 5));
 
   return_NanUndefined();
 }
@@ -293,30 +303,37 @@ NAN_METHOD(testString) {
 
   t.plan(14);
 
-  t.ok(_( stringMatches( NanNew<String>("Hello World"), "Hello World")));
-  t.ok(_( stringMatches( NanNew<String>("Hello World", 4), "Hell")));
-  t.ok(_( stringMatches( NanNew<String>(std::string("foo")), "foo")));
-  t.ok(_( assertType<String>( NanNew<String>("plonk."))));
+  t.ok(_( stringMatches(
+      NanNew<String>("Hello World").ToLocalChecked(), "Hello World")));
+  t.ok(_( stringMatches(
+      NanNew<String>("Hello World", 4).ToLocalChecked(), "Hell")));
+  t.ok(_( stringMatches(
+      NanNew<String>(std::string("foo")).ToLocalChecked(), "foo")));
+  t.ok(_( assertType<String>(
+      NanNew<String>("plonk.").ToLocalChecked())));
 
-  t.ok(_( stringMatches( NanNew<String>(), "")));
-  t.ok(_( assertType<String>( NanNew<String>())));
+  t.ok(_( stringMatches( NanNew<String>().ToLocalChecked(), "")));
+  t.ok(_( assertType<String>( NanNew<String>().ToLocalChecked())));
 
   // These should be deprecated
   const uint8_t *ustring = reinterpret_cast<const uint8_t *>("unsigned chars");
-  t.ok(_( stringMatches( NanNew<String>(ustring), "unsigned chars")));
-  t.ok(_( stringMatches( NanNew<String>(ustring, 8), "unsigned")));
+  t.ok(_( stringMatches(
+      NanNew<String>(ustring).ToLocalChecked(), "unsigned chars")));
+  t.ok(_( stringMatches(
+      NanNew<String>(ustring, 8).ToLocalChecked(), "unsigned")));
 
   // === Convenience
 
-  t.ok(_( stringMatches( NanNew("using namespace nan; // is poetry"),
-          "using namespace nan; // is poetry")));
-  t.ok(_( assertType<String>( NanNew("plonk."))));
+  t.ok(_( stringMatches(
+      NanNew("using namespace nan; // is poetry").ToLocalChecked()
+    , "using namespace nan; // is poetry")));
+  t.ok(_( assertType<String>( NanNew("plonk.").ToLocalChecked())));
 
-  t.ok(_( stringMatches( NanNew("Hello World", 4), "Hell")));
-  t.ok(_( assertType<String>( NanNew("plonk.", 4))));
+  t.ok(_( stringMatches( NanNew("Hello World", 4).ToLocalChecked(), "Hell")));
+  t.ok(_( assertType<String>( NanNew("plonk.", 4).ToLocalChecked())));
 
-  t.ok(_( stringMatches( NanNew(std::string("bar")), "bar")));
-  t.ok(_( assertType<String>( NanNew(std::string("plonk.")))));
+  t.ok(_( stringMatches( NanNew(std::string("bar")).ToLocalChecked(), "bar")));
+  t.ok(_( assertType<String>( NanNew(std::string("plonk.")).ToLocalChecked())));
 
   return_NanUndefined();
 }
@@ -333,10 +350,10 @@ NAN_METHOD(testStringObject) {
   t.plan(2);
 
   t.ok(_( stringMatches(
-          V(NanNew<StringObject>(NanNew<String>("plonk"))),
+          V(NanNew<StringObject>(NanNew<String>("plonk").ToLocalChecked())),
           "plonk")));
   t.ok(_( assertType<StringObject>(
-          NanNew<StringObject>(NanNew<String>("plonk")))));
+          NanNew<StringObject>(NanNew<String>("plonk").ToLocalChecked()))));
 
   return_NanUndefined();
 }
@@ -349,7 +366,8 @@ NAN_METHOD(testHandles) {
 
   t.plan(2);
 
-  t.ok(_( assertType<String>( NanNew( asHandle(NanNew("foo"))))));
+  t.ok(_( assertType<String>(
+      NanNew( asHandle(NanNew("foo").ToLocalChecked())))));
   t.ok(_( assertType<Uint32>( NanNew( asHandle(NanNew(5u))))));
 
   return_NanUndefined();
@@ -362,7 +380,7 @@ NAN_METHOD(testPersistents) {
   t.plan(1);
 
   Persistent<String> p;
-  NanAssignPersistent(p, NanNew("foo"));
+  NanAssignPersistent(p, NanNew("foo").ToLocalChecked());
   t.ok(_( assertType<String>( NanNew(p))));
   NanDisposePersistent(p);
 
@@ -428,32 +446,32 @@ NAN_METHOD(testRegression242) {
 
 NAN_METHOD(newIntegerWithValue) {
   NanScope();
-  return_NanValue(NanNew<Integer>(args[0]->Int32Value()));
+  return_NanValue(NanNew<Integer>(NanInt32Value(args[0]).FromJust()));
 }
 
 NAN_METHOD(newNumberWithValue) {
   NanScope();
-  return_NanValue(NanNew<Number>(args[0]->NumberValue()));
+  return_NanValue(NanNew<Number>(NanNumberValue(args[0]).FromJust()));
 }
 
 NAN_METHOD(newUint32WithValue) {
   NanScope();
-  return_NanValue(NanNew<Uint32>(args[0]->Uint32Value()));
+  return_NanValue(NanNew<Uint32>(NanUint32Value(args[0]).FromJust()));
 }
 
 NAN_METHOD(newStringFromChars) {
   NanScope();
-  return_NanValue(NanNew<String>("hello?"));
+  return_NanValue(NanNew<String>("hello?").ToLocalChecked());
 }
 
 NAN_METHOD(newStringFromCharsWithLength) {
   NanScope();
-  return_NanValue(NanNew<String>("hello?", 4));
+  return_NanValue(NanNew<String>("hello?", 4).ToLocalChecked());
 }
 
 NAN_METHOD(newStringFromStdString) {
   NanScope();
-  return_NanValue(NanNew<String>(std::string("hello!")));
+  return_NanValue(NanNew<String>(std::string("hello!")).ToLocalChecked());
 }
 
 NAN_METHOD(newExternal) {

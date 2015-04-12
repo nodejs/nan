@@ -14,28 +14,47 @@ NAN_METHOD(OptionValues) {
   v8::Local<v8::Object> inobj = args[0].As<v8::Object>();
   v8::Local<v8::Object> outobj = NanNew<v8::Object>();
 
-  bool boolt = NanBooleanOptionValue(inobj, NanNew("true"));
-  bool boolf = NanBooleanOptionValue(inobj, NanNew("false"));
-  bool booldt = NanBooleanOptionValue(inobj, NanNew("dt"), true);
-  bool booldf = NanBooleanOptionValue(inobj, NanNew("df"), false);
-  uint32_t uint32i = NanUInt32OptionValue(inobj, NanNew("i"), 0);
-  uint32_t uint32f = NanUInt32OptionValue(inobj, NanNew("f"), 0);
-  uint32_t uint32di = NanUInt32OptionValue(inobj, NanNew("di"), 111);
+  bool boolt = NanBooleanOptionValue(
+      inobj
+    , NanNew("true").ToLocalChecked());
+  bool boolf = NanBooleanOptionValue(
+      inobj
+    , NanNew("false").ToLocalChecked());
+  bool booldt = NanBooleanOptionValue(
+      inobj
+    , NanNew("dt").ToLocalChecked()
+    , true);
+  bool booldf = NanBooleanOptionValue(
+      inobj
+    , NanNew("df").ToLocalChecked()
+    , false);
+  uint32_t uint32i = NanUInt32OptionValue(
+      inobj
+    , NanNew("i").ToLocalChecked()
+    , 0);
+  uint32_t uint32f = NanUInt32OptionValue(
+      inobj
+    , NanNew("f").ToLocalChecked()
+    , 0);
+  uint32_t uint32di = NanUInt32OptionValue(
+      inobj
+    , NanNew("di").ToLocalChecked()
+    , 111);
 
-  outobj->Set(NanNew("true"), NanNew(boolt));
-  outobj->Set(NanNew("false"), NanNew(boolf));
-  outobj->Set(NanNew("dt"), NanNew(booldt));
-  outobj->Set(NanNew("df"), NanNew(booldf));
-  outobj->Set(NanNew("i"), NanNew(uint32i));
-  outobj->Set(NanNew("f"), NanNew(uint32f));
-  outobj->Set(NanNew("di"), NanNew(uint32di));
+  NanSet(outobj, NanNew("true").ToLocalChecked(), NanNew(boolt));
+  NanSet(outobj, NanNew("false").ToLocalChecked(), NanNew(boolf));
+  NanSet(outobj, NanNew("dt").ToLocalChecked(), NanNew(booldt));
+  NanSet(outobj, NanNew("df").ToLocalChecked(), NanNew(booldf));
+  NanSet(outobj, NanNew("i").ToLocalChecked(), NanNew(uint32i));
+  NanSet(outobj, NanNew("f").ToLocalChecked(), NanNew(uint32f));
+  NanSet(outobj, NanNew("di").ToLocalChecked(), NanNew(uint32di));
 
   NanReturnValue(outobj);
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew("o")
+  NanSet(target
+    , NanNew("o").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(OptionValues)->GetFunction()
   );
 }

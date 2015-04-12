@@ -10,6 +10,7 @@
 
 NAN_METHOD(ReturnString) {
   NanScope();
-  v8::Local<v8::String> s = NanNew<v8::String>(*NanUtf8String(args[0]));
+  v8::Local<v8::String> s =
+      NanNew<v8::String>(*NanUtf8String(args[0])).ToLocalChecked();
   NanReturnValue(s);
 }

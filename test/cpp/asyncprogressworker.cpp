@@ -52,14 +52,14 @@ NAN_METHOD(DoProgress) {
   NanAsyncQueueWorker(new ProgressWorker(
       callback
     , progress
-    , args[0]->Uint32Value()
-    , args[1]->Uint32Value()));
+    , NanUint32Value(args[0]).FromJust()
+    , NanUint32Value(args[1]).FromJust()));
   NanReturnUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  exports->Set(
-      NanNew<v8::String>("a")
+  NanSet(exports
+    , NanNew<v8::String>("a").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(DoProgress)->GetFunction());
 }
 

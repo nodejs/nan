@@ -29,8 +29,8 @@ NAN_METHOD(SetAndGet) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("setAndGet")
+  NanSet(target
+    , NanNew<v8::String>("setAndGet").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(SetAndGet)->GetFunction()
   );
 }

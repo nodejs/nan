@@ -9,15 +9,15 @@
 #include <nan.h>
 
 class MyObject : public node::ObjectWrap {
-public:
-	static void Init(v8::Handle<v8::Object> exports);
+ public:
+  static void Init(v8::Handle<v8::Object> exports);
 
-private:
-	MyObject();
-	~MyObject();
+ private:
+  MyObject();
+  ~MyObject();
 
-	static NAN_METHOD(New);
-	static v8::Persistent<v8::Function> constructor;
+  static NAN_METHOD(New);
+  static v8::Persistent<v8::Function> constructor;
 };
 
 v8::Persistent<v8::Function> MyObject::constructor;
@@ -29,43 +29,68 @@ MyObject::~MyObject() {
 }
 
 void MyObject::Init(v8::Handle<v8::Object> exports) {
-	NanScope();
+  NanScope();
 
-	// Prepare constructor template
-	v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-	tpl->SetClassName(NanNew<v8::String>("MyObject"));
-	tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  // Prepare constructor template
+  v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
+  tpl->SetClassName(NanNew<v8::String>("MyObject").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-	// Prototype
-	NanSetPrototypeTemplate(tpl, "prototypeProp", NanNew<v8::String>("a prototype property"));
-	// Instance
-	NanSetInstanceTemplate(tpl, "instanceProp", NanNew<v8::String>("an instance property"));
-	// PropertyAttributes
-	NanSetInstanceTemplate(tpl, NanNew<v8::String>("none"), NanNew<v8::String>("none"), v8::None);
-	NanSetInstanceTemplate(tpl, NanNew<v8::String>("readOnly"), NanNew<v8::String>("readOnly"), v8::ReadOnly);
-	NanSetInstanceTemplate(tpl, NanNew<v8::String>("dontEnum"), NanNew<v8::String>("dontEnum"), v8::DontEnum);
-	NanSetInstanceTemplate(tpl, NanNew<v8::String>("dontDelete"), NanNew<v8::String>("dontDelete"), v8::DontDelete);
+  // Prototype
+  NanSetPrototypeTemplate(
+    tpl
+  , "prototypeProp"
+  , NanNew<v8::String>("a prototype property").ToLocalChecked());
 
-	NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
-	exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
+  // Instance
+  NanSetInstanceTemplate(
+    tpl
+  , "instanceProp"
+  , NanNew<v8::String>("an instance property").ToLocalChecked());
+
+  // PropertyAttributes
+  NanSetInstanceTemplate(
+    tpl
+  , NanNew<v8::String>("none").ToLocalChecked()
+  , NanNew<v8::String>("none").ToLocalChecked()
+  , v8::None);
+  NanSetInstanceTemplate(
+    tpl
+  , NanNew<v8::String>("readOnly").ToLocalChecked()
+  , NanNew<v8::String>("readOnly").ToLocalChecked()
+  , v8::ReadOnly);
+  NanSetInstanceTemplate(
+    tpl
+  , NanNew<v8::String>("dontEnum").ToLocalChecked()
+  , NanNew<v8::String>("dontEnum").ToLocalChecked()
+  , v8::DontEnum);
+  NanSetInstanceTemplate(
+    tpl
+  , NanNew<v8::String>("dontDelete").ToLocalChecked()
+  , NanNew<v8::String>("dontDelete").ToLocalChecked()
+  , v8::DontDelete);
+
+  NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
+  NanSet(exports
+  , NanNew<v8::String>("MyObject").ToLocalChecked()
+  , tpl->GetFunction());
 }
 
 NAN_METHOD(MyObject::New) {
-	NanScope();
+  NanScope();
 
-	if (args.IsConstructCall()) {
-		MyObject* obj = new MyObject();
-		obj->Wrap(args.This());
-		NanReturnValue(args.This());
-	}
-	else {
-		v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
-		NanReturnValue(cons->NewInstance());
-	}
+  if (args.IsConstructCall()) {
+    MyObject* obj = new MyObject();
+    obj->Wrap(args.This());
+    NanReturnValue(args.This());
+  } else {
+    v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
+    NanReturnValue(cons->NewInstance());
+  }
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-	MyObject::Init(exports);
+  MyObject::Init(exports);
 }
 
 NODE_MODULE(settemplate, Init)

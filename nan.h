@@ -77,6 +77,625 @@ typedef v8::String::ExternalOneByteStringResource
     NanExternalOneByteStringResource;
 #endif
 
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
+typedef void (*NanGetter) (
+    v8::Local<v8::String> property
+  , const v8::PropertyCallbackInfo<v8::Value>& info);
+
+typedef void (*NanSetter) (
+    v8::Local<v8::String> property
+  , v8::Local<v8::Value> value
+  , const v8::PropertyCallbackInfo<void>& info);
+#else
+typedef v8::Handle<v8::Value> (*NanGetter) (
+    v8::Local<v8::String> property
+  , const v8::AccessorInfo& info);
+
+typedef void (*NanSetter) (
+    v8::Local<v8::String> property
+  , v8::Local<v8::Value> value
+  , const v8::AccessorInfo& info);
+#endif  // NODE_MODULE_VERSION
+
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+
+typedef v8::MaybeLocal NanMaybeLocal;
+typedef v8::Maybe NanMaybe;
+
+template<typename T>
+inline NanMaybe<T> NanNothing() {
+  return v8::Nothing<T>();
+}
+
+template<typename T>
+inline NanMaybe<T> NanJust(const T& t) {
+  return v8::Just<T>(t);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Boolean> NanToBoolean(v8::Handle<v8::Value> val) {
+  return val->ToBoolean(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Number> NanToNumber(v8::Handle<v8::Value> val) {
+  return val->ToNumber(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::String> NanToString(v8::Handle<v8::Value> val) {
+  return val->ToString(NanGetCurrentContext());
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::String> NanToDetailString(v8::Handle<v8::Value> val) {
+  return val->ToDetailString(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Object> NanToObject(v8::Handle<v8::Value> val) {
+  return val->ToObject(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Integer> NanToInteger(v8::Handle<v8::Value> val) {
+  return val->ToInteger(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Uint32> NanToUint32(v8::Handle<v8::Value> val) {
+  return val->ToUint32(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Int32> NanToInt32(v8::Handle<v8::Value> val) {
+  return val->ToInt32(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<bool> NanBooleanValue(v8::Handle<v8::Value> val) {
+  return val->BooleanValue(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<double> NanNumberValue(v8::Handle<v8::Value> val) {
+  return val->NumberValue(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<int64_t> NanIntegerValue(v8::Handle<v8::Value> val) {
+  return val->IntegerValue(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<uint32_t> NanUint32Value(v8::Handle<v8::Value> val) {
+  return val->Uint32Value(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<int32_t> NanInt32Value(v8::Handle<v8::Value> val) {
+  return val->Int32Value(NanGetCurrentContext());
+}
+
+NAN_INLINE
+NanMaybe<bool> NanEquals(v8::Handle<v8::Value> a, v8::Handle<v8::Value>(b)) {
+  return a->Equals(NanGetCurrentContext(), b);
+}
+
+template<typename T>
+NAN_INLINE NanMaybeLocal<T> NanNewInstance(v8::Handle<T> h) {
+  return h->NewInstance(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Function> NanGetFunction(
+    v8::Handle<v8::FunctionTemplate> t) {
+  return t->GetFunction(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<bool> NanSet(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key
+  , v8::Handle<v8::Value> value) {
+  return obj->Set(NanGetCurrentContext(), key, value);
+}
+
+NAN_INLINE NanMaybe<bool> NanSet(
+    v8::Handle<v8::Object> obj
+  , uint32_t index
+  , v8::Handle<v8::Value> value) {
+  return obj->Set(NanGetCurrentContext(), index, value);
+}
+
+NAN_INLINE NanMaybe<bool> NanForceSet(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key
+  , v8::Handle<v8::Value> value
+  , v8::PropertyAttribute attribs = v8::None) {
+  return obj->ForceSet(NanGetCurrentContext(), key, value, attribs);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGet(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key) {
+  return obj->Get(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::Value> NanGet(v8::Handle<v8::Object> obj, uint32_t index) {
+  return obj->Get(NanGetCurrentContext(), index);
+}
+
+NAN_INLINE v8::PropertyAttribute NanGetPropertyAttributes(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key) {
+  return obj->GetPropertyAttributes(NanGetCurrentContext(), key).FromJust();
+}
+
+NAN_INLINE NanMaybe<bool> NanHas(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->Has(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE NanMaybe<bool> NanHas(v8::Handle<v8::Object> obj, uint32_t index) {
+  return obj->Has(NanGetCurrentContext(), index);
+}
+
+NAN_INLINE NanMaybe<bool> NanDelete(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->Delete(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE
+NanMaybe<bool> NanDelete(v8::Handle<v8::Object> obj, uint32_t index) {
+  return obj->Delete(NanGetCurrentContext(), index);
+}
+
+NAN_INLINE NanMaybe<bool> NanSetAccessor(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> name
+  , NanGetter getter
+  , NanSetter setter = 0
+  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+  , v8::AccessControl settings = v8::DEFAULT
+  , v8::PropertyAttribute attribute = v8::None) {
+  return obj->SetAccessor(
+       NanGetCurrentContext()
+     , name
+     , getter
+     , setter
+     , data
+     , settings
+     , attribute);
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::Array> NanGetPropertyNames(v8::Handle<v8::Object> obj) {
+  return obj->GetPropertyNames(NanGetCurrentContext());
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::Array> NanGetOwnPropertyNames(v8::Handle<v8::Object> obj) {
+  return obj->GetOwnPropertyNames(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<bool> NanSetPrototype(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> prototype) {
+  return obj->SetPrototype(NanGetCurrentContext(), prototype);
+}
+
+NAN_INLINE NanMaybeLocal<v8::String> NanObjectProtoToString(
+    v8::Handle<v8::Object> obj) {
+  return obj->ObjectProtoToString(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<bool> NanHasOwnProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->HasOwnProperty(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE NanMaybe<bool> NanHasRealNamedProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->HasRealNamedProperty(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE NanMaybe<bool> NanHasRealIndexedProperty(
+    v8::Handle<v8::Object> obj
+  , uint32_t index) {
+  return obj->HasRealIndexedProperty(NanGetCurrentContext(), index);
+}
+
+NAN_INLINE NanMaybe<bool> NanHasRealNamedCallbackProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->HasRealNamedCallbackProperty(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGetRealNamedPropertyInPrototypeChain(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->GetRealNamedPropertyInPrototypeChain(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGetRealNamedProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return obj->GetRealNamedProperty(NanGetCurrentContext(), key);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanCallAsFunction(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Object> recv
+  , int argc
+  , v8::Handle<v8::Value> argv[]) {
+  return obj->CallAsFunction(NanGetCurrentContext(), recv, argc, argv);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanCallAsConstructor(
+    v8::Handle<v8::Object> obj
+  , int argc, v8::Handle<v8::Value> argv[]) {
+  return obj->CallAsConstructor(NanGetCurrentContext(), argc, argv);
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::String> NanGetSourceLine(v8::Handle<v8::Message> msg) {
+  return msg->GetSourceLine(NanGetCurrentContext());
+}
+
+NAN_INLINE NanMaybe<int> NanGetLineNumber(v8::Handle<v8::Message> msg) {
+  return msg->GetLineNumber(NanGetCurrentContext()).FromJust();
+}
+
+NAN_INLINE NanMaybe<int> NanGetStartColumn(v8::Handle<v8::Message> msg) {
+  return msg->GetStartColumn(NanGetCurrentContext()).FromJust();
+}
+
+NAN_INLINE NanMaybe<int> NanGetEndColumn(v8::Handle<v8::Message> msg) {
+  return msg->GetEndColumn(NanGetCurrentContext()).FromJust();
+}
+
+NAN_INLINE NanMaybeLocal<v8::Object> NanCloneElementAt(
+    v8::Handle<v8::Array> array
+  , uint32_t index) {
+  return array->CloneElementAt(NanGetCurrentContext(), index);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanStackTrace(v8::TryCatch trycatch) {
+  return trycatch.StackTrace(NanGetCurrentContext());
+}
+
+#else
+
+template<typename T>
+class NanMaybeLocal {
+ public:
+  NAN_INLINE NanMaybeLocal() : val_(v8::Local<T>()) {}
+
+  template<class S>
+# if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
+  NAN_INLINE NanMaybeLocal(v8::Local<S> that) : val_(that) {}
+# else
+  NAN_INLINE NanMaybeLocal(v8::Local<S> that) :
+      val_(*reinterpret_cast<v8::Local<T>*>(&that)) {}
+# endif
+
+  NAN_INLINE bool IsEmpty() { return val_->IsEmpty(); }
+
+  template<typename S>
+  NAN_INLINE bool ToLocal(v8::Local<S> *out) {
+    *out = val_;
+    return !IsEmpty();
+  }
+
+  NAN_INLINE v8::Local<T> ToLocalChecked() {
+#if defined(V8_ENABLE_CHECKS)
+    assert(!IsEmpty() && "ToLocalChecked is Empty");
+#endif  // V8_ENABLE_CHECKS
+    return val_;
+  }
+
+  template<typename S>
+  NAN_INLINE v8::Local<S> FromMaybe(v8::Local<S> default_value) const {
+    return IsEmpty() ? default_value : val_;
+  }
+
+ private:
+  v8::Local<T> val_;
+};
+
+template<typename T>
+class NanMaybe {
+ public:
+  NAN_INLINE bool IsNothing() const { return !has_value_; }
+  NAN_INLINE bool IsJust() const { return has_value_; }
+
+  NAN_INLINE T FromJust() const {
+#if defined(V8_ENABLE_CHECKS)
+    assert(IsJust() && "FromJust is Nothing");
+#endif  // V8_ENABLE_CHECKS
+    return value_;
+  }
+
+  NAN_INLINE T FromMaybe(const T& default_value) const {
+    return has_value_ ? value_ : default_value;
+  }
+
+  NAN_INLINE bool operator==(const NanMaybe &other) const {
+    return (IsJust() == other.IsJust()) &&
+        (!IsJust() || FromJust() == other.FromJust());
+  }
+
+  NAN_INLINE bool operator!=(const NanMaybe &other) const {
+    return !operator==(other);
+  }
+
+ private:
+  NanMaybe() : has_value_(false) {}
+  explicit NanMaybe(const T& t) : has_value_(true), value_(t) {}
+  bool has_value_;
+  T value_;
+
+  template<typename U>
+  friend NanMaybe<U> NanNothing();
+  template<typename U>
+  friend NanMaybe<U> NanJust(const U& u);
+};
+
+template<typename T>
+inline NanMaybe<T> NanNothing() {
+  return NanMaybe<T>();
+}
+
+template<typename T>
+inline NanMaybe<T> NanJust(const T& t) {
+  return NanMaybe<T>(t);
+}
+
+NAN_INLINE NanMaybeLocal<v8::Boolean> NanToBoolean(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::Boolean>(val->ToBoolean());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Number> NanToNumber(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::Number>(val->ToNumber());
+}
+
+NAN_INLINE NanMaybeLocal<v8::String> NanToString(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::String>(val->ToString());
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::String> NanToDetailString(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::String>(val->ToDetailString());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Object> NanToObject(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::Object>(val->ToObject());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Integer> NanToInteger(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::Integer>(val->ToInteger());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Uint32> NanToUint32(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::Uint32>(val->ToUint32());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Int32> NanToInt32(v8::Handle<v8::Value> val) {
+  return NanMaybeLocal<v8::Int32>(val->ToInt32());
+}
+
+NAN_INLINE NanMaybe<bool> NanBooleanValue(v8::Handle<v8::Value> val) {
+  return NanJust<bool>(val->BooleanValue());
+}
+
+NAN_INLINE NanMaybe<double> NanNumberValue(v8::Handle<v8::Value> val) {
+  return NanJust<double>(val->NumberValue());
+}
+
+NAN_INLINE NanMaybe<int64_t> NanIntegerValue(v8::Handle<v8::Value> val) {
+  return NanJust<int64_t>(val->IntegerValue());
+}
+
+NAN_INLINE NanMaybe<uint32_t> NanUint32Value(v8::Handle<v8::Value> val) {
+  return NanJust<uint32_t>(val->Uint32Value());
+}
+
+NAN_INLINE NanMaybe<int32_t> NanInt32Value(v8::Handle<v8::Value> val) {
+  return NanJust<int32_t>(val->Int32Value());
+}
+
+NAN_INLINE
+NanMaybe<bool> NanEquals(v8::Handle<v8::Value> a, v8::Handle<v8::Value>(b)) {
+  return NanJust<bool>(a->Equals(b));
+}
+
+template<typename T>
+NAN_INLINE NanMaybeLocal<T> NanNewInstance(v8::Handle<T> h) {
+  return NanMaybeLocal<T>(h->NewInstance());
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::Function> NanGetFunction(v8::Handle<v8::FunctionTemplate> t) {
+  return NanMaybeLocal<v8::Function>(t->GetFunction());
+}
+
+NAN_INLINE NanMaybe<bool> NanSet(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key
+  , v8::Handle<v8::Value> value) {
+  return NanJust<bool>(obj->Set(key, value));
+}
+
+NAN_INLINE NanMaybe<bool> NanSet(
+    v8::Handle<v8::Object> obj
+  , uint32_t index
+  , v8::Handle<v8::Value> value) {
+  return NanJust<bool>(obj->Set(index, value));
+}
+
+NAN_INLINE NanMaybe<bool> NanForceSet(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key
+  , v8::Handle<v8::Value> value
+  , v8::PropertyAttribute attribs = v8::None) {
+  return NanJust<bool>(obj->ForceSet(key, value, attribs));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGet(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key) {
+  return NanMaybeLocal<v8::Value>(obj->Get(key));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGet(
+    v8::Handle<v8::Object> obj
+  , uint32_t index) {
+  return NanMaybeLocal<v8::Value>(obj->Get(index));
+}
+
+NAN_INLINE NanMaybe<v8::PropertyAttribute> NanGetPropertyAttributes(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> key) {
+  return NanJust<v8::PropertyAttribute>(obj->GetPropertyAttributes(key));
+}
+
+NAN_INLINE NanMaybe<bool> NanHas(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanJust<bool>(obj->Has(key));
+}
+
+NAN_INLINE NanMaybe<bool> NanHas(
+    v8::Handle<v8::Object> obj
+  , uint32_t index) {
+  return NanJust<bool>(obj->Has(index));
+}
+
+NAN_INLINE NanMaybe<bool> NanDelete(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanJust<bool>(obj->Delete(key));
+}
+
+NAN_INLINE NanMaybe<bool> NanDelete(
+    v8::Handle<v8::Object> obj
+  , uint32_t index) {
+  return NanJust<bool>(obj->Delete(index));
+}
+
+NAN_INLINE NanMaybe<bool> NanSetAccessor(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> name
+  , NanGetter getter
+  , NanSetter setter = 0
+  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+  , v8::AccessControl settings = v8::DEFAULT
+  , v8::PropertyAttribute attribute = v8::None) {
+  return NanJust<bool>(obj->SetAccessor(
+       name
+     , getter
+     , setter
+     , data
+     , settings
+     , attribute));
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::Array> NanGetPropertyNames(v8::Handle<v8::Object> obj) {
+  return NanMaybeLocal<v8::Array>(obj->GetPropertyNames());
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::Array> NanGetOwnPropertyNames(v8::Handle<v8::Object> obj) {
+  return NanMaybeLocal<v8::Array>(obj->GetOwnPropertyNames());
+}
+
+NAN_INLINE NanMaybe<bool> NanSetPrototype(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Value> prototype) {
+  return NanJust<bool>(obj->SetPrototype(prototype));
+}
+
+NAN_INLINE NanMaybeLocal<v8::String> NanObjectProtoToString(
+    v8::Handle<v8::Object> obj) {
+  return NanMaybeLocal<v8::String>(obj->ObjectProtoToString());
+}
+
+NAN_INLINE NanMaybe<bool> NanHasOwnProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanJust<bool>(obj->HasOwnProperty(key));
+}
+
+NAN_INLINE NanMaybe<bool> NanHasRealNamedProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanJust<bool>(obj->HasRealNamedProperty(key));
+}
+
+NAN_INLINE NanMaybe<bool> NanHasRealIndexedProperty(
+    v8::Handle<v8::Object> obj
+  , uint32_t index) {
+  return NanJust<bool>(obj->HasRealIndexedProperty(index));
+}
+
+NAN_INLINE NanMaybe<bool> NanHasRealNamedCallbackProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanJust<bool>(obj->HasRealNamedCallbackProperty(key));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGetRealNamedPropertyInPrototypeChain(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanMaybeLocal<v8::Value>(
+      obj->GetRealNamedPropertyInPrototypeChain(key));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanGetRealNamedProperty(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> key) {
+  return NanMaybeLocal<v8::Value>(obj->GetRealNamedProperty(key));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanCallAsFunction(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::Object> recv
+  , int argc
+  , v8::Handle<v8::Value> argv[]) {
+  return NanMaybeLocal<v8::Value>(obj->CallAsFunction(recv, argc, argv));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanCallAsConstructor(
+    v8::Handle<v8::Object> obj
+  , int argc
+  , v8::Handle<v8::Value> argv[]) {
+  return NanMaybeLocal<v8::Value>(obj->CallAsConstructor(argc, argv));
+}
+
+NAN_INLINE
+NanMaybeLocal<v8::String> NanGetSourceLine(v8::Handle<v8::Message> msg) {
+  return NanMaybeLocal<v8::String>(msg->GetSourceLine());
+}
+
+NAN_INLINE NanMaybe<int> NanGetLineNumber(v8::Handle<v8::Message> msg) {
+  return NanJust<int>(msg->GetLineNumber());
+}
+
+NAN_INLINE NanMaybe<int> NanGetStartColumn(v8::Handle<v8::Message> msg) {
+  return NanJust<int>(msg->GetStartColumn());
+}
+
+NAN_INLINE NanMaybe<int> NanGetEndColumn(v8::Handle<v8::Message> msg) {
+  return NanJust<int>(msg->GetEndColumn());
+}
+
+NAN_INLINE NanMaybeLocal<v8::Object> NanCloneElementAt(
+    v8::Handle<v8::Array> array
+  , uint32_t index) {
+  return NanMaybeLocal<v8::Object>(array->CloneElementAt(index));
+}
+
+NAN_INLINE NanMaybeLocal<v8::Value> NanStackTrace(v8::TryCatch trycatch) {
+  return NanMaybeLocal<v8::Value>(trycatch.StackTrace());
+}
+
+#endif
+
 #include "nan_new.h"  // NOLINT(build/include)
 
 // uv helpers
@@ -219,12 +838,12 @@ NAN_INLINE bool NanBooleanOptionValue(
 ) {
   if (def) {
     return optionsObj.IsEmpty()
-      || !optionsObj->Has(opt)
-      || optionsObj->Get(opt)->BooleanValue();
+      || !NanHas(optionsObj, opt).FromJust()
+      || NanBooleanValue(NanGet(optionsObj, opt).ToLocalChecked()).FromJust();
   } else {
     return !optionsObj.IsEmpty()
-      && optionsObj->Has(opt)
-      && optionsObj->Get(opt)->BooleanValue();
+      && NanHas(optionsObj, opt).FromJust()
+      && NanBooleanValue(NanGet(optionsObj, opt).ToLocalChecked()).FromJust();
   }
 }
 
@@ -241,9 +860,9 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
   , uint32_t def
 ) {
   return !optionsObj.IsEmpty()
-    && optionsObj->Has(opt)
-    && optionsObj->Get(opt)->IsNumber()
-      ? optionsObj->Get(opt)->Uint32Value()
+    && NanHas(optionsObj, opt).FromJust()
+    && NanGet(optionsObj, opt).ToLocalChecked()->IsNumber()
+      ? NanUint32Value(NanGet(optionsObj, opt).ToLocalChecked()).FromJust()
       : def;
 }
 
@@ -261,8 +880,13 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
 }
 
 template<typename T>
+NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(NanMaybeLocal<T> val) {
+  return val.ToLocalChecked();
+}
+
+template<typename T>
 NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
-  return NanNew(val);
+  return _NanEnsureLocal(NanNew(val));
 }
 
 /* io.js 1.0  */
@@ -283,9 +907,17 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
     v8::Isolate::GetCurrent()->SetAddHistogramSampleFunction(cb);
   }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
+    return v8::Isolate::GetCurrent()->IdleNotificationDeadline(
+        idle_time_in_ms * 0.001);
+  }
+# else
   NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
     return v8::Isolate::GetCurrent()->IdleNotification(idle_time_in_ms);
   }
+#endif
 
   NAN_INLINE void NanLowMemoryNotification() {
     v8::Isolate::GetCurrent()->LowMemoryNotification();
@@ -325,7 +957,6 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
 // Node 0.11+ (0.11.12 and below won't compile with these)
-
 # define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define _NAN_METHOD_RETURN_TYPE void
@@ -396,14 +1027,16 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
 # define NanEscapeScope(val) scope.Escape(_NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
-# define NanReturnValue(value) return args.GetReturnValue().Set(_NanEnsureLocal(value))
+# define NanReturnValue(value) return args.GetReturnValue().Set(               \
+  _NanEnsureLocal(value))
 # define NanReturnUndefined() return
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 
-  NAN_INLINE v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap &obj) {
+  NAN_INLINE
+  v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap &obj) {
     return const_cast<node::ObjectWrap &>(obj).handle();
   }
 
@@ -496,7 +1129,7 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
 
   NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
       const char* data, int length = -1) {
-    return NanNew<v8::String>(data, length);
+    return NanNew<v8::String>(data, length).ToLocalChecked();
   }
 
   template<typename T>
@@ -593,12 +1226,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     template<typename T, typename P>                                           \
     static void name(const _NanWeakCallbackData<T, P> &data)
 
-# define _NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
+# define _NAN_ERROR(fun, msg) fun(NanNew<v8::String>(msg).ToLocalChecked())
 
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
+# define _NAN_THROW_ERROR(fun, msg)                                            \
     do {                                                                       \
       NanScope();                                                              \
-      v8::Isolate::GetCurrent()->ThrowException(_NAN_ERROR(fun, errmsg));      \
+      v8::Isolate::GetCurrent()->ThrowException(_NAN_ERROR(fun, msg));         \
     } while (0);
 
   NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
@@ -618,9 +1251,12 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       const char *msg
     , const int errorNumber
   ) {
-    v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
+    v8::Local<v8::Value> err =
+        v8::Exception::Error(NanNew<v8::String>(msg).ToLocalChecked());
     v8::Local<v8::Object> obj = err.As<v8::Object>();
-    obj->Set(NanNew<v8::String>("code"), NanNew<v8::Integer>(errorNumber));
+    NanSet(obj
+      , NanNew<v8::String>("code").ToLocalChecked()
+      , NanNew<v8::Integer>(errorNumber));
     return err;
   }
 
@@ -700,32 +1336,64 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     );
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
   ) {
     v8::ScriptCompiler::Source source(s, origin);
-    return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source);
+    return v8::ScriptCompiler::Compile(NanGetCurrentContext(), &source);
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
   ) {
     v8::ScriptCompiler::Source source(s);
-    return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source);
+    return v8::ScriptCompiler::Compile(NanGetCurrentContext(), &source);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
       v8::Handle<NanUnboundScript> script
   ) {
     return script->BindToCurrentContext()->Run();
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
       v8::Handle<NanBoundScript> script
   ) {
     return script->Run();
   }
+#else
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
+      v8::Local<v8::String> s
+    , const v8::ScriptOrigin& origin
+  ) {
+    v8::ScriptCompiler::Source source(s, origin);
+    return NanMaybeLocal<NanBoundScript>(
+        v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source));
+  }
+
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
+      v8::Local<v8::String> s
+  ) {
+    v8::ScriptCompiler::Source source(s);
+    return NanMaybeLocal<NanBoundScript>(
+        v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source));
+  }
+
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
+      v8::Handle<NanUnboundScript> script
+  ) {
+    return NanMaybeLocal<v8::Value>(script->BindToCurrentContext()->Run());
+  }
+
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
+      v8::Handle<NanBoundScript> script
+  ) {
+    return NanMaybeLocal<v8::Value>(script->Run());
+  }
+#endif
 
   NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
       v8::Handle<v8::Object> target
@@ -772,7 +1440,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   class NanAsciiString {
    public:
     NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
+      v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
       size = toStr->Length();
       buf = new char[size + 1];
       size = toStr->WriteOneByte(reinterpret_cast<unsigned char*>(buf));
@@ -806,7 +1474,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   class NanUtf8String {
    public:
     NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
+      v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
       size = toStr->Utf8Length();
       buf = new char[size + 1];
       toStr->WriteUtf8(buf);
@@ -839,7 +1507,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   class NanUcs2String {
    public:
     NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
+      v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
       size = toStr->Length();
       buf = new uint16_t[size + 1];
       toStr->Write(buf);
@@ -871,7 +1539,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
 #else
 // Node 0.8 and 0.10
-
 # define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
 # define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
 # define _NAN_METHOD_RETURN_TYPE v8::Handle<v8::Value>
@@ -941,7 +1608,8 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
 
-  NAN_INLINE v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap &obj) {
+  NAN_INLINE
+  v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap &obj) {
     return v8::Local<v8::Object>::New(obj.handle_);
   }
 
@@ -1121,14 +1789,14 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     template<typename T, typename P>                                           \
     static void name(const _NanWeakCallbackData<T, P> &data)
 
-# define _NAN_ERROR(fun, errmsg)                                               \
+# define _NAN_ERROR(fun, msg)                                                  \
     fun(v8::String::New(errmsg))
 
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
+# define _NAN_THROW_ERROR(fun, msg)                                            \
     do {                                                                       \
       NanScope();                                                              \
       return v8::Local<v8::Value>::New(                                        \
-        v8::ThrowException(_NAN_ERROR(fun, errmsg)));                          \
+        v8::ThrowException(_NAN_ERROR(fun, msg)));                             \
     } while (0);
 
   NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
@@ -1248,21 +1916,23 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return lctx;
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
   ) {
-    return v8::Script::Compile(s, const_cast<v8::ScriptOrigin *>(&origin));
+    return NanMaybeLocal<NanBoundScript>(
+        v8::Script::Compile(s, const_cast<v8::ScriptOrigin *>(&origin)));
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
     v8::Local<v8::String> s
   ) {
-    return v8::Script::Compile(s);
+    return NanMaybeLocal<NanBoundScript>(v8::Script::Compile(s));
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Handle<v8::Script> script) {
-    return script->Run();
+  NAN_INLINE
+  NanMaybeLocal<v8::Value> NanRunScript(v8::Handle<v8::Script> script) {
+    return NanMaybeLocal<v8::Value>(script->Run());
   }
 
   NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
@@ -1325,7 +1995,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   class NanAsciiString {
    public:
     NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
+      v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
       size = toStr->Length();
       buf = new char[size + 1];
       size = toStr->WriteAscii(buf);
@@ -1359,7 +2029,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   class NanUtf8String {
    public:
     NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
+      v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
       size = toStr->Utf8Length();
       buf = new char[size + 1];
       toStr->WriteUtf8(buf);
@@ -1392,7 +2062,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   class NanUcs2String {
    public:
     NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
+      v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
       size = toStr->Length();
       buf = new uint16_t[size + 1];
       toStr->Write(buf);
@@ -1504,7 +2174,7 @@ class NanCallback {
 
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
     NanScope();
-    NanNew(handle)->Set(kCallbackIndex, fn);
+    NanSet(NanNew(handle), kCallbackIndex, fn);
   }
 
   NAN_INLINE v8::Local<v8::Function> GetFunction() const {
@@ -1583,7 +2253,7 @@ class NanCallback {
 #endif
 #endif
   }
-};
+};  // NOLINT(readability/braces)
 
 /* abstract */ class NanAsyncWorker {
  public:
@@ -1621,13 +2291,14 @@ class NanCallback {
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Object> &obj) {
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    handle->Set(NanNew<v8::String>(key), obj);
+    NanSet(handle, NanNew<v8::String>(key).ToLocalChecked(), obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return NanEscapeScope(handle->Get(NanNew(key)).As<v8::Object>());
+    return NanEscapeScope(
+        handle->Get(NanNew(key).ToLocalChecked()).As<v8::Object>());
   }
 
   virtual void Execute() = 0;
@@ -1650,7 +2321,7 @@ class NanCallback {
     NanScope();
 
     v8::Local<v8::Value> argv[] = {
-        v8::Exception::Error(NanNew<v8::String>(ErrorMessage()))
+      v8::Exception::Error(NanNew<v8::String>(ErrorMessage()).ToLocalChecked())
     };
     callback->Call(1, argv);
   }
@@ -2091,7 +2762,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
     return data;
   }
 
-  v8::Local<v8::String> toStr = from->ToString();
+  v8::Local<v8::String> toStr = NanToString(from).ToLocalChecked();
 
   char *to = static_cast<char *>(buf);
 
@@ -2279,7 +2950,7 @@ inline
 void
 NanExport(v8::Handle<v8::Object> target, const char * name,
     NanFunctionCallback f) {
-  target->Set(NanNew<v8::String>(name),
+  NanSet(target, NanNew<v8::String>(name).ToLocalChecked(),
       NanNew<v8::FunctionTemplate>(f)->GetFunction());
 }
 
@@ -2287,7 +2958,7 @@ NanExport(v8::Handle<v8::Object> target, const char * name,
 
 struct NanTap {
   explicit NanTap(v8::Handle<v8::Value> t) : t_() {
-    NanAssignPersistent(t_, t->ToObject());
+    NanAssignPersistent(t_, NanToObject(t).ToLocalChecked());
   }
 
   ~NanTap() { NanDisposePersistent(t_); }  // not sure if neccessary
@@ -2300,7 +2971,7 @@ struct NanTap {
   inline void ok(bool isOk, const char * msg = NULL) {
     v8::Handle<v8::Value> args[2];
     args[0] = NanNew(isOk);
-    if (msg) args[1] = NanNew(msg);
+    if (msg) args[1] = NanNew(msg).ToLocalChecked();
     NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
   }
 

@@ -59,10 +59,19 @@ Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
 
 //=== Date =====================================================================
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
-  return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
+  return v8::Date::New(NanGetCurrentContext(), value).As<v8::Date>();
 }
+#else
+Factory<v8::Date>::return_t
+Factory<v8::Date>::New(double value) {
+  return Factory<v8::Date>::return_t(
+      v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>());
+}
+#endif
 
 //=== External =================================================================
 
@@ -150,15 +159,27 @@ Factory<v8::ObjectTemplate>::New() {
 
 //=== RegExp ===================================================================
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Handle<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return v8::RegExp::New(pattern, flags);
+  return v8::RegExp::New(NanGetCurrentContext(), pattern, flags);
 }
+#else
+Factory<v8::RegExp>::return_t
+Factory<v8::RegExp>::New(
+    v8::Handle<v8::String> pattern
+  , v8::RegExp::Flags flags) {
+  return Factory<v8::RegExp>::return_t(v8::RegExp::New(pattern, flags));
+}
+#endif
 
 //=== Script ===================================================================
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
@@ -171,6 +192,22 @@ Factory<v8::Script>::New( v8::Local<v8::String> source
   v8::ScriptCompiler::Source src(source, origin);
   return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
+#else
+Factory<v8::Script>::return_t
+Factory<v8::Script>::New( v8::Local<v8::String> source) {
+  v8::ScriptCompiler::Source src(source);
+  return Factory<v8::Script>::return_t(
+      v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src));
+}
+
+Factory<v8::Script>::return_t
+Factory<v8::Script>::New( v8::Local<v8::String> source
+                        , v8::ScriptOrigin const& origin) {
+  v8::ScriptCompiler::Source src(source, origin);
+  return Factory<v8::Script>::return_t(
+      v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src));
+}
+#endif
 
 //=== Signature ================================================================
 
@@ -183,9 +220,12 @@ Factory<v8::Signature>::New(Factory<v8::Signature>::FTH receiver) {
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New() {
-  return v8::String::Empty(v8::Isolate::GetCurrent());
+  return Factory<v8::String>::return_t(
+      v8::String::Empty(v8::Isolate::GetCurrent()));
 }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::String>::return_t
 Factory<v8::String>::New(const char * value, int length) {
   return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value,
@@ -220,6 +260,59 @@ Factory<v8::String>::return_t
 Factory<v8::String>::New(NanExternalOneByteStringResource * value) {
   return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
 }
+#else
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const char * value, int length) {
+  return Factory<v8::String>::return_t(
+      v8::String::NewFromUtf8(
+          v8::Isolate::GetCurrent()
+        , value
+        , v8::String::kNormalString
+        , length));
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(std::string const& value) {
+  assert(value.size() <= INT_MAX && "string too long");
+  return Factory<v8::String>::return_t(
+      v8::String::NewFromUtf8(
+          v8::Isolate::GetCurrent()
+        , value.data()
+        , v8::String::kNormalString
+        , static_cast<int>(value.size())));
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint8_t * value, int length) {
+  return Factory<v8::String>::return_t(
+      v8::String::NewFromOneByte(
+          v8::Isolate::GetCurrent()
+        , value
+        , v8::String::kNormalString, length));
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(const uint16_t * value, int length) {
+  return Factory<v8::String>::return_t(
+      v8::String::NewFromTwoByte(
+          v8::Isolate::GetCurrent()
+        , value
+        , v8::String::kNormalString
+        , length));
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
+  return Factory<v8::String>::return_t(
+      v8::String::NewExternal(v8::Isolate::GetCurrent(), value));
+}
+
+Factory<v8::String>::return_t
+Factory<v8::String>::New(NanExternalOneByteStringResource * value) {
+  return Factory<v8::String>::return_t(
+      v8::String::NewExternal(v8::Isolate::GetCurrent(), value));
+}
+#endif
 
 //=== String Object ============================================================
 
