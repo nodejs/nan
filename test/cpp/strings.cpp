@@ -28,8 +28,8 @@ void Init (v8::Handle<v8::Object> target) {
   , encodeHex
   );
 
-  target->Set(
-      NanNew("encodeHex")
+  NanSet(target
+    , NanNew("encodeHex").ToLocalChecked()
     , encodeHex->GetFunction()
   );
 
@@ -41,8 +41,8 @@ void Init (v8::Handle<v8::Object> target) {
   , encodeUCS2
   );
 
-  target->Set(
-      NanNew("encodeUCS2")
+  NanSet(target
+    , NanNew("encodeUCS2").ToLocalChecked()
     , encodeUCS2->GetFunction()
   );
 }

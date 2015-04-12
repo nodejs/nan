@@ -14,7 +14,7 @@ NAN_METHOD(ReturnValue) {
   if (args.Length() == 1) {
     NanReturnValue(args[0]);
   } else {
-    NanReturnValue(NanNew<v8::String>("default"));
+    NanReturnValue(NanNew<v8::String>("default").ToLocalChecked());
   }
 }
 
@@ -32,21 +32,20 @@ NAN_METHOD(ReturnPersistent) {
 
 void Init (v8::Handle<v8::Object> target) {
   NanAssignPersistent(persistent, NanNew(true));
-
-  target->Set(
-      NanNew<v8::String>("r")
+  NanSet(target
+    , NanNew<v8::String>("r").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("p")
+  NanSet(target
+    , NanNew<v8::String>("p").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("s")
+  NanSet(target
+    , NanNew<v8::String>("s").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnString)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("q")
+  NanSet(target
+    , NanNew<v8::String>("q").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnPersistent)->GetFunction()
   );
 }
