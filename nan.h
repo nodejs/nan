@@ -1220,6 +1220,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE void FreeData(char *data, void *hint) {
+    (void) (hint);  // suppress unused warning
     delete[] data;
   }
 
