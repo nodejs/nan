@@ -112,7 +112,7 @@ NAN_METHOD(NewSignature) {
   NanScope();
   v8::Local<v8::FunctionTemplate> tmpl =
       NanNew<v8::FunctionTemplate>(NewSignature);
-  v8::Local<v8::Signature> sig = NanNew<v8::Signature>(tmpl, 1, &tmpl);
+  v8::Local<v8::Signature> sig = NanNew<v8::Signature>(tmpl);
   tmpl = NanNew<v8::FunctionTemplate>(
       NewSignature, v8::Handle<v8::Value>(), sig);
   NanReturnValue(NanNew<v8::String>("string"));

@@ -281,9 +281,8 @@ NAN_METHOD(testSignature) {
   t.ok(_( assertType<Sig>(NanNew<Sig>())));
   t.ok(_( assertType<Sig>(NanNew<Sig>(NanNew<FT>(testSignature)))));
 
-  Local<FT> arg = NanNew<FT>(testSignature);
   t.ok(_( assertType<Sig>(
-      NanNew<Sig>(NanNew<FT>(testSignature), 1 , &arg))));
+      NanNew<Sig>(NanNew<FT>(testSignature)))));
 
   return_NanUndefined();
 }

@@ -181,10 +181,8 @@ Factory<v8::Script>::New( v8::Local<v8::String> source
 //=== Signature ================================================================
 
 Factory<v8::Signature>::return_t
-Factory<v8::Signature>::New( Factory<v8::Signature>::FTH receiver
-                           , int argc
-                           , Factory<v8::Signature>::FTH argv[]) {
-  return v8::Signature::New(receiver, argc, argv);
+Factory<v8::Signature>::New(Factory<v8::Signature>::FTH receiver) {
+  return v8::Signature::New(receiver);
 }
 
 //=== String ===================================================================

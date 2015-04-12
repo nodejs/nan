@@ -148,9 +148,7 @@ struct Factory<v8::Script> : FactoryBase<v8::Script> {
 template <>
 struct Factory<v8::Signature> : FactoryBase<v8::Signature> {
   typedef v8::Handle<v8::FunctionTemplate> FTH;
-  static inline
-  return_t
-  New( FTH receiver = FTH(), int argc = 0, FTH argv[] = NULL );
+  static inline return_t New(FTH receiver = FTH());
 };
 
 template <>
