@@ -1060,6 +1060,10 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
     return NanEscapeScope(NanNew(v8::False(v8::Isolate::GetCurrent())));
   }
 
+  NAN_INLINE v8::Local<v8::String> NanEmptyString() {
+    return v8::String::Empty(v8::Isolate::GetCurrent());
+  }
+
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
     return static_cast<int>(
         v8::Isolate::GetCurrent()->AdjustAmountOfExternalAllocatedMemory(bc));
@@ -1631,6 +1635,10 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   NAN_INLINE v8::Local<v8::Boolean> NanFalse() {
     NanEscapableScope();
     return NanEscapeScope(NanNew(v8::False()));
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanEmptyString() {
+    return v8::String::Empty();
   }
 
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
