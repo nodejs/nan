@@ -100,4 +100,8 @@
         "target_name" : "threadlocal"
       , "sources"     : [ "cpp/threadlocal.cpp" ]
     }
+    , {
+        "target_name" : "objectwraphandle"
+      , "sources"     : [ "cpp/objectwraphandle.cpp" ]
+    }
 ]}
