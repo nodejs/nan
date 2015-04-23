@@ -31,6 +31,7 @@ LINT_SOURCES = \
 	test/cpp/nancallback.cpp \
 	test/cpp/nannew.cpp \
         test/cpp/news.cpp \
+	test/cpp/objectwraphandle.cpp \
 	test/cpp/optionvalues.cpp \
 	test/cpp/persistent.cpp \
 	test/cpp/returnemptystring.cpp \
