@@ -5,7 +5,7 @@
   "main": "include_dirs.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/rvagg/nan.git"
+    "url": "git://github.com/iojs/nan.git"
   },
   "scripts": {
     "test": "tap --gc test/js/*-test.js",
@@ -24,7 +24,7 @@
     "bindings": "~1.2.1",
     "node-gyp": "~1.0.2",
     "pangyp": "~2.0.1",
-    "tap": "~0.5.0",
+    "tap": "~0.7.1",
     "xtend": "~4.0.0"
   },
   "license": "MIT"

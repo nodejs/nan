@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.12 as well as io.js.**
 
-***Current version: 1.7.0***
+***Current version: 1.8.0***
 
 *(See [CHANGELOG.md](https://github.com/iojs/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -26,6 +26,12 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Apr-2015: 1.8.0 release
+
+* Support V8 4.2
+* Removed support for creating `Signature`s with arguments
+* Backported thread local storage routines for libuv
 
 ### Feb-2015: 1.7.0 release
 

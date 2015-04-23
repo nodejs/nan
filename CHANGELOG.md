@@ -1,6 +1,14 @@
 # NAN ChangeLog
 
-**Version 1.7.0: current Node 12: 0.12.0, Node 10: 0.10.36, io.js: 1.4.1**
+**Version 1.8.0: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1**
+
+### 1.8.0 Apr 23 2015
+
+  - Feature: Allow primitives with NanReturnValue 2e4475e
+  - Feature: Added comparison operators to NanCallback 55b075e
+  - Feature: Backport thread local storage 15bb7fa
+  - Removal: Remove support for signatures with arguments 8a2069d
+  - Correcteness: Replaced NanObjectWrapHandle macro with function 0bc6d59
 
 ### 1.7.0 Feb 28 2015
 
