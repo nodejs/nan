@@ -13,8 +13,8 @@
 // Based on test-thread.c from libuv.
 
 class TlsTest : public NanAsyncWorker {
-public:
-  TlsTest(NanTap *t) : NanAsyncWorker(NULL), t(t), i(0) {
+ public:
+  explicit TlsTest(NanTap *t) : NanAsyncWorker(NULL), t(t), i(0) {
     NanScope();
     t->plan(7);
     t->ok(_(0 == nauv_key_create(&tls_key)));
@@ -37,7 +37,8 @@ public:
     t->ok(_(NULL == ErrorMessage()));
     delete t;
   }
-private:
+
+ private:
   nauv_key_t tls_key;
 
   NanTap *t;
@@ -59,8 +60,8 @@ NAN_METHOD(thread_local_storage) {
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  exports->Set(
-      NanNew<v8::String>("thread_local_storage")
+  NanSet(exports
+    , NanNew<v8::String>("thread_local_storage").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(thread_local_storage)->GetFunction()
   );
 }

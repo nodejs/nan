@@ -26,7 +26,9 @@ NAN_METHOD(Work) {
 }
 
 void Init (v8::Handle<v8::Object> exports) {
-  exports->Set(NanNew("a"), NanNew<v8::FunctionTemplate>(Work)->GetFunction());
+  NanSet(exports
+    , NanNew("a").ToLocalChecked()
+    , NanNew<v8::FunctionTemplate>(Work)->GetFunction());
 }
 
 NODE_MODULE(asyncworkererror, Init)

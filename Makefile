@@ -23,7 +23,10 @@ LINT_SOURCES = \
         test/cpp/asyncprogressworker.cpp \
         test/cpp/asyncworkererror.cpp \
         test/cpp/bufferworkerpersistent.cpp \
+        test/cpp/converters.cpp \
         test/cpp/gc.cpp \
+	test/cpp/isolatedata.cpp \
+	test/cpp/makecallback.cpp \
         test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
@@ -37,9 +40,11 @@ LINT_SOURCES = \
 	test/cpp/returnnull.cpp \
 	test/cpp/returnundefined.cpp \
 	test/cpp/returnvalue.cpp \
+        test/cpp/settemplate.cpp \
 	test/cpp/settergetter.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
+        test/cpp/threadlocal.cpp \
         test/cpp/weak.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 

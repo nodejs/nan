@@ -44,20 +44,23 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
     NanNew<v8::FunctionTemplate>(SetterGetter::New);
   NanAssignPersistent(settergetter_constructor, tpl);
-  tpl->SetClassName(NanNew<v8::String>("SetterGetter"));
+  tpl->SetClassName(NanNew<v8::String>("SetterGetter").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
-  proto->SetAccessor(NanNew<v8::String>("prop1"), SetterGetter::GetProp1);
   proto->SetAccessor(
-    NanNew<v8::String>("prop2")
+    NanNew<v8::String>("prop1").ToLocalChecked()
+  , SetterGetter::GetProp1
+  );
+  proto->SetAccessor(
+    NanNew<v8::String>("prop2").ToLocalChecked()
   , SetterGetter::GetProp2
   , SetterGetter::SetProp2
   );
 
   v8::Local<v8::Function> createnew =
     NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
-  target->Set(NanNew<v8::String>("create"), createnew);
+  NanSet(target, NanNew<v8::String>("create").ToLocalChecked(), createnew);
 }
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
@@ -103,7 +106,7 @@ NAN_GETTER(SetterGetter::GetProp1) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  NanReturnValue(NanNew(settergetter->prop1));
+  NanReturnValue(NanNew(settergetter->prop1).ToLocalChecked());
 }
 
 NAN_GETTER(SetterGetter::GetProp2) {
@@ -127,7 +130,7 @@ NAN_GETTER(SetterGetter::GetProp2) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  NanReturnValue(NanNew(settergetter->prop2));
+  NanReturnValue(NanNew(settergetter->prop2).ToLocalChecked());
 }
 
 NAN_SETTER(SetterGetter::SetProp2) {
@@ -163,7 +166,7 @@ NAN_METHOD(SetterGetter::Log) {
   SetterGetter* settergetter =
     node::ObjectWrap::Unwrap<SetterGetter>(args.This());
 
-  NanReturnValue(NanNew(settergetter->log));
+  NanReturnValue(NanNew(settergetter->log).ToLocalChecked());
 }
 
 NODE_MODULE(settergetter, SetterGetter::Init)

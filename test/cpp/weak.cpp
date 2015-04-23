@@ -19,7 +19,7 @@ NAN_WEAK_CALLBACK(weakCallback) {
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-  v8::Local<v8::String> lstring = NanNew<v8::String>("result");
+  v8::Local<v8::String> lstring = NanNew<v8::String>("result").ToLocalChecked();
   int *parameter = new int(0);
   NanMakeWeakPersistent(func, parameter, &weakCallback);
   return lstring;
@@ -31,8 +31,8 @@ NAN_METHOD(Hustle) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("hustle")
+  NanSet(target
+    , NanNew<v8::String>("hustle").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }

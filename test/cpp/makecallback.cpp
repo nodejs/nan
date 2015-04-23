@@ -9,16 +9,16 @@
 #include <nan.h>
 
 class MyObject : public node::ObjectWrap {
-public:
-    static void Init(v8::Handle<v8::Object> exports);
+ public:
+  static void Init(v8::Handle<v8::Object> exports);
 
-private:
-    MyObject();
-    ~MyObject();
+ private:
+  MyObject();
+  ~MyObject();
 
-    static NAN_METHOD(New);
-    static NAN_METHOD(CallEmit);
-    static v8::Persistent<v8::Function> constructor;
+  static NAN_METHOD(New);
+  static NAN_METHOD(CallEmit);
+  static v8::Persistent<v8::Function> constructor;
 };
 
 v8::Persistent<v8::Function> MyObject::constructor;
@@ -30,45 +30,45 @@ MyObject::~MyObject() {
 }
 
 void MyObject::Init(v8::Handle<v8::Object> exports) {
-    NanScope();
+  NanScope();
 
-    // Prepare constructor template
-    v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-    tpl->SetClassName(NanNew<v8::String>("MyObject"));
-    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  // Prepare constructor template
+  v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
+  tpl->SetClassName(NanNew<v8::String>("MyObject").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-    NODE_SET_PROTOTYPE_METHOD(tpl, "call_emit", CallEmit);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "call_emit", CallEmit);
 
-    NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
-    exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
+  NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
+  NanSet(exports,
+      NanNew<v8::String>("MyObject").ToLocalChecked(), tpl->GetFunction());
 }
 
 NAN_METHOD(MyObject::New) {
-    NanScope();
+  NanScope();
 
-    if (args.IsConstructCall()) {
-        MyObject* obj = new MyObject();
-        obj->Wrap(args.This());
-        NanReturnValue(args.This());
-    }
-    else {
-        v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
-        NanReturnValue(cons->NewInstance());
-    }
+  if (args.IsConstructCall()) {
+    MyObject* obj = new MyObject();
+    obj->Wrap(args.This());
+    NanReturnValue(args.This());
+  } else {
+    v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
+    NanReturnValue(cons->NewInstance());
+  }
 }
 
 NAN_METHOD(MyObject::CallEmit) {
-    NanScope();
-    v8::Handle<v8::Value> argv[1] = {
-        NanNew("event"), // event name
-    };
+  NanScope();
+  v8::Handle<v8::Value> argv[1] = {
+    NanNew("event").ToLocalChecked(),  // event name
+  };
 
-    NanMakeCallback(args.This(), "emit", 1, argv);
-    NanReturnUndefined();
+  NanMakeCallback(args.This(), "emit", 1, argv);
+  NanReturnUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-    MyObject::Init(exports);
+  MyObject::Init(exports);
 }
 
 NODE_MODULE(makecallback, Init)

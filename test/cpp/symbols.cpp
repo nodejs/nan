@@ -9,7 +9,10 @@
 #include <nan.h>
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(NanNew<v8::String>("key"), NanNew<v8::String>("a property"));
+  NanSet(target
+    , NanNew<v8::String>("key").ToLocalChecked()
+    , NanNew<v8::String>("a property").ToLocalChecked()
+  );
 }
 
 NODE_MODULE(symbols, Init)
