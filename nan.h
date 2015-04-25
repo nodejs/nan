@@ -27,6 +27,7 @@
 #include <node_object_wrap.h>
 #include <cstring>
 #include <climits>
+#include <cstdlib>
 #if defined(_MSC_VER)
 # pragma warning( push )
 # pragma warning( disable : 4530 )
