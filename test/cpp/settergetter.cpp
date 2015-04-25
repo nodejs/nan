@@ -30,6 +30,7 @@ static v8::Persistent<v8::FunctionTemplate> settergetter_constructor;
 
 NAN_METHOD(CreateNew) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(SetterGetter::NewInstance());
 }
 
@@ -85,6 +86,7 @@ NAN_METHOD(SetterGetter::New) {
 NAN_GETTER(SetterGetter::GetProp1) {
   NanScope();
 
+  (void) property;  // suppress unused warning
   SetterGetter* settergetter =
     node::ObjectWrap::Unwrap<SetterGetter>(args.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
@@ -109,6 +111,7 @@ NAN_GETTER(SetterGetter::GetProp1) {
 NAN_GETTER(SetterGetter::GetProp2) {
   NanScope();
 
+  (void) property;  // suppress unused warning
   SetterGetter* settergetter =
     node::ObjectWrap::Unwrap<SetterGetter>(args.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
@@ -133,6 +136,7 @@ NAN_GETTER(SetterGetter::GetProp2) {
 NAN_SETTER(SetterGetter::SetProp2) {
   NanScope();
 
+  (void) property;  // suppress unused warning
   SetterGetter* settergetter =
       node::ObjectWrap::Unwrap<SetterGetter>(args.This());
   strncpy(

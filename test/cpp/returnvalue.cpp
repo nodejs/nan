@@ -19,11 +19,13 @@ NAN_METHOD(ReturnValue) {
 
 NAN_METHOD(ReturnPrimitive) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(true);
 }
 
 NAN_METHOD(ReturnString) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue("yes, it works");
 }
 

@@ -40,6 +40,7 @@ struct is_same<T, T> {
 template <typename T, typename U>
 bool
 assertType(U value) {
+  (void) value;  // suppress unused warning
   return is_same<v8::Local<T>, U>::value;
 }
 
@@ -402,6 +403,7 @@ NAN_METHOD(testRegression212) {
  */
 void overloaded() {}
 NAN_METHOD(overloaded) {
+    (void) args; // suppress unused warning
     overloaded();  // not unused
     return_NanUndefined();
 }
@@ -445,21 +447,25 @@ NAN_METHOD(newUint32WithValue) {
 
 NAN_METHOD(newStringFromChars) {
   NanScope();
+  (void) args;  // suppress unused warning
   return_NanValue(NanNew<String>("hello?"));
 }
 
 NAN_METHOD(newStringFromCharsWithLength) {
   NanScope();
+  (void) args;  // suppress unused warning
   return_NanValue(NanNew<String>("hello?", 4));
 }
 
 NAN_METHOD(newStringFromStdString) {
   NanScope();
+  (void) args;  // suppress unused warning
   return_NanValue(NanNew<String>(std::string("hello!")));
 }
 
 NAN_METHOD(newExternal) {
   NanScope();
+  (void) args;  // suppress unused warning
   return_NanValue(NanNew<External>(&ttt));
 }
 

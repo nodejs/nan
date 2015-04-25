@@ -10,33 +10,39 @@
 
 NAN_METHOD(NewNumber) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew(0.5));
 }
 
 NAN_METHOD(NewNegativeInteger) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew(-1));
 }
 
 NAN_METHOD(NewPositiveInteger) {
   NanScope();
+  (void) args;  // suppress unused warning
   NanReturnValue(NanNew(1));
 }
 
 NAN_METHOD(NewUtf8String) {
   NanScope();
+  (void) args;  // suppress unused warning
   const char s[] = "strïng";
   NanReturnValue(NanNew(s));
 }
 
 NAN_METHOD(NewLatin1String) {
   NanScope();
+  (void) args;  // suppress unused warning
   const uint8_t s[] = "str\xefng";
   NanReturnValue(NanNew(s));
 }
 
 NAN_METHOD(NewUcs2String) {
   NanScope();
+  (void) args;  // suppress unused warning
   uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
   NanReturnValue(NanNew(s));
 }
@@ -61,12 +67,14 @@ class ExtAsciiString : public NanExternalOneByteStringResource {
 
 NAN_METHOD(NewExternalStringResource) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::Local<v8::String> ext = NanNew(new ExtString());
   NanReturnValue(ext);
 }
 
 NAN_METHOD(NewExternalAsciiStringResource) {
   NanScope();
+  (void) args;  // suppress unused warning
   v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
   NanReturnValue(ext);
 }

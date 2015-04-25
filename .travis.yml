@@ -1,12 +1,9 @@
 language: node_js
-env:
-  - NODE_VERSION="0.8"
-  - NODE_VERSION="0.10.38"
-  - NODE_VERSION="0.12.2"
-  - NODE_VERSION="iojs-v1.6.4"
-#  - NODE_WEBKIT="0.11.6" NODE_VERSION="0.11.13"
 node_js:
-  - "0.10"
+  - "0.8.28"
+  - "0.10.38"
+  - "0.12.2"
+  - "iojs-v1.6.4"
 notifications:
   email:
     - rod@vagg.org
@@ -15,12 +12,6 @@ before_install:
   - mv node_modules npm
   - npm/.bin/npm --version
   - npm/.bin/npm install
-  - rm -rf ~/.nvm
-  - git clone https://github.com/creationix/nvm.git ~/.nvm
-  - source ~/.nvm/nvm.sh
-  - nvm install $NODE_VERSION
-  - node --version
-  - if [[ ${NODE_VERSION} == "0.8" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
-#  - if [[ ${NODE_WEBKIT:-unset} != "unset" ]]; then npm install nw-gyp && ./node_modules/.bin/nw-gyp rebuild --directory test --target=$NODE_WEBKIT; fi
+  - if [[ $(node --version) == "v0.8.28" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
 install:
 script: tap --gc test/js/*-test.js
