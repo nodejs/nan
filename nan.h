@@ -12,7 +12,7 @@
  *
  * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
  *
- * Version 1.8.3: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1
+ * Version 1.8.4: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1
  *
  * See https://github.com/rvagg/nan for the latest update to this file
  **********************************************************************************/

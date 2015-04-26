@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 1.8.3: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1**
+**Version 1.8.4: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1**
+
+### 1.8.4 Apr 26 2015
+
+  - Build: Repackage
 
 ### 1.8.3 Apr 26 2015
 

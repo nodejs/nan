@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.12 as well as io.js.**
 
-***Current version: 1.8.3***
+***Current version: 1.8.4***
 
 *(See [CHANGELOG.md](https://github.com/iojs/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
