@@ -10,11 +10,11 @@
  *   - Ben Noordhuis <https://github.com/bnoordhuis>
  *   - David Siegel <https://github.com/agnat>
  *
- * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ * MIT License <https://github.com/iojs/nan/blob/master/LICENSE.md>
  *
  * Version 1.8.4: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1
  *
- * See https://github.com/rvagg/nan for the latest update to this file
+ * See https://github.com/iojs/nan for the latest update to this file
  **********************************************************************************/
 
 #ifndef NAN_H_
