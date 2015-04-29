@@ -23,6 +23,7 @@ LINT_SOURCES = \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncworkererror.cpp \
 	test/cpp/bufferworkerpersistent.cpp \
+	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \

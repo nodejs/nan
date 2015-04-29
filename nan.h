@@ -685,58 +685,64 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     template<typename T, typename P>                                           \
     static void name(const _NanWeakCallbackData<T, P> &data)
 
-# define _NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
-
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
-    do {                                                                       \
+# define X(NAME)                                                               \
+    NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *errmsg) {          \
+      NanEscapableScope();                                                     \
+      return NanEscapeScope(v8::Exception::NAME(NanNew(errmsg)));              \
+    }                                                                          \
+                                                                               \
+    NAN_INLINE                                                                 \
+    v8::Local<v8::Value> Nan ## NAME(v8::Handle<v8::String> errmsg) {          \
+      return v8::Exception::NAME(errmsg);                                      \
+    }                                                                          \
+                                                                               \
+    NAN_INLINE void NanThrow ## NAME(const char *errmsg) {                     \
       NanScope();                                                              \
-      v8::Isolate::GetCurrent()->ThrowException(_NAN_ERROR(fun, errmsg));      \
-    } while (0);
+      v8::Isolate::GetCurrent()->ThrowException(                               \
+          v8::Exception::NAME(NanNew(errmsg)));                                \
+    }                                                                          \
+                                                                               \
+    NAN_INLINE void NanThrow ## NAME(v8::Handle<v8::String> errmsg) {          \
+      NanScope();                                                              \
+      v8::Isolate::GetCurrent()->ThrowException(                               \
+          v8::Exception::NAME(NanNew(errmsg)));                                \
+    }
 
-  NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
-    return  _NAN_ERROR(v8::Exception::Error, errmsg);
-  }
+  X(Error)
+  X(RangeError)
+  X(ReferenceError)
+  X(SyntaxError)
+  X(TypeError)
 
-  NAN_INLINE void NanThrowError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
-  }
+# undef X
 
   NAN_INLINE void NanThrowError(v8::Handle<v8::Value> error) {
-    NanScope();
     v8::Isolate::GetCurrent()->ThrowException(error);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanError(
+  namespace Nan { namespace imp {
+    NAN_INLINE v8::Local<v8::Value> E(const char *msg, const int errorNumber) {
+      NanEscapableScope();
+      v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
+      v8::Local<v8::Object> obj = err.As<v8::Object>();
+      obj->Set(NanNew<v8::String>("code"), NanNew<v8::Int32>(errorNumber));
+      return NanEscapeScope(err);
+    }
+  }  // end of namespace imp
+  }  // end of namespace Nan
+
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanError(
       const char *msg
     , const int errorNumber
   ) {
-    v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
-    v8::Local<v8::Object> obj = err.As<v8::Object>();
-    obj->Set(NanNew<v8::String>("code"), NanNew<v8::Integer>(errorNumber));
-    return err;
+    return Nan::imp::E(msg, errorNumber);
   }
 
-  NAN_INLINE void NanThrowError(
+  NAN_DEPRECATED NAN_INLINE void NanThrowError(
       const char *msg
     , const int errorNumber
   ) {
-    NanThrowError(NanError(msg, errorNumber));
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanTypeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
-  }
-
-  NAN_INLINE void NanThrowTypeError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanRangeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
-  }
-
-  NAN_INLINE void NanThrowRangeError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
+    NanThrowError(Nan::imp::E(msg, errorNumber));
   }
 
   template<typename T> NAN_INLINE void NanDisposePersistent(
@@ -1217,68 +1223,66 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     template<typename T, typename P>                                           \
     static void name(const _NanWeakCallbackData<T, P> &data)
 
-# define _NAN_ERROR(fun, errmsg)                                               \
-    fun(v8::String::New(errmsg))
+# define X(NAME)                                                               \
+    NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *errmsg) {          \
+      NanEscapableScope();                                                     \
+      return NanEscapeScope(v8::Exception::NAME(NanNew(errmsg)));              \
+    }                                                                          \
+                                                                               \
+    NAN_INLINE                                                                 \
+    v8::Local<v8::Value> Nan ## NAME(v8::Handle<v8::String> errmsg) {          \
+      return v8::Exception::NAME(errmsg);                                      \
+    }                                                                          \
+                                                                               \
+    NAN_INLINE v8::Local<v8::Value> NanThrow ## NAME(const char *errmsg) {     \
+      NanEscapableScope();                                                     \
+      return NanEscapeScope(NanNew(v8::ThrowException(                         \
+          v8::Exception::NAME(NanNew(errmsg)))));                              \
+    }                                                                          \
+                                                                               \
+    NAN_INLINE                                                                 \
+    v8::Local<v8::Value> NanThrow ## NAME(v8::Handle<v8::String> errmsg) {     \
+      NanEscapableScope();                                                     \
+      return NanEscapeScope(NanNew(v8::ThrowException(                         \
+          v8::Exception::NAME(errmsg))));                                      \
+    }
 
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
-    do {                                                                       \
-      NanScope();                                                              \
-      return v8::Local<v8::Value>::New(                                        \
-        v8::ThrowException(_NAN_ERROR(fun, errmsg)));                          \
-    } while (0);
+  X(Error)
+  X(RangeError)
+  X(ReferenceError)
+  X(SyntaxError)
+  X(TypeError)
 
-  NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::Error, errmsg);
+# undef X
+
+  NAN_INLINE v8::Local<v8::Value> NanThrowError(v8::Handle<v8::Value> error) {
+    NanEscapableScope();
+    return NanEscapeScope(v8::Local<v8::Value>::New(v8::ThrowException(error)));
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanThrowError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
-  }
+  namespace Nan { namespace imp {
+    NAN_INLINE v8::Local<v8::Value> E(const char *msg, const int errorNumber) {
+      NanEscapableScope();
+      v8::Local<v8::Value> err = v8::Exception::Error(NanNew<v8::String>(msg));
+      v8::Local<v8::Object> obj = err.As<v8::Object>();
+      obj->Set(NanNew<v8::String>("code"), NanNew<v8::Int32>(errorNumber));
+      return NanEscapeScope(err);
+    }
+  }  // end of namespace imp
+  }  // end of namespace Nan
 
-  NAN_INLINE v8::Local<v8::Value> NanThrowError(
-      v8::Handle<v8::Value> error
-  ) {
-    NanScope();
-    return v8::Local<v8::Value>::New(v8::ThrowException(error));
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanError(
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanError(
       const char *msg
     , const int errorNumber
   ) {
-    v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(msg));
-    v8::Local<v8::Object> obj = err.As<v8::Object>();
-    obj->Set(v8::String::New("code"), v8::Int32::New(errorNumber));
-    return err;
+    return Nan::imp::E(msg, errorNumber);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanThrowError(
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanThrowError(
       const char *msg
     , const int errorNumber
   ) {
-    return NanThrowError(NanError(msg, errorNumber));
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanTypeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanThrowTypeError(
-      const char* errmsg
-  ) {
-    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanRangeError(
-      const char* errmsg
-  ) {
-    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
-  }
-
-  NAN_INLINE v8::Local<v8::Value> NanThrowRangeError(
-      const char* errmsg
-  ) {
-    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
+    return NanThrowError(Nan::imp::E(msg, errorNumber));
   }
 
   template<typename T>
