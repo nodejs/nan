@@ -756,6 +756,10 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
         v8::Isolate::GetCurrent(), target, method, argc, argv));
   }
 
+  NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
+    node::FatalException(v8::Isolate::GetCurrent(), try_catch);
+  }
+
   template<typename T>
   NAN_INLINE void NanSetIsolateData(
       v8::Isolate *isolate
@@ -1307,6 +1311,10 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # else
     return NanMakeCallback(target, NanNew(method), argc, argv);
 # endif
+  }
+
+  NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
+    node::FatalException(try_catch);
   }
 
   template<typename T>
