@@ -252,19 +252,21 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 template<typename T>
 v8::Local<T> NanNew(v8::Handle<T>);
 
-template<typename T>
-NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Handle<T> val) {
-  return NanNew(val);
-}
+namespace NanIntern {
+  template<typename T>
+  NAN_INLINE v8::Local<T> NanEnsureLocal(v8::Handle<T> val) {
+    return NanNew(val);
+  }
 
-template<typename T>
-NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
-  return val;
-}
+  template<typename T>
+  NAN_INLINE v8::Local<T> NanEnsureLocal(v8::Local<T> val) {
+    return val;
+  }
 
-template<typename T>
-NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
-  return NanNew(val);
+  template<typename T>
+  NAN_INLINE v8::Local<v8::Value> NanEnsureLocal(T val) {
+    return NanNew(val);
+  }
 }
 
 /* io.js 1.0  */
@@ -325,80 +327,63 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
   }
 #endif
 
-#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
-// Node 0.11+ (0.11.12 and below won't compile with these)
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)  // Node 0.12
+  typedef const v8::FunctionCallbackInfo<v8::Value>& NAN_METHOD_ARGS_TYPE;
+  typedef void NAN_METHOD_RETURN_TYPE;
 
-# define _NAN_METHOD_ARGS_TYPE const v8::FunctionCallbackInfo<v8::Value>&
-# define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
-# define _NAN_METHOD_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Value>& NAN_GETTER_ARGS_TYPE;
+  typedef void NAN_GETTER_RETURN_TYPE;
 
-# define _NAN_GETTER_ARGS_TYPE const v8::PropertyCallbackInfo<v8::Value>&
-# define _NAN_GETTER_ARGS _NAN_GETTER_ARGS_TYPE args
-# define _NAN_GETTER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<void>& NAN_SETTER_ARGS_TYPE;
+  typedef void NAN_SETTER_RETURN_TYPE;
 
-# define _NAN_SETTER_ARGS_TYPE const v8::PropertyCallbackInfo<void>&
-# define _NAN_SETTER_ARGS _NAN_SETTER_ARGS_TYPE args
-# define _NAN_SETTER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Value>&
+      NAN_PROPERTY_GETTER_ARGS_TYPE;
+  typedef void NAN_PROPERTY_GETTER_RETURN_TYPE;
 
-# define _NAN_PROPERTY_GETTER_ARGS_TYPE                                        \
-    const v8::PropertyCallbackInfo<v8::Value>&
-# define _NAN_PROPERTY_GETTER_ARGS _NAN_PROPERTY_GETTER_ARGS_TYPE args
-# define _NAN_PROPERTY_GETTER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Value>&
+      NAN_PROPERTY_SETTER_ARGS_TYPE;
+  typedef void NAN_PROPERTY_SETTER_RETURN_TYPE;
 
-# define _NAN_PROPERTY_SETTER_ARGS_TYPE                                        \
-    const v8::PropertyCallbackInfo<v8::Value>&
-# define _NAN_PROPERTY_SETTER_ARGS _NAN_PROPERTY_SETTER_ARGS_TYPE args
-# define _NAN_PROPERTY_SETTER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Array>&
+      NAN_PROPERTY_ENUMERATOR_ARGS_TYPE;
+  typedef void NAN_PROPERTY_ENUMERATOR_RETURN_TYPE;
 
-# define _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE                                    \
-    const v8::PropertyCallbackInfo<v8::Array>&
-# define _NAN_PROPERTY_ENUMERATOR_ARGS _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE args
-# define _NAN_PROPERTY_ENUMERATOR_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Boolean>&
+      NAN_PROPERTY_DELETER_ARGS_TYPE;
+  typedef void NAN_PROPERTY_DELETER_RETURN_TYPE;
 
-# define _NAN_PROPERTY_DELETER_ARGS_TYPE                                       \
-    const v8::PropertyCallbackInfo<v8::Boolean>&
-# define _NAN_PROPERTY_DELETER_ARGS                                            \
-    _NAN_PROPERTY_DELETER_ARGS_TYPE args
-# define _NAN_PROPERTY_DELETER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Integer>&
+      NAN_PROPERTY_QUERY_ARGS_TYPE;
+  typedef void NAN_PROPERTY_QUERY_RETURN_TYPE;
 
-# define _NAN_PROPERTY_QUERY_ARGS_TYPE                                         \
-    const v8::PropertyCallbackInfo<v8::Integer>&
-# define _NAN_PROPERTY_QUERY_ARGS _NAN_PROPERTY_QUERY_ARGS_TYPE args
-# define _NAN_PROPERTY_QUERY_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Value>& NAN_INDEX_GETTER_ARGS_TYPE;
+  typedef void NAN_INDEX_GETTER_RETURN_TYPE;
 
-# define _NAN_INDEX_GETTER_ARGS_TYPE                                           \
-    const v8::PropertyCallbackInfo<v8::Value>&
-# define _NAN_INDEX_GETTER_ARGS _NAN_INDEX_GETTER_ARGS_TYPE args
-# define _NAN_INDEX_GETTER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Value>& NAN_INDEX_SETTER_ARGS_TYPE;
+  typedef void NAN_INDEX_SETTER_RETURN_TYPE;
 
-# define _NAN_INDEX_SETTER_ARGS_TYPE                                           \
-    const v8::PropertyCallbackInfo<v8::Value>&
-# define _NAN_INDEX_SETTER_ARGS _NAN_INDEX_SETTER_ARGS_TYPE args
-# define _NAN_INDEX_SETTER_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Array>&
+      NAN_INDEX_ENUMERATOR_ARGS_TYPE;
+  typedef void NAN_INDEX_ENUMERATOR_RETURN_TYPE;
 
-# define _NAN_INDEX_ENUMERATOR_ARGS_TYPE                                       \
-    const v8::PropertyCallbackInfo<v8::Array>&
-# define _NAN_INDEX_ENUMERATOR_ARGS _NAN_INDEX_ENUMERATOR_ARGS_TYPE args
-# define _NAN_INDEX_ENUMERATOR_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Boolean>&
+      NAN_INDEX_DELETER_ARGS_TYPE;
+  typedef void NAN_INDEX_DELETER_RETURN_TYPE;
 
-# define _NAN_INDEX_DELETER_ARGS_TYPE                                          \
-    const v8::PropertyCallbackInfo<v8::Boolean>&
-# define _NAN_INDEX_DELETER_ARGS _NAN_INDEX_DELETER_ARGS_TYPE args
-# define _NAN_INDEX_DELETER_RETURN_TYPE void
-
-# define _NAN_INDEX_QUERY_ARGS_TYPE                                            \
-    const v8::PropertyCallbackInfo<v8::Integer>&
-# define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
-# define _NAN_INDEX_QUERY_RETURN_TYPE void
+  typedef const v8::PropertyCallbackInfo<v8::Integer>&
+      NAN_INDEX_QUERY_ARGS_TYPE;
+  typedef void NAN_INDEX_QUERY_RETURN_TYPE;
 
 # define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
 # define NanEscapableScope()                                                   \
   v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
 
-# define NanEscapeScope(val) scope.Escape(_NanEnsureLocal(val))
+# define NanEscapeScope(val) scope.Escape(NanIntern::NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
-# define NanReturnValue(value) return args.GetReturnValue().Set(_NanEnsureLocal(value))
+# define NanReturnValue(value)                                                 \
+  return args.GetReturnValue().Set(NanIntern::NanEnsureLocal(value))
 # define NanReturnUndefined() return
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
@@ -516,17 +501,17 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
   }
 
   template<typename T, typename P>
-  class _NanWeakCallbackData;
+  class NanWeakCallbackData;
 
   template<typename T, typename P>
-  struct _NanWeakCallbackInfo {
-    typedef void (*Callback)(const _NanWeakCallbackData<T, P>& data);
-    NAN_INLINE _NanWeakCallbackInfo(v8::Handle<T> handle, P* param, Callback cb)
+  struct NanWeakCallbackInfo {
+    typedef void (*Callback)(const NanWeakCallbackData<T, P>& data);
+    NAN_INLINE NanWeakCallbackInfo(v8::Handle<T> handle, P* param, Callback cb)
       : parameter(param), callback(cb) {
        NanAssignPersistent(persistent, handle);
     }
 
-    NAN_INLINE ~_NanWeakCallbackInfo() {
+    NAN_INLINE ~NanWeakCallbackInfo() {
       persistent.Reset();
     }
 
@@ -536,9 +521,9 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
   };
 
   template<typename T, typename P>
-  class _NanWeakCallbackData {
+  class NanWeakCallbackData {
    public:
-    NAN_INLINE _NanWeakCallbackData(_NanWeakCallbackInfo<T, P> *info)
+    NAN_INLINE NanWeakCallbackData(NanWeakCallbackInfo<T, P> *info)
       : info_(info) { }
 
     NAN_INLINE v8::Local<T> GetValue() const {
@@ -553,7 +538,7 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
 
     NAN_INLINE void Revive() const;
 
-    NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
+    NAN_INLINE NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
       return info_;
     }
 
@@ -561,14 +546,14 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
     }
 
    private:
-    _NanWeakCallbackInfo<T, P>* info_;
+    NanWeakCallbackInfo<T, P>* info_;
   };
 
   template<typename T, typename P>
-  static void _NanWeakCallbackDispatcher(
-    const v8::WeakCallbackData<T, _NanWeakCallbackInfo<T, P> > &data) {
-      _NanWeakCallbackInfo<T, P> *info = data.GetParameter();
-      _NanWeakCallbackData<T, P> wcbd(info);
+  static void NanWeakCallbackDispatcher(
+    const v8::WeakCallbackData<T, NanWeakCallbackInfo<T, P> > &data) {
+      NanWeakCallbackInfo<T, P> *info = data.GetParameter();
+      NanWeakCallbackData<T, P> wcbd(info);
       info->callback(wcbd);
       if (wcbd.IsNearDeath()) {
         delete wcbd.GetCallbackInfo();
@@ -576,39 +561,39 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
   }
 
   template<typename T, typename P>
-  NAN_INLINE void _NanWeakCallbackData<T, P>::Revive() const {
-      info_->persistent.SetWeak(info_, &_NanWeakCallbackDispatcher<T, P>);
+  NAN_INLINE void NanWeakCallbackData<T, P>::Revive() const {
+      info_->persistent.SetWeak(info_, &NanWeakCallbackDispatcher<T, P>);
   }
 
-template<typename T, typename P>
-NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
-    v8::Handle<T> handle
-  , P* parameter
-  , typename _NanWeakCallbackInfo<T, P>::Callback callback) {
-    _NanWeakCallbackInfo<T, P> *cbinfo =
-     new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
-    cbinfo->persistent.SetWeak(cbinfo, &_NanWeakCallbackDispatcher<T, P>);
+  template<typename T, typename P>
+  NAN_INLINE NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
+      v8::Handle<T> handle
+    , P* parameter
+    , typename NanWeakCallbackInfo<T, P>::Callback callback) {
+    NanWeakCallbackInfo<T, P> *cbinfo =
+     new NanWeakCallbackInfo<T, P>(handle, parameter, callback);
+    cbinfo->persistent.SetWeak(cbinfo, &NanWeakCallbackDispatcher<T, P>);
     return cbinfo;
-}
+  }
 
 # define NAN_WEAK_CALLBACK(name)                                               \
     template<typename T, typename P>                                           \
-    static void name(const _NanWeakCallbackData<T, P> &data)
+    static void name(const NanWeakCallbackData<T, P> &data)
 
-# define _NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
+# define NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
 
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
+# define NAN_THROW_ERROR(fun, errmsg)                                          \
     do {                                                                       \
       NanScope();                                                              \
-      v8::Isolate::GetCurrent()->ThrowException(_NAN_ERROR(fun, errmsg));      \
+      v8::Isolate::GetCurrent()->ThrowException(NAN_ERROR(fun, errmsg));       \
     } while (0);
 
   NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
-    return  _NAN_ERROR(v8::Exception::Error, errmsg);
+    return  NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE void NanThrowError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
+    NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE void NanThrowError(v8::Handle<v8::Value> error) {
@@ -634,19 +619,19 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE v8::Local<v8::Value> NanTypeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
+    return NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE void NanThrowTypeError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanRangeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
+    return NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   NAN_INLINE void NanThrowRangeError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   template<typename T> NAN_INLINE void NanDisposePersistent(
@@ -871,60 +856,45 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     int size;
   };
 
-#else
-// Node 0.8 and 0.10
+#else  // Node 0.8 and 0.10
+  typedef const v8::Arguments& NAN_METHOD_ARGS_TYPE;
+  typedef v8::Handle<v8::Value> NAN_METHOD_RETURN_TYPE;
 
-# define _NAN_METHOD_ARGS_TYPE const v8::Arguments&
-# define _NAN_METHOD_ARGS _NAN_METHOD_ARGS_TYPE args
-# define _NAN_METHOD_RETURN_TYPE v8::Handle<v8::Value>
+  typedef const v8::AccessorInfo & NAN_GETTER_ARGS_TYPE;
+  typedef v8::Handle<v8::Value> NAN_GETTER_RETURN_TYPE;
 
-# define _NAN_GETTER_ARGS_TYPE const v8::AccessorInfo &
-# define _NAN_GETTER_ARGS _NAN_GETTER_ARGS_TYPE args
-# define _NAN_GETTER_RETURN_TYPE v8::Handle<v8::Value>
+  typedef const v8::AccessorInfo & NAN_SETTER_ARGS_TYPE;
+  typedef void NAN_SETTER_RETURN_TYPE;
 
-# define _NAN_SETTER_ARGS_TYPE const v8::AccessorInfo &
-# define _NAN_SETTER_ARGS _NAN_SETTER_ARGS_TYPE args
-# define _NAN_SETTER_RETURN_TYPE void
+  typedef const v8::AccessorInfo& NAN_PROPERTY_GETTER_ARGS_TYPE;
+  typedef v8::Handle<v8::Value> NAN_PROPERTY_GETTER_RETURN_TYPE;
 
-# define _NAN_PROPERTY_GETTER_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_PROPERTY_GETTER_ARGS _NAN_PROPERTY_GETTER_ARGS_TYPE args
-# define _NAN_PROPERTY_GETTER_RETURN_TYPE v8::Handle<v8::Value>
+  typedef const v8::AccessorInfo& NAN_PROPERTY_SETTER_ARGS_TYPE;
+  typedef v8::Handle<v8::Value> NAN_PROPERTY_SETTER_RETURN_TYPE;
 
-# define _NAN_PROPERTY_SETTER_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_PROPERTY_SETTER_ARGS _NAN_PROPERTY_SETTER_ARGS_TYPE args
-# define _NAN_PROPERTY_SETTER_RETURN_TYPE v8::Handle<v8::Value>
+  typedef const v8::AccessorInfo& NAN_PROPERTY_ENUMERATOR_ARGS_TYPE;
+  typedef v8::Handle<v8::Array> NAN_PROPERTY_ENUMERATOR_RETURN_TYPE;
 
-# define _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_PROPERTY_ENUMERATOR_ARGS _NAN_PROPERTY_ENUMERATOR_ARGS_TYPE args
-# define _NAN_PROPERTY_ENUMERATOR_RETURN_TYPE v8::Handle<v8::Array>
+  typedef const v8::AccessorInfo& NAN_PROPERTY_DELETER_ARGS_TYPE;
+  typedef v8::Handle<v8::Boolean> NAN_PROPERTY_DELETER_RETURN_TYPE;
 
-# define _NAN_PROPERTY_DELETER_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_PROPERTY_DELETER_ARGS _NAN_PROPERTY_DELETER_ARGS_TYPE args
-# define _NAN_PROPERTY_DELETER_RETURN_TYPE v8::Handle<v8::Boolean>
+  typedef const v8::AccessorInfo& NAN_PROPERTY_QUERY_ARGS_TYPE;
+  typedef v8::Handle<v8::Integer> NAN_PROPERTY_QUERY_RETURN_TYPE;
 
-# define _NAN_PROPERTY_QUERY_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_PROPERTY_QUERY_ARGS _NAN_PROPERTY_QUERY_ARGS_TYPE args
-# define _NAN_PROPERTY_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
+  typedef const v8::AccessorInfo& NAN_INDEX_GETTER_ARGS_TYPE;
+  typedef v8::Handle<v8::Value> NAN_INDEX_GETTER_RETURN_TYPE;
 
-# define _NAN_INDEX_GETTER_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_INDEX_GETTER_ARGS _NAN_INDEX_GETTER_ARGS_TYPE args
-# define _NAN_INDEX_GETTER_RETURN_TYPE v8::Handle<v8::Value>
+  typedef const v8::AccessorInfo& NAN_INDEX_SETTER_ARGS_TYPE;
+  typedef v8::Handle<v8::Value> NAN_INDEX_SETTER_RETURN_TYPE;
 
-# define _NAN_INDEX_SETTER_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_INDEX_SETTER_ARGS _NAN_INDEX_SETTER_ARGS_TYPE args
-# define _NAN_INDEX_SETTER_RETURN_TYPE v8::Handle<v8::Value>
+  typedef const v8::AccessorInfo& NAN_INDEX_ENUMERATOR_ARGS_TYPE;
+  typedef v8::Handle<v8::Array> NAN_INDEX_ENUMERATOR_RETURN_TYPE;
 
-# define _NAN_INDEX_ENUMERATOR_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_INDEX_ENUMERATOR_ARGS _NAN_INDEX_ENUMERATOR_ARGS_TYPE args
-# define _NAN_INDEX_ENUMERATOR_RETURN_TYPE v8::Handle<v8::Array>
+  typedef const v8::AccessorInfo& NAN_INDEX_DELETER_ARGS_TYPE;
+  typedef v8::Handle<v8::Boolean> NAN_INDEX_DELETER_RETURN_TYPE;
 
-# define _NAN_INDEX_DELETER_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_INDEX_DELETER_ARGS _NAN_INDEX_DELETER_ARGS_TYPE args
-# define _NAN_INDEX_DELETER_RETURN_TYPE v8::Handle<v8::Boolean>
-
-# define _NAN_INDEX_QUERY_ARGS_TYPE const v8::AccessorInfo&
-# define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
-# define _NAN_INDEX_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
+  typedef const v8::AccessorInfo& NAN_INDEX_QUERY_ARGS_TYPE;
+  typedef v8::Handle<v8::Integer> NAN_INDEX_QUERY_RETURN_TYPE;
 
   NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
       const char* data, int length = -1) {
@@ -936,7 +906,8 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define NanEscapeScope(val) scope.Close(val)
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
-# define NanReturnValue(value) return scope.Close(_NanEnsureLocal(value))
+# define NanReturnValue(value)                                                 \
+  return scope.Close(NanIntern::NanEnsureLocal(value))
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
 # define NanReturnUndefined() return v8::Undefined()
@@ -1038,17 +1009,17 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template<typename T, typename P>
-  class _NanWeakCallbackData;
+  class NanWeakCallbackData;
 
   template<typename T, typename P>
-  struct _NanWeakCallbackInfo {
-    typedef void (*Callback)(const _NanWeakCallbackData<T, P> &data);
-    NAN_INLINE _NanWeakCallbackInfo(v8::Handle<T> handle, P* param, Callback cb)
+  struct NanWeakCallbackInfo {
+    typedef void (*Callback)(const NanWeakCallbackData<T, P> &data);
+    NAN_INLINE NanWeakCallbackInfo(v8::Handle<T> handle, P* param, Callback cb)
       : parameter(param)
       , callback(cb)
       , persistent(v8::Persistent<T>::New(handle)) { }
 
-    NAN_INLINE ~_NanWeakCallbackInfo() {
+    NAN_INLINE ~NanWeakCallbackInfo() {
       persistent.Dispose();
       persistent.Clear();
     }
@@ -1059,9 +1030,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   };
 
   template<typename T, typename P>
-  class _NanWeakCallbackData {
+  class NanWeakCallbackData {
    public:
-    NAN_INLINE _NanWeakCallbackData(_NanWeakCallbackInfo<T, P> *info)
+    NAN_INLINE NanWeakCallbackData(NanWeakCallbackInfo<T, P> *info)
       : info_(info) { }
 
     NAN_INLINE v8::Local<T> GetValue() const {
@@ -1076,7 +1047,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
     NAN_INLINE void Revive() const;
 
-    NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
+    NAN_INLINE NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
       return info_;
     }
 
@@ -1084,15 +1055,15 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    _NanWeakCallbackInfo<T, P>* info_;
+    NanWeakCallbackInfo<T, P>* info_;
   };
 
   template<typename T, typename P>
-  static void _NanWeakPersistentDispatcher(
+  static void NanWeakPersistentDispatcher(
       v8::Persistent<v8::Value> object, void *data) {
-    _NanWeakCallbackInfo<T, P>* info =
-        static_cast<_NanWeakCallbackInfo<T, P>*>(data);
-    _NanWeakCallbackData<T, P> wcbd(info);
+    NanWeakCallbackInfo<T, P>* info =
+        static_cast<NanWeakCallbackInfo<T, P>*>(data);
+    NanWeakCallbackData<T, P> wcbd(info);
     info->callback(wcbd);
     if (wcbd.IsNearDeath()) {
       delete wcbd.GetCallbackInfo();
@@ -1100,45 +1071,45 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   template<typename T, typename P>
-  NAN_INLINE void _NanWeakCallbackData<T, P>::Revive() const {
+  NAN_INLINE void NanWeakCallbackData<T, P>::Revive() const {
       info_->persistent.MakeWeak(
           info_
-        , &_NanWeakPersistentDispatcher<T, P>);
+        , &NanWeakPersistentDispatcher<T, P>);
   }
 
   template<typename T, typename P>
-  NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
+  NAN_INLINE NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     v8::Handle<T> handle
   , P* parameter
-  , typename _NanWeakCallbackInfo<T, P>::Callback callback) {
-      _NanWeakCallbackInfo<T, P> *cbinfo =
-        new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
+  , typename NanWeakCallbackInfo<T, P>::Callback callback) {
+      NanWeakCallbackInfo<T, P> *cbinfo =
+        new NanWeakCallbackInfo<T, P>(handle, parameter, callback);
       cbinfo->persistent.MakeWeak(
           cbinfo
-        , &_NanWeakPersistentDispatcher<T, P>);
+        , &NanWeakPersistentDispatcher<T, P>);
       return cbinfo;
   }
 
 # define NAN_WEAK_CALLBACK(name)                                               \
     template<typename T, typename P>                                           \
-    static void name(const _NanWeakCallbackData<T, P> &data)
+    static void name(const NanWeakCallbackData<T, P> &data)
 
-# define _NAN_ERROR(fun, errmsg)                                               \
+# define NAN_ERROR(fun, errmsg)                                                \
     fun(v8::String::New(errmsg))
 
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
+# define NAN_THROW_ERROR(fun, errmsg)                                          \
     do {                                                                       \
       NanScope();                                                              \
       return v8::Local<v8::Value>::New(                                        \
-        v8::ThrowException(_NAN_ERROR(fun, errmsg)));                          \
+        v8::ThrowException(NAN_ERROR(fun, errmsg)));                           \
     } while (0);
 
   NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::Error, errmsg);
+    return NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
+    NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowError(
@@ -1166,25 +1137,25 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE v8::Local<v8::Value> NanTypeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
+    return NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowTypeError(
       const char* errmsg
   ) {
-    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanRangeError(
       const char* errmsg
   ) {
-    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
+    return NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowRangeError(
       const char* errmsg
   ) {
-    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   template<typename T>
@@ -1428,50 +1399,55 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
 typedef void (*NanFreeCallback)(char *data, void *hint);
 
-#define NAN_METHOD(name) _NAN_METHOD_RETURN_TYPE name(_NAN_METHOD_ARGS)
+#define NAN_METHOD(name) NAN_METHOD_RETURN_TYPE name(NAN_METHOD_ARGS_TYPE args)
 #define NAN_GETTER(name)                                                       \
-    _NAN_GETTER_RETURN_TYPE name(                                              \
+    NAN_GETTER_RETURN_TYPE name(                                               \
         v8::Local<v8::String> property                                         \
-      , _NAN_GETTER_ARGS)
+      , NAN_GETTER_ARGS_TYPE args)
 #define NAN_SETTER(name)                                                       \
-    _NAN_SETTER_RETURN_TYPE name(                                              \
+    NAN_SETTER_RETURN_TYPE name(                                               \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
-      , _NAN_SETTER_ARGS)
+      , NAN_SETTER_ARGS_TYPE args)
 #define NAN_PROPERTY_GETTER(name)                                              \
-    _NAN_PROPERTY_GETTER_RETURN_TYPE name(                                     \
+    NAN_PROPERTY_GETTER_RETURN_TYPE name(                                      \
         v8::Local<v8::String> property                                         \
-      , _NAN_PROPERTY_GETTER_ARGS)
+      , NAN_PROPERTY_GETTER_ARGS_TYPE args)
 #define NAN_PROPERTY_SETTER(name)                                              \
-    _NAN_PROPERTY_SETTER_RETURN_TYPE name(                                     \
+    NAN_PROPERTY_SETTER_RETURN_TYPE name(                                      \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
-      , _NAN_PROPERTY_SETTER_ARGS)
+      , NAN_PROPERTY_SETTER_ARGS_TYPE args)
 #define NAN_PROPERTY_ENUMERATOR(name)                                          \
-    _NAN_PROPERTY_ENUMERATOR_RETURN_TYPE name(_NAN_PROPERTY_ENUMERATOR_ARGS)
+    NAN_PROPERTY_ENUMERATOR_RETURN_TYPE name(                                  \
+        NAN_PROPERTY_ENUMERATOR_ARGS_TYPE args)
 #define NAN_PROPERTY_DELETER(name)                                             \
-    _NAN_PROPERTY_DELETER_RETURN_TYPE name(                                    \
+    NAN_PROPERTY_DELETER_RETURN_TYPE name(                                     \
         v8::Local<v8::String> property                                         \
-      , _NAN_PROPERTY_DELETER_ARGS)
+      , NAN_PROPERTY_DELETER_ARGS_TYPE args)
 #define NAN_PROPERTY_QUERY(name)                                               \
-    _NAN_PROPERTY_QUERY_RETURN_TYPE name(                                      \
+    NAN_PROPERTY_QUERY_RETURN_TYPE name(                                       \
         v8::Local<v8::String> property                                         \
-      , _NAN_PROPERTY_QUERY_ARGS)
+      , NAN_PROPERTY_QUERY_ARGS_TYPE args)
 # define NAN_INDEX_GETTER(name)                                                \
-    _NAN_INDEX_GETTER_RETURN_TYPE name(uint32_t index, _NAN_INDEX_GETTER_ARGS)
+    NAN_INDEX_GETTER_RETURN_TYPE name(                                         \
+        uint32_t index                                                         \
+      , NAN_INDEX_GETTER_ARGS_TYPE args)
 #define NAN_INDEX_SETTER(name)                                                 \
-    _NAN_INDEX_SETTER_RETURN_TYPE name(                                        \
+    NAN_INDEX_SETTER_RETURN_TYPE name(                                         \
         uint32_t index                                                         \
       , v8::Local<v8::Value> value                                             \
-      , _NAN_INDEX_SETTER_ARGS)
+      , NAN_INDEX_SETTER_ARGS_TYPE args)
 #define NAN_INDEX_ENUMERATOR(name)                                             \
-    _NAN_INDEX_ENUMERATOR_RETURN_TYPE name(_NAN_INDEX_ENUMERATOR_ARGS)
+    NAN_INDEX_ENUMERATOR_RETURN_TYPE name(NAN_INDEX_ENUMERATOR_ARGS_TYPE args)
 #define NAN_INDEX_DELETER(name)                                                \
-    _NAN_INDEX_DELETER_RETURN_TYPE name(                                       \
+    NAN_INDEX_DELETER_RETURN_TYPE name(                                        \
         uint32_t index                                                         \
-      , _NAN_INDEX_DELETER_ARGS)
+      , NAN_INDEX_DELETER_ARGS_TYPE args)
 #define NAN_INDEX_QUERY(name)                                                  \
-    _NAN_INDEX_QUERY_RETURN_TYPE name(uint32_t index, _NAN_INDEX_QUERY_ARGS)
+    NAN_INDEX_QUERY_RETURN_TYPE name(                                          \
+        uint32_t index                                                         \
+      , NAN_INDEX_QUERY_ARGS_TYPE args)
 
 class NanCallback {
  public:
