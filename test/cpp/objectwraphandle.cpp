@@ -23,7 +23,7 @@ class MyObject : public node::ObjectWrap {
   }
 
  private:
-  explicit MyObject(double value=0) : value_(value) {}
+  explicit MyObject(double value = 0) : value_(value) {}
   ~MyObject() {}
 
   static NAN_METHOD(New) {

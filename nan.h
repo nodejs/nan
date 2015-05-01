@@ -398,14 +398,16 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
 # define NanEscapeScope(val) scope.Escape(_NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
-# define NanReturnValue(value) return args.GetReturnValue().Set(_NanEnsureLocal(value))
+# define NanReturnValue(value)                                                 \
+  return args.GetReturnValue().Set(_NanEnsureLocal(value))
 # define NanReturnUndefined() return
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 
-  NAN_INLINE v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap *obj) {
+  NAN_INLINE
+  v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap *obj) {
     return const_cast<node::ObjectWrap*>(obj)->handle();
   }
 
@@ -943,7 +945,8 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
 
-  NAN_INLINE v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap *obj) {
+  NAN_INLINE
+  v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap *obj) {
     return v8::Local<v8::Object>::New(obj->handle_);
   }
 
@@ -1090,6 +1093,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   template<typename T, typename P>
   static void _NanWeakPersistentDispatcher(
       v8::Persistent<v8::Value> object, void *data) {
+    (void) object;  // unused
     _NanWeakCallbackInfo<T, P>* info =
         static_cast<_NanWeakCallbackInfo<T, P>*>(data);
     _NanWeakCallbackData<T, P> wcbd(info);
@@ -1221,6 +1225,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE void FreeData(char *data, void *hint) {
+    (void) hint;  // unused
     delete[] data;
   }
 
@@ -1551,13 +1556,8 @@ class NanCallback {
                            , v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
-#else
-  v8::Handle<v8::Value> Call_(v8::Handle<v8::Object> target
-                           , int argc
-                           , v8::Handle<v8::Value> argv[]) const {
-#endif
     NanEscapableScope();
-#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
+
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
     return NanEscapeScope(node::MakeCallback(
@@ -1567,7 +1567,13 @@ class NanCallback {
       , argc
       , argv
     ));
+  }
 #else
+  v8::Handle<v8::Value> Call_(v8::Handle<v8::Object> target
+                           , int argc
+                           , v8::Handle<v8::Value> argv[]) const {
+    NanEscapableScope();
+
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
@@ -1583,8 +1589,8 @@ class NanCallback {
     return NanEscapeScope(NanMakeCallback(
         target, callback, argc, argv));
 #endif
-#endif
   }
+#endif
 };
 
 /* abstract */ class NanAsyncWorker {
