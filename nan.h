@@ -1314,7 +1314,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
   }
 
   NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
-    node::FatalException(try_catch);
+    node::FatalException(const_cast<v8::TryCatch&>(try_catch));
   }
 
   template<typename T>
