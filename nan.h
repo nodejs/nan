@@ -59,7 +59,7 @@
 # define NAN_DISALLOW_ASSIGN(CLASS) void operator=(const CLASS&) = delete;
 # define NAN_DISALLOW_COPY(CLASS) CLASS(const CLASS&) = delete;
 # define NAN_DISALLOW_MOVE(CLASS)                                              \
-    CLASS(CLASS&&) = delete;                                                   \
+    CLASS(CLASS&&) = delete;  /* NOLINT(build/c++11) */                        \
     void operator=(CLASS&&) = delete;
 #else
 # define NAN_DISALLOW_ASSIGN(CLASS) void operator=(const CLASS&);
