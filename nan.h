@@ -562,6 +562,9 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
     P* const parameter;
     Callback const callback;
     v8::Persistent<T> persistent;
+
+   private:
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(_NanWeakCallbackInfo)
   };
 
   template<typename T, typename P>
@@ -1079,6 +1082,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     P* const parameter;
     Callback const callback;
     v8::Persistent<T> persistent;
+
+   private:
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(_NanWeakCallbackInfo)
   };
 
   template<typename T, typename P>
