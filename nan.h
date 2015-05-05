@@ -1696,6 +1696,7 @@ class NanCallback {
   }
 
  private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsyncWorker)
   char *errmsg_;
 };
 
