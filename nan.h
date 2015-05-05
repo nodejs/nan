@@ -55,6 +55,35 @@
 # define NAN_DEPRECATED
 #endif
 
+#if __cplusplus >= 201103L
+# define NAN_DISALLOW_ASSIGN(CLASS) void operator=(const CLASS&) = delete;
+# define NAN_DISALLOW_COPY(CLASS) CLASS(const CLASS&) = delete;
+# define NAN_DISALLOW_MOVE(CLASS)                                              \
+    CLASS(CLASS&&) = delete;                                                   \
+    void operator=(CLASS&&) = delete;
+#else
+# define NAN_DISALLOW_ASSIGN(CLASS) void operator=(const CLASS&);
+# define NAN_DISALLOW_COPY(CLASS) CLASS(const CLASS&);
+# define NAN_DISALLOW_MOVE(CLASS)
+#endif
+
+#define NAN_DISALLOW_ASSIGN_COPY(CLASS)                                        \
+    NAN_DISALLOW_ASSIGN(CLASS)                                                 \
+    NAN_DISALLOW_COPY(CLASS)
+
+#define NAN_DISALLOW_ASSIGN_MOVE(CLASS)                                        \
+    NAN_DISALLOW_ASSIGN(CLASS)                                                 \
+    NAN_DISALLOW_MOVE(CLASS)
+
+#define NAN_DISALLOW_COPY_MOVE(CLASS)                                          \
+    NAN_DISALLOW_COPY(CLASS)                                                   \
+    NAN_DISALLOW_MOVE(CLASS)
+
+#define NAN_DISALLOW_ASSIGN_COPY_MOVE(CLASS)                                   \
+    NAN_DISALLOW_ASSIGN(CLASS)                                                 \
+    NAN_DISALLOW_COPY(CLASS)                                                   \
+    NAN_DISALLOW_MOVE(CLASS)
+
 #define NODE_0_10_MODULE_VERSION 11
 #define NODE_0_12_MODULE_VERSION 12
 #define ATOM_0_21_MODULE_VERSION 41
@@ -533,6 +562,9 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
     P* const parameter;
     Callback const callback;
     v8::Persistent<T> persistent;
+
+   private:
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(_NanWeakCallbackInfo)
   };
 
   template<typename T, typename P>
@@ -797,9 +829,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    // disallow copying and assigning
-    NanAsciiString(const NanAsciiString&);
-    void operator=(const NanAsciiString&);
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsciiString)
 
     char *buf;
     int size;
@@ -830,9 +860,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    // disallow copying and assigning
-    NanUtf8String(const NanUtf8String&);
-    void operator=(const NanUtf8String&);
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
     char *buf;
     int size;
@@ -863,9 +891,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    // disallow copying and assigning
-    NanUcs2String(const NanUcs2String&);
-    void operator=(const NanUcs2String&);
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUcs2String)
 
     uint16_t *buf;
     int size;
@@ -1056,6 +1082,9 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     P* const parameter;
     Callback const callback;
     v8::Persistent<T> persistent;
+
+   private:
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(_NanWeakCallbackInfo)
   };
 
   template<typename T, typename P>
@@ -1350,9 +1379,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    // disallow copying and assigning
-    NanAsciiString(const NanAsciiString&);
-    void operator=(const NanAsciiString&);
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsciiString)
 
     char *buf;
     int size;
@@ -1383,9 +1410,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    // disallow copying and assigning
-    NanUtf8String(const NanUtf8String&);
-    void operator=(const NanUtf8String&);
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
     char *buf;
     int size;
@@ -1416,9 +1441,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    // disallow copying and assigning
-    NanUcs2String(const NanUcs2String&);
-    void operator=(const NanUcs2String&);
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUcs2String)
 
     uint16_t *buf;
     int size;
@@ -1543,6 +1566,7 @@ class NanCallback {
   }
 
  private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanCallback)
   v8::Persistent<v8::Object> handle;
   static const uint32_t kCallbackIndex = 0;
 
@@ -1672,6 +1696,7 @@ class NanCallback {
   }
 
  private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsyncWorker)
   char *errmsg_;
 };
 
@@ -1722,14 +1747,7 @@ class NanCallback {
 
    private:
     explicit ExecutionProgress(NanAsyncProgressWorker* that) : that_(that) {}
-    // Prohibit copying and assignment.
-    ExecutionProgress(const ExecutionProgress&);
-    void operator=(const ExecutionProgress&);
-  #if __cplusplus >= 201103L
-    // Prohibit C++11 move semantics.
-    ExecutionProgress(ExecutionProgress&&) = delete;
-    void operator=(ExecutionProgress&&) = delete;
-  #endif
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
     NanAsyncProgressWorker* const that_;
   };
 
