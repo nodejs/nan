@@ -1566,6 +1566,7 @@ class NanCallback {
   }
 
  private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanCallback)
   v8::Persistent<v8::Object> handle;
   static const uint32_t kCallbackIndex = 0;
 
