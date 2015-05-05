@@ -173,7 +173,6 @@ NAN_METHOD(NewBoolean2) {
 #if defined(_MSC_VER)
 # pragma warning( pop )
 #endif
-
 }
 
 void Init(v8::Handle<v8::Object> target) {
