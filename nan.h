@@ -826,7 +826,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    NAN_DISALLOW_ASSIGN_COPY(NanAsciiString)
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsciiString)
 
     char *buf;
     int size;
@@ -857,7 +857,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    NAN_DISALLOW_ASSIGN_COPY(NanUtf8String)
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
     char *buf;
     int size;
@@ -888,7 +888,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    NAN_DISALLOW_ASSIGN_COPY(NanUcs2String)
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUcs2String)
 
     uint16_t *buf;
     int size;
@@ -1373,7 +1373,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    NAN_DISALLOW_ASSIGN_COPY(NanAsciiString)
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsciiString)
 
     char *buf;
     int size;
@@ -1404,7 +1404,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    NAN_DISALLOW_ASSIGN_COPY(NanUtf8String)
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
     char *buf;
     int size;
@@ -1435,7 +1435,7 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     }
 
    private:
-    NAN_DISALLOW_ASSIGN_COPY(NanUcs2String)
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUcs2String)
 
     uint16_t *buf;
     int size;
