@@ -26,7 +26,7 @@
 // node v0.10 implementation
 //==============================================================================
 
-namespace NanIntern {
+namespace Nan { namespace imp {
 
 //=== Array ====================================================================
 
@@ -250,7 +250,8 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
   return v8::StringObject::New(value).As<v8::StringObject>();
 }
 
-}  // end of namespace NanIntern
+}  // end of namespace imp
+}  // end of namespace Nan
 
 //=== Presistents and Handles ==================================================
 
