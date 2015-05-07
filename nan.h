@@ -219,91 +219,6 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 #endif
 #endif
 
-// some generic helpers
-
-namespace Nan { namespace imp {
-template<typename T> NAN_INLINE bool NanSetPointerSafe(
-    T *var
-  , T val
-) {
-  if (var) {
-    *var = val;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-template<typename T> NAN_INLINE T NanGetPointerSafe(
-    T *var
-  , T fallback = reinterpret_cast<T>(0)
-) {
-  if (var) {
-    return *var;
-  } else {
-    return fallback;
-  }
-}
-
-NAN_INLINE bool NanBooleanOptionValue(
-    v8::Local<v8::Object> optionsObj
-  , v8::Handle<v8::String> opt, bool def
-) {
-  if (def) {
-    return optionsObj.IsEmpty()
-      || !optionsObj->Has(opt)
-      || optionsObj->Get(opt)->BooleanValue();
-  } else {
-    return !optionsObj.IsEmpty()
-      && optionsObj->Has(opt)
-      && optionsObj->Get(opt)->BooleanValue();
-  }
-}
-
-}  // end of namespace imp
-}  // end of namespace Nan
-
-template<typename T> NAN_DEPRECATED NAN_INLINE bool NanSetPointerSafe(
-    T *var
-  , T val
-) {
-  return Nan::imp::NanSetPointerSafe<T>(var, val);
-}
-
-template<typename T> NAN_DEPRECATED NAN_INLINE T NanGetPointerSafe(
-    T *var
-  , T fallback = reinterpret_cast<T>(0)
-) {
-  return Nan::imp::NanGetPointerSafe(var, fallback);
-}
-
-
-NAN_DEPRECATED NAN_INLINE bool NanBooleanOptionValue(
-    v8::Local<v8::Object> optionsObj
-  , v8::Handle<v8::String> opt, bool def
-) {
-  return Nan::imp::NanBooleanOptionValue(optionsObj, opt, def);
-}
-
-NAN_DEPRECATED NAN_INLINE bool NanBooleanOptionValue(
-    v8::Local<v8::Object> optionsObj
-  , v8::Handle<v8::String> opt
-) {
-  return Nan::imp::NanBooleanOptionValue(optionsObj, opt, false);
-}
-
-NAN_DEPRECATED NAN_INLINE uint32_t NanUInt32OptionValue(
-    v8::Local<v8::Object> optionsObj
-  , v8::Handle<v8::String> opt
-  , uint32_t def
-) {
-  return !optionsObj.IsEmpty()
-    && optionsObj->Has(opt)
-    && optionsObj->Get(opt)->IsNumber()
-      ? optionsObj->Get(opt)->Uint32Value()
-      : def;
-}
-
 template<typename T>
 v8::Local<T> NanNew(v8::Handle<T>);
 
@@ -583,11 +498,6 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
     v8::Isolate::GetCurrent()->GetHeapStatistics(heap_statistics);
   }
 
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
-      const char* data, int length = -1) {
-    return NanNew<v8::String>(data, length);
-  }
-
   template<typename T>
   NAN_INLINE void NanAssignPersistent(
       v8::Persistent<T>& handle
@@ -645,9 +555,6 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
 
     NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
       return info_;
-    }
-
-    NAN_DEPRECATED NAN_INLINE void Dispose() const {
     }
 
    private:
@@ -780,18 +687,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return NanNew(function_template)->HasInstance(value);
   }
 
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
-      v8::ExtensionConfiguration* extensions = NULL
-    , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
-    , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
-  ) {
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    return v8::Local<v8::Context>::New(
-        isolate
-      , v8::Context::New(isolate, extensions, tmpl, obj)
-    );
-  }
-
   NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
@@ -874,10 +769,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       size = toStr->WriteOneByte(reinterpret_cast<unsigned char*>(buf));
     }
 
-    NAN_DEPRECATED NAN_INLINE int Size() const {
-      return size;
-    }
-
     NAN_INLINE int length() const {
       return size;
     }
@@ -906,10 +797,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       toStr->WriteUtf8(buf);
     }
 
-    NAN_DEPRECATED NAN_INLINE int Size() const {
-      return size;
-    }
-
     NAN_INLINE int length() const {
       return size;
     }
@@ -935,10 +822,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       size = toStr->Length();
       buf = new uint16_t[size + 1];
       toStr->Write(buf);
-    }
-
-    NAN_DEPRECATED NAN_INLINE int Size() const {
-      return size;
     }
 
     NAN_INLINE int length() const {
@@ -1013,11 +896,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define _NAN_INDEX_QUERY_ARGS_TYPE const v8::AccessorInfo&
 # define _NAN_INDEX_QUERY_ARGS _NAN_INDEX_QUERY_ARGS_TYPE args
 # define _NAN_INDEX_QUERY_RETURN_TYPE v8::Handle<v8::Integer>
-
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::String> NanSymbol(
-      const char* data, int length = -1) {
-    return v8::String::NewSymbol(data, length);
-  }
 
 # define NanScope() v8::HandleScope scope
 # define NanEscapableScope() v8::HandleScope scope
@@ -1171,9 +1049,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 
     NAN_INLINE _NanWeakCallbackInfo<T, P>* GetCallbackInfo() const {
       return info_;
-    }
-
-    NAN_DEPRECATED NAN_INLINE void Dispose() const {
     }
 
    private:
@@ -1334,17 +1209,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
     return function_template->HasInstance(value);
   }
 
-  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Context> NanNewContextHandle(
-      v8::ExtensionConfiguration* extensions = NULL
-    , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
-    , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>()
-  ) {
-    v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
-    v8::Local<v8::Context> lctx = NanNew(ctx);
-    ctx.Dispose();
-    return lctx;
-  }
-
   NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
@@ -1432,10 +1296,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       size = toStr->WriteAscii(buf);
     }
 
-    NAN_DEPRECATED NAN_INLINE int Size() const {
-      return size;
-    }
-
     NAN_INLINE int length() const {
       return size;
     }
@@ -1464,10 +1324,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       toStr->WriteUtf8(buf);
     }
 
-    NAN_DEPRECATED NAN_INLINE int Size() const {
-      return size;
-    }
-
     NAN_INLINE int length() const {
       return size;
     }
@@ -1493,10 +1349,6 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
       size = toStr->Length();
       buf = new uint16_t[size + 1];
       toStr->Write(buf);
-    }
-
-    NAN_DEPRECATED NAN_INLINE int Size() const {
-      return size;
     }
 
     NAN_INLINE int length() const {
@@ -1890,134 +1742,6 @@ NAN_INLINE void NanAsyncQueueWorker (NanAsyncWorker* worker) {
   );
 }
 
-//// Base 64 ////
-
-#define _nan_base64_encoded_size(size) ((size + 2 - ((size + 2) % 3)) / 3 * 4)
-
-// Doesn't check for padding at the end.  Can be 1-2 bytes over.
-NAN_INLINE size_t _nan_base64_decoded_size_fast(size_t size) {
-  size_t remainder = size % 4;
-
-  size = (size / 4) * 3;
-  if (remainder) {
-    if (size == 0 && remainder == 1) {
-      // special case: 1-byte input cannot be decoded
-      size = 0;
-    } else {
-      // non-padded input, add 1 or 2 extra bytes
-      size += 1 + (remainder == 3);
-    }
-  }
-
-  return size;
-}
-
-template<typename T>
-NAN_INLINE size_t _nan_base64_decoded_size(
-    const T* src
-  , size_t size
-) {
-  if (size == 0)
-    return 0;
-
-  if (src[size - 1] == '=')
-    size--;
-  if (size > 0 && src[size - 1] == '=')
-    size--;
-
-  return _nan_base64_decoded_size_fast(size);
-}
-
-// supports regular and URL-safe base64
-static const int _nan_unbase64_table[] = {
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -1, -1, -2, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63
-  , 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1
-  , -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14
-  , 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, 63
-  , -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
-  , 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-  , -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-};
-
-#define _nan_unbase64(x) _nan_unbase64_table[(uint8_t)(x)]
-
-template<typename T> static size_t _nan_base64_decode(
-    char* buf
-  , size_t len
-  , const T* src
-  , const size_t srcLen
-) {
-  char* dst = buf;
-  char* dstEnd = buf + len;
-  const T* srcEnd = src + srcLen;
-
-  while (src < srcEnd && dst < dstEnd) {
-    ptrdiff_t remaining = srcEnd - src;
-    char a, b, c, d;
-
-    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
-    if (remaining == 0 || *src == '=') break;
-    a = _nan_unbase64(*src++);
-
-    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
-    if (remaining <= 1 || *src == '=') break;
-    b = _nan_unbase64(*src++);
-
-    *dst++ = (a << 2) | ((b & 0x30) >> 4);
-    if (dst == dstEnd) break;
-
-    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
-    if (remaining <= 2 || *src == '=') break;
-    c = _nan_unbase64(*src++);
-
-    *dst++ = ((b & 0x0F) << 4) | ((c & 0x3C) >> 2);
-    if (dst == dstEnd) break;
-
-    while (_nan_unbase64(*src) < 0 && src < srcEnd) src++, remaining--;
-    if (remaining <= 3 || *src == '=') break;
-    d = _nan_unbase64(*src++);
-
-    *dst++ = ((c & 0x03) << 6) | (d & 0x3F);
-  }
-
-  return dst - buf;
-}
-
-//// HEX ////
-
-template<typename T> unsigned _nan_hex2bin(T c) {
-  if (c >= '0' && c <= '9') return c - '0';
-  if (c >= 'A' && c <= 'F') return 10 + (c - 'A');
-  if (c >= 'a' && c <= 'f') return 10 + (c - 'a');
-  return static_cast<unsigned>(-1);
-}
-
-template<typename T> static size_t _nan_hex_decode(
-    char* buf
-  , size_t len
-  , const T* src
-  , const size_t srcLen
-) {
-  size_t i;
-  for (i = 0; i < len && i * 2 + 1 < srcLen; ++i) {
-    unsigned a = _nan_hex2bin(src[i * 2 + 0]);
-    unsigned b = _nan_hex2bin(src[i * 2 + 1]);
-    if (!~a || !~b) return i;
-    buf[i] = a * 16 + b;
-  }
-
-  return i;
-}
-
 namespace Nan { namespace imp {
 
 inline
@@ -2042,39 +1766,6 @@ IsExternal(v8::Local<v8::String> str) {
 
 }  // end of namespace imp
 }  // end of namespace Nan
-
-static bool _NanGetExternalParts(
-    v8::Handle<v8::Value> val
-  , const char** data
-  , size_t* len
-) {
-  if (node::Buffer::HasInstance(val)) {
-    *data = node::Buffer::Data(val.As<v8::Object>());
-    *len = node::Buffer::Length(val.As<v8::Object>());
-    return true;
-  }
-
-  assert(val->IsString());
-  v8::Local<v8::String> str = NanNew(val.As<v8::String>());
-
-  if (Nan::imp::IsExternal(str)) {
-    const NanExternalOneByteStringResource* ext;
-    ext = Nan::imp::GetExternalResource(str);
-    *data = ext->data();
-    *len = ext->length();
-    return true;
-  }
-
-  if (str->IsExternal()) {
-    const v8::String::ExternalStringResource* ext;
-    ext = str->GetExternalStringResource();
-    *data = reinterpret_cast<const char*>(ext->data());
-    *len = ext->length();
-    return true;
-  }
-
-  return false;
-}
 
 namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
@@ -2157,178 +1848,6 @@ NAN_INLINE ssize_t NanDecodeWrite(
     , val
     , static_cast<node::encoding>(encoding));
 #endif
-}
-
-/* NAN_DEPRECATED */ NAN_INLINE void* _NanRawString(
-    v8::Handle<v8::Value> from
-  , enum Nan::Encoding encoding
-  , size_t *datalen
-  , void *buf
-  , size_t buflen
-  , int flags
-) {
-  NanScope();
-
-  size_t sz_;
-  size_t term_len = !(flags & v8::String::NO_NULL_TERMINATION);
-  char *data = NULL;
-  size_t len;
-  bool is_extern = _NanGetExternalParts(
-      from
-    , const_cast<const char**>(&data)
-    , &len);
-
-  if (is_extern && !term_len) {
-    Nan::imp::NanSetPointerSafe(datalen, len);
-    return data;
-  }
-
-  v8::Local<v8::String> toStr = from->ToString();
-
-  char *to = static_cast<char *>(buf);
-
-  switch (encoding) {
-    case Nan::ASCII:
-#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
-      sz_ = toStr->Length();
-      if (to == NULL) {
-        to = new char[sz_ + term_len];
-      } else {
-        assert(buflen >= sz_ + term_len && "too small buffer");
-      }
-      Nan::imp::NanSetPointerSafe<size_t>(
-          datalen
-        , toStr->WriteAscii(to, 0, static_cast<int>(sz_ + term_len), flags));
-      return to;
-#endif
-    case Nan::BINARY:
-    case Nan::BUFFER:
-      sz_ = toStr->Length();
-      if (to == NULL) {
-        to = new char[sz_ + term_len];
-      } else {
-        assert(buflen >= sz_ + term_len && "too small buffer");
-      }
-#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
-      {
-        uint16_t* twobytebuf = new uint16_t[sz_ + term_len];
-
-        size_t somelen = toStr->Write(twobytebuf, 0,
-          static_cast<int>(sz_ + term_len), flags);
-
-        for (size_t i = 0; i < sz_ + term_len && i < somelen + term_len; i++) {
-          unsigned char *b = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
-          to[i] = *b;
-        }
-
-        Nan::imp::NanSetPointerSafe<size_t>(datalen, somelen);
-
-        delete[] twobytebuf;
-        return to;
-      }
-#else
-      Nan::imp::NanSetPointerSafe<size_t>(
-        datalen,
-        toStr->WriteOneByte(
-            reinterpret_cast<uint8_t *>(to)
-          , 0
-          , static_cast<int>(sz_ + term_len)
-          , flags));
-      return to;
-#endif
-    case Nan::UTF8:
-      sz_ = toStr->Utf8Length();
-      if (to == NULL) {
-        to = new char[sz_ + term_len];
-      } else {
-        assert(buflen >= sz_ + term_len && "too small buffer");
-      }
-      Nan::imp::NanSetPointerSafe<size_t>(
-          datalen
-        , toStr->WriteUtf8(to, static_cast<int>(sz_ + term_len)
-            , NULL, flags)
-          - term_len);
-      return to;
-    case Nan::BASE64:
-      {
-        v8::String::Value value(toStr);
-        sz_ = _nan_base64_decoded_size(*value, value.length());
-        if (to == NULL) {
-          to = new char[sz_ + term_len];
-        } else {
-          assert(buflen >= sz_ + term_len);
-        }
-        Nan::imp::NanSetPointerSafe<size_t>(
-            datalen
-          , _nan_base64_decode(to, sz_, *value, value.length()));
-        if (term_len) {
-          to[sz_] = '\0';
-        }
-        return to;
-      }
-    case Nan::UCS2:
-      {
-        sz_ = toStr->Length();
-        if (to == NULL) {
-          to = new char[(sz_ + term_len) * 2];
-        } else {
-          assert(buflen >= (sz_ + term_len) * 2 && "too small buffer");
-        }
-
-        int bc = 2 * toStr->Write(
-            reinterpret_cast<uint16_t *>(to)
-          , 0
-          , static_cast<int>(sz_ + term_len)
-          , flags);
-        Nan::imp::NanSetPointerSafe<size_t>(datalen, bc);
-        return to;
-      }
-    case Nan::HEX:
-      {
-        v8::String::Value value(toStr);
-        sz_ = value.length();
-        assert(!(sz_ & 1) && "bad hex data");
-        if (to == NULL) {
-          to = new char[sz_ / 2 + term_len];
-        } else {
-          assert(buflen >= sz_ / 2 + term_len && "too small buffer");
-        }
-        Nan::imp::NanSetPointerSafe<size_t>(
-            datalen
-          , _nan_hex_decode(to, sz_ / 2, *value, value.length()));
-      }
-      if (term_len) {
-        to[sz_ / 2] = '\0';
-      }
-      return to;
-    default:
-      assert(0 && "unknown encoding");
-  }
-  return to;
-}
-
-NAN_DEPRECATED NAN_INLINE void* NanRawString(
-    v8::Handle<v8::Value> from
-  , enum Nan::Encoding encoding
-  , size_t *datalen
-  , void *buf
-  , size_t buflen
-  , int flags
-) {
-  return _NanRawString(from, encoding, datalen, buf, buflen, flags);
-}
-
-
-NAN_DEPRECATED NAN_INLINE char* NanCString(
-    v8::Handle<v8::Value> from
-  , size_t *datalen
-  , char *buf = NULL
-  , size_t buflen = 0
-  , int flags = v8::String::NO_OPTIONS
-) {
-    return static_cast<char *>(
-      _NanRawString(from, Nan::UTF8, datalen, buf, buflen, flags)
-    );
 }
 
 NAN_INLINE void NanSetPrototypeTemplate(
