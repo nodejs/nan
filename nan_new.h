@@ -18,7 +18,7 @@
 # include <string>
 #endif
 
-namespace NanIntern {  // scnr
+namespace Nan { namespace imp {  // scnr
 
 // TODO(agnat): Generalize
 template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
@@ -171,11 +171,12 @@ struct Factory<v8::StringObject> : FactoryBase<v8::StringObject> {
   static inline return_t New(v8::Handle<v8::String> value);
 };
 
-}  // end of namespace NanIntern
+}  // end of namespace imp
+}  // end of namespace Nan
 
 #if (NODE_MODULE_VERSION >= 12)
 
-namespace NanIntern {
+namespace Nan { namespace imp {
 
 template <>
 struct Factory<v8::UnboundScript> : FactoryBase<v8::UnboundScript> {
@@ -184,7 +185,8 @@ struct Factory<v8::UnboundScript> : FactoryBase<v8::UnboundScript> {
                             , v8::ScriptOrigin const& origin);
 };
 
-}  // end of namespace NanIntern
+}  // end of namespace imp
+}  // end of namespace Nan
 
 # include "nan_implementation_12_inl.h"
 
@@ -197,33 +199,33 @@ struct Factory<v8::UnboundScript> : FactoryBase<v8::UnboundScript> {
 //=== API ======================================================================
 
 template <typename T>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew() {
-  return NanIntern::Factory<T>::New();
+  return Nan::imp::Factory<T>::New();
 }
 
 template <typename T, typename A0>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew(A0 arg0) {
-  return NanIntern::Factory<T>::New(arg0);
+  return Nan::imp::Factory<T>::New(arg0);
 }
 
 template <typename T, typename A0, typename A1>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew(A0 arg0, A1 arg1) {
-  return NanIntern::Factory<T>::New(arg0, arg1);
+  return Nan::imp::Factory<T>::New(arg0, arg1);
 }
 
 template <typename T, typename A0, typename A1, typename A2>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew(A0 arg0, A1 arg1, A2 arg2) {
-  return NanIntern::Factory<T>::New(arg0, arg1, arg2);
+  return Nan::imp::Factory<T>::New(arg0, arg1, arg2);
 }
 
 template <typename T, typename A0, typename A1, typename A2, typename A3>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
-  return NanIntern::Factory<T>::New(arg0, arg1, arg2, arg3);
+  return Nan::imp::Factory<T>::New(arg0, arg1, arg2, arg3);
 }
 
 // Note(agnat): When passing overloaded function pointers to template functions
@@ -233,19 +235,19 @@ NanNew(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
 
 // v8::Function and v8::FunctionTemplate with one or two arguments
 template <typename T>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew( NanFunctionCallback callback
       , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
-    return NanIntern::Factory<T>::New(callback, data);
+    return Nan::imp::Factory<T>::New(callback, data);
 }
 
 // v8::Function and v8::FunctionTemplate with three arguments
 template <typename T, typename A2>
-typename NanIntern::Factory<T>::return_t
+typename Nan::imp::Factory<T>::return_t
 NanNew( NanFunctionCallback callback
       , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
       , A2 a2 = A2()) {
-    return NanIntern::Factory<T>::New(callback, data, a2);
+    return Nan::imp::Factory<T>::New(callback, data, a2);
 }
 
 // Convenience
@@ -254,73 +256,73 @@ template <typename T> inline v8::Local<T> NanNew(v8::Handle<T> h);
 template <typename T> inline v8::Local<T> NanNew(v8::Persistent<T> const& p);
 
 inline
-NanIntern::Factory<v8::Boolean>::return_t
+Nan::imp::Factory<v8::Boolean>::return_t
 NanNew(bool value) {
   return NanNew<v8::Boolean>(value);
 }
 
 inline
-NanIntern::Factory<v8::Int32>::return_t
+Nan::imp::Factory<v8::Int32>::return_t
 NanNew(int32_t value) {
   return NanNew<v8::Int32>(value);
 }
 
 inline
-NanIntern::Factory<v8::Uint32>::return_t
+Nan::imp::Factory<v8::Uint32>::return_t
 NanNew(uint32_t value) {
   return NanNew<v8::Uint32>(value);
 }
 
 inline
-NanIntern::Factory<v8::Number>::return_t
+Nan::imp::Factory<v8::Number>::return_t
 NanNew(double value) {
   return NanNew<v8::Number>(value);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(std::string const& value) {
   return NanNew<v8::String>(value);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(const char * value, int length) {
   return NanNew<v8::String>(value, length);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(const char * value) {
   return NanNew<v8::String>(value);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(const uint8_t * value) {
   return NanNew<v8::String>(value);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(const uint16_t * value) {
   return NanNew<v8::String>(value);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(v8::String::ExternalStringResource * value) {
   return NanNew<v8::String>(value);
 }
 
 inline
-NanIntern::Factory<v8::String>::return_t
+Nan::imp::Factory<v8::String>::return_t
 NanNew(NanExternalOneByteStringResource * value) {
   return NanNew<v8::String>(value);
 }
 
 inline
-NanIntern::Factory<v8::RegExp>::return_t
+Nan::imp::Factory<v8::RegExp>::return_t
 NanNew(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
   return NanNew<v8::RegExp>(pattern, flags);
 }

@@ -30,7 +30,7 @@
 #include <string.h>  // memcpy
 #include <limits.h>
 
-namespace NanIntern {
+namespace Nan { namespace imp {
 
 using v8::Local;
 using v8::Handle;
@@ -307,6 +307,7 @@ static Local<Value> Encode(const char* buf,
 
 #undef base64_encoded_size
 
-}  // namespace NanIntern
+}  // end of namespace imp
+}  // end of namespace Nan
 
 #endif  // NAN_STRING_BYTES_H_

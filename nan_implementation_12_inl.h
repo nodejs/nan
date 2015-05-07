@@ -21,7 +21,7 @@
 # include <string>
 #endif
 
-namespace NanIntern {
+namespace Nan { namespace imp {
 
 //=== Array ====================================================================
 
@@ -244,7 +244,8 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
   return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
 }
 
-}  // end of namespace NanIntern
+}  // end of namespace imp
+}  // end of namespace Nan
 
 //=== Presistents and Handles ==================================================
 

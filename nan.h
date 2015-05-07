@@ -281,20 +281,50 @@ NAN_INLINE uint32_t NanUInt32OptionValue(
 template<typename T>
 v8::Local<T> NanNew(v8::Handle<T>);
 
-template<typename T>
-NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Handle<T> val) {
-  return NanNew(val);
-}
+namespace Nan { namespace imp {
+  template<typename T>
+  NAN_INLINE v8::Persistent<T> &NanEnsureHandleOrPersistent(
+      v8::Persistent<T> &val) {  // NOLINT(runtime/references)
+    return val;
+  }
 
-template<typename T>
-NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
-  return val;
-}
+  template<typename T>
+  NAN_INLINE
+  v8::Handle<T> NanEnsureHandleOrPersistent(const v8::Handle<T> &val) {
+    return val;
+  }
 
-template<typename T>
-NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
-  return NanNew(val);
-}
+  template<typename T>
+  NAN_INLINE v8::Local<T> NanEnsureHandleOrPersistent(const v8::Local<T> &val) {
+    return val;
+  }
+
+  template<typename T>
+  NAN_INLINE v8::Local<v8::Value> NanEnsureHandleOrPersistent(const T &val) {
+    return NanNew(val);
+  }
+
+  template<typename T>
+  NAN_INLINE v8::Local<T> NanEnsureLocal(const v8::Local<T> &val) {
+    return val;
+  }
+
+  template<typename T>
+  NAN_INLINE v8::Local<T> NanEnsureLocal(const v8::Persistent<T> &val) {
+    return NanNew(val);
+  }
+
+  template<typename T>
+  NAN_INLINE v8::Local<T> NanEnsureLocal(const v8::Handle<T> &val) {
+    return NanNew(val);
+  }
+
+  template<typename T>
+  NAN_INLINE v8::Local<v8::Value> NanEnsureLocal(const T &val) {
+    return NanNew(val);
+  }
+}  // end of namespace imp
+}  // end of namespace Nan
 
 /* io.js 1.0  */
 #if NODE_MODULE_VERSION >= IOJS_1_0_MODULE_VERSION \
@@ -424,11 +454,11 @@ NAN_INLINE v8::Local<v8::Value> _NanEnsureLocal(T val) {
 # define NanEscapableScope()                                                   \
   v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
 
-# define NanEscapeScope(val) scope.Escape(_NanEnsureLocal(val))
+# define NanEscapeScope(val) scope.Escape(Nan::imp::NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value)                                                 \
-  return args.GetReturnValue().Set(_NanEnsureLocal(value))
+return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
 # define NanReturnUndefined() return
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
@@ -968,7 +998,8 @@ NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
 # define NanEscapeScope(val) scope.Close(val)
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
-# define NanReturnValue(value) return scope.Close(_NanEnsureLocal(value))
+# define NanReturnValue(value)                                                 \
+    return scope.Close(Nan::imp::NanEnsureHandleOrPersistent(value))
 # define NanReturnHolder() NanReturnValue(args.Holder())
 # define NanReturnThis() NanReturnValue(args.This())
 # define NanReturnUndefined() return v8::Undefined()
@@ -1961,7 +1992,7 @@ template<typename T> static size_t _nan_hex_decode(
   return i;
 }
 
-namespace NanIntern {
+namespace Nan { namespace imp {
 
 inline
 NanExternalOneByteStringResource const*
@@ -1983,7 +2014,8 @@ IsExternal(v8::Local<v8::String> str) {
 #endif
 }
 
-}  // end of namespace NanIntern
+}  // end of namespace imp
+}  // end of namespace Nan
 
 static bool _NanGetExternalParts(
     v8::Handle<v8::Value> val
@@ -1999,9 +2031,9 @@ static bool _NanGetExternalParts(
   assert(val->IsString());
   v8::Local<v8::String> str = NanNew(val.As<v8::String>());
 
-  if (NanIntern::IsExternal(str)) {
+  if (Nan::imp::IsExternal(str)) {
     const NanExternalOneByteStringResource* ext;
-    ext = NanIntern::GetExternalResource(str);
+    ext = Nan::imp::GetExternalResource(str);
     *data = ext->data();
     *len = ext->length();
     return true;
@@ -2053,7 +2085,7 @@ NAN_INLINE v8::Local<v8::Value> NanEncode(
 # if NODE_VERSION_AT_LEAST(0, 10, 0)
   return node::Encode(buf, len, static_cast<node::encoding>(encoding));
 # else
-  return NanIntern::Encode(reinterpret_cast<const char*>(buf), len, encoding);
+  return Nan::imp::Encode(reinterpret_cast<const char*>(buf), len, encoding);
 # endif
 #endif
 }

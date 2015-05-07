@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+v8::Persistent<v8::Boolean> persistent;
+
 NAN_METHOD(ReturnValue) {
   NanScope();
   if (args.Length() == 1) {
@@ -27,7 +29,14 @@ NAN_METHOD(ReturnString) {
   NanReturnValue("yes, it works");
 }
 
+NAN_METHOD(ReturnPersistent) {
+  NanScope();
+  NanReturnValue(persistent);
+}
+
 void Init (v8::Handle<v8::Object> target) {
+  NanAssignPersistent(persistent, NanNew(true));
+
   target->Set(
       NanNew<v8::String>("r")
     , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
@@ -39,6 +48,10 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("s")
     , NanNew<v8::FunctionTemplate>(ReturnString)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("q")
+    , NanNew<v8::FunctionTemplate>(ReturnPersistent)->GetFunction()
   );
 }
 
