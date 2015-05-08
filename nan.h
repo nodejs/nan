@@ -221,6 +221,7 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 
 // some generic helpers
 
+namespace Nan { namespace imp {
 template<typename T> NAN_INLINE bool NanSetPointerSafe(
     T *var
   , T val
@@ -259,14 +260,39 @@ NAN_INLINE bool NanBooleanOptionValue(
   }
 }
 
-NAN_INLINE bool NanBooleanOptionValue(
+}  // end of namespace imp
+}  // end of namespace Nan
+
+template<typename T> NAN_DEPRECATED NAN_INLINE bool NanSetPointerSafe(
+    T *var
+  , T val
+) {
+  return Nan::imp::NanSetPointerSafe<T>(var, val);
+}
+
+template<typename T> NAN_DEPRECATED NAN_INLINE T NanGetPointerSafe(
+    T *var
+  , T fallback = reinterpret_cast<T>(0)
+) {
+  return Nan::imp::NanGetPointerSafe(var, fallback);
+}
+
+
+NAN_DEPRECATED NAN_INLINE bool NanBooleanOptionValue(
+    v8::Local<v8::Object> optionsObj
+  , v8::Handle<v8::String> opt, bool def
+) {
+  return Nan::imp::NanBooleanOptionValue(optionsObj, opt, def);
+}
+
+NAN_DEPRECATED NAN_INLINE bool NanBooleanOptionValue(
     v8::Local<v8::Object> optionsObj
   , v8::Handle<v8::String> opt
 ) {
-  return NanBooleanOptionValue(optionsObj, opt, false);
+  return Nan::imp::NanBooleanOptionValue(optionsObj, opt, false);
 }
 
-NAN_INLINE uint32_t NanUInt32OptionValue(
+NAN_DEPRECATED NAN_INLINE uint32_t NanUInt32OptionValue(
     v8::Local<v8::Object> optionsObj
   , v8::Handle<v8::String> opt
   , uint32_t def
@@ -2153,7 +2179,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
     , &len);
 
   if (is_extern && !term_len) {
-    NanSetPointerSafe(datalen, len);
+    Nan::imp::NanSetPointerSafe(datalen, len);
     return data;
   }
 
@@ -2170,7 +2196,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-      NanSetPointerSafe<size_t>(
+      Nan::imp::NanSetPointerSafe<size_t>(
           datalen
         , toStr->WriteAscii(to, 0, static_cast<int>(sz_ + term_len), flags));
       return to;
@@ -2195,13 +2221,13 @@ NAN_INLINE ssize_t NanDecodeWrite(
           to[i] = *b;
         }
 
-        NanSetPointerSafe<size_t>(datalen, somelen);
+        Nan::imp::NanSetPointerSafe<size_t>(datalen, somelen);
 
         delete[] twobytebuf;
         return to;
       }
 #else
-      NanSetPointerSafe<size_t>(
+      Nan::imp::NanSetPointerSafe<size_t>(
         datalen,
         toStr->WriteOneByte(
             reinterpret_cast<uint8_t *>(to)
@@ -2217,7 +2243,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
       } else {
         assert(buflen >= sz_ + term_len && "too small buffer");
       }
-      NanSetPointerSafe<size_t>(
+      Nan::imp::NanSetPointerSafe<size_t>(
           datalen
         , toStr->WriteUtf8(to, static_cast<int>(sz_ + term_len)
             , NULL, flags)
@@ -2232,7 +2258,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
         } else {
           assert(buflen >= sz_ + term_len);
         }
-        NanSetPointerSafe<size_t>(
+        Nan::imp::NanSetPointerSafe<size_t>(
             datalen
           , _nan_base64_decode(to, sz_, *value, value.length()));
         if (term_len) {
@@ -2254,7 +2280,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
           , 0
           , static_cast<int>(sz_ + term_len)
           , flags);
-        NanSetPointerSafe<size_t>(datalen, bc);
+        Nan::imp::NanSetPointerSafe<size_t>(datalen, bc);
         return to;
       }
     case Nan::HEX:
@@ -2267,7 +2293,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
         } else {
           assert(buflen >= sz_ / 2 + term_len && "too small buffer");
         }
-        NanSetPointerSafe<size_t>(
+        Nan::imp::NanSetPointerSafe<size_t>(
             datalen
           , _nan_hex_decode(to, sz_ / 2, *value, value.length()));
       }
