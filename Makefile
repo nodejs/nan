@@ -2,7 +2,7 @@ TOPLEVEL ?= $(dir $(lastword $(MAKEFILE_LIST)))
 CPPLINT ?= $(TOPLEVEL)/cpplint.py
 PYTHON ?= python
 BUILDTYPE ?= Release
-MODULES = symbols strings optionvalues
+MODULES = symbols strings
 SOURCES = $(MODULES:%=test/cpp/%.cpp)
 ADDONS = $(MODULES:%=test/build/$(BUILDTYPE)/%.node)
 
@@ -32,7 +32,6 @@ LINT_SOURCES = \
 	test/cpp/nannew.cpp \
 	test/cpp/news.cpp \
 	test/cpp/objectwraphandle.cpp \
-	test/cpp/optionvalues.cpp \
 	test/cpp/persistent.cpp \
 	test/cpp/returnemptystring.cpp \
 	test/cpp/returnnull.cpp \

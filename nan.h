@@ -244,6 +244,22 @@ template<typename T> NAN_INLINE T NanGetPointerSafe(
     return fallback;
   }
 }
+
+NAN_INLINE bool NanBooleanOptionValue(
+    v8::Local<v8::Object> optionsObj
+  , v8::Handle<v8::String> opt, bool def
+) {
+  if (def) {
+    return optionsObj.IsEmpty()
+      || !optionsObj->Has(opt)
+      || optionsObj->Get(opt)->BooleanValue();
+  } else {
+    return !optionsObj.IsEmpty()
+      && optionsObj->Has(opt)
+      && optionsObj->Get(opt)->BooleanValue();
+  }
+}
+
 }  // end of namespace imp
 }  // end of namespace Nan
 
@@ -262,29 +278,21 @@ template<typename T> NAN_DEPRECATED NAN_INLINE T NanGetPointerSafe(
 }
 
 
-NAN_INLINE bool NanBooleanOptionValue(
+NAN_DEPRECATED NAN_INLINE bool NanBooleanOptionValue(
     v8::Local<v8::Object> optionsObj
   , v8::Handle<v8::String> opt, bool def
 ) {
-  if (def) {
-    return optionsObj.IsEmpty()
-      || !optionsObj->Has(opt)
-      || optionsObj->Get(opt)->BooleanValue();
-  } else {
-    return !optionsObj.IsEmpty()
-      && optionsObj->Has(opt)
-      && optionsObj->Get(opt)->BooleanValue();
-  }
+  return Nan::imp::NanBooleanOptionValue(optionsObj, opt, def);
 }
 
-NAN_INLINE bool NanBooleanOptionValue(
+NAN_DEPRECATED NAN_INLINE bool NanBooleanOptionValue(
     v8::Local<v8::Object> optionsObj
   , v8::Handle<v8::String> opt
 ) {
-  return NanBooleanOptionValue(optionsObj, opt, false);
+  return Nan::imp::NanBooleanOptionValue(optionsObj, opt, false);
 }
 
-NAN_INLINE uint32_t NanUInt32OptionValue(
+NAN_DEPRECATED NAN_INLINE uint32_t NanUInt32OptionValue(
     v8::Local<v8::Object> optionsObj
   , v8::Handle<v8::String> opt
   , uint32_t def

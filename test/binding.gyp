@@ -14,10 +14,6 @@
       , "sources"     : [ "cpp/strings.cpp" ]
     }
   , {
-        "target_name" : "optionvalues"
-      , "sources"     : [ "cpp/optionvalues.cpp" ]
-    }
-  , {
         "target_name" : "multifile"
       , "sources"     : [ "cpp/multifile1.cpp", "cpp/multifile2.cpp" ]
     }
