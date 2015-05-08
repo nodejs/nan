@@ -267,9 +267,8 @@ namespace Nan { namespace imp {
 }  // end of namespace imp
 }  // end of namespace Nan
 
-/* io.js 1.0  */
-#if NODE_MODULE_VERSION >= IOJS_1_0_MODULE_VERSION \
-  || NODE_VERSION_AT_LEAST(0, 11, 15)
+/* node 0.12  */
+#if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
   NAN_INLINE
   void NanSetCounterFunction(v8::CounterLookupCallback cb) {
     v8::Isolate::GetCurrent()->SetCounterFunction(cb);
@@ -1808,7 +1807,7 @@ namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 }
 
-#if !NODE_VERSION_AT_LEAST(0, 10, 0)
+#if NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION
 # include "nan_string_bytes.h"  // NOLINT(build/include)
 #endif
 
@@ -1836,7 +1835,7 @@ NAN_INLINE v8::Local<v8::Value> NanEncode(
     , buf, len
     , static_cast<node::encoding>(encoding));
 #else
-# if NODE_VERSION_AT_LEAST(0, 10, 0)
+# if NODE_MODULE_VERSION >= NODE_0_10_MODULE_VERSION
   return node::Encode(buf, len, static_cast<node::encoding>(encoding));
 # else
   return Nan::imp::Encode(reinterpret_cast<const char*>(buf), len, encoding);
