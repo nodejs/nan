@@ -644,16 +644,16 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
       info_->persistent.SetWeak(info_, &_NanWeakCallbackDispatcher<T, P>);
   }
 
-template<typename T, typename P>
-NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
-    v8::Handle<T> handle
-  , P* parameter
-  , typename _NanWeakCallbackInfo<T, P>::Callback callback) {
-    _NanWeakCallbackInfo<T, P> *cbinfo =
-     new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
-    cbinfo->persistent.SetWeak(cbinfo, &_NanWeakCallbackDispatcher<T, P>);
-    return cbinfo;
-}
+  template<typename T, typename P>
+  NAN_INLINE _NanWeakCallbackInfo<T, P>* NanMakeWeakPersistent(
+      v8::Handle<T> handle
+    , P* parameter
+    , typename _NanWeakCallbackInfo<T, P>::Callback callback) {
+      _NanWeakCallbackInfo<T, P> *cbinfo =
+       new _NanWeakCallbackInfo<T, P>(handle, parameter, callback);
+      cbinfo->persistent.SetWeak(cbinfo, &_NanWeakCallbackDispatcher<T, P>);
+      return cbinfo;
+  }
 
 # define NAN_WEAK_CALLBACK(name)                                               \
     template<typename T, typename P>                                           \
