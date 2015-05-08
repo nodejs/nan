@@ -1244,16 +1244,7 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
     , v8::Handle<v8::Function> func
     , int argc
     , v8::Handle<v8::Value>* argv) {
-# if NODE_VERSION_AT_LEAST(0, 8, 0)
     return NanNew(node::MakeCallback(target, func, argc, argv));
-# else
-    v8::TryCatch try_catch;
-    v8::Local<v8::Value> result = func->Call(target, argc, argv);
-    if (try_catch.HasCaught()) {
-        node::FatalException(try_catch);
-    }
-    return result;
-# endif
   }
 
   NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
@@ -1261,12 +1252,7 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
     , v8::Handle<v8::String> symbol
     , int argc
     , v8::Handle<v8::Value>* argv) {
-# if NODE_VERSION_AT_LEAST(0, 8, 0)
     return NanNew(node::MakeCallback(target, symbol, argc, argv));
-# else
-    v8::Local<v8::Function> callback = target->Get(symbol).As<v8::Function>();
-    return NanMakeCallback(target, callback, argc, argv);
-# endif
   }
 
   NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
@@ -1274,11 +1260,7 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
     , const char* method
     , int argc
     , v8::Handle<v8::Value>* argv) {
-# if NODE_VERSION_AT_LEAST(0, 8, 0)
     return NanNew(node::MakeCallback(target, method, argc, argv));
-# else
-    return NanMakeCallback(target, NanNew(method), argc, argv);
-# endif
   }
 
   NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
@@ -1553,7 +1535,6 @@ class NanCallback {
                            , v8::Handle<v8::Value> argv[]) const {
     NanEscapableScope();
 
-#if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
     return NanEscapeScope(NanNew(node::MakeCallback(
@@ -1561,13 +1542,7 @@ class NanCallback {
       , callback
       , argc
       , argv
-    )));
-#else
-    v8::Local<v8::Function> callback = handle->
-        Get(kCallbackIndex).As<v8::Function>();
-    return NanEscapeScope(NanMakeCallback(
-        target, callback, argc, argv));
-#endif
+    ));
   }
 #endif
 };
