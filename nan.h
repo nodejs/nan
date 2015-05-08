@@ -1721,14 +1721,26 @@ class NanCallback {
 
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Object> &obj) {
-    v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    handle->Set(NanNew<v8::String>(key), obj);
+    NanScope();
+    NanNew(persistentHandle)->Set(NanNew(key), obj);
+  }
+
+  NAN_INLINE void SaveToPersistent(
+      uint32_t index, const v8::Local<v8::Object> &obj) {
+    NanScope();
+    NanNew(persistentHandle)->Set(index, obj);
   }
 
   v8::Local<v8::Object> GetFromPersistent(const char *key) const {
     NanEscapableScope();
-    v8::Local<v8::Object> handle = NanNew(persistentHandle);
-    return NanEscapeScope(handle->Get(NanNew(key)).As<v8::Object>());
+    return NanEscapeScope(
+        NanNew(persistentHandle)->Get(NanNew(key)).As<v8::Object>());
+  }
+
+  v8::Local<v8::Object> GetFromPersistent(uint32_t index) const {
+    NanEscapableScope();
+    return NanEscapeScope(
+        NanNew(persistentHandle)->Get(index).As<v8::Object>());
   }
 
   virtual void Execute() = 0;
