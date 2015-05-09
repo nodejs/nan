@@ -12,39 +12,39 @@
 static NanPersistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {
-  persistentTest1.Reset(args[0].As<v8::String>());
-  NanReturnUndefined();
+  persistentTest1.Reset(info[0].As<v8::String>());
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(Get1) {
-  NanReturnValue(NanNew(persistentTest1));
+  info.GetReturnValue().Set(NanNew(persistentTest1));
 }
 
 NAN_METHOD(Dispose1) {
   persistentTest1.Reset();
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(ToPersistentAndBackAgain) {
-  NanPersistent<v8::Object> persistent(args[0].As<v8::Object>());
+  NanPersistent<v8::Object> persistent(info[0].As<v8::Object>());
   v8::Local<v8::Object> object = NanNew(persistent);
   persistent.Reset();
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
-  NanReturnValue(object);
+  info.GetReturnValue().Set(object);
 }
 
 NAN_METHOD(PersistentToPersistent) {
-  NanPersistent<v8::String> persistent(args[0].As<v8::String>());
+  NanPersistent<v8::String> persistent(info[0].As<v8::String>());
   persistentTest1.Reset(persistent);
   persistent.Reset();
   persistentTest1.Reset();
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(CopyablePersistent) {
   NanCopyablePersistentTraits<v8::String>::CopyablePersistent p;
   p = persistentTest1;
-  NanReturnValue(p);
+  info.GetReturnValue().Set(NanNew(p));
 }
 
 void Init (v8::Handle<v8::Object> target) {

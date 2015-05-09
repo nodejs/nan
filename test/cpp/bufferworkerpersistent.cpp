@@ -49,12 +49,12 @@ class BufferWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(DoSleep) {
-  v8::Local<v8::Object> bufferHandle = args[1].As<v8::Object>();
-  NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+  v8::Local<v8::Object> bufferHandle = info[1].As<v8::Object>();
+  NanCallback *callback = new NanCallback(info[2].As<v8::Function>());
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
   NanAsyncQueueWorker(
-      new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
-  NanReturnUndefined();
+      new BufferWorker(callback, info[0]->Uint32Value(), bufferHandle));
+  info.GetReturnValue().SetUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
