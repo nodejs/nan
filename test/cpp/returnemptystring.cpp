@@ -9,7 +9,7 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnEmptyString) {
-  NanReturnEmptyString();
+  info.GetReturnValue().SetEmptyString();
 }
 
 void Init (v8::Handle<v8::Object> target) {

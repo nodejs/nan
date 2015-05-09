@@ -15,8 +15,8 @@ using v8::Number;
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {
   // expect a number as the first argument
-  int points = args[0]->Uint32Value();
+  int points = info[0]->Uint32Value();
   double est = Estimate(points);
 
-  NanReturnValue(NanNew<Number>(est));
+  info.GetReturnValue().Set(est);
 }

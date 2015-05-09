@@ -46,8 +46,8 @@
       , "sources"     : [ "cpp/asyncworker.cpp" ]
     }
   , {
-        "target_name" : "settergetter"
-      , "sources"     : [ "cpp/settergetter.cpp" ]
+        "target_name" : "accessors"
+      , "sources"     : [ "cpp/accessors.cpp" ]
     }
   , {
         "target_name" : "persistent"
@@ -111,5 +111,13 @@
     , {
         "target_name" : "trycatch"
       , "sources"     : [ "cpp/trycatch.cpp" ]
+    }
+    , {
+        "target_name" : "namedinterceptors"
+      , "sources"     : [ "cpp/namedinterceptors.cpp" ]
+    }
+    , {
+        "target_name" : "indexedinterceptors"
+      , "sources"     : [ "cpp/indexedinterceptors.cpp" ]
     }
 ]}

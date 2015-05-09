@@ -9,11 +9,11 @@
 #include <nan.h>
 
 NAN_METHOD(EncodeHex) {
-  NanReturnValue(NanEncode("hello", 5, Nan::HEX));
+  info.GetReturnValue().Set(NanEncode("hello", 5, Nan::HEX));
 }
 
 NAN_METHOD(EncodeUCS2) {
-  NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
+  info.GetReturnValue().Set(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
 }
 
 NanPersistent<v8::FunctionTemplate> encodeHex_persistent;

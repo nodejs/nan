@@ -96,12 +96,16 @@
       *(static_cast<T *volatile *>(0)) = static_cast<S*>(0);                   \
     }
 
+//=== CallbackInfo =============================================================
+
+#include "nan_callbacks.h"  // NOLINT(build/include)
+
+//==============================================================================
+
 #if (NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION)
-typedef v8::InvocationCallback NanFunctionCallback;
 typedef v8::Script             NanUnboundScript;
 typedef v8::Script             NanBoundScript;
 #else
-typedef v8::FunctionCallback   NanFunctionCallback;
 typedef v8::UnboundScript      NanUnboundScript;
 typedef v8::Script             NanBoundScript;
 #endif
@@ -439,61 +443,6 @@ class NanEscapableScope {
 #endif
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)  // Node 0.12
-  typedef const v8::FunctionCallbackInfo<v8::Value>& NAN_METHOD_ARGS_TYPE;
-  typedef void NAN_METHOD_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Value>& NAN_GETTER_ARGS_TYPE;
-  typedef void NAN_GETTER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<void>& NAN_SETTER_ARGS_TYPE;
-  typedef void NAN_SETTER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Value>&
-      NAN_PROPERTY_GETTER_ARGS_TYPE;
-  typedef void NAN_PROPERTY_GETTER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Value>&
-      NAN_PROPERTY_SETTER_ARGS_TYPE;
-  typedef void NAN_PROPERTY_SETTER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Array>&
-      NAN_PROPERTY_ENUMERATOR_ARGS_TYPE;
-  typedef void NAN_PROPERTY_ENUMERATOR_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Boolean>&
-      NAN_PROPERTY_DELETER_ARGS_TYPE;
-  typedef void NAN_PROPERTY_DELETER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Integer>&
-      NAN_PROPERTY_QUERY_ARGS_TYPE;
-  typedef void NAN_PROPERTY_QUERY_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Value>& NAN_INDEX_GETTER_ARGS_TYPE;
-  typedef void NAN_INDEX_GETTER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Value>& NAN_INDEX_SETTER_ARGS_TYPE;
-  typedef void NAN_INDEX_SETTER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Array>&
-      NAN_INDEX_ENUMERATOR_ARGS_TYPE;
-  typedef void NAN_INDEX_ENUMERATOR_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Boolean>&
-      NAN_INDEX_DELETER_ARGS_TYPE;
-  typedef void NAN_INDEX_DELETER_RETURN_TYPE;
-
-  typedef const v8::PropertyCallbackInfo<v8::Integer>&
-      NAN_INDEX_QUERY_ARGS_TYPE;
-  typedef void NAN_INDEX_QUERY_RETURN_TYPE;
-
-# define NanReturnValue(value)                                                 \
-  return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
-# define NanReturnUndefined() return
-# define NanReturnHolder() NanReturnValue(args.Holder())
-# define NanReturnThis() NanReturnValue(args.This())
-# define NanReturnNull() return args.GetReturnValue().SetNull()
-# define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
-
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
     NanEscapableScope scope;
     return scope.Escape(NanNew(v8::Undefined(v8::Isolate::GetCurrent())));
@@ -725,53 +674,6 @@ class NanEscapableScope {
   }
 
 #else  // Node 0.8 and 0.10
-  typedef const v8::Arguments& NAN_METHOD_ARGS_TYPE;
-  typedef v8::Handle<v8::Value> NAN_METHOD_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo & NAN_GETTER_ARGS_TYPE;
-  typedef v8::Handle<v8::Value> NAN_GETTER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo & NAN_SETTER_ARGS_TYPE;
-  typedef void NAN_SETTER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_PROPERTY_GETTER_ARGS_TYPE;
-  typedef v8::Handle<v8::Value> NAN_PROPERTY_GETTER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_PROPERTY_SETTER_ARGS_TYPE;
-  typedef v8::Handle<v8::Value> NAN_PROPERTY_SETTER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_PROPERTY_ENUMERATOR_ARGS_TYPE;
-  typedef v8::Handle<v8::Array> NAN_PROPERTY_ENUMERATOR_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_PROPERTY_DELETER_ARGS_TYPE;
-  typedef v8::Handle<v8::Boolean> NAN_PROPERTY_DELETER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_PROPERTY_QUERY_ARGS_TYPE;
-  typedef v8::Handle<v8::Integer> NAN_PROPERTY_QUERY_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_INDEX_GETTER_ARGS_TYPE;
-  typedef v8::Handle<v8::Value> NAN_INDEX_GETTER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_INDEX_SETTER_ARGS_TYPE;
-  typedef v8::Handle<v8::Value> NAN_INDEX_SETTER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_INDEX_ENUMERATOR_ARGS_TYPE;
-  typedef v8::Handle<v8::Array> NAN_INDEX_ENUMERATOR_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_INDEX_DELETER_ARGS_TYPE;
-  typedef v8::Handle<v8::Boolean> NAN_INDEX_DELETER_RETURN_TYPE;
-
-  typedef const v8::AccessorInfo& NAN_INDEX_QUERY_ARGS_TYPE;
-  typedef v8::Handle<v8::Integer> NAN_INDEX_QUERY_RETURN_TYPE;
-
-# define NanReturnValue(value)                                                 \
-    return Nan::imp::NanEnsureHandleOrPersistent(value)
-# define NanReturnHolder() NanReturnValue(args.Holder())
-# define NanReturnThis() NanReturnValue(args.This())
-# define NanReturnUndefined() return v8::Undefined()
-# define NanReturnNull() return v8::Null()
-# define NanReturnEmptyString() return v8::String::Empty()
-
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
     NanEscapableScope scope;
     return scope.Escape(NanNew(v8::Undefined()));
@@ -865,17 +767,15 @@ class NanEscapableScope {
       return v8::Exception::NAME(errmsg);                                      \
     }                                                                          \
                                                                                \
-    NAN_INLINE v8::Local<v8::Value> NanThrow ## NAME(const char *errmsg) {     \
-      NanEscapableScope scope;                                                 \
-      return scope.Escape(NanNew(v8::ThrowException(                           \
-          v8::Exception::NAME(NanNew(errmsg)))));                              \
+    NAN_INLINE void NanThrow ## NAME(const char *errmsg) {                     \
+      NanScope scope;                                                          \
+      v8::ThrowException(v8::Exception::NAME(NanNew(errmsg)));                 \
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
-    v8::Local<v8::Value> NanThrow ## NAME(v8::Handle<v8::String> errmsg) {     \
+    void NanThrow ## NAME(v8::Handle<v8::String> errmsg) {                     \
       NanEscapableScope scope;                                                 \
-      return scope.Escape(NanNew(v8::ThrowException(                           \
-          v8::Exception::NAME(errmsg))));                                      \
+      v8::ThrowException(v8::Exception::NAME(errmsg));                         \
     }
 
   X(Error)
@@ -886,9 +786,8 @@ class NanEscapableScope {
 
 # undef X
 
-  NAN_INLINE v8::Local<v8::Value> NanThrowError(v8::Handle<v8::Value> error) {
-    NanEscapableScope scope;
-    return scope.Escape(v8::Local<v8::Value>::New(v8::ThrowException(error)));
+  NAN_INLINE void NanThrowError(v8::Handle<v8::Value> error) {
+    v8::ThrowException(error);
   }
 
   NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
@@ -1001,55 +900,102 @@ class NanEscapableScope {
 
 typedef void (*NanFreeCallback)(char *data, void *hint);
 
-#define NAN_METHOD(name) NAN_METHOD_RETURN_TYPE name(NAN_METHOD_ARGS_TYPE args)
+typedef const NanFunctionCallbackInfo<v8::Value>& NAN_METHOD_ARGS_TYPE;
+typedef void NAN_METHOD_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Value>& NAN_GETTER_ARGS_TYPE;
+typedef void NAN_GETTER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<void>& NAN_SETTER_ARGS_TYPE;
+typedef void NAN_SETTER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Value>&
+    NAN_PROPERTY_GETTER_ARGS_TYPE;
+typedef void NAN_PROPERTY_GETTER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Value>&
+    NAN_PROPERTY_SETTER_ARGS_TYPE;
+typedef void NAN_PROPERTY_SETTER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Array>&
+    NAN_PROPERTY_ENUMERATOR_ARGS_TYPE;
+typedef void NAN_PROPERTY_ENUMERATOR_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Boolean>&
+    NAN_PROPERTY_DELETER_ARGS_TYPE;
+typedef void NAN_PROPERTY_DELETER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Integer>&
+    NAN_PROPERTY_QUERY_ARGS_TYPE;
+typedef void NAN_PROPERTY_QUERY_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Value>& NAN_INDEX_GETTER_ARGS_TYPE;
+typedef void NAN_INDEX_GETTER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Value>& NAN_INDEX_SETTER_ARGS_TYPE;
+typedef void NAN_INDEX_SETTER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Array>&
+    NAN_INDEX_ENUMERATOR_ARGS_TYPE;
+typedef void NAN_INDEX_ENUMERATOR_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Boolean>&
+    NAN_INDEX_DELETER_ARGS_TYPE;
+typedef void NAN_INDEX_DELETER_RETURN_TYPE;
+
+typedef const NanPropertyCallbackInfo<v8::Integer>&
+    NAN_INDEX_QUERY_ARGS_TYPE;
+typedef void NAN_INDEX_QUERY_RETURN_TYPE;
+
+#define NAN_METHOD(name) NAN_METHOD_RETURN_TYPE name(NAN_METHOD_ARGS_TYPE info)
 #define NAN_GETTER(name)                                                       \
     NAN_GETTER_RETURN_TYPE name(                                               \
         v8::Local<v8::String> property                                         \
-      , NAN_GETTER_ARGS_TYPE args)
+      , NAN_GETTER_ARGS_TYPE info)
 #define NAN_SETTER(name)                                                       \
     NAN_SETTER_RETURN_TYPE name(                                               \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
-      , NAN_SETTER_ARGS_TYPE args)
+      , NAN_SETTER_ARGS_TYPE info)
 #define NAN_PROPERTY_GETTER(name)                                              \
     NAN_PROPERTY_GETTER_RETURN_TYPE name(                                      \
         v8::Local<v8::String> property                                         \
-      , NAN_PROPERTY_GETTER_ARGS_TYPE args)
+      , NAN_PROPERTY_GETTER_ARGS_TYPE info)
 #define NAN_PROPERTY_SETTER(name)                                              \
     NAN_PROPERTY_SETTER_RETURN_TYPE name(                                      \
         v8::Local<v8::String> property                                         \
       , v8::Local<v8::Value> value                                             \
-      , NAN_PROPERTY_SETTER_ARGS_TYPE args)
+      , NAN_PROPERTY_SETTER_ARGS_TYPE info)
 #define NAN_PROPERTY_ENUMERATOR(name)                                          \
     NAN_PROPERTY_ENUMERATOR_RETURN_TYPE name(                                  \
-        NAN_PROPERTY_ENUMERATOR_ARGS_TYPE args)
+        NAN_PROPERTY_ENUMERATOR_ARGS_TYPE info)
 #define NAN_PROPERTY_DELETER(name)                                             \
     NAN_PROPERTY_DELETER_RETURN_TYPE name(                                     \
         v8::Local<v8::String> property                                         \
-      , NAN_PROPERTY_DELETER_ARGS_TYPE args)
+      , NAN_PROPERTY_DELETER_ARGS_TYPE info)
 #define NAN_PROPERTY_QUERY(name)                                               \
     NAN_PROPERTY_QUERY_RETURN_TYPE name(                                       \
         v8::Local<v8::String> property                                         \
-      , NAN_PROPERTY_QUERY_ARGS_TYPE args)
+      , NAN_PROPERTY_QUERY_ARGS_TYPE info)
 # define NAN_INDEX_GETTER(name)                                                \
     NAN_INDEX_GETTER_RETURN_TYPE name(                                         \
         uint32_t index                                                         \
-      , NAN_INDEX_GETTER_ARGS_TYPE args)
+      , NAN_INDEX_GETTER_ARGS_TYPE info)
 #define NAN_INDEX_SETTER(name)                                                 \
     NAN_INDEX_SETTER_RETURN_TYPE name(                                         \
         uint32_t index                                                         \
       , v8::Local<v8::Value> value                                             \
-      , NAN_INDEX_SETTER_ARGS_TYPE args)
+      , NAN_INDEX_SETTER_ARGS_TYPE info)
 #define NAN_INDEX_ENUMERATOR(name)                                             \
-    NAN_INDEX_ENUMERATOR_RETURN_TYPE name(NAN_INDEX_ENUMERATOR_ARGS_TYPE args)
+    NAN_INDEX_ENUMERATOR_RETURN_TYPE name(NAN_INDEX_ENUMERATOR_ARGS_TYPE info)
 #define NAN_INDEX_DELETER(name)                                                \
     NAN_INDEX_DELETER_RETURN_TYPE name(                                        \
         uint32_t index                                                         \
-      , NAN_INDEX_DELETER_ARGS_TYPE args)
+      , NAN_INDEX_DELETER_ARGS_TYPE info)
 #define NAN_INDEX_QUERY(name)                                                  \
     NAN_INDEX_QUERY_RETURN_TYPE name(                                          \
         uint32_t index                                                         \
-      , NAN_INDEX_QUERY_ARGS_TYPE args)
+      , NAN_INDEX_QUERY_ARGS_TYPE info)
 
 class NanCallback {
  public:
@@ -1417,7 +1363,7 @@ IsExternal(v8::Local<v8::String> str) {
 
 namespace Nan {
   enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
-}
+}  // end of namespace Nan
 
 #if NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION
 # include "nan_string_bytes.h"  // NOLINT(build/include)
@@ -1532,6 +1478,288 @@ NAN_INLINE void NanSetInstanceTemplate(
   NanSetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
 
+template<typename T>
+NAN_INLINE void NanSetMethod(
+    const T &recv
+  , const char *name
+  , NanFunctionCallback callback) {
+  NanScope scope;
+  v8::Local<v8::Function> fn = NanNew<v8::FunctionTemplate>(
+      callback)->GetFunction();
+  v8::Local<v8::String> fn_name = NanNew(name);
+  fn->SetName(fn_name);
+  recv->Set(fn_name, fn);
+}
+
+NAN_INLINE void NanSetPrototypeMethod(
+    v8::Handle<v8::FunctionTemplate> recv
+  , const char* name, NanFunctionCallback callback) {
+  NanScope scope;
+  v8::Local<v8::Function> fn = NanNew<v8::FunctionTemplate>(
+      callback
+    , v8::Handle<v8::Value>()
+    , NanNew<v8::Signature>(recv))->GetFunction();
+  v8::Local<v8::String> fn_name = NanNew(name);
+  recv->PrototypeTemplate()->Set(fn_name, fn);
+  fn->SetName(fn_name);
+}
+
+//=== Accessors and Such =======================================================
+
+inline void NanSetAccessor(
+    v8::Handle<v8::ObjectTemplate> tpl
+  , v8::Handle<v8::String> name
+  , NanGetterCallback getter
+  , NanSetterCallback setter = 0
+  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+  , v8::AccessControl settings = v8::DEFAULT
+  , v8::PropertyAttribute attribute = v8::None
+  , Nan::imp::Sig signature = Nan::imp::Sig()) {
+  NanScope scope;
+
+  Nan::imp::NativeGetter getter_ =
+      Nan::imp::GetterCallbackWrapper;
+  Nan::imp::NativeSetter setter_ =
+      setter ? Nan::imp::SetterCallbackWrapper : 0;
+
+  v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(Nan::imp::kAccessorFieldCount);
+  v8::Local<v8::Object> obj = otpl->NewInstance();
+  NanSetInternalFieldPointer(
+      obj
+    , Nan::imp::kGetterIndex
+    , Nan::imp::GetWrapper<NanGetterCallback, Nan::imp::GetterWrapper>(getter));
+  v8::Local<v8::Value> val = NanNew<v8::Value>(data);
+
+  if (setter != 0) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kSetterIndex
+      , Nan::imp::GetWrapper<NanSetterCallback,
+            Nan::imp::SetterWrapper>(setter));
+  }
+
+  if (!val.IsEmpty()) {
+    obj->SetInternalField(Nan::imp::kDataIndex, val);
+  }
+
+  tpl->SetAccessor(
+      name
+    , getter_
+    , setter_
+    , obj
+    , settings
+    , attribute
+    , signature);
+}
+
+inline bool NanSetAccessor(
+    v8::Handle<v8::Object> obj
+  , v8::Handle<v8::String> name
+  , NanGetterCallback getter
+  , NanSetterCallback setter = 0
+  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+  , v8::AccessControl settings = v8::DEFAULT
+  , v8::PropertyAttribute attribute = v8::None) {
+  NanEscapableScope scope;
+
+  Nan::imp::NativeGetter getter_ =
+      Nan::imp::GetterCallbackWrapper;
+  Nan::imp::NativeSetter setter_ =
+      setter ? Nan::imp::SetterCallbackWrapper : 0;
+
+  v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(Nan::imp::kAccessorFieldCount);
+  v8::Local<v8::Object> dataobj = otpl->NewInstance();
+  NanSetInternalFieldPointer(
+      dataobj
+    , Nan::imp::kGetterIndex
+    , Nan::imp::GetWrapper<NanGetterCallback, Nan::imp::GetterWrapper>(getter));
+  v8::Local<v8::Value> val = NanNew<v8::Value>(data);
+
+  if (!val.IsEmpty()) {
+    dataobj->SetInternalField(Nan::imp::kDataIndex, val);
+  }
+
+  if (setter) {
+    NanSetInternalFieldPointer(
+        dataobj
+      , Nan::imp::kPropertySetterIndex
+      , Nan::imp::GetWrapper<NanSetterCallback,
+            Nan::imp::SetterWrapper>(setter));
+  }
+
+  return obj->SetAccessor(
+      name
+    , getter_
+    , setter_
+    , dataobj
+    , settings
+    , attribute);
+}
+
+inline void NanSetNamedPropertyHandler(
+    v8::Handle<v8::ObjectTemplate> tpl
+  , NanPropertyGetterCallback getter
+  , NanPropertySetterCallback setter = 0
+  , NanPropertyQueryCallback query = 0
+  , NanPropertyDeleterCallback deleter = 0
+  , NanPropertyEnumeratorCallback enumerator = 0
+  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+  NanScope scope;
+
+  Nan::imp::NativePropertyGetter getter_ =
+      Nan::imp::PropertyGetterCallbackWrapper;
+  Nan::imp::NativePropertySetter setter_ =
+      setter ? Nan::imp::PropertySetterCallbackWrapper : 0;
+  Nan::imp::NativePropertyQuery query_ =
+      query ? Nan::imp::PropertyQueryCallbackWrapper : 0;
+  Nan::imp::NativePropertyDeleter *deleter_ =
+      deleter ? Nan::imp::PropertyDeleterCallbackWrapper : 0;
+  Nan::imp::NativePropertyEnumerator enumerator_ =
+      enumerator ? Nan::imp::PropertyEnumeratorCallbackWrapper : 0;
+
+  v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(Nan::imp::kPropertyFieldCount);
+  v8::Local<v8::Object> obj = otpl->NewInstance();
+  NanSetInternalFieldPointer(
+      obj
+    , Nan::imp::kPropertyGetterIndex
+    , Nan::imp::GetWrapper<NanPropertyGetterCallback,
+          Nan::imp::PropertyGetterWrapper>(getter));
+  v8::Local<v8::Value> val = NanNew<v8::Value>(data);
+
+  if (setter) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kPropertySetterIndex
+      , Nan::imp::GetWrapper<NanPropertySetterCallback,
+            Nan::imp::PropertySetterWrapper>(setter));
+  }
+
+  if (query) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kPropertyQueryIndex
+      , Nan::imp::GetWrapper<NanPropertyQueryCallback,
+            Nan::imp::PropertyQueryWrapper>(query));
+  }
+
+  if (deleter) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kPropertyDeleterIndex
+      , Nan::imp::GetWrapper<NanPropertyDeleterCallback,
+            Nan::imp::PropertyDeleterWrapper>(deleter));
+  }
+
+  if (enumerator) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kPropertyEnumeratorIndex
+      , Nan::imp::GetWrapper<NanPropertyEnumeratorCallback,
+            Nan::imp::PropertyEnumeratorWrapper>(enumerator));
+  }
+
+  if (!val.IsEmpty()) {
+    obj->SetInternalField(Nan::imp::kDataIndex, val);
+  }
+
+#if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
+  tpl->SetHandler(v8::NamedPropertyHandlerConfiguration(
+      getter_, setter_, query_, deleter_, enumerator_, obj));
+#else
+  tpl->SetNamedPropertyHandler(
+      getter_
+    , setter_
+    , query_
+    , deleter_
+    , enumerator_
+    , obj);
+#endif
+}
+
+inline void NanSetIndexedPropertyHandler(
+    v8::Handle<v8::ObjectTemplate> tpl
+  , NanIndexGetterCallback getter
+  , NanIndexSetterCallback setter = 0
+  , NanIndexQueryCallback query = 0
+  , NanIndexDeleterCallback deleter = 0
+  , NanIndexEnumeratorCallback enumerator = 0
+  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+  NanScope scope;
+
+  Nan::imp::NativeIndexGetter getter_ =
+      Nan::imp::IndexGetterCallbackWrapper;
+  Nan::imp::NativeIndexSetter setter_ =
+      setter ? Nan::imp::IndexSetterCallbackWrapper : 0;
+  Nan::imp::NativeIndexQuery query_ =
+      query ? Nan::imp::IndexQueryCallbackWrapper : 0;
+  Nan::imp::NativeIndexDeleter deleter_ =
+      deleter ? Nan::imp::IndexDeleterCallbackWrapper : 0;
+  Nan::imp::NativeIndexEnumerator enumerator_ =
+      enumerator ? Nan::imp::IndexEnumeratorCallbackWrapper : 0;
+
+  v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(Nan::imp::kIndexPropertyFieldCount);
+  v8::Local<v8::Object> obj = otpl->NewInstance();
+  NanSetInternalFieldPointer(
+      obj
+    , Nan::imp::kIndexPropertyGetterIndex
+    , Nan::imp::GetWrapper<NanIndexGetterCallback,
+          Nan::imp::IndexGetterWrapper>(getter));
+  v8::Local<v8::Value> val = NanNew<v8::Value>(data);
+
+  if (setter) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kIndexPropertySetterIndex
+      , Nan::imp::GetWrapper<NanIndexSetterCallback,
+            Nan::imp::IndexSetterWrapper>(setter));
+  }
+
+  if (query) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kIndexPropertyQueryIndex
+      , Nan::imp::GetWrapper<NanIndexQueryCallback,
+            Nan::imp::IndexQueryWrapper>(query));
+  }
+
+  if (deleter) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kIndexPropertyDeleterIndex
+      , Nan::imp::GetWrapper<NanIndexDeleterCallback,
+            Nan::imp::IndexDeleterWrapper>(deleter));
+  }
+
+  if (enumerator) {
+    NanSetInternalFieldPointer(
+        obj
+      , Nan::imp::kIndexPropertyEnumeratorIndex
+      , Nan::imp::GetWrapper<NanIndexEnumeratorCallback,
+            Nan::imp::IndexEnumeratorWrapper>(enumerator));
+  }
+
+  if (!val.IsEmpty()) {
+    obj->SetInternalField(Nan::imp::kDataIndex, val);
+  }
+
+#if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
+  tpl->SetHandler(v8::IndexedPropertyHandlerConfiguration(
+      getter_, setter_, query_, deleter_, enumerator_, obj));
+#else
+  tpl->SetIndexedPropertyHandler(
+      getter_
+    , setter_
+    , query_
+    , deleter_
+    , enumerator_
+    , obj);
+#endif
+}
+
 //=== ObjectWrap ===============================================================
 
 class NanObjectWrap : public node::ObjectWrap {
@@ -1586,6 +1814,12 @@ struct NanTap {
     NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
   }
 
+  inline void pass(const char * msg = NULL) {
+    v8::Handle<v8::Value> hmsg;
+    if (msg) hmsg = NanNew(msg);
+    NanMakeCallback(NanNew(t_), "pass", msg ? 1 : 0, &hmsg);
+  }
+
  private:
   NanPersistent<v8::Object> t_;
 };
@@ -1595,8 +1829,6 @@ struct NanTap {
 #define NAN_TEST_EXPRESSION(expression) \
   ( expression ), __FILE__ ":" NAN_STRINGIZE(__LINE__) ": " #expression
 
-#define return_NanValue(v) NanReturnValue(v)
-#define return_NanUndefined() NanReturnUndefined()
 #define NAN_EXPORT(target, function) NanExport(target, #function, function)
 
 #undef TYPE_CHECK

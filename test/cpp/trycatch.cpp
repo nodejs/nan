@@ -16,7 +16,6 @@ NAN_METHOD(TryCatch) {
     assert(try_catch.HasCaught());
     try_catch.ReThrow();
   }
-  NanReturnUndefined();
 }
 
 void Init (v8::Handle<v8::Object> target) {
