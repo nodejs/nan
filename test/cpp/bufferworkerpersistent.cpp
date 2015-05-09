@@ -23,7 +23,10 @@ class BufferWorker : public NanAsyncWorker {
 
       NanScope();
 
+     /* test them all */
       SaveToPersistent("buffer", bufferHandle);
+      SaveToPersistent(NanNew("puffer"), bufferHandle);
+      SaveToPersistent(0u, bufferHandle);
     }
 
   ~BufferWorker() {}
@@ -35,9 +38,14 @@ class BufferWorker : public NanAsyncWorker {
   void HandleOKCallback () {
     NanScope();
 
-    v8::Local<v8::Object> handle = GetFromPersistent("buffer");
-    v8::Local<v8::Value> argv[] = { handle };
-    callback->Call(1, argv);
+    v8::Local<v8::Value> handle = GetFromPersistent("buffer");
+    callback->Call(1, &handle);
+
+    handle = GetFromPersistent(NanNew("puffer"));
+    callback->Call(1, &handle);
+
+    handle = GetFromPersistent(0u);
+    callback->Call(1, &handle);
   }
 
  private:
