@@ -52,7 +52,7 @@ stringMatches(Local<Value> value, const char * match) {
 #define _(e) NAN_TEST_EXPRESSION(e)
 
 NAN_METHOD(testArray) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(3);
 
@@ -60,11 +60,11 @@ NAN_METHOD(testArray) {
   t.ok(_( NanNew<Array>(7)->Length() == 7));
   t.ok(_( assertType<Array>(NanNew<Array>(7))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testBoolean) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(6);
 
@@ -76,7 +76,7 @@ NAN_METHOD(testBoolean) {
   t.ok(_( NanNew(false)->Value() == false));
   t.ok(_( assertType<Boolean>( NanNew(true))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 #if (NODE_MODULE_VERSION < 12)
@@ -85,7 +85,7 @@ NAN_METHOD(testBoolean) {
 # define V(x) x->ValueOf()
 #endif
 NAN_METHOD(testBooleanObject) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(3);
 
@@ -93,12 +93,12 @@ NAN_METHOD(testBooleanObject) {
   t.ok(_( V(NanNew<BooleanObject>(true)) == true));
   t.ok(_( V(NanNew<BooleanObject>(false)) == false));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 #undef V
 
 NAN_METHOD(testContext) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(5);
   t.ok(_( assertType<Context>( NanNew<Context>())));
@@ -113,45 +113,45 @@ NAN_METHOD(testContext) {
           NanNew<Context>(&extensions
           , Handle<ObjectTemplate>(), Handle<Value>()))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testDate) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(1);
 
   t.ok(_( assertType<Date>( NanNew<Date>(static_cast<double>(time(NULL))))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 int ttt = 23;
 
 NAN_METHOD(testExternal) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(2);
 
   t.ok(_(NanNew<External>(&ttt)->Value() == &ttt));
   t.ok(_( assertType<External>(NanNew<External>(&ttt))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testFunction) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
   t.plan(2);
 
   t.ok(_( assertType<Function>(NanNew<Function>(testFunction))));
   v8::Local<String> data = NanNew("plonk");
   t.ok(_( assertType<Function>(NanNew<Function>(testFunction, data))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testFunctionTemplate) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(4);
 
@@ -165,13 +165,13 @@ NAN_METHOD(testFunctionTemplate) {
   t.ok(_( assertType<FunctionTemplate>(
           NanNew<FunctionTemplate>( testFunctionTemplate, data, signature))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 const double epsilon = 1e-9;
 
 NAN_METHOD(testNumber) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(17);
 
@@ -201,42 +201,42 @@ NAN_METHOD(testNumber) {
   t.ok(_( fabs(NanNew(M_PI)->Value() - M_PI) < epsilon));
   t.ok(_( assertType<Number>( NanNew(M_E) )));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testNumberObject) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(2);
 
   t.ok(_( assertType<NumberObject>( NanNew<NumberObject>(M_PI))));
   t.ok(_( fabs(NanNew<NumberObject>(M_PI)->NumberValue() - M_PI) < epsilon));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testObject) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(1);
 
   t.ok(_(assertType<Object>( NanNew<Object>())));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testObjectTemplate) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(1);
 
   t.ok(_(assertType<ObjectTemplate>( NanNew<ObjectTemplate>())));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testScript) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(6);
 
@@ -255,11 +255,11 @@ NAN_METHOD(testScript) {
   t.ok(_( NanRunScript(
       NanNew<NanUnboundScript>(NanNew("2 + 3")))->Int32Value() == 5));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testSignature) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(3);
 
@@ -271,11 +271,11 @@ NAN_METHOD(testSignature) {
   t.ok(_( assertType<Sig>(
       NanNew<Sig>(NanNew<FT>(testSignature)))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testString) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(14);
 
@@ -304,7 +304,7 @@ NAN_METHOD(testString) {
   t.ok(_( stringMatches( NanNew(std::string("bar")), "bar")));
   t.ok(_( assertType<String>( NanNew(std::string("plonk.")))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 #if (NODE_MODULE_VERSION < 12)
@@ -313,7 +313,7 @@ NAN_METHOD(testString) {
 # define V(x) x->ValueOf()
 #endif
 NAN_METHOD(testStringObject) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(2);
 
@@ -323,24 +323,24 @@ NAN_METHOD(testStringObject) {
   t.ok(_( assertType<StringObject>(
           NanNew<StringObject>(NanNew<String>("plonk")))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 #undef V
 
 template <typename T> Handle<T> asHandle(Local<T> l) { return l; }
 NAN_METHOD(testHandles) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(2);
 
   t.ok(_( assertType<String>( NanNew( asHandle(NanNew("foo"))))));
   t.ok(_( assertType<Uint32>( NanNew( asHandle(NanNew(5u))))));
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testPersistents) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(1);
 
@@ -349,7 +349,7 @@ NAN_METHOD(testPersistents) {
   t.ok(_( assertType<String>( NanNew(p))));
   p.Reset();
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 //==============================================================================
@@ -359,7 +359,7 @@ NAN_METHOD(testPersistents) {
 
 // See https://github.com/nodejs/nan/issues/212
 NAN_METHOD(testRegression212) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   t.plan(1);
 
@@ -374,7 +374,7 @@ NAN_METHOD(testRegression212) {
 # pragma warning( pop )
 #endif
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 /* Compile time regression test for https://github.com/nodejs/nan/issues/242
@@ -384,11 +384,11 @@ NAN_METHOD(testRegression212) {
 void overloaded() {}
 NAN_METHOD(overloaded) {
     overloaded();  // not unused
-    return_NanUndefined();
+    info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(testRegression242) {
-  NanTap t(args[0]);
+  NanTap t(info[0]);
 
   // These lines must *compile*. Not much to test at runtime.
   Local<FunctionTemplate> ft = NanNew<FunctionTemplate>(overloaded);
@@ -400,7 +400,7 @@ NAN_METHOD(testRegression242) {
 
   t.ok(true, "compile-time regression test #242");
 
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 
@@ -409,31 +409,31 @@ NAN_METHOD(testRegression242) {
 //==============================================================================
 
 NAN_METHOD(newIntegerWithValue) {
-  return_NanValue(NanNew<Integer>(args[0]->Int32Value()));
+  info.GetReturnValue().Set(NanNew<Integer>(info[0]->Int32Value()));
 }
 
 NAN_METHOD(newNumberWithValue) {
-  return_NanValue(NanNew<Number>(args[0]->NumberValue()));
+  info.GetReturnValue().Set(NanNew<Number>(info[0]->NumberValue()));
 }
 
 NAN_METHOD(newUint32WithValue) {
-  return_NanValue(NanNew<Uint32>(args[0]->Uint32Value()));
+  info.GetReturnValue().Set(NanNew<Uint32>(info[0]->Uint32Value()));
 }
 
 NAN_METHOD(newStringFromChars) {
-  return_NanValue(NanNew<String>("hello?"));
+  info.GetReturnValue().Set(NanNew<String>("hello?"));
 }
 
 NAN_METHOD(newStringFromCharsWithLength) {
-  return_NanValue(NanNew<String>("hello?", 4));
+  info.GetReturnValue().Set(NanNew<String>("hello?", 4));
 }
 
 NAN_METHOD(newStringFromStdString) {
-  return_NanValue(NanNew<String>(std::string("hello!")));
+  info.GetReturnValue().Set(NanNew<String>(std::string("hello!")));
 }
 
 NAN_METHOD(newExternal) {
-  return_NanValue(NanNew<External>(&ttt));
+  info.GetReturnValue().Set(NanNew<External>(&ttt));
 }
 
 void Init(Handle<Object> exports) {

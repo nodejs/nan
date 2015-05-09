@@ -34,8 +34,8 @@ v8::Handle<v8::String> wrap() {
 }
 
 NAN_METHOD(Hustle) {
-  cb.Reset(args[0].As<v8::Function>());
-  NanReturnValue(wrap());
+  cb.Reset(info[0].As<v8::Function>());
+  info.GetReturnValue().Set(wrap());
 }
 
 void Init (v8::Handle<v8::Object> target) {

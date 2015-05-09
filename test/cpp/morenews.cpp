@@ -9,30 +9,30 @@
 #include <nan.h>
 
 NAN_METHOD(NewNumber) {
-  NanReturnValue(NanNew(0.5));
+  info.GetReturnValue().Set(NanNew(0.5));
 }
 
 NAN_METHOD(NewNegativeInteger) {
-  NanReturnValue(NanNew(-1));
+  info.GetReturnValue().Set(NanNew(-1));
 }
 
 NAN_METHOD(NewPositiveInteger) {
-  NanReturnValue(NanNew(1));
+  info.GetReturnValue().Set(NanNew(1));
 }
 
 NAN_METHOD(NewUtf8String) {
   const char s[] = "strïng";
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(NanNew(s));
 }
 
 NAN_METHOD(NewLatin1String) {
   const uint8_t s[] = "str\xefng";
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(NanNew(s));
 }
 
 NAN_METHOD(NewUcs2String) {
   uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(NanNew(s));
 }
 
 static const uint16_t ws[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
@@ -55,12 +55,12 @@ class ExtAsciiString : public NanExternalOneByteStringResource {
 
 NAN_METHOD(NewExternalStringResource) {
   v8::Local<v8::String> ext = NanNew(new ExtString());
-  NanReturnValue(ext);
+  info.GetReturnValue().Set(ext);
 }
 
 NAN_METHOD(NewExternalAsciiStringResource) {
   v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
-  NanReturnValue(ext);
+  info.GetReturnValue().Set(ext);
 }
 
 void Init(v8::Handle<v8::Object> target) {

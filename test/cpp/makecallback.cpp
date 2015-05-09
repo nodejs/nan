@@ -35,21 +35,21 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
     tpl->SetClassName(NanNew<v8::String>("MyObject"));
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-    NODE_SET_PROTOTYPE_METHOD(tpl, "call_emit", CallEmit);
+    NanSetPrototypeMethod(tpl, "call_emit", CallEmit);
 
     constructor.Reset(tpl->GetFunction());
     exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
 }
 
 NAN_METHOD(MyObject::New) {
-    if (args.IsConstructCall()) {
+    if (info.IsConstructCall()) {
         MyObject* obj = new MyObject();
-        obj->Wrap(args.This());
-        NanReturnValue(args.This());
+        obj->Wrap(info.This());
+        info.GetReturnValue().Set(info.This());
     }
     else {
         v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
-        NanReturnValue(cons->NewInstance());
+        info.GetReturnValue().Set(cons->NewInstance());
     }
 }
 
@@ -58,8 +58,8 @@ NAN_METHOD(MyObject::CallEmit) {
         NanNew("event"), // event name
     };
 
-    NanMakeCallback(args.This(), "emit", 1, argv);
-    NanReturnUndefined();
+    NanMakeCallback(info.This(), "emit", 1, argv);
+    info.GetReturnValue().SetUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {

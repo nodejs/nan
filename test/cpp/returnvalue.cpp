@@ -11,23 +11,21 @@
 NanGlobal<v8::Boolean> global;
 
 NAN_METHOD(ReturnValue) {
-  if (args.Length() == 1) {
-    NanReturnValue(args[0]);
+  const NanFunctionCallbackInfo<v8::Value> cbinfo = info;
+  NanReturnValue<v8::Value> ret = cbinfo.GetReturnValue();
+  if (cbinfo.Length() == 1) {
+    ret.Set(info[0].As<v8::String>());
   } else {
-    NanReturnValue(NanNew<v8::String>("default"));
+    ret.Set(NanNew<v8::String>("default"));
   }
 }
 
 NAN_METHOD(ReturnPrimitive) {
-  NanReturnValue(true);
-}
-
-NAN_METHOD(ReturnString) {
-  NanReturnValue("yes, it works");
+  info.GetReturnValue().Set(true);
 }
 
 NAN_METHOD(ReturnGlobal) {
-  NanReturnValue(global);
+  info.GetReturnValue().Set(global);
 }
 
 void Init (v8::Handle<v8::Object> target) {
@@ -40,10 +38,6 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("p")
     , NanNew<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
-  );
-  target->Set(
-      NanNew<v8::String>("s")
-    , NanNew<v8::FunctionTemplate>(ReturnString)->GetFunction()
   );
   target->Set(
       NanNew<v8::String>("q")

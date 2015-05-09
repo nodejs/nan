@@ -19,77 +19,78 @@
 static int magic = 1337;
 
 NAN_METHOD(NewNumber) {
-  NanReturnValue(NanNew<v8::Number>(0.5));
+  info.GetReturnValue().Set(NanNew<v8::Number>(0.5));
 }
 
 NAN_METHOD(NewNegativeInteger) {
-  NanReturnValue(NanNew<v8::Integer>(-1));
+  info.GetReturnValue().Set(NanNew<v8::Integer>(-1));
 }
 
 NAN_METHOD(NewPositiveInteger) {
-  NanReturnValue(NanNew<v8::Integer>(1));
+  info.GetReturnValue().Set(NanNew<v8::Integer>(1));
 }
 
 NAN_METHOD(NewUnsignedInteger) {
-  NanReturnValue(NanNew<v8::Integer>(0xFFFFFFFFu));
+  info.GetReturnValue().Set(NanNew<v8::Integer>(0xFFFFFFFFu));
 }
 
 NAN_METHOD(NewInt32FromPositive) {
-  NanReturnValue(NanNew<v8::Int32>(0xFFFFFFFF));
+  info.GetReturnValue().Set(NanNew<v8::Int32>(0xFFFFFFFF));
 }
 
 NAN_METHOD(NewInt32FromNegative) {
-  NanReturnValue(NanNew<v8::Int32>(-1));
+  info.GetReturnValue().Set(NanNew<v8::Int32>(-1));
 }
 
 NAN_METHOD(NewUint32FromPositive) {
-  NanReturnValue(NanNew<v8::Uint32>(0xFFFFFFFF));
+  info.GetReturnValue().Set(NanNew<v8::Uint32>(0xFFFFFFFF));
 }
 
 NAN_METHOD(NewUint32FromNegative) {
-  NanReturnValue(NanNew<v8::Uint32>(-1));
+  info.GetReturnValue().Set(NanNew<v8::Uint32>(-1));
 }
 
 NAN_METHOD(NewUtf8String) {
   const char s[] = "strïng";
-  NanReturnValue(NanNew<v8::String>(s));
+  info.GetReturnValue().Set(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewLatin1String) {
   const uint8_t s[] = "str\xefng";
-  NanReturnValue(NanNew<v8::String>(s));
+  info.GetReturnValue().Set(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewUcs2String) {
   const uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(NanNew(s));
 }
 
 NAN_METHOD(NewStdString) {
   const std::string s = "strïng";
-  NanReturnValue(NanNew<v8::String>(s));
+  info.GetReturnValue().Set(NanNew<v8::String>(s));
 }
 
 NAN_METHOD(NewRegExp) {
-  NanReturnValue(NanNew<v8::RegExp>(NanNew("foo"), v8::RegExp::kNone));
+  info.GetReturnValue().Set(
+      NanNew<v8::RegExp>(NanNew("foo"), v8::RegExp::kNone));
 }
 
 NAN_METHOD(NewStringObject) {
-  NanReturnValue(NanNew<v8::StringObject>(NanNew<v8::String>("foo")));
+  info.GetReturnValue().Set(NanNew<v8::StringObject>(NanNew("foo")));
 }
 
 NAN_METHOD(NewNumberObject) {
-  NanReturnValue(NanNew<v8::NumberObject>(0.5));
+  info.GetReturnValue().Set(NanNew<v8::NumberObject>(0.5));
 }
 
 NAN_METHOD(NewBooleanObject) {
-  NanReturnValue(NanNew<v8::BooleanObject>(true));
+  info.GetReturnValue().Set(NanNew<v8::BooleanObject>(true));
 }
 
 NAN_METHOD(NewExternal) {
   v8::Local<v8::External> ext = NanNew<v8::External>(&magic);
   assert(*static_cast<int *>(ext->Value()) == 1337);
-  NanReturnValue(NanNew<v8::String>("passed"));
+  info.GetReturnValue().Set(NanNew<v8::String>("passed"));
 }
 
 NAN_METHOD(NewSignature) {
@@ -98,42 +99,42 @@ NAN_METHOD(NewSignature) {
   v8::Local<v8::Signature> sig = NanNew<v8::Signature>(tmpl);
   tmpl = NanNew<v8::FunctionTemplate>(
       NewSignature, v8::Handle<v8::Value>(), sig);
-  NanReturnValue(NanNew<v8::String>("string"));
+  info.GetReturnValue().Set(NanNew<v8::String>("string"));
 }
 
 NAN_METHOD(NewScript) {
   v8::Local<NanUnboundScript> script = NanNew<NanUnboundScript>(NanNew("2+4"));
-  NanReturnValue(NanRunScript(script)->ToInt32());
+  info.GetReturnValue().Set(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(NewScript2) {
   v8::ScriptOrigin origin(NanNew<v8::String>("x"));
   v8::Local<NanUnboundScript> script =
       NanNew<NanUnboundScript>(NanNew("2+4"), origin);
-  NanReturnValue(NanRunScript(script)->ToInt32());
+  info.GetReturnValue().Set(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(CompileScript) {
   v8::Local<NanBoundScript> script = NanCompileScript(NanNew("2+4"));
-  NanReturnValue(NanRunScript(script)->ToInt32());
+  info.GetReturnValue().Set(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(CompileScript2) {
   v8::ScriptOrigin origin(NanNew<v8::String>("x"));
   v8::Local<NanBoundScript> script = NanCompileScript(NanNew("2+4"), origin);
-  NanReturnValue(NanRunScript(script)->ToInt32());
+  info.GetReturnValue().Set(NanRunScript(script)->ToInt32());
 }
 
 NAN_METHOD(NewDate) {
-  NanReturnValue(NanNew<v8::Date>(1337));
+  info.GetReturnValue().Set(NanNew<v8::Date>(1337));
 }
 
 NAN_METHOD(NewArray) {
-  NanReturnValue(NanNew<v8::Array>());
+  info.GetReturnValue().Set(NanNew<v8::Array>());
 }
 
 NAN_METHOD(NewBoolean) {
-  NanReturnValue(NanNew<v8::Boolean>(true));
+  info.GetReturnValue().Set(NanNew<v8::Boolean>(true));
 }
 
 // #212
@@ -142,7 +143,7 @@ NAN_METHOD(NewBoolean2) {
 # pragma warning( push )
 # pragma warning( disable : 4800 )
 #endif
-  NanReturnValue(NanNew<v8::Boolean>(1));
+  info.GetReturnValue().Set(NanNew<v8::Boolean>(1));
 #if defined(_MSC_VER)
 # pragma warning( pop )
 #endif

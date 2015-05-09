@@ -23,7 +23,7 @@ NAN_METHOD(SetAndGet) {
 
   delete d1;
 
-  NanReturnValue(NanNew<v8::Boolean>(d0 == d1));
+  info.GetReturnValue().Set(NanNew<v8::Boolean>(d0 == d1));
 }
 
 void Init (v8::Handle<v8::Object> target) {
