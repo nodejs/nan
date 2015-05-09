@@ -1357,17 +1357,29 @@ class NanCallback {
   }
 
   NAN_INLINE void SaveToPersistent(
+      const v8::Handle<v8::String> &key, const v8::Local<v8::Value> &value) {
+    NanScope();
+    NanNew(persistentHandle)->Set(key, value);
+  }
+
+  NAN_INLINE void SaveToPersistent(
       uint32_t index, const v8::Local<v8::Value> &value) {
     NanScope();
     NanNew(persistentHandle)->Set(index, value);
   }
 
-  v8::Local<v8::Value> GetFromPersistent(const char *key) const {
+  NAN_INLINE v8::Local<v8::Value> GetFromPersistent(const char *key) const {
     NanEscapableScope();
     return NanEscapeScope(NanNew(persistentHandle)->Get(NanNew(key)));
   }
 
-  v8::Local<v8::Value> GetFromPersistent(uint32_t index) const {
+  NAN_INLINE v8::Local<v8::Value>
+  GetFromPersistent(const v8::Local<v8::String> &key) const {
+    NanEscapableScope();
+    return NanEscapeScope(NanNew(persistentHandle)->Get(key));
+  }
+
+  NAN_INLINE v8::Local<v8::Value> GetFromPersistent(uint32_t index) const {
     NanEscapableScope();
     return NanEscapeScope(NanNew(persistentHandle)->Get(index));
   }
