@@ -316,6 +316,26 @@ class NanEscapableScope {
 #endif
 };
 
+//=== Locker ===================================================================
+
+class NanLocker {
+ private:
+  v8::Locker locker;
+
+ public:
+  explicit inline NanLocker(v8::Isolate *isolate) : locker(isolate) {}
+
+  inline static bool IsLocked(v8::Isolate *isolate) {
+    return v8::Locker::IsLocked(isolate);
+  }
+
+  inline static bool IsActive() { return v8::Locker::IsActive(); }
+};
+
+//=== Unlocker =================================================================
+
+class NanUnlocker : public v8::Unlocker {};
+
 /* node 0.12  */
 #if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
   NAN_INLINE
@@ -421,8 +441,6 @@ class NanEscapableScope {
       NAN_INDEX_QUERY_ARGS_TYPE;
   typedef void NAN_INDEX_QUERY_RETURN_TYPE;
 
-# define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
-# define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value)                                                 \
   return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
 # define NanReturnUndefined() return
@@ -803,8 +821,6 @@ class NanEscapableScope {
   typedef const v8::AccessorInfo& NAN_INDEX_QUERY_ARGS_TYPE;
   typedef v8::Handle<v8::Integer> NAN_INDEX_QUERY_RETURN_TYPE;
 
-# define NanLocker() v8::Locker locker
-# define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value)                                                 \
     return Nan::imp::NanEnsureHandleOrPersistent(value)
 # define NanReturnHolder() NanReturnValue(args.Holder())
