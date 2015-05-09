@@ -60,12 +60,12 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
 }
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
-  NanEscapableScope();
+  NanEscapableScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
       NanNew(settergetter_constructor);
   v8::Local<v8::Object> instance =
     constructorHandle->GetFunction()->NewInstance(0, NULL);
-  return NanEscapeScope(instance);
+  return scope.Escape(instance);
 }
 
 NAN_METHOD(SetterGetter::New) {
