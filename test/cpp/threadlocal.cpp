@@ -31,7 +31,7 @@ class TlsTest : public NanAsyncWorker {
     ok(_(NULL == nauv_key_get(&tls_key)));
   }
   void WorkComplete() {
-    NanScope();
+    NanScope scope;
     for (unsigned j = 0; j < i; ++j)
       t->ok(res[j].ok, res[j].msg);
     nauv_key_delete(&tls_key);
