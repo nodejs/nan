@@ -16,10 +16,12 @@
 # pragma warning( disable : 4530 )
 # include <string>
 # include <vector>
+# include <map>
 # pragma warning( pop )
 #else
 # include <string>
 # include <vector>
+# include <map>
 #endif
 
 //==============================================================================
@@ -98,11 +100,29 @@ Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Value> data
                                   , v8::Handle<v8::Signature> signature) {
+  v8::HandleScope scope;
+
+  static std::map<NanFunctionCallback, Nan::imp::FunctionWrapper*> cbmap;
+  v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New();
+  tpl->SetInternalFieldCount(Nan::imp::kFunctionFieldCount);
+  v8::Local<v8::Object> obj = tpl->NewInstance();
+
+  obj->SetPointerInInternalField(
+      Nan::imp::kFunctionIndex
+    , Nan::imp::GetWrapper<NanFunctionCallback,
+          Nan::imp::FunctionWrapper>(callback));
+  v8::Local<v8::Value> val = v8::Local<v8::Value>::New(data);
+
+  if (!val.IsEmpty()) {
+    obj->SetInternalField(Nan::imp::kDataIndex, val);
+  }
+
   // Note(agnat): Emulate length argument here. Unfortunately, I couldn't find
   // a way. Have at it though...
-  return v8::FunctionTemplate::New( callback
-                                  , data
-                                  , signature);
+  return scope.Close(
+      v8::FunctionTemplate::New( Nan::imp::FunctionCallbackWrapper
+                               , obj
+                               , signature));
 }
 
 //=== Number ===================================================================

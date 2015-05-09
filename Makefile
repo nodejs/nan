@@ -15,6 +15,9 @@ LINT_SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
+	nan_callbacks.h \
+	nan_callbacks_12_inl.h \
+	nan_callbacks_pre_12_inl.h \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
 	nan_new.h \
@@ -22,18 +25,21 @@ LINT_SOURCES = \
 	nan_persistent_pre_12_inl.h \
 	nan_string_bytes.h \
 	nan_weak.h \
+	test/cpp/accessors.cpp \
 	test/cpp/asyncworker.cpp \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncworkererror.cpp \
 	test/cpp/bufferworkerpersistent.cpp \
 	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
+	test/cpp/indexedinterceptors.cpp \
 	test/cpp/isolatedata.cpp \
 	test/cpp/makecallback.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
 	test/cpp/multifile2.h \
+	test/cpp/namedinterceptors.cpp \
 	test/cpp/nancallback.cpp \
 	test/cpp/nannew.cpp \
 	test/cpp/news.cpp \
@@ -67,6 +73,7 @@ forcetest:
 	npm test
 
 $(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h \
+		nan_callbacks.h nan_callbacks_12_inl.h nan_callbacks_pre_12_inl.h \
 		nan_persistent_12_inl.h nan_persistent_pre_12_inl.h nan_weak.h \
 		nan_string_bytes.h test/binding.gyp $(SOURCES)
 	cd test/ && ../node_modules/.bin/node-gyp rebuild

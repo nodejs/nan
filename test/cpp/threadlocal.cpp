@@ -54,9 +54,9 @@ class TlsTest : public NanAsyncWorker {
 };
 
 NAN_METHOD(thread_local_storage) {
-  NanTap *t = new NanTap(args[0]);
+  NanTap *t = new NanTap(info[0]);
   NanAsyncQueueWorker(new TlsTest(t));
-  return_NanUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {

@@ -46,14 +46,14 @@ class ProgressWorker : public NanAsyncProgressWorker {
 };
 
 NAN_METHOD(DoProgress) {
-  NanCallback *progress = new NanCallback(args[2].As<v8::Function>());
-  NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
+  NanCallback *progress = new NanCallback(info[2].As<v8::Function>());
+  NanCallback *callback = new NanCallback(info[3].As<v8::Function>());
   NanAsyncQueueWorker(new ProgressWorker(
       callback
     , progress
-    , args[0]->Uint32Value()
-    , args[1]->Uint32Value()));
-  NanReturnUndefined();
+    , info[0]->Uint32Value()
+    , info[1]->Uint32Value()));
+  info.GetReturnValue().SetUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
