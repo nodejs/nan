@@ -30,8 +30,6 @@ MyObject::~MyObject() {
 }
 
 void MyObject::Init(v8::Handle<v8::Object> exports) {
-    NanScope();
-
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
     tpl->SetClassName(NanNew<v8::String>("MyObject"));
@@ -44,8 +42,6 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
 }
 
 NAN_METHOD(MyObject::New) {
-    NanScope();
-
     if (args.IsConstructCall()) {
         MyObject* obj = new MyObject();
         obj->Wrap(args.This());
@@ -58,7 +54,6 @@ NAN_METHOD(MyObject::New) {
 }
 
 NAN_METHOD(MyObject::CallEmit) {
-    NanScope();
     v8::Handle<v8::Value> argv[1] = {
         NanNew("event"), // event name
     };

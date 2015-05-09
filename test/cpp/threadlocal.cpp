@@ -15,7 +15,6 @@
 class TlsTest : public NanAsyncWorker {
 public:
   TlsTest(NanTap *t) : NanAsyncWorker(NULL), t(t), i(0) {
-    NanScope();
     t->plan(7);
     t->ok(_(0 == nauv_key_create(&tls_key)));
     t->ok(_(NULL == nauv_key_get(&tls_key)));
@@ -52,7 +51,6 @@ private:
 };
 
 NAN_METHOD(thread_local_storage) {
-  NanScope();
   NanTap *t = new NanTap(args[0]);
   NanAsyncQueueWorker(new TlsTest(t));
   return_NanUndefined();

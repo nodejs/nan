@@ -21,7 +21,6 @@ NAN_GC_CALLBACK(gcEpilogueCallback) {
 }
 
 NAN_METHOD(Hook) {
-  NanScope();
   NanAssignPersistent(callback, args[0].As<v8::Function>());
   NanAddGCPrologueCallback(gcPrologueCallback);
   NanAddGCEpilogueCallback(gcEpilogueCallback);

@@ -20,9 +20,6 @@ class BufferWorker : public NanAsyncWorker {
         , v8::Local<v8::Object> &bufferHandle
       )
     : NanAsyncWorker(callback), milliseconds(milliseconds) {
-
-      NanScope();
-
       SaveToPersistent("buffer", bufferHandle);
     }
 
@@ -44,7 +41,6 @@ class BufferWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(DoSleep) {
-  NanScope();
   v8::Local<v8::Object> bufferHandle = args[1].As<v8::Object>();
   NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
