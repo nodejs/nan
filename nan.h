@@ -493,20 +493,19 @@ namespace Nan { namespace imp {
       handle.Reset(v8::Isolate::GetCurrent(), obj);
   }
 
-# define _NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
-
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
+# define NAN_ERROR(fun, errmsg) fun(NanNew<v8::String>(errmsg))
+# define NAN_THROW_ERROR(fun, errmsg)                                          \
     do {                                                                       \
       NanScope();                                                              \
-      v8::Isolate::GetCurrent()->ThrowException(_NAN_ERROR(fun, errmsg));      \
+      v8::Isolate::GetCurrent()->ThrowException(NAN_ERROR(fun, errmsg));       \
     } while (0);
 
   NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
-    return  _NAN_ERROR(v8::Exception::Error, errmsg);
+    return  NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE void NanThrowError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
+    NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE void NanThrowError(v8::Handle<v8::Value> error) {
@@ -532,19 +531,19 @@ namespace Nan { namespace imp {
   }
 
   NAN_INLINE v8::Local<v8::Value> NanTypeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
+    return NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE void NanThrowTypeError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanRangeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
+    return NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   NAN_INLINE void NanThrowRangeError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   template<typename T> NAN_INLINE void NanDisposePersistent(
@@ -891,22 +890,21 @@ namespace Nan { namespace imp {
       handle = v8::Persistent<T>::New(obj);
   }
 
-# define _NAN_ERROR(fun, errmsg)                                               \
-    fun(v8::String::New(errmsg))
+# define NAN_ERROR(fun, errmsg) fun(v8::String::New(errmsg))
 
-# define _NAN_THROW_ERROR(fun, errmsg)                                         \
+# define NAN_THROW_ERROR(fun, errmsg)                                          \
     do {                                                                       \
       NanScope();                                                              \
       return v8::Local<v8::Value>::New(                                        \
-        v8::ThrowException(_NAN_ERROR(fun, errmsg)));                          \
+        v8::ThrowException(NAN_ERROR(fun, errmsg)));                           \
     } while (0);
 
   NAN_INLINE v8::Local<v8::Value> NanError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::Error, errmsg);
+    return NAN_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowError(const char* errmsg) {
-    _NAN_THROW_ERROR(v8::Exception::Error, errmsg);
+    NAN_THROW_ERROR(v8::Exception::Error, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowError(
@@ -934,25 +932,25 @@ namespace Nan { namespace imp {
   }
 
   NAN_INLINE v8::Local<v8::Value> NanTypeError(const char* errmsg) {
-    return _NAN_ERROR(v8::Exception::TypeError, errmsg);
+    return NAN_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowTypeError(
       const char* errmsg
   ) {
-    _NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::TypeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanRangeError(
       const char* errmsg
   ) {
-    return _NAN_ERROR(v8::Exception::RangeError, errmsg);
+    return NAN_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanThrowRangeError(
       const char* errmsg
   ) {
-    _NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
+    NAN_THROW_ERROR(v8::Exception::RangeError, errmsg);
   }
 
   template<typename T>
