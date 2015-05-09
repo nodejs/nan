@@ -9,7 +9,7 @@
 #include <nan.h>
 #include <cstring>
 
-class SetterGetter : public node::ObjectWrap {
+class SetterGetter : public NanObjectWrap {
  public:
   static void Init (v8::Handle<v8::Object> target);
   static v8::Handle<v8::Value> NewInstance ();
@@ -29,7 +29,7 @@ class SetterGetter : public node::ObjectWrap {
 static NanPersistent<v8::FunctionTemplate> settergetter_constructor;
 
 NAN_METHOD(CreateNew) {
-  NanReturnValue(SetterGetter::NewInstance());
+  info.GetReturnValue().Set(SetterGetter::NewInstance());
 }
 
 SetterGetter::SetterGetter() {
@@ -45,11 +45,12 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
   settergetter_constructor.Reset(tpl);
   tpl->SetClassName(NanNew<v8::String>("SetterGetter"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
+  NanSetPrototypeMethod(tpl, "log", SetterGetter::Log);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
-  proto->SetAccessor(NanNew<v8::String>("prop1"), SetterGetter::GetProp1);
-  proto->SetAccessor(
-    NanNew<v8::String>("prop2")
+  NanSetAccessor(proto, NanNew<v8::String>("prop1"), SetterGetter::GetProp1);
+  NanSetAccessor(
+    proto
+  , NanNew<v8::String>("prop2")
   , SetterGetter::GetProp2
   , SetterGetter::SetProp2
   );
@@ -75,14 +76,14 @@ NAN_METHOD(SetterGetter::New) {
       settergetter->log
     , "New()\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
-  settergetter->Wrap(args.This());
+  settergetter->Wrap(info.This());
 
-  NanReturnValue(args.This());
+  info.GetReturnValue().Set(info.This());
 }
 
 NAN_GETTER(SetterGetter::GetProp1) {
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+    NanObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -99,12 +100,12 @@ NAN_GETTER(SetterGetter::GetProp1) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  NanReturnValue(NanNew(settergetter->prop1));
+  info.GetReturnValue().Set(NanNew(settergetter->prop1));
 }
 
 NAN_GETTER(SetterGetter::GetProp2) {
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+    NanObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -121,12 +122,12 @@ NAN_GETTER(SetterGetter::GetProp2) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  NanReturnValue(NanNew(settergetter->prop2));
+  info.GetReturnValue().Set(NanNew(settergetter->prop2));
 }
 
 NAN_SETTER(SetterGetter::SetProp2) {
   SetterGetter* settergetter =
-      node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+      NanObjectWrap::Unwrap<SetterGetter>(info.This());
   strncpy(
       settergetter->prop2
     , *NanUtf8String(value)
@@ -151,9 +152,9 @@ NAN_SETTER(SetterGetter::SetProp2) {
 
 NAN_METHOD(SetterGetter::Log) {
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+    NanObjectWrap::Unwrap<SetterGetter>(info.This());
 
-  NanReturnValue(NanNew(settergetter->log));
+  info.GetReturnValue().Set(NanNew(settergetter->log));
 }
 
-NODE_MODULE(settergetter, SetterGetter::Init)
+NODE_MODULE(accessors, SetterGetter::Init)

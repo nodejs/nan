@@ -9,22 +9,22 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnUtf8String) {
-  NanReturnValue(NanNew(*NanUtf8String(args[0])));
+  info.GetReturnValue().Set(NanNew(*NanUtf8String(info[0])));
 }
 
 NAN_METHOD(HeapString) {
-  NanUtf8String *s = new NanUtf8String(args[0]);
+  NanUtf8String *s = new NanUtf8String(info[0]);
   v8::Local<v8::String> res = NanNew(**s);
   delete s;
-  NanReturnValue(res);
+  info.GetReturnValue().Set(res);
 }
 
 NAN_METHOD(EncodeHex) {
-  NanReturnValue(NanEncode("hello", 5, Nan::HEX));
+  info.GetReturnValue().Set(NanEncode("hello", 5, Nan::HEX));
 }
 
 NAN_METHOD(EncodeUCS2) {
-  NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
+  info.GetReturnValue().Set(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
 }
 
 NanPersistent<v8::FunctionTemplate> returnUtf8String_persistent;

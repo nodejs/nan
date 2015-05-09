@@ -9,41 +9,36 @@
 #include <nan.h>
 
 NAN_METHOD(GlobalContext) {
-  NanCallback(args[0].As<v8::Function>()).Call(0, NULL);
-  NanReturnUndefined();
+  NanCallback(info[0].As<v8::Function>()).Call(0, NULL);
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(SpecificContext) {
-  NanCallback cb(args[0].As<v8::Function>());
+  NanCallback cb(info[0].As<v8::Function>());
   cb.Call(NanGetCurrentContext()->Global(), 0, NULL);
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(CustomReceiver) {
-  NanCallback cb(args[0].As<v8::Function>());
-  cb.Call(args[1].As<v8::Object>(), 0, NULL);
-  NanReturnUndefined();
+  NanCallback cb(info[0].As<v8::Function>());
+  cb.Call(info[1].As<v8::Object>(), 0, NULL);
 }
 
 NAN_METHOD(CompareCallbacks) {
-  NanCallback cb1(args[0].As<v8::Function>());
-  NanCallback cb2(args[1].As<v8::Function>());
-  NanCallback cb3(args[2].As<v8::Function>());
+  NanCallback cb1(info[0].As<v8::Function>());
+  NanCallback cb2(info[1].As<v8::Function>());
+  NanCallback cb3(info[2].As<v8::Function>());
 
-  NanReturnValue(NanNew<v8::Boolean>(cb1 == cb2 && cb1 != cb3));
+  info.GetReturnValue().Set(NanNew<v8::Boolean>(cb1 == cb2 && cb1 != cb3));
 }
 
 NAN_METHOD(CallDirect) {
-  NanCallback cb(args[0].As<v8::Function>());
+  NanCallback cb(info[0].As<v8::Function>());
   (*cb)->Call(NanGetCurrentContext()->Global(), 0, NULL);
-
-  NanReturnUndefined();
 }
 
 NAN_METHOD(CallAsFunction) {
-  NanCallback(args[0].As<v8::Function>())();
-
-  NanReturnUndefined();
+  NanCallback(info[0].As<v8::Function>())();
 }
 
 void Init (v8::Handle<v8::Object> target) {

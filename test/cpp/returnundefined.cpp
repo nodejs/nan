@@ -9,7 +9,7 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnUndefined) {
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 void Init (v8::Handle<v8::Object> target) {

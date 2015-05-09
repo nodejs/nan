@@ -15,7 +15,7 @@ class MyObject : public NanObjectWrap {
     tpl->SetClassName(NanNew("MyObject"));
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getHandle", GetHandle);
+    NanSetPrototypeMethod(tpl, "getHandle", GetHandle);
 
     constructor.Reset(tpl->GetFunction());
     exports->Set(NanNew("MyObject"), tpl->GetFunction());
@@ -26,22 +26,22 @@ class MyObject : public NanObjectWrap {
   ~MyObject() {}
 
   static NAN_METHOD(New) {
-    if (args.IsConstructCall()) {
-      double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+    if (info.IsConstructCall()) {
+      double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
       MyObject *obj = new MyObject(value);
-      obj->Wrap(args.This());
-      NanReturnThis();
+      obj->Wrap(info.This());
+      info.GetReturnValue().Set(info.This());
     } else {
       const int argc = 1;
-      v8::Local<v8::Value> argv[argc] = {args[0]};
+      v8::Local<v8::Value> argv[argc] = {info[0]};
       v8::Local<v8::Function> cons = NanNew(constructor);
-      NanReturnValue(cons->NewInstance(argc, argv));
+      info.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
   }
 
   static NAN_METHOD(GetHandle) {
-    MyObject* obj = NanObjectWrap::Unwrap<MyObject>(args.This());
-    NanReturnValue(obj->handle());
+    MyObject* obj = NanObjectWrap::Unwrap<MyObject>(info.This());
+    info.GetReturnValue().Set(obj->handle());
   }
 
   static NanPersistent<v8::Function> constructor;
