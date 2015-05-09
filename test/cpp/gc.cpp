@@ -22,11 +22,13 @@ NAN_GC_CALLBACK(gcEpilogueCallback) {
 NAN_METHOD(Hook) {
   NanAddGCPrologueCallback(gcPrologueCallback);
   NanAddGCEpilogueCallback(gcEpilogueCallback);
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(Check) {
-  NanReturnValue(NanNew(prologue_called && epilogue_called));
+  NanScope();
+  info.GetReturnValue().Set(
+      NanNew(prologue_called && epilogue_called));
 }
 
 void Init (v8::Handle<v8::Object> target) {

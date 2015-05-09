@@ -12,35 +12,35 @@
 static v8::Persistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {
-  NanAssignPersistent(persistentTest1, args[0].As<v8::String>());
-  NanReturnUndefined();
+  NanAssignPersistent(persistentTest1, info[0].As<v8::String>());
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(Get1) {
-  NanReturnValue(NanNew(persistentTest1));
+  info.GetReturnValue().Set(NanNew(persistentTest1));
 }
 
 NAN_METHOD(Dispose1) {
   NanDisposePersistent(persistentTest1);
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(ToPersistentAndBackAgain) {
   v8::Persistent<v8::Object> persistent;
-  NanAssignPersistent(persistent, args[0].As<v8::Object>());
+  NanAssignPersistent(persistent, info[0].As<v8::Object>());
   v8::Local<v8::Object> object = NanNew(persistent);
   NanDisposePersistent(persistent);
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
-  NanReturnValue(object);
+  info.GetReturnValue().Set(object);
 }
 
 NAN_METHOD(PersistentToPersistent) {
   v8::Persistent<v8::String> persistent;
-  NanAssignPersistent(persistent, args[0].As<v8::String>());
+  NanAssignPersistent(persistent, info[0].As<v8::String>());
   NanAssignPersistent(persistentTest1, persistent);
   NanDisposePersistent(persistent);
   NanDisposePersistent(persistentTest1);
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 void Init (v8::Handle<v8::Object> target) {

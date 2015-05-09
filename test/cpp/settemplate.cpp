@@ -49,14 +49,14 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
 }
 
 NAN_METHOD(MyObject::New) {
-	if (args.IsConstructCall()) {
+	if (info.IsConstructCall()) {
 		MyObject* obj = new MyObject();
-		obj->Wrap(args.This());
-		NanReturnValue(args.This());
+		obj->Wrap(info.This());
+		info.GetReturnValue().Set(info.This());
 	}
 	else {
 		v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
-		NanReturnValue(cons->NewInstance());
+		info.GetReturnValue().Set(cons->NewInstance());
 	}
 }
 

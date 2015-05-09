@@ -19,16 +19,19 @@ LINT_SOURCES = \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
 	nan_new.h \
+	test/cpp/accessors.cpp \
 	test/cpp/asyncworker.cpp \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncworkererror.cpp \
 	test/cpp/bufferworkerpersistent.cpp \
 	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
+	test/cpp/indexedinterceptors.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
 	test/cpp/multifile2.h \
+	test/cpp/namedinterceptors.cpp \
 	test/cpp/nancallback.cpp \
 	test/cpp/nannew.cpp \
 	test/cpp/news.cpp \
@@ -38,7 +41,6 @@ LINT_SOURCES = \
 	test/cpp/returnnull.cpp \
 	test/cpp/returnundefined.cpp \
 	test/cpp/returnvalue.cpp \
-	test/cpp/settergetter.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
 	test/cpp/weak.cpp \

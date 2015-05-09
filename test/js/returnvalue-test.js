@@ -11,14 +11,12 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'returnvalue' });
 
 test('returnvalue', function (t) {
-  t.plan(9);
+  t.plan(7);
   t.type(bindings.r, 'function');
   t.type(bindings.p, 'function');
-  t.type(bindings.s, 'function');
   t.type(bindings.q, 'function');
   t.equal(bindings.r('a string value'), 'a string value');
   t.equal(bindings.r(), 'default');
   t.ok(bindings.p());
-  t.equal(bindings.s(), 'yes, it works');
   t.ok(bindings.q());
 });
