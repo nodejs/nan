@@ -35,7 +35,7 @@ class BufferWorker : public NanAsyncWorker {
   }
 
   void HandleOKCallback () {
-    NanScope();
+    NanScope scope;
 
     v8::Local<v8::Value> handle = GetFromPersistent("buffer");
     callback->Call(1, &handle);

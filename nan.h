@@ -267,6 +267,55 @@ namespace Nan { namespace imp {
 }  // end of namespace imp
 }  // end of namespace Nan
 
+//=== HandleScope ==============================================================
+
+class NanScope {
+  v8::HandleScope scope;
+
+ public:
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+  inline static int NumberOfHandles() {
+    return v8::HandleScope::NumberOfHandles(v8::Isolate::GetCurrent());
+  }
+  inline NanScope() : scope(v8::Isolate::GetCurrent()) {}
+#else
+  inline static int NumberOfHandles() {
+    return v8::HandleScope::NumberOfHandles();
+  }
+#endif
+};
+
+class NanEscapableScope {
+ public:
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+  inline static int NumberOfHandles() {
+    return v8::EscapableHandleScope::NumberOfHandles(v8::Isolate::GetCurrent());
+  }
+
+  inline NanEscapableScope() : scope(v8::Isolate::GetCurrent()) {}
+
+  template<typename T>
+  inline v8::Local<T> Escape(v8::Local<T> value) {
+    return scope.Escape(value);
+  }
+
+ private:
+  v8::EscapableHandleScope scope;
+#else
+  inline static int NumberOfHandles() {
+    return v8::HandleScope::NumberOfHandles();
+  }
+
+  template<typename T>
+  inline v8::Local<T> Escape(v8::Local<T> value) {
+    return scope.Close(value);
+  }
+
+ private:
+  v8::HandleScope scope;
+#endif
+};
+
 /* node 0.12  */
 #if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
   NAN_INLINE
@@ -372,11 +421,6 @@ namespace Nan { namespace imp {
       NAN_INDEX_QUERY_ARGS_TYPE;
   typedef void NAN_INDEX_QUERY_RETURN_TYPE;
 
-# define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
-# define NanEscapableScope()                                                   \
-  v8::EscapableHandleScope scope(v8::Isolate::GetCurrent())
-
-# define NanEscapeScope(val) scope.Escape(Nan::imp::NanEnsureLocal(val))
 # define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
 # define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value)                                                 \
@@ -388,23 +432,23 @@ namespace Nan { namespace imp {
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::Undefined(v8::Isolate::GetCurrent())));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::Undefined(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE v8::Local<v8::Primitive> NanNull() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::Null(v8::Isolate::GetCurrent())));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::Null(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> NanTrue() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::True(v8::Isolate::GetCurrent())));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::True(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> NanFalse() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::False(v8::Isolate::GetCurrent())));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::False(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
@@ -492,7 +536,7 @@ namespace Nan { namespace imp {
 
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
-      NanScope();                                                              \
+      NanScope scope;                                                          \
       v8::Isolate::GetCurrent()->ThrowException(_NAN_ERROR(fun, errmsg));      \
     } while (0);
 
@@ -505,7 +549,7 @@ namespace Nan { namespace imp {
   }
 
   NAN_INLINE void NanThrowError(v8::Handle<v8::Value> error) {
-    NanScope();
+    NanScope scope;
     v8::Isolate::GetCurrent()->ThrowException(error);
   }
 
@@ -778,9 +822,6 @@ namespace Nan { namespace imp {
   typedef const v8::AccessorInfo& NAN_INDEX_QUERY_ARGS_TYPE;
   typedef v8::Handle<v8::Integer> NAN_INDEX_QUERY_RETURN_TYPE;
 
-# define NanScope() v8::HandleScope scope
-# define NanEscapableScope() v8::HandleScope scope
-# define NanEscapeScope(val) scope.Close(val)
 # define NanLocker() v8::Locker locker
 # define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value)                                                 \
@@ -792,23 +833,23 @@ namespace Nan { namespace imp {
 # define NanReturnEmptyString() return v8::String::Empty()
 
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::Undefined()));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::Undefined()));
   }
 
   NAN_INLINE v8::Local<v8::Primitive> NanNull() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::Null()));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::Null()));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> NanTrue() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::True()));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::True()));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> NanFalse() {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(v8::False()));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(v8::False()));
   }
 
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
@@ -886,7 +927,7 @@ namespace Nan { namespace imp {
 
 # define _NAN_THROW_ERROR(fun, errmsg)                                         \
     do {                                                                       \
-      NanScope();                                                              \
+      NanScope scope;                                                          \
       return v8::Local<v8::Value>::New(                                        \
         v8::ThrowException(_NAN_ERROR(fun, errmsg)));                          \
     } while (0);
@@ -902,7 +943,7 @@ namespace Nan { namespace imp {
   NAN_INLINE v8::Local<v8::Value> NanThrowError(
       v8::Handle<v8::Value> error
   ) {
-    NanScope();
+    NanScope scope;
     return v8::Local<v8::Value>::New(v8::ThrowException(error));
   }
 
@@ -1197,13 +1238,13 @@ typedef void (*NanFreeCallback)(char *data, void *hint);
 class NanCallback {
  public:
   NanCallback() {
-    NanScope();
+    NanScope scope;
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
     NanAssignPersistent(handle, obj);
   }
 
   explicit NanCallback(const v8::Handle<v8::Function> &fn) {
-    NanScope();
+    NanScope scope;
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
     NanAssignPersistent(handle, obj);
     SetFunction(fn);
@@ -1215,7 +1256,7 @@ class NanCallback {
   }
 
   bool operator==(const NanCallback &other) const {
-    NanScope();
+    NanScope scope;
     v8::Local<v8::Value> a = NanNew(handle)->Get(kCallbackIndex);
     v8::Local<v8::Value> b = NanNew(other.handle)->Get(kCallbackIndex);
     return a->StrictEquals(b);
@@ -1226,18 +1267,18 @@ class NanCallback {
   }
 
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
-    NanScope();
+    NanScope scope;
     NanNew(handle)->Set(kCallbackIndex, fn);
   }
 
   NAN_INLINE v8::Local<v8::Function> GetFunction() const {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(handle)->Get(kCallbackIndex)
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(handle)->Get(kCallbackIndex)
         .As<v8::Function>());
   }
 
   NAN_INLINE bool IsEmpty() const {
-    NanScope();
+    NanScope scope;
     return NanNew(handle)->Get(kCallbackIndex)->IsUndefined();
   }
 
@@ -1273,32 +1314,32 @@ class NanCallback {
                            , v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
-    NanEscapableScope();
+    NanEscapableScope scope;
 
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    return NanEscapeScope(node::MakeCallback(
+    return scope.Escape(Nan::imp::NanEnsureLocal(node::MakeCallback(
         isolate
       , target
       , callback
       , argc
       , argv
-    ));
+    )));
   }
 #else
   v8::Handle<v8::Value> Call_(v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
-    NanEscapableScope();
+    NanEscapableScope scope;
 
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
-    return NanEscapeScope(node::MakeCallback(
+    return scope.Escape(Nan::imp::NanEnsureLocal(node::MakeCallback(
         target
       , callback
       , argc
       , argv
-    ));
+    )));
   }
 #endif
 };
@@ -1309,13 +1350,13 @@ class NanCallback {
       : callback(callback_), errmsg_(NULL) {
     request.data = this;
 
-    NanScope();
+    NanScope scope;
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
     NanAssignPersistent(persistentHandle, obj);
   }
 
   virtual ~NanAsyncWorker() {
-    NanScope();
+    NanScope scope;
 
     if (!persistentHandle.IsEmpty())
       NanDisposePersistent(persistentHandle);
@@ -1326,7 +1367,7 @@ class NanCallback {
   }
 
   virtual void WorkComplete() {
-    NanScope();
+    NanScope scope;
 
     if (errmsg_ == NULL)
       HandleOKCallback();
@@ -1338,36 +1379,36 @@ class NanCallback {
 
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Value> &value) {
-    NanScope();
+    NanScope scope;
     NanNew(persistentHandle)->Set(NanNew(key), value);
   }
 
   NAN_INLINE void SaveToPersistent(
       const v8::Handle<v8::String> &key, const v8::Local<v8::Value> &value) {
-    NanScope();
+    NanScope scope;
     NanNew(persistentHandle)->Set(key, value);
   }
 
   NAN_INLINE void SaveToPersistent(
       uint32_t index, const v8::Local<v8::Value> &value) {
-    NanScope();
+    NanScope scope;
     NanNew(persistentHandle)->Set(index, value);
   }
 
   NAN_INLINE v8::Local<v8::Value> GetFromPersistent(const char *key) const {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(persistentHandle)->Get(NanNew(key)));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(persistentHandle)->Get(NanNew(key)));
   }
 
   NAN_INLINE v8::Local<v8::Value>
   GetFromPersistent(const v8::Local<v8::String> &key) const {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(persistentHandle)->Get(key));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(persistentHandle)->Get(key));
   }
 
   NAN_INLINE v8::Local<v8::Value> GetFromPersistent(uint32_t index) const {
-    NanEscapableScope();
-    return NanEscapeScope(NanNew(persistentHandle)->Get(index));
+    NanEscapableScope scope;
+    return scope.Escape(NanNew(persistentHandle)->Get(index));
   }
 
   virtual void Execute() = 0;
@@ -1387,7 +1428,7 @@ class NanCallback {
   }
 
   virtual void HandleErrorCallback() {
-    NanScope();
+    NanScope scope;
 
     v8::Local<v8::Value> argv[] = {
         v8::Exception::Error(NanNew<v8::String>(ErrorMessage()))

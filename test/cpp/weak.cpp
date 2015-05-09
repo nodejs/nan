@@ -20,11 +20,11 @@ NanWeakCallbackData<v8::Function, int> & data) {  // NOLINT(runtime/references)
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-  NanEscapableScope();
+  NanEscapableScope scope;
   v8::Local<v8::String> lstring = NanNew<v8::String>("result");
   int *parameter = new int(0);
   NanMakeWeakPersistent(func, parameter, weakCallback);
-  return NanEscapeScope(lstring);
+  return scope.Escape(lstring);
 }
 
 NAN_METHOD(Hustle) {
