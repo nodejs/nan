@@ -285,8 +285,6 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
  * <a href="#api_nan_escapable_scope"><b><code>NanEscapableScope</code></b></a>
  * <a href="#api_nan_escape_scope"><b><code>NanEscapeScope</code></b></a>
- * <a href="#api_nan_locker"><b><code>NanLocker</code></b></a>
- * <a href="#api_nan_unlocker"><b><code>NanUnlocker</code></b></a>
  * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
@@ -662,32 +660,6 @@ Handle<String> Foo::Bar() {
 <a name="api_nan_escape_scope"></a>
 ### Local&lt;T&gt; NanEscapeScope(Handle&lt;T&gt; value);
 Use together with `NanEscapableScope` to escape the scope. Corresponds to `HandleScope::Close` or `EscapableHandleScope::Escape`.
-
-<a name="api_nan_locker"></a>
-### NanLocker()
-
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanLocker()` necessary, use it in place of `Locker locker`:
-
-```c++
-NAN_METHOD(Foo::Bar) {
-  NanLocker();
-  ...
-  NanUnlocker();
-}
-```
-
-<a name="api_nan_unlocker"></a>
-### NanUnlocker()
-
-The introduction of `isolate` references for many V8 calls in Node 0.11 makes `NanUnlocker()` necessary, use it in place of `Unlocker unlocker`:
-
-```c++
-NAN_METHOD(Foo::Bar) {
-  NanLocker();
-  ...
-  NanUnlocker();
-}
-```
 
 <a name="api_nan_get_internal_field_pointer"></a>
 ### void * NanGetInternalFieldPointer(Handle&lt;Object&gt;, int)

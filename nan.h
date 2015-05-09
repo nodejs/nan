@@ -440,8 +440,6 @@ class NanEscapableScope {
       NAN_INDEX_QUERY_ARGS_TYPE;
   typedef void NAN_INDEX_QUERY_RETURN_TYPE;
 
-# define NanLocker() v8::Locker locker(v8::Isolate::GetCurrent())
-# define NanUnlocker() v8::Unlocker unlocker(v8::Isolate::GetCurrent())
 # define NanReturnValue(value)                                                 \
   return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
 # define NanReturnUndefined() return
@@ -822,8 +820,6 @@ class NanEscapableScope {
   typedef const v8::AccessorInfo& NAN_INDEX_QUERY_ARGS_TYPE;
   typedef v8::Handle<v8::Integer> NAN_INDEX_QUERY_RETURN_TYPE;
 
-# define NanLocker() v8::Locker locker
-# define NanUnlocker() v8::Unlocker unlocker
 # define NanReturnValue(value)                                                 \
     return Nan::imp::NanEnsureHandleOrPersistent(value)
 # define NanReturnHolder() NanReturnValue(args.Holder())
