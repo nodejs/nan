@@ -31,7 +31,7 @@ class ProgressWorker : public NanAsyncProgressWorker {
   }
 
   void HandleProgressCallback(const char *data, size_t size) {
-    NanScope();
+    NanScope scope;
 
     v8::Local<v8::Value> argv[] = {
         NanNew<v8::Integer>(*reinterpret_cast<int*>(const_cast<char*>(data)))
