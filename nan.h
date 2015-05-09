@@ -387,11 +387,6 @@ namespace Nan { namespace imp {
 # define NanReturnNull() return args.GetReturnValue().SetNull()
 # define NanReturnEmptyString() return args.GetReturnValue().SetEmptyString()
 
-  NAN_INLINE
-  v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap *obj) {
-    return const_cast<node::ObjectWrap*>(obj)->handle();
-  }
-
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
     NanEscapableScope();
     return NanEscapeScope(NanNew(v8::Undefined(v8::Isolate::GetCurrent())));
@@ -795,11 +790,6 @@ namespace Nan { namespace imp {
 # define NanReturnUndefined() return v8::Undefined()
 # define NanReturnNull() return v8::Null()
 # define NanReturnEmptyString() return v8::String::Empty()
-
-  NAN_INLINE
-  v8::Local<v8::Object> NanObjectWrapHandle(const node::ObjectWrap *obj) {
-    return v8::Local<v8::Object>::New(obj->handle_);
-  }
 
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
     NanEscapableScope();
@@ -1684,6 +1674,16 @@ NAN_INLINE void NanSetInstanceTemplate(
 ) {
   NanSetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
+
+//=== ObjectWrap ===============================================================
+
+class NanObjectWrap : public node::ObjectWrap {
+#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
+ public:
+  inline v8::Local<v8::Object> handle() { return NanNew(handle_); }
+  inline v8::Persistent<v8::Object> &persistent() { return handle_; }
+#endif
+};
 
 //=== Weak Persistent Handling =================================================
 
