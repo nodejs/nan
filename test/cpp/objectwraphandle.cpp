@@ -8,7 +8,7 @@
 
 #include <nan.h>
 
-class MyObject : public node::ObjectWrap {
+class MyObject : public NanObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports) {
     v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
@@ -40,8 +40,8 @@ class MyObject : public node::ObjectWrap {
   }
 
   static NAN_METHOD(GetHandle) {
-    MyObject* obj = node::ObjectWrap::Unwrap<MyObject>(args.This());
-    NanReturnValue(NanObjectWrapHandle(obj));
+    MyObject* obj = NanObjectWrap::Unwrap<MyObject>(args.This());
+    NanReturnValue(obj->handle());
   }
 
   static v8::Persistent<v8::Function> constructor;
