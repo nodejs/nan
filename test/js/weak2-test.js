@@ -8,15 +8,15 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak2' });
 
-test('weak', function (t) {
+test('weak2', function (t) {
   t.plan(3);
 
-  var weak = bindings, count = 0;
-  t.type(weak.hustle, 'function');
+  var weak2 = bindings, count = 0;
+  t.type(weak2.hustle, 'function');
 
-  weak.hustle(function () {}, function (val) {
+  weak2.hustle(function (val) {
     t.equal(val, 42);
     count++;
   });
@@ -27,5 +27,10 @@ test('weak', function (t) {
   // do not run weak callback
   gc();
 
-  t.equal(count, 1);
+  var timeout = setTimeout(function () {
+    if (count > 0) {
+      clearTimeout(timeout);
+      t.equal(count, 1);
+    }
+  }, 100);
 });

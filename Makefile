@@ -15,10 +15,13 @@ LINT_SOURCES = \
 	examples/async_pi_estimate/sync.cc \
 	examples/async_pi_estimate/sync.h \
 	nan.h \
-	nan_string_bytes.h \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
 	nan_new.h \
+	nan_persistent_12_inl.h \
+	nan_persistent_pre_12_inl.h \
+	nan_string_bytes.h \
+	nan_weak.h \
 	test/cpp/asyncworker.cpp \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncworkererror.cpp \
@@ -43,6 +46,7 @@ LINT_SOURCES = \
 	test/cpp/symbols.cpp \
 	test/cpp/trycatch.cpp \
 	test/cpp/weak.cpp \
+	test/cpp/weak2.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
 FILTER = -whitespace/parens
@@ -59,5 +63,7 @@ forcetest:
 	cd test/ && node-gyp rebuild && cd ..
 	npm test
 
-$(ADDONS): nan.h nan_string_bytes.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h test/binding.gyp $(SOURCES)
+$(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h \
+		nan_persistent_12_inl.h nan_persistent_pre_12_inl.h nan_weak.h \
+		nan_string_bytes.h test/binding.gyp $(SOURCES)
 	cd test/ && ../node_modules/.bin/node-gyp rebuild
