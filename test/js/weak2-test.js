@@ -8,16 +8,16 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak2' });
 
-test('weak', function (t) {
+test('weak2', function (t) {
   t.plan(2);
 
-  var weak = bindings;
-  t.type(weak.hustle, 'function');
+  var weak2 = bindings;
+  t.type(weak2.hustle, 'function');
 
   function f() {
-    weak.hustle(function () {}, function (val) {
+    weak2.hustle(function (val) {
       t.equal(val, 42);
     });
   };
