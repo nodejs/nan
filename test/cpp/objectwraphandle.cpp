@@ -17,7 +17,7 @@ class MyObject : public NanObjectWrap {
 
     NODE_SET_PROTOTYPE_METHOD(tpl, "getHandle", GetHandle);
 
-    NanAssignPersistent(constructor, tpl->GetFunction());
+    constructor.Reset(tpl->GetFunction());
     exports->Set(NanNew("MyObject"), tpl->GetFunction());
   }
 
@@ -44,11 +44,11 @@ class MyObject : public NanObjectWrap {
     NanReturnValue(obj->handle());
   }
 
-  static v8::Persistent<v8::Function> constructor;
+  static NanPersistent<v8::Function> constructor;
   double value_;
 };
 
-v8::Persistent<v8::Function> MyObject::constructor;
+NanPersistent<v8::Function> MyObject::constructor;
 
 void Init(v8::Handle<v8::Object> exports) {
   MyObject::Init(exports);

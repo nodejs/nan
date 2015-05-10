@@ -254,8 +254,13 @@ inline v8::Local<T> NanNew(v8::Handle<T> h) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), h);
 }
 
-template <typename T>
-inline v8::Local<T> NanNew(v8::Persistent<T> const& p) {
+template <typename T, typename M>
+inline v8::Local<T> NanNew(v8::Persistent<T, M> const& p) {
+  return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
+}
+
+template <typename T, typename M>
+inline v8::Local<T> NanNew(NanPersistent<T, M> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 

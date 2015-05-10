@@ -89,6 +89,12 @@
 #define ATOM_0_21_MODULE_VERSION 41
 #define IOJS_1_0_MODULE_VERSION  42
 #define IOJS_1_1_MODULE_VERSION  43
+#define IOJS_2_0_MODULE_VERSION  44
+
+#define TYPE_CHECK(T, S)                                                       \
+    while (false) {                                                            \
+      *(static_cast<T *volatile *>(0)) = static_cast<S*>(0);                   \
+    }
 
 #if (NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION)
 typedef v8::InvocationCallback NanFunctionCallback;
@@ -106,6 +112,28 @@ typedef v8::String::ExternalAsciiStringResource
 #else
 typedef v8::String::ExternalOneByteStringResource
     NanExternalOneByteStringResource;
+#endif
+
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+template<typename T>
+class NanNonCopyablePersistentTraits :
+    public v8::NonCopyablePersistentTraits<T> {};
+template<typename T>
+class NanCopyablePersistentTraits :
+    public v8::CopyablePersistentTraits<T> {};
+
+template<typename T>
+class NanPersistentBase :
+    public v8::PersistentBase<T> {};
+
+template<typename T, typename M = v8::NonCopyablePersistentTraits<T> >
+class NanPersistent;
+#else
+template<typename T> class NanNonCopyablePersistentTraits;
+template<typename T> class NanPersistentBase;
+template<typename T, typename P> class NanWeakCallbackData;
+template<typename T, typename M = NanNonCopyablePersistentTraits<T> >
+class NanPersistent;
 #endif
 
 #include "nan_new.h"  // NOLINT(build/include)
@@ -221,6 +249,27 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 
 template<typename T>
 v8::Local<T> NanNew(v8::Handle<T>);
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  typedef v8::WeakCallbackType NanWeakCallbackType;
+#else
+struct NanWeakCallbackType {
+  enum E {kParameter, kInternalFields};
+  E type;
+  NanWeakCallbackType(E other) : type(other) {}  // NOLINT(runtime/explicit)
+  inline bool operator==(E other) { return other == this->type; }
+  inline bool operator!=(E other) { return !operator==(other); }
+};
+#endif
+
+template<typename P> class NanWeakCallbackInfo;
+
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+# include "nan_persistent_12_inl.h"  // NOLINT(build/include)
+#else
+# include "nan_persistent_pre_12_inl.h"  // NOLINT(build/include)
+#endif
 
 namespace Nan { namespace imp {
   template<typename T>
@@ -532,20 +581,6 @@ class NanEscapableScope {
     v8::Isolate::GetCurrent()->GetHeapStatistics(heap_statistics);
   }
 
-  template<typename T>
-  NAN_INLINE void NanAssignPersistent(
-      v8::Persistent<T>& handle
-    , v8::Handle<T> obj) {
-      handle.Reset(v8::Isolate::GetCurrent(), obj);
-  }
-
-  template<typename T>
-  NAN_INLINE void NanAssignPersistent(
-      v8::Persistent<T>& handle
-    , const v8::Persistent<T>& obj) {
-      handle.Reset(v8::Isolate::GetCurrent(), obj);
-  }
-
 # define X(NAME)                                                               \
     NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *errmsg) {          \
       NanEscapableScope scope;                                                 \
@@ -579,12 +614,6 @@ class NanEscapableScope {
 
   NAN_INLINE void NanThrowError(v8::Handle<v8::Value> error) {
     v8::Isolate::GetCurrent()->ThrowException(error);
-  }
-
-  template<typename T> NAN_INLINE void NanDisposePersistent(
-      v8::Persistent<T> &handle
-  ) {
-    handle.Reset();
   }
 
   NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
@@ -825,14 +854,6 @@ class NanEscapableScope {
     v8::V8::GetHeapStatistics(heap_statistics);
   }
 
-  template<typename T>
-  NAN_INLINE void NanAssignPersistent(
-      v8::Persistent<T>& handle
-    , v8::Handle<T> obj) {
-      handle.Dispose();
-      handle = v8::Persistent<T>::New(obj);
-  }
-
 # define X(NAME)                                                               \
     NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *errmsg) {          \
       NanEscapableScope scope;                                                 \
@@ -868,13 +889,6 @@ class NanEscapableScope {
   NAN_INLINE v8::Local<v8::Value> NanThrowError(v8::Handle<v8::Value> error) {
     NanEscapableScope scope;
     return scope.Escape(v8::Local<v8::Value>::New(v8::ThrowException(error)));
-  }
-
-  template<typename T>
-  NAN_INLINE void NanDisposePersistent(
-      v8::Persistent<T> &handle) {  // NOLINT(runtime/references)
-    handle.Dispose();
-    handle.Clear();
   }
 
   NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
@@ -1042,19 +1056,19 @@ class NanCallback {
   NanCallback() {
     NanScope scope;
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
-    NanAssignPersistent(handle, obj);
+    handle.Reset(obj);
   }
 
   explicit NanCallback(const v8::Handle<v8::Function> &fn) {
     NanScope scope;
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
-    NanAssignPersistent(handle, obj);
+    handle.Reset(obj);
     SetFunction(fn);
   }
 
   ~NanCallback() {
     if (handle.IsEmpty()) return;
-    NanDisposePersistent(handle);
+    handle.Reset();
   }
 
   bool operator==(const NanCallback &other) const {
@@ -1108,7 +1122,7 @@ class NanCallback {
 
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(NanCallback)
-  v8::Persistent<v8::Object> handle;
+  NanPersistent<v8::Object> handle;
   static const uint32_t kCallbackIndex = 0;
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
@@ -1134,7 +1148,7 @@ class NanCallback {
                            , v8::Handle<v8::Value> argv[]) const {
     NanEscapableScope scope;
 
-    v8::Local<v8::Function> callback = handle->
+    v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
     return scope.Escape(Nan::imp::NanEnsureLocal(node::MakeCallback(
         target
@@ -1154,14 +1168,14 @@ class NanCallback {
 
     NanScope scope;
     v8::Local<v8::Object> obj = NanNew<v8::Object>();
-    NanAssignPersistent(persistentHandle, obj);
+    persistentHandle.Reset(obj);
   }
 
   virtual ~NanAsyncWorker() {
     NanScope scope;
 
     if (!persistentHandle.IsEmpty())
-      NanDisposePersistent(persistentHandle);
+      persistentHandle.Reset();
     if (callback)
       delete callback;
     if (errmsg_)
@@ -1222,7 +1236,7 @@ class NanCallback {
   }
 
  protected:
-  v8::Persistent<v8::Object> persistentHandle;
+  NanPersistent<v8::Object> persistentHandle;
   NanCallback *callback;
 
   virtual void HandleOKCallback() {
@@ -1539,114 +1553,13 @@ class NanTryCatch : public v8::TryCatch {
 
 //=== Weak Persistent Handling =================================================
 
-#if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
-# define NAN_WEAK_CALLBACK_DATA_TYPE_ \
-    v8::WeakCallbackData<T, NanWeakCallbackData<T, P> > const&
-# define NAN_WEAK_CALLBACK_SIG_ NAN_WEAK_CALLBACK_DATA_TYPE_
-#else
-# define NAN_WEAK_CALLBACK_DATA_TYPE_ void *
-# define NAN_WEAK_CALLBACK_SIG_ \
-    v8::Persistent<v8::Value>, NAN_WEAK_CALLBACK_DATA_TYPE_
-#endif
-
-template <typename T, typename P>
-class NanWeakCallbackData {
- public:  // constructors
-  typedef void (*Callback)(
-      NanWeakCallbackData & data  // NOLINT(runtime/references)
-      );
-  NanWeakCallbackData(v8::Handle<T> handle, P* param, Callback cb)
-    : parameter(param), callback(cb) {
-    NanAssignPersistent(persistent, handle);
-    Revive();
-  }
-  inline ~NanWeakCallbackData();
-
- public:  // member functions
-  v8::Local<T> GetValue() const { return NanNew(persistent); }
-  v8::Persistent<T> &GetPersistent() const { return persistent; }
-  P* GetParameter() const { return parameter; }
-  bool IsNearDeath() const { return persistent.IsNearDeath(); }
-  inline void Revive();
-
- private:  // constructors
-  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanWeakCallbackData)
-
- private:  // static member functions
-  static
-  void
-  invoke(NAN_WEAK_CALLBACK_SIG_ data) {
-    NanWeakCallbackData * wcbd = unwrap(data);
-    wcbd->callback(*wcbd);
-    if (wcbd->IsNearDeath()) {
-      delete wcbd;
-    }
-  }
-
-  static inline
-  NanWeakCallbackData *
-  unwrap(NAN_WEAK_CALLBACK_DATA_TYPE_ data);
-
- private:  // data members
-  P* const parameter;
-  Callback const callback;
-  v8::Persistent<T> persistent;
-};
-
-#undef NAN_WEAK_CALLBACK_DATA_TYPE_
-#undef NAN_WEAK_CALLBACK_SIG_
-
-#if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
-
-template <typename T, typename P>
-NanWeakCallbackData<T, P>::~NanWeakCallbackData() { persistent.Reset(); }
-
-template <typename T, typename P>
-void
-NanWeakCallbackData<T, P>::Revive() { persistent.SetWeak(this, &invoke); }
-
-template <typename T, typename P>
-NanWeakCallbackData<T, P> *
-NanWeakCallbackData<T, P>::unwrap(
-    v8::WeakCallbackData<T, NanWeakCallbackData> const& data) {
-  return data.GetParameter();
-}
-
-#else
-
-template <typename T, typename P>
-NanWeakCallbackData<T, P>::~NanWeakCallbackData() {
-  persistent.Dispose();
-  persistent.Clear();
-}
-
-template <typename T, typename P>
-void
-NanWeakCallbackData<T, P>::Revive() { persistent.MakeWeak(this, &invoke); }
-
-template <typename T, typename P>
-NanWeakCallbackData<T, P> *
-NanWeakCallbackData<T, P>::unwrap(void * data) {
-  return static_cast<NanWeakCallbackData*>(data);
-}
-
-#endif
-
-template<typename T, typename P>
-inline
-NanWeakCallbackData<T, P>*
-NanMakeWeakPersistent(
-    v8::Handle<T> handle
-  , P* parameter
-  , typename NanWeakCallbackData<T, P>::Callback callback) {
-  return new NanWeakCallbackData<T, P>(handle, parameter, callback);
-}
+#include "nan_weak.h"  // NOLINT(build/include)
 
 //=== Export ==================================================================
 
 inline
 void
-NanExport(v8::Handle<v8::Object> target, const char * name,
+NanExport(v8::Handle<v8::Object> target, const char *name,
     NanFunctionCallback f) {
   target->Set(NanNew<v8::String>(name),
       NanNew<v8::FunctionTemplate>(f)->GetFunction());
@@ -1656,17 +1569,17 @@ NanExport(v8::Handle<v8::Object> target, const char * name,
 
 struct NanTap {
   explicit NanTap(v8::Handle<v8::Value> t) : t_() {
-    NanAssignPersistent(t_, t->ToObject());
+    t_.Reset(t->ToObject());
   }
 
-  ~NanTap() { NanDisposePersistent(t_); }  // not sure if neccessary
+  ~NanTap() { t_.Reset(); }  // not sure if neccessary
 
   inline void plan(int i) {
     v8::Handle<v8::Value> arg = NanNew(i);
     NanMakeCallback(NanNew(t_), "plan", 1, &arg);
   }
 
-  inline void ok(bool isOk, const char * msg = NULL) {
+  inline void ok(bool isOk, const char *msg = NULL) {
     v8::Handle<v8::Value> args[2];
     args[0] = NanNew(isOk);
     if (msg) args[1] = NanNew(msg);
@@ -1674,7 +1587,7 @@ struct NanTap {
   }
 
  private:
-  v8::Persistent<v8::Object> t_;
+  NanPersistent<v8::Object> t_;
 };
 
 #define NAN_STRINGIZE2(x) #x
@@ -1685,5 +1598,7 @@ struct NanTap {
 #define return_NanValue(v) NanReturnValue(v)
 #define return_NanUndefined() NanReturnUndefined()
 #define NAN_EXPORT(target, function) NanExport(target, #function, function)
+
+#undef TYPE_CHECK
 
 #endif  // NAN_H_

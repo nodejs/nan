@@ -344,10 +344,10 @@ NAN_METHOD(testPersistents) {
 
   t.plan(1);
 
-  Persistent<String> p;
-  NanAssignPersistent(p, NanNew("foo"));
+  NanPersistent<String> p;
+  p.Reset(NanNew("foo"));
   t.ok(_( assertType<String>( NanNew(p))));
-  NanDisposePersistent(p);
+  p.Reset();
 
   return_NanUndefined();
 }

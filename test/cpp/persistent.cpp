@@ -9,10 +9,10 @@
 #include <nan.h>
 #include <cstring>  // memset()
 
-static v8::Persistent<v8::String> persistentTest1;
+static NanPersistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {
-  NanAssignPersistent(persistentTest1, args[0].As<v8::String>());
+  persistentTest1.Reset(args[0].As<v8::String>());
   NanReturnUndefined();
 }
 
@@ -21,26 +21,30 @@ NAN_METHOD(Get1) {
 }
 
 NAN_METHOD(Dispose1) {
-  NanDisposePersistent(persistentTest1);
+  persistentTest1.Reset();
   NanReturnUndefined();
 }
 
 NAN_METHOD(ToPersistentAndBackAgain) {
-  v8::Persistent<v8::Object> persistent;
-  NanAssignPersistent(persistent, args[0].As<v8::Object>());
+  NanPersistent<v8::Object> persistent(args[0].As<v8::Object>());
   v8::Local<v8::Object> object = NanNew(persistent);
-  NanDisposePersistent(persistent);
+  persistent.Reset();
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
   NanReturnValue(object);
 }
 
 NAN_METHOD(PersistentToPersistent) {
-  v8::Persistent<v8::String> persistent;
-  NanAssignPersistent(persistent, args[0].As<v8::String>());
-  NanAssignPersistent(persistentTest1, persistent);
-  NanDisposePersistent(persistent);
-  NanDisposePersistent(persistentTest1);
+  NanPersistent<v8::String> persistent(args[0].As<v8::String>());
+  persistentTest1.Reset(persistent);
+  persistent.Reset();
+  persistentTest1.Reset();
   NanReturnUndefined();
+}
+
+NAN_METHOD(CopyablePersistent) {
+  NanCopyablePersistentTraits<v8::String>::CopyablePersistent p;
+  p = persistentTest1;
+  NanReturnValue(p);
 }
 
 void Init (v8::Handle<v8::Object> target) {
@@ -63,6 +67,10 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("persistentToPersistent")
     , NanNew<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("copyablePersistent")
+    , NanNew<v8::FunctionTemplate>(CopyablePersistent)->GetFunction()
   );
 }
 
