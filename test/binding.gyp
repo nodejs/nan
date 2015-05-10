@@ -58,6 +58,10 @@
       , "sources"     : [ "cpp/weak.cpp" ]
     }
   , {
+        "target_name" : "weak2"
+      , "sources"     : [ "cpp/weak2.cpp" ]
+    }
+  , {
         "target_name" : "bufferworkerpersistent"
       , "sources"     : [ "cpp/bufferworkerpersistent.cpp" ]
     }

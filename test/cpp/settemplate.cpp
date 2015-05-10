@@ -17,10 +17,10 @@ class MyObject : public node::ObjectWrap {
   ~MyObject();
 
   static NAN_METHOD(New);
-  static v8::Persistent<v8::Function> constructor;
+  static NanPersistent<v8::Function> constructor;
 };
 
-v8::Persistent<v8::Function> MyObject::constructor;
+NanPersistent<v8::Function> MyObject::constructor;
 
 MyObject::MyObject() {
 }
@@ -48,7 +48,7 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
   NanSetInstanceTemplate(
       tpl, NanNew("dontDelete"), NanNew("dontDelete"), v8::DontDelete);
 
-  NanAssignPersistent<v8::Function>(constructor, tpl->GetFunction());
+  constructor.Reset(tpl->GetFunction());
   exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
 }
 

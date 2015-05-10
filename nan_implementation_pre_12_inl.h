@@ -265,4 +265,9 @@ inline v8::Local<T> NanNew(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(p);
 }
 
+template <typename T, typename M>
+inline v8::Local<T> NanNew(NanPersistent<T, M> const& p) {
+  return v8::Local<T>::New(p.persistent);
+}
+
 #endif  // NAN_IMPLEMENTATION_PRE_12_INL_H_
