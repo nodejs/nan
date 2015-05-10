@@ -253,7 +253,14 @@ NanNew( NanFunctionCallback callback
 // Convenience
 
 template <typename T> inline v8::Local<T> NanNew(v8::Handle<T> h);
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+template <typename T, typename M>
+    inline v8::Local<T> NanNew(v8::Persistent<T, M> const& p);
+#else
 template <typename T> inline v8::Local<T> NanNew(v8::Persistent<T> const& p);
+#endif
+template <typename T, typename M>
+inline v8::Local<T> NanNew(NanPersistent<T, M> const& p);
 
 inline
 Nan::imp::Factory<v8::Boolean>::return_t

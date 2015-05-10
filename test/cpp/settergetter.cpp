@@ -26,7 +26,7 @@ class SetterGetter : public node::ObjectWrap {
   char prop2[256];
 };
 
-static v8::Persistent<v8::FunctionTemplate> settergetter_constructor;
+static NanPersistent<v8::FunctionTemplate> settergetter_constructor;
 
 NAN_METHOD(CreateNew) {
   NanReturnValue(SetterGetter::NewInstance());
@@ -42,7 +42,7 @@ SetterGetter::SetterGetter() {
 void SetterGetter::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
     NanNew<v8::FunctionTemplate>(SetterGetter::New);
-  NanAssignPersistent(settergetter_constructor, tpl);
+  settergetter_constructor.Reset(tpl);
   tpl->SetClassName(NanNew<v8::String>("SetterGetter"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
