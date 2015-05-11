@@ -8,10 +8,9 @@
 
 #include <nan.h>
 
-class MyObject : public node::ObjectWrap {
+class MyObject : public NanObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports) {
-    NanScope();
     v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
     tpl->SetClassName(NanNew("MyObject"));
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -27,8 +26,6 @@ class MyObject : public node::ObjectWrap {
   ~MyObject() {}
 
   static NAN_METHOD(New) {
-    NanScope();
-
     if (args.IsConstructCall()) {
       double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
       MyObject *obj = new MyObject(value);
@@ -43,9 +40,8 @@ class MyObject : public node::ObjectWrap {
   }
 
   static NAN_METHOD(GetHandle) {
-    NanScope();
-    MyObject* obj = node::ObjectWrap::Unwrap<MyObject>(args.This());
-    NanReturnValue(NanObjectWrapHandle(obj));
+    MyObject* obj = NanObjectWrap::Unwrap<MyObject>(args.This());
+    NanReturnValue(obj->handle());
   }
 
   static v8::Persistent<v8::Function> constructor;
