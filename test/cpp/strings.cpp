@@ -8,25 +8,6 @@
 
 #include <nan.h>
 
-NAN_METHOD(ReturnAsciiString) {
-  NanReturnValue(NanNew(*NanAsciiString(args[0])));
-}
-
-NAN_METHOD(ReturnUtf8String) {
-  NanReturnValue(NanNew(*NanUtf8String(args[0])));
-}
-
-NAN_METHOD(ReturnUcs2String) {
-  NanReturnValue(NanNew(*NanUcs2String(args[0])));
-}
-
-NAN_METHOD(HeapString) {
-  NanUcs2String *s = new NanUcs2String(args[0]);
-  v8::Local<v8::String> res = NanNew(**s);
-  delete s;
-  NanReturnValue(res);
-}
-
 NAN_METHOD(EncodeHex) {
   NanReturnValue(NanEncode("hello", 5, Nan::HEX));
 }
@@ -35,66 +16,10 @@ NAN_METHOD(EncodeUCS2) {
   NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
 }
 
-v8::Persistent<v8::FunctionTemplate> returnAsciiString_persistent;
-v8::Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
-v8::Persistent<v8::FunctionTemplate> returnUcs2String_persistent;
-v8::Persistent<v8::FunctionTemplate> heapString_persistent;
 v8::Persistent<v8::FunctionTemplate> encodeHex_persistent;
 v8::Persistent<v8::FunctionTemplate> encodeUCS2_persistent;
 
 void Init (v8::Handle<v8::Object> target) {
-  v8::Local<v8::FunctionTemplate> returnAsciiString =
-    NanNew<v8::FunctionTemplate>(ReturnAsciiString);
-
-  NanAssignPersistent(
-    returnAsciiString_persistent
-  , returnAsciiString
-  );
-
-  target->Set(
-      NanNew("returnAsciiString")
-    , returnAsciiString->GetFunction()
-  );
-
-  v8::Local<v8::FunctionTemplate> returnUtf8String =
-    NanNew<v8::FunctionTemplate>(ReturnUtf8String);
-
-  NanAssignPersistent(
-    returnUtf8String_persistent
-  , returnUtf8String
-  );
-
-  target->Set(
-      NanNew("returnUtf8String")
-    , returnUtf8String->GetFunction()
-  );
-
-  v8::Local<v8::FunctionTemplate> returnUcs2String =
-    NanNew<v8::FunctionTemplate>(ReturnUcs2String);
-
-  NanAssignPersistent(
-    returnUcs2String_persistent
-  , returnUcs2String
-  );
-
-  target->Set(
-      NanNew("returnUcs2String")
-    , returnUcs2String->GetFunction()
-  );
-
-  v8::Local<v8::FunctionTemplate> heapString =
-    NanNew<v8::FunctionTemplate>(HeapString);
-
-  NanAssignPersistent(
-    heapString_persistent
-  , heapString
-  );
-
-  target->Set(
-      NanNew("heapString")
-    , heapString->GetFunction()
-  );
-
   v8::Local<v8::FunctionTemplate> encodeHex =
     NanNew<v8::FunctionTemplate>(EncodeHex);
 
