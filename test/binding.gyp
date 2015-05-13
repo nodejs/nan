@@ -100,4 +100,8 @@
         "target_name" : "objectwraphandle"
       , "sources"     : [ "cpp/objectwraphandle.cpp" ]
     }
+    , {
+        "target_name" : "error"
+      , "sources"     : [ "cpp/error.cpp" ]
+    }
 ]}
