@@ -8,30 +8,37 @@
 
 #include <nan.h>
 
-static v8::Persistent<v8::Function> callback;
+static bool prologue_called = false;
+static bool epilogue_called = false;
 
 NAN_GC_CALLBACK(gcPrologueCallback) {
-  v8::Local<v8::Value> argv[] = {NanNew<v8::String>("prologue")};
-  NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
+  prologue_called = true;
 }
 
 NAN_GC_CALLBACK(gcEpilogueCallback) {
-  v8::Local<v8::Value> argv[] = {NanNew<v8::String>("epilogue")};
-  NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
+  epilogue_called = true;
 }
 
 NAN_METHOD(Hook) {
   NanScope();
-  NanAssignPersistent(callback, args[0].As<v8::Function>());
   NanAddGCPrologueCallback(gcPrologueCallback);
   NanAddGCEpilogueCallback(gcEpilogueCallback);
-  NanReturnValue(args.Holder());
+  NanReturnUndefined();
+}
+
+NAN_METHOD(Check) {
+  NanScope();
+  NanReturnValue(NanNew(prologue_called && epilogue_called));
 }
 
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("hook")
     , NanNew<v8::FunctionTemplate>(Hook)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("check")
+    , NanNew<v8::FunctionTemplate>(Check)->GetFunction()
   );
 }
 

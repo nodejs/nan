@@ -14,10 +14,9 @@ test('gc', function (t) {
   t.plan(3);
 
   t.type(bindings.hook, 'function');
+  t.type(bindings.check, 'function');
 
-  bindings.hook(function (from) {
-    t.ok(from == 'prologue' || from == 'epilogue');
-  });
-
+  bindings.hook();
   gc();
+  t.ok(bindings.check());
 });
