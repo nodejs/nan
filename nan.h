@@ -316,26 +316,6 @@ class NanEscapableScope {
 #endif
 };
 
-//=== Locker ===================================================================
-
-class NanLocker {
- private:
-  v8::Locker locker;
-
- public:
-  explicit inline NanLocker(v8::Isolate *isolate) : locker(isolate) {}
-
-  inline static bool IsLocked(v8::Isolate *isolate) {
-    return v8::Locker::IsLocked(isolate);
-  }
-
-  inline static bool IsActive() { return v8::Locker::IsActive(); }
-};
-
-//=== Unlocker =================================================================
-
-class NanUnlocker : public v8::Unlocker {};
-
 /* node 0.12  */
 #if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
   NAN_INLINE
