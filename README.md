@@ -5,11 +5,11 @@ Native Abstractions for Node.js
 
 ***Current version: 1.8.4***
 
-*(See [CHANGELOG.md](https://github.com/iojs/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
+*(See [CHANGELOG.md](https://github.com/nodejs/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
 [![NPM](https://nodei.co/npm/nan.png?downloads=true&downloadRank=true)](https://nodei.co/npm/nan/) [![NPM](https://nodei.co/npm-dl/nan.png?months=6&height=3)](https://nodei.co/npm/nan/)
 
-[![Build Status](https://api.travis-ci.org/iojs/nan.svg?branch=master)](http://travis-ci.org/iojs/nan)
+[![Build Status](https://api.travis-ci.org/nodejs/nan.svg?branch=master)](http://travis-ci.org/nodejs/nan)
 [![Build status](https://ci.appveyor.com/api/projects/status/kh73pbm9dsju7fgh)](https://ci.appveyor.com/project/RodVagg/nan)
 
 Thanks to the crazy changes in V8 (and some in Node core), keeping native addons compiling happily across versions, particularly 0.10 to 0.12, is a minor nightmare. The goal of this project is to store all logic necessary to develop native Node.js addons without having to inspect `NODE_MODULE_VERSION` and get yourself into a macro-tangle.
@@ -87,7 +87,7 @@ V8 has now introduced an `EscapableHandleScope` from which you `scope.Escape(Loc
 
 Because `node::MakeCallback()` now takes an `Isolate`, and because it doesn't exist in older versions of Node, we've introduced `NanMakeCallback()`. You should *always* use this when calling a JavaScript function from C++.
 
-There's lots more, check out the Changelog in nan.h or look through [#86](https://github.com/iojs/nan/pull/86) for all the gory details.
+There's lots more, check out the Changelog in nan.h or look through [#86](https://github.com/nodejs/nan/pull/86) for all the gory details.
 
 ### Dec-2013: NanCString and NanRawString
 
@@ -127,7 +127,7 @@ This works like a `-I<path-to-NAN>` when compiling your addon.
 
 See **[LevelDOWN](https://github.com/rvagg/node-leveldown/pull/48)** for a full example of **NAN** in use.
 
-For a simpler example, see the **[async pi estimation example](https://github.com/iojs/nan/tree/master/examples/async_pi_estimate)** in the examples directory for full code and an explanation of what this Monte Carlo Pi estimation example does. Below are just some parts of the full example that illustrate the use of **NAN**.
+For a simpler example, see the **[async pi estimation example](https://github.com/nodejs/nan/tree/master/examples/async_pi_estimate)** in the examples directory for full code and an explanation of what this Monte Carlo Pi estimation example does. Below are just some parts of the full example that illustrate the use of **NAN**.
 
 For another example, see **[nan-example-eol](https://github.com/CodeCharmLtd/nan-example-eol)**. It shows newline detection implemented as a native addon.
 

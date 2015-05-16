@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2015 NAN contributors
  *
- * MIT License <https://github.com/iojs/nan/blob/master/LICENSE.md>
+ * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
 // toys used in testing
@@ -375,7 +375,7 @@ NAN_METHOD(testPersistents) {
 //==============================================================================
 
 
-// See https://github.com/iojs/nan/issues/212
+// See https://github.com/nodejs/nan/issues/212
 NAN_METHOD(testRegression212) {
   NanScope();
   NanTap t(args[0]);
@@ -396,7 +396,7 @@ NAN_METHOD(testRegression212) {
   return_NanUndefined();
 }
 
-/* Compile time regression test for https://github.com/iojs/nan/issues/242
+/* Compile time regression test for https://github.com/nodejs/nan/issues/242
  * In the presence of overloaded functions NaN should be able to pick the one
  * matching NanFunctionCallback.
  */

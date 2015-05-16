@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2015 NAN contributors
  *
- * MIT License <https://github.com/iojs/nan/blob/master/LICENSE.md>
+ * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
 #include <cstdlib>
