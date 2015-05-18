@@ -158,62 +158,15 @@ inline NanMaybe<T> NanJust(const T& t) {
 
 v8::Local<v8::Context> NanGetCurrentContext();
 
-NAN_INLINE NanMaybeLocal<v8::Boolean> NanToBoolean(v8::Handle<v8::Value> val) {
-  return val->ToBoolean(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Number> NanToNumber(v8::Handle<v8::Value> val) {
-  return val->ToNumber(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybeLocal<v8::String> NanToString(v8::Handle<v8::Value> val) {
-  return val->ToString(NanGetCurrentContext());
-}
 
 NAN_INLINE
 NanMaybeLocal<v8::String> NanToDetailString(v8::Handle<v8::Value> val) {
   return val->ToDetailString(NanGetCurrentContext());
 }
 
-NAN_INLINE NanMaybeLocal<v8::Object> NanToObject(v8::Handle<v8::Value> val) {
-  return val->ToObject(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Integer> NanToInteger(v8::Handle<v8::Value> val) {
-  return val->ToInteger(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Uint32> NanToUint32(v8::Handle<v8::Value> val) {
-  return val->ToUint32(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Int32> NanToInt32(v8::Handle<v8::Value> val) {
-  return val->ToInt32(NanGetCurrentContext());
-}
-
 NAN_INLINE
 NanMaybeLocal<v8::Uint32> NanToArrayIndex(v8::Handle<v8::Value> val) {
   return val->ToArrayIndex(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybe<bool> NanBooleanValue(v8::Handle<v8::Value> val) {
-  return val->BooleanValue(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybe<double> NanNumberValue(v8::Handle<v8::Value> val) {
-  return val->NumberValue(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybe<int64_t> NanIntegerValue(v8::Handle<v8::Value> val) {
-  return val->IntegerValue(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybe<uint32_t> NanUint32Value(v8::Handle<v8::Value> val) {
-  return val->Uint32Value(NanGetCurrentContext());
-}
-
-NAN_INLINE NanMaybe<int32_t> NanInt32Value(v8::Handle<v8::Value> val) {
-  return val->Int32Value(NanGetCurrentContext());
 }
 
 NAN_INLINE
@@ -494,62 +447,14 @@ inline NanMaybe<T> NanJust(const T& t) {
   return NanMaybe<T>(t);
 }
 
-NAN_INLINE NanMaybeLocal<v8::Boolean> NanToBoolean(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::Boolean>(val->ToBoolean());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Number> NanToNumber(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::Number>(val->ToNumber());
-}
-
-NAN_INLINE NanMaybeLocal<v8::String> NanToString(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::String>(val->ToString());
-}
-
 NAN_INLINE
 NanMaybeLocal<v8::String> NanToDetailString(v8::Handle<v8::Value> val) {
   return NanMaybeLocal<v8::String>(val->ToDetailString());
 }
 
-NAN_INLINE NanMaybeLocal<v8::Object> NanToObject(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::Object>(val->ToObject());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Integer> NanToInteger(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::Integer>(val->ToInteger());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Uint32> NanToUint32(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::Uint32>(val->ToUint32());
-}
-
-NAN_INLINE NanMaybeLocal<v8::Int32> NanToInt32(v8::Handle<v8::Value> val) {
-  return NanMaybeLocal<v8::Int32>(val->ToInt32());
-}
-
 NAN_INLINE
 NanMaybeLocal<v8::Uint32> NanToArrayIndex(v8::Handle<v8::Value> val) {
   return NanMaybeLocal<v8::Uint32>(val->ToArrayIndex());
-}
-
-NAN_INLINE NanMaybe<bool> NanBooleanValue(v8::Handle<v8::Value> val) {
-  return NanJust<bool>(val->BooleanValue());
-}
-
-NAN_INLINE NanMaybe<double> NanNumberValue(v8::Handle<v8::Value> val) {
-  return NanJust<double>(val->NumberValue());
-}
-
-NAN_INLINE NanMaybe<int64_t> NanIntegerValue(v8::Handle<v8::Value> val) {
-  return NanJust<int64_t>(val->IntegerValue());
-}
-
-NAN_INLINE NanMaybe<uint32_t> NanUint32Value(v8::Handle<v8::Value> val) {
-  return NanJust<uint32_t>(val->Uint32Value());
-}
-
-NAN_INLINE NanMaybe<int32_t> NanInt32Value(v8::Handle<v8::Value> val) {
-  return NanJust<int32_t>(val->Int32Value());
 }
 
 NAN_INLINE
@@ -750,6 +655,8 @@ NAN_INLINE NanMaybeLocal<v8::Value> NanStackTrace(v8::TryCatch trycatch) {
 
 #endif
 
+
+#include "nan_converters.h"  // NOLINT(build/include)
 #include "nan_new.h"  // NOLINT(build/include)
 
 // uv helpers
@@ -2340,7 +2247,7 @@ NanExport(v8::Handle<v8::Object> target, const char * name,
 
 struct NanTap {
   explicit NanTap(v8::Handle<v8::Value> t) : t_() {
-    NanAssignPersistent(t_, NanToObject(t).ToLocalChecked());
+    NanAssignPersistent(t_, NanTo<v8::Object>(t).ToLocalChecked());
   }
 
   ~NanTap() { NanDisposePersistent(t_); }  // not sure if neccessary

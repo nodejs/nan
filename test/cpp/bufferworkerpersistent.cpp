@@ -54,7 +54,7 @@ NAN_METHOD(DoSleep) {
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
   NanAsyncQueueWorker(new BufferWorker(
       callback
-    , NanUint32Value(args[0]).FromJust()
+    , NanTo<uint32_t>(args[0]).FromJust()
     , bufferHandle));
   NanReturnUndefined();
 }

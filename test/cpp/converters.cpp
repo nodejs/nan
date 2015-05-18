@@ -10,17 +10,17 @@
 
 NAN_METHOD(ToBoolean) {
   NanScope();
-  NanReturnValue(NanToBoolean(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::Boolean>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToNumber) {
   NanScope();
-  NanReturnValue(NanToNumber(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::Number>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToString) {
   NanScope();
-  NanReturnValue(NanToString(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::String>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToDetailString) {
@@ -30,22 +30,22 @@ NAN_METHOD(ToDetailString) {
 
 NAN_METHOD(ToObject) {
   NanScope();
-  NanReturnValue(NanToObject(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::Object>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToInteger) {
   NanScope();
-  NanReturnValue(NanToInteger(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::Integer>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToUint32) {
   NanScope();
-  NanReturnValue(NanToUint32(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::Uint32>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToInt32) {
   NanScope();
-  NanReturnValue(NanToInt32(args[0]).ToLocalChecked());
+  NanReturnValue(NanTo<v8::Int32>(args[0]).ToLocalChecked());
 }
 
 NAN_METHOD(ToArrayIndex) {
@@ -55,28 +55,28 @@ NAN_METHOD(ToArrayIndex) {
 
 NAN_METHOD(BooleanValue) {
   NanScope();
-  NanReturnValue(NanNew(NanBooleanValue(args[0]).FromJust()));
+  NanReturnValue(NanNew(NanTo<bool>(args[0]).FromJust()));
 }
 
 NAN_METHOD(NumberValue) {
   NanScope();
-  NanReturnValue(NanNew(NanNumberValue(args[0]).FromJust()));
+  NanReturnValue(NanNew(NanTo<double>(args[0]).FromJust()));
 }
 
 NAN_METHOD(IntegerValue) {
   NanScope();
   NanReturnValue(NanNew<v8::Integer>(static_cast<int32_t>(
-      NanIntegerValue(args[0]).FromJust())));
+      NanTo<int64_t>(args[0]).FromJust())));
 }
 
 NAN_METHOD(Uint32Value) {
   NanScope();
-  NanReturnValue(NanNew<v8::Uint32>(NanUint32Value(args[0]).FromJust()));
+  NanReturnValue(NanNew<v8::Uint32>(NanTo<uint32_t>(args[0]).FromJust()));
 }
 
 NAN_METHOD(Int32Value) {
   NanScope();
-  NanReturnValue(NanNew<v8::Int32>(NanInt32Value(args[0]).FromJust()));
+  NanReturnValue(NanNew<v8::Int32>(NanTo<int32_t>(args[0]).FromJust()));
 }
 
 void Init (v8::Handle<v8::Object> target) {

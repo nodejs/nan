@@ -213,7 +213,7 @@ NAN_METHOD(testNumberObject) {
   t.ok(_( assertType<NumberObject>( NanNew<NumberObject>(M_PI))));
   t.ok(_(
       fabs(
-          NanNumberValue(NanNew<NumberObject>(M_PI)).FromJust() - M_PI
+          NanTo<double>(NanNew<NumberObject>(M_PI)).FromJust() - M_PI
       ) < epsilon));
 
   return_NanUndefined();
@@ -258,10 +258,10 @@ NAN_METHOD(testScript) {
         , origin).ToLocalChecked())));
 
   // for the fans of the bound script
-  t.ok(_( NanInt32Value(NanRunScript(
+  t.ok(_( NanTo<int32_t>(NanRunScript(
       NanNew<NanBoundScript>(NanNew("2 + 3").ToLocalChecked()
     ).ToLocalChecked()).ToLocalChecked()).FromJust() == 5));
-  t.ok(_( NanInt32Value(NanRunScript(
+  t.ok(_( NanTo<int32_t>(NanRunScript(
       NanNew<NanUnboundScript>(NanNew("2 + 3").ToLocalChecked()
     ).ToLocalChecked()).ToLocalChecked()).FromJust() == 5));
 
@@ -427,15 +427,15 @@ NAN_METHOD(testRegression242) {
 //==============================================================================
 
 NAN_METHOD(newIntegerWithValue) {
-  return_NanValue(NanNew<Integer>(NanInt32Value(args[0]).FromJust()));
+  return_NanValue(NanNew<Integer>(NanTo<int32_t>(args[0]).FromJust()));
 }
 
 NAN_METHOD(newNumberWithValue) {
-  return_NanValue(NanNew<Number>(NanNumberValue(args[0]).FromJust()));
+  return_NanValue(NanNew<Number>(NanTo<double>(args[0]).FromJust()));
 }
 
 NAN_METHOD(newUint32WithValue) {
-  return_NanValue(NanNew<Uint32>(NanUint32Value(args[0]).FromJust()));
+  return_NanValue(NanNew<Uint32>(NanTo<uint32_t>(args[0]).FromJust()));
 }
 
 NAN_METHOD(newStringFromChars) {

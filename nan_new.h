@@ -27,21 +27,21 @@ template <>
 inline
 v8::Local<v8::Integer>
 To<v8::Integer>(v8::Handle<v8::Integer> i) {
-  return NanToInteger(i).ToLocalChecked();
+  return NanTo<v8::Integer>(i).ToLocalChecked();
 }
 
 template <>
 inline
 v8::Local<v8::Int32>
 To<v8::Int32>(v8::Handle<v8::Integer> i) {
-  return NanToInt32(i).ToLocalChecked();
+  return NanTo<v8::Int32>(i).ToLocalChecked();
 }
 
 template <>
 inline
 v8::Local<v8::Uint32>
 To<v8::Uint32>(v8::Handle<v8::Integer> i) {
-  return NanToUint32(i).ToLocalChecked();
+  return NanTo<v8::Uint32>(i).ToLocalChecked();
 }
 
 template <typename T> struct FactoryBase {

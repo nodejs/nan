@@ -29,7 +29,7 @@ class SleepWorker : public NanAsyncWorker {
 NAN_METHOD(DoSleep) {
   NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
   NanAsyncQueueWorker(
-      new SleepWorker(callback, NanUint32Value(args[0]).FromJust()));
+      new SleepWorker(callback, NanTo<uint32_t>(args[0]).FromJust()));
   NanReturnUndefined();
 }
 

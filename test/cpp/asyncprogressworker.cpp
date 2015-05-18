@@ -51,8 +51,8 @@ NAN_METHOD(DoProgress) {
   NanAsyncQueueWorker(new ProgressWorker(
       callback
     , progress
-    , NanUint32Value(args[0]).FromJust()
-    , NanUint32Value(args[1]).FromJust()));
+    , NanTo<uint32_t>(args[0]).FromJust()
+    , NanTo<uint32_t>(args[1]).FromJust()));
   NanReturnUndefined();
 }
 

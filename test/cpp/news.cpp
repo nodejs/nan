@@ -106,7 +106,7 @@ NAN_METHOD(NewScript) {
   v8::Local<NanUnboundScript> script =
       NanNew<NanUnboundScript>(NanNew("2+4").ToLocalChecked()).ToLocalChecked();
   NanReturnValue(
-      NanToInt32(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
+      NanTo<v8::Int32>(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
 }
 
 NAN_METHOD(NewScript2) {
@@ -116,14 +116,14 @@ NAN_METHOD(NewScript2) {
           NanNew("2+4").ToLocalChecked()
         , origin).ToLocalChecked();
   NanReturnValue(
-      NanToInt32(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
+      NanTo<v8::Int32>(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
 }
 
 NAN_METHOD(CompileScript) {
   v8::Local<NanBoundScript> script =
       NanCompileScript(NanNew("2+4").ToLocalChecked()).ToLocalChecked();
   NanReturnValue(
-      NanToInt32(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
+      NanTo<v8::Int32>(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
 }
 
 NAN_METHOD(CompileScript2) {
@@ -131,7 +131,7 @@ NAN_METHOD(CompileScript2) {
   v8::Local<NanBoundScript> script =
       NanCompileScript(NanNew("2+4").ToLocalChecked(), origin).ToLocalChecked();
   NanReturnValue(
-      NanToInt32(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
+      NanTo<v8::Int32>(NanRunScript(script).ToLocalChecked()).ToLocalChecked());
 }
 
 NAN_METHOD(NewDate) {
