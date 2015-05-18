@@ -51,7 +51,7 @@ test('news', function (t) {
   t.equal(bindings.newLatin1String(), 'strïng');
   t.equal(bindings.newUcs2String(), 'strïng');
   t.equal(bindings.newStdString(), 'strïng');
-  t.deepEquals(bindings.newRegExp(), /foo/g);
+  t.equal(bindings.newRegExp().toString(), '/foo/');
   t.deepEquals(bindings.newStringObject(), new String("foo"));
   t.deepEquals(bindings.newNumberObject(), new Number(0.5));
   t.deepEquals(bindings.newBooleanObject(), new Boolean(true));
