@@ -41,6 +41,7 @@ LINT_SOURCES = \
 	test/cpp/settergetter.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
+	test/cpp/trycatch.cpp \
 	test/cpp/weak.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
