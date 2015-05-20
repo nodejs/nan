@@ -26,19 +26,31 @@ template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
 template <>
 inline
 v8::Local<v8::Integer>
-To<v8::Integer>(v8::Handle<v8::Integer> i) { return i->ToInteger(); }
+To<v8::Integer>(v8::Handle<v8::Integer> i) {
+  return NanTo<v8::Integer>(i).ToLocalChecked();
+}
 
 template <>
 inline
 v8::Local<v8::Int32>
-To<v8::Int32>(v8::Handle<v8::Integer> i)   { return i->ToInt32(); }
+To<v8::Int32>(v8::Handle<v8::Integer> i) {
+  return NanTo<v8::Int32>(i).ToLocalChecked();
+}
 
 template <>
 inline
 v8::Local<v8::Uint32>
-To<v8::Uint32>(v8::Handle<v8::Integer> i)  { return i->ToUint32(); }
+To<v8::Uint32>(v8::Handle<v8::Integer> i) {
+  return NanTo<v8::Uint32>(i).ToLocalChecked();
+}
 
-template <typename T> struct FactoryBase { typedef v8::Local<T> return_t; };
+template <typename T> struct FactoryBase {
+  typedef v8::Local<T> return_t;
+};
+
+template <typename T> struct MaybeFactoryBase {
+  typedef NanMaybeLocal<T> return_t;
+};
 
 template <typename T> struct Factory;
 
@@ -68,7 +80,7 @@ struct Factory<v8::Context> : FactoryBase<v8::Context> {
 };
 
 template <>
-struct Factory<v8::Date> : FactoryBase<v8::Date> {
+struct Factory<v8::Date> : MaybeFactoryBase<v8::Date> {
   static inline return_t New(double value);
 };
 
@@ -134,13 +146,13 @@ struct Factory<v8::ObjectTemplate> : FactoryBase<v8::ObjectTemplate> {
 };
 
 template <>
-struct Factory<v8::RegExp> : FactoryBase<v8::RegExp> {
+struct Factory<v8::RegExp> : MaybeFactoryBase<v8::RegExp> {
   static inline return_t New(
       v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);
 };
 
 template <>
-struct Factory<v8::Script> : FactoryBase<v8::Script> {
+struct Factory<v8::Script> : MaybeFactoryBase<v8::Script> {
   static inline return_t New( v8::Local<v8::String> source);
   static inline return_t New( v8::Local<v8::String> source
                             , v8::ScriptOrigin const& origin);
@@ -153,7 +165,7 @@ struct Factory<v8::Signature> : FactoryBase<v8::Signature> {
 };
 
 template <>
-struct Factory<v8::String> : FactoryBase<v8::String> {
+struct Factory<v8::String> : MaybeFactoryBase<v8::String> {
   static inline return_t New();
   static inline return_t New(const char *value, int length = -1);
   static inline return_t New(const uint16_t *value, int length = -1);
@@ -179,7 +191,7 @@ struct Factory<v8::StringObject> : FactoryBase<v8::StringObject> {
 namespace Nan { namespace imp {
 
 template <>
-struct Factory<v8::UnboundScript> : FactoryBase<v8::UnboundScript> {
+struct Factory<v8::UnboundScript> : MaybeFactoryBase<v8::UnboundScript> {
   static inline return_t New( v8::Local<v8::String> source);
   static inline return_t New( v8::Local<v8::String> source
                             , v8::ScriptOrigin const& origin);

@@ -21,7 +21,7 @@ class BufferWorker : public NanAsyncWorker {
       )
     : NanAsyncWorker(callback), milliseconds(milliseconds) {
       SaveToPersistent("buffer", bufferHandle);
-      SaveToPersistent(NanNew("puffer"), bufferHandle);
+      SaveToPersistent(NanNew("puffer").ToLocalChecked(), bufferHandle);
       SaveToPersistent(0u, bufferHandle);
     }
 
@@ -37,7 +37,7 @@ class BufferWorker : public NanAsyncWorker {
     v8::Local<v8::Value> handle = GetFromPersistent("buffer");
     callback->Call(1, &handle);
 
-    handle = GetFromPersistent(NanNew("puffer"));
+    handle = GetFromPersistent(NanNew("puffer").ToLocalChecked());
     callback->Call(1, &handle);
 
     handle = GetFromPersistent(0u);
@@ -52,14 +52,16 @@ NAN_METHOD(DoSleep) {
   v8::Local<v8::Object> bufferHandle = args[1].As<v8::Object>();
   NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
-  NanAsyncQueueWorker(
-      new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
+  NanAsyncQueueWorker(new BufferWorker(
+      callback
+    , NanTo<uint32_t>(args[0]).FromJust()
+    , bufferHandle));
   NanReturnUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  exports->Set(
-      NanNew<v8::String>("a")
+  NanSet(exports
+    , NanNew<v8::String>("a").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
