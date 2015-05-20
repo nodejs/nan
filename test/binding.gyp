@@ -104,4 +104,8 @@
         "target_name" : "error"
       , "sources"     : [ "cpp/error.cpp" ]
     }
+    , {
+        "target_name" : "trycatch"
+      , "sources"     : [ "cpp/trycatch.cpp" ]
+    }
 ]}
