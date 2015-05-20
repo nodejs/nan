@@ -85,7 +85,7 @@
     NAN_DISALLOW_MOVE(CLASS)
 
 #define NODE_0_10_MODULE_VERSION 11
-#define NODE_0_12_MODULE_VERSION 12
+#define NODE_0_12_MODULE_VERSION 14
 #define ATOM_0_21_MODULE_VERSION 41
 #define IOJS_1_0_MODULE_VERSION  42
 #define IOJS_1_1_MODULE_VERSION  43
@@ -1509,6 +1509,15 @@ class NanObjectWrap : public node::ObjectWrap {
  public:
   inline v8::Local<v8::Object> handle() { return NanNew(handle_); }
   inline v8::Persistent<v8::Object> &persistent() { return handle_; }
+#endif
+};
+
+//=== TryCatch =================================================================
+
+class NanTryCatch : public v8::TryCatch {
+#if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
+ public:
+  NanTryCatch() : v8::TryCatch(v8::Isolate::GetCurrent()) {}
 #endif
 };
 
