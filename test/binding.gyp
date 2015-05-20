@@ -124,4 +124,8 @@
         "target_name" : "converters"
       , "sources"     : [ "cpp/converters.cpp" ]
     }
+    , {
+        "target_name" : "trycatch"
+      , "sources"     : [ "cpp/trycatch.cpp" ]
+    }
 ]}

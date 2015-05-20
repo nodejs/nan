@@ -85,7 +85,7 @@
     NAN_DISALLOW_MOVE(CLASS)
 
 #define NODE_0_10_MODULE_VERSION 11
-#define NODE_0_12_MODULE_VERSION 12
+#define NODE_0_12_MODULE_VERSION 14
 #define ATOM_0_21_MODULE_VERSION 41
 #define IOJS_1_0_MODULE_VERSION  42
 #define IOJS_1_1_MODULE_VERSION  43
@@ -139,7 +139,6 @@ template<typename T, typename P> class NanWeakCallbackData;
 template<typename T, typename M = NanNonCopyablePersistentTraits<T> >
 class NanPersistent;
 #endif  // NODE_MODULE_VERSION
-
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
@@ -412,6 +411,53 @@ class NanEscapableScope {
   void *operator new(size_t size);
   void operator delete(void *, size_t);
 };
+
+//=== TryCatch =================================================================
+
+class NanTryCatch {
+  v8::TryCatch try_catch_;
+  friend void NanFatalException(const NanTryCatch&);
+
+ public:
+#if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
+  NanTryCatch() : try_catch_(v8::Isolate::GetCurrent()) {}
+#endif
+
+  NAN_INLINE bool HasCaught() const { return try_catch_.HasCaught(); }
+
+  NAN_INLINE bool CanContinue() const { return try_catch_.CanContinue(); }
+
+  NAN_INLINE v8::Handle<v8::Value> ReThrow() { return try_catch_.ReThrow(); }
+
+  NAN_INLINE v8::Local<v8::Value> Exception() const {
+    return try_catch_.Exception();
+  }
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  NAN_INLINE v8::MaybeLocal<v8::Value> StackTrace() const {
+    return try_catch_.StackTrace(NanGetCurrentContext());
+  }
+#else
+  NAN_INLINE NanMaybeLocal<v8::Value> StackTrace() const {
+    return NanMaybeLocal<v8::Value>(try_catch_.StackTrace());
+  }
+#endif
+
+  NAN_INLINE v8::Local<v8::Message> Message() const {
+    return try_catch_.Message();
+  }
+
+  NAN_INLINE void Reset() { try_catch_.Reset(); }
+
+  NAN_INLINE void SetVerbose(bool value) { try_catch_.SetVerbose(value); }
+
+  NAN_INLINE void SetCaptureMessage(bool value) {
+    try_catch_.SetCaptureMessage(value);
+  }
+};
+
+//============ =================================================================
 
 /* node 0.12  */
 #if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
@@ -726,8 +772,8 @@ class NanEscapableScope {
         v8::Isolate::GetCurrent(), target, method, argc, argv));
   }
 
-  NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
-    node::FatalException(v8::Isolate::GetCurrent(), try_catch);
+  NAN_INLINE void NanFatalException(const NanTryCatch& try_catch) {
+    node::FatalException(v8::Isolate::GetCurrent(), try_catch.try_catch_);
   }
 
   NAN_INLINE v8::Local<v8::Value> NanErrnoException(
@@ -1060,8 +1106,8 @@ class NanEscapableScope {
     return NanNew(node::MakeCallback(target, method, argc, argv));
   }
 
-  NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
-    node::FatalException(const_cast<v8::TryCatch&>(try_catch));
+  NAN_INLINE void NanFatalException(const NanTryCatch& try_catch) {
+    node::FatalException(const_cast<v8::TryCatch &>(try_catch.try_catch_));
   }
 
   NAN_INLINE v8::Local<v8::Value> NanErrnoException(
