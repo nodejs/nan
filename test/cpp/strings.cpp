@@ -16,17 +16,14 @@ NAN_METHOD(EncodeUCS2) {
   NanReturnValue(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
 }
 
-v8::Persistent<v8::FunctionTemplate> encodeHex_persistent;
-v8::Persistent<v8::FunctionTemplate> encodeUCS2_persistent;
+NanPersistent<v8::FunctionTemplate> encodeHex_persistent;
+NanPersistent<v8::FunctionTemplate> encodeUCS2_persistent;
 
 void Init (v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> encodeHex =
     NanNew<v8::FunctionTemplate>(EncodeHex);
 
-  NanAssignPersistent(
-    encodeHex_persistent
-  , encodeHex
-  );
+  encodeHex_persistent.Reset(encodeHex);
 
   target->Set(
       NanNew("encodeHex")
@@ -36,10 +33,7 @@ void Init (v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> encodeUCS2 =
     NanNew<v8::FunctionTemplate>(EncodeUCS2);
 
-  NanAssignPersistent(
-    encodeUCS2_persistent
-  , encodeUCS2
-  );
+  encodeUCS2_persistent.Reset(encodeUCS2);
 
   target->Set(
       NanNew("encodeUCS2")

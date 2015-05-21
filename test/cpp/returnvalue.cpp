@@ -8,7 +8,7 @@
 
 #include <nan.h>
 
-v8::Persistent<v8::Boolean> persistent;
+NanPersistent<v8::Boolean> persistent;
 
 NAN_METHOD(ReturnValue) {
   if (args.Length() == 1) {
@@ -31,7 +31,7 @@ NAN_METHOD(ReturnPersistent) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  NanAssignPersistent(persistent, NanNew(true));
+  persistent.Reset(NanNew(true));
 
   target->Set(
       NanNew<v8::String>("r")
