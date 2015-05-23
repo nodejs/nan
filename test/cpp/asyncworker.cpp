@@ -28,13 +28,13 @@ class SleepWorker : public NanAsyncWorker {
 
 NAN_METHOD(DoSleep) {
   NanCallback *callback = new NanCallback(info[1].As<v8::Function>());
-  NanAsyncQueueWorker(new SleepWorker(callback, info[0]->Uint32Value()));
-  info.GetReturnValue().SetUndefined();
+  NanAsyncQueueWorker(
+      new SleepWorker(callback, NanTo<uint32_t>(info[0]).FromJust()));
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  exports->Set(
-      NanNew<v8::String>("a")
+  NanSet(exports
+    , NanNew<v8::String>("a").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 

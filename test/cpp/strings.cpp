@@ -9,12 +9,12 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnUtf8String) {
-  info.GetReturnValue().Set(NanNew(*NanUtf8String(info[0])));
+  info.GetReturnValue().Set(NanNew(*NanUtf8String(info[0])).ToLocalChecked());
 }
 
 NAN_METHOD(HeapString) {
   NanUtf8String *s = new NanUtf8String(info[0]);
-  v8::Local<v8::String> res = NanNew(**s);
+  v8::Local<v8::String> res = NanNew(**s).ToLocalChecked();
   delete s;
   info.GetReturnValue().Set(res);
 }
@@ -39,7 +39,7 @@ void Init (v8::Handle<v8::Object> target) {
   returnUtf8String_persistent.Reset(returnUtf8String);
 
   target->Set(
-      NanNew("returnUtf8String")
+      NanNew("returnUtf8String").ToLocalChecked()
     , returnUtf8String->GetFunction()
   );
 
@@ -49,7 +49,7 @@ void Init (v8::Handle<v8::Object> target) {
   heapString_persistent.Reset(heapString);
 
   target->Set(
-      NanNew("heapString")
+      NanNew("heapString").ToLocalChecked()
     , heapString->GetFunction()
   );
 
@@ -58,8 +58,8 @@ void Init (v8::Handle<v8::Object> target) {
 
   encodeHex_persistent.Reset(encodeHex);
 
-  target->Set(
-      NanNew("encodeHex")
+  NanSet(target
+    , NanNew("encodeHex").ToLocalChecked()
     , encodeHex->GetFunction()
   );
 
@@ -68,8 +68,8 @@ void Init (v8::Handle<v8::Object> target) {
 
   encodeUCS2_persistent.Reset(encodeUCS2);
 
-  target->Set(
-      NanNew("encodeUCS2")
+  NanSet(target
+    , NanNew("encodeUCS2").ToLocalChecked()
     , encodeUCS2->GetFunction()
   );
 }

@@ -46,18 +46,6 @@ void SetterGetter::Init(v8::Handle<v8::Object> target) {
   tpl->SetClassName(NanNew<v8::String>("SetterGetter").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   NanSetPrototypeMethod(tpl, "log", SetterGetter::Log);
-  v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
-  NanSetAccessor(
-      proto
-    , NanNew("prop1").ToLocalChecked()
-    , SetterGetter::GetProp1);
-  NanSetAccessor(
-      proto
-    , NanNew<v8::String>("prop2").ToLocalChecked()
-    , SetterGetter::GetProp2
-    , SetterGetter::SetProp2
-  );
-
   v8::Local<v8::Function> createnew =
     NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
   NanSet(target, NanNew<v8::String>("create").ToLocalChecked(), createnew);
@@ -69,6 +57,16 @@ v8::Handle<v8::Value> SetterGetter::NewInstance () {
       NanNew(settergetter_constructor);
   v8::Local<v8::Object> instance =
     constructorHandle->GetFunction()->NewInstance(0, NULL);
+  NanSetAccessor(
+      instance
+    , NanNew("prop1").ToLocalChecked()
+    , SetterGetter::GetProp1);
+  NanSetAccessor(
+      instance
+    , NanNew<v8::String>("prop2").ToLocalChecked()
+    , SetterGetter::GetProp2
+    , SetterGetter::SetProp2
+  );
   return scope.Escape(instance);
 }
 
@@ -133,7 +131,7 @@ NAN_SETTER(SetterGetter::SetProp2) {
       NanObjectWrap::Unwrap<SetterGetter>(info.This());
   strncpy(
       settergetter->prop2
-    , *NanUtf8String(value)
+    , *v8::String::Utf8Value(value)
     , sizeof (settergetter->prop2));
   settergetter->prop2[sizeof (settergetter->prop2) - 1] = '\0';
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
@@ -160,4 +158,4 @@ NAN_METHOD(SetterGetter::Log) {
   info.GetReturnValue().Set(NanNew(settergetter->log).ToLocalChecked());
 }
 
-NODE_MODULE(accessors, SetterGetter::Init)
+NODE_MODULE(accessors2, SetterGetter::Init)

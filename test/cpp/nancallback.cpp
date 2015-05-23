@@ -10,21 +10,16 @@
 
 NAN_METHOD(GlobalContext) {
   NanCallback(info[0].As<v8::Function>()).Call(0, NULL);
-  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(SpecificContext) {
   NanCallback cb(info[0].As<v8::Function>());
   cb.Call(NanGetCurrentContext()->Global(), 0, NULL);
-  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(CustomReceiver) {
-  NanScope();
-
-  NanCallback cb(args[0].As<v8::Function>());
-  cb.Call(args[1].As<v8::Object>(), 0, NULL);
-  NanReturnUndefined();
+  NanCallback cb(info[0].As<v8::Function>());
+  cb.Call(info[1].As<v8::Object>(), 0, NULL);
 }
 
 NAN_METHOD(CompareCallbacks) {
@@ -36,20 +31,20 @@ NAN_METHOD(CompareCallbacks) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("globalContext")
+  NanSet(target
+    , NanNew<v8::String>("globalContext").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(GlobalContext)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("specificContext")
+  NanSet(target
+    , NanNew<v8::String>("specificContext").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(SpecificContext)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("customReceiver")
+  NanSet(target
+    , NanNew<v8::String>("customReceiver").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(CustomReceiver)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("compareCallbacks")
+  NanSet(target
+    , NanNew<v8::String>("compareCallbacks").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(CompareCallbacks)->GetFunction()
   );
 }
