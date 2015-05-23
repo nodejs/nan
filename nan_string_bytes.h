@@ -233,7 +233,7 @@ static Local<Value> Encode(const char* buf,
                            enum Nan::Encoding encoding) {
   assert(buflen <= node::Buffer::kMaxLength);
   if (!buflen && encoding != Nan::BUFFER)
-    return NanNew("");
+    return NanNew("").ToLocalChecked();
 
   Local<String> val;
   switch (encoding) {
@@ -244,15 +244,15 @@ static Local<Value> Encode(const char* buf,
       if (contains_non_ascii(buf, buflen)) {
         char* out = new char[buflen];
         force_ascii(buf, out, buflen);
-        val = NanNew<String>(out, buflen);
+        val = NanNew<String>(out, buflen).ToLocalChecked();
         delete[] out;
       } else {
-        val = NanNew<String>(buf, buflen);
+        val = NanNew<String>(buf, buflen).ToLocalChecked();
       }
       break;
 
     case Nan::UTF8:
-      val = NanNew<String>(buf, buflen);
+      val = NanNew<String>(buf, buflen).ToLocalChecked();
       break;
 
     case Nan::BINARY: {
@@ -263,7 +263,7 @@ static Local<Value> Encode(const char* buf,
         // XXX is the following line platform independent?
         twobytebuf[i] = cbuf[i];
       }
-      val = NanNew<String>(twobytebuf, buflen);
+      val = NanNew<String>(twobytebuf, buflen).ToLocalChecked();
       delete[] twobytebuf;
       break;
     }
@@ -275,14 +275,14 @@ static Local<Value> Encode(const char* buf,
       size_t written = base64_encode(buf, buflen, dst, dlen);
       assert(written == dlen);
 
-      val = NanNew<String>(dst, dlen);
+      val = NanNew<String>(dst, dlen).ToLocalChecked();
       delete[] dst;
       break;
     }
 
     case Nan::UCS2: {
       const uint16_t* data = reinterpret_cast<const uint16_t*>(buf);
-      val = NanNew<String>(data, buflen / 2);
+      val = NanNew<String>(data, buflen / 2).ToLocalChecked();
       break;
     }
 
@@ -292,7 +292,7 @@ static Local<Value> Encode(const char* buf,
       size_t written = hex_encode(buf, buflen, dst, dlen);
       assert(written == dlen);
 
-      val = NanNew<String>(dst, dlen);
+      val = NanNew<String>(dst, dlen).ToLocalChecked();
       delete[] dst;
       break;
     }

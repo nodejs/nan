@@ -16,7 +16,7 @@ NAN_METHOD(ReturnValue) {
   if (cbinfo.Length() == 1) {
     ret.Set(info[0].As<v8::String>());
   } else {
-    ret.Set(NanNew<v8::String>("default"));
+    ret.Set(NanNew("default").ToLocalChecked());
   }
 }
 
@@ -31,16 +31,16 @@ NAN_METHOD(ReturnGlobal) {
 void Init (v8::Handle<v8::Object> target) {
   global.Reset(NanNew(true));
 
-  target->Set(
-      NanNew<v8::String>("r")
+  NanSet(target
+    , NanNew<v8::String>("r").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("p")
+  NanSet(target
+    , NanNew<v8::String>("p").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("q")
+  NanSet(target
+    , NanNew<v8::String>("q").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
   );
 }

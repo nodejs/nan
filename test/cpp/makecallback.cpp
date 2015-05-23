@@ -32,13 +32,13 @@ MyObject::~MyObject() {
 void MyObject::Init(v8::Handle<v8::Object> exports) {
   // Prepare constructor template
   v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-  tpl->SetClassName(NanNew<v8::String>("MyObject"));
+  tpl->SetClassName(NanNew<v8::String>("MyObject").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   NanSetPrototypeMethod(tpl, "call_emit", CallEmit);
 
   constructor.Reset(tpl->GetFunction());
-  exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
+  NanSet(exports, NanNew("MyObject").ToLocalChecked(), tpl->GetFunction());
 }
 
 NAN_METHOD(MyObject::New) {
@@ -54,7 +54,7 @@ NAN_METHOD(MyObject::New) {
 
 NAN_METHOD(MyObject::CallEmit) {
   v8::Handle<v8::Value> argv[1] = {
-      NanNew("event"), // event name
+    NanNew("event").ToLocalChecked(),  // event name
   };
 
   NanMakeCallback(info.This(), "emit", 1, argv);

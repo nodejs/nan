@@ -31,25 +31,47 @@ MyObject::~MyObject() {
 void MyObject::Init(v8::Handle<v8::Object> exports) {
   // Prepare constructor template
   v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-  tpl->SetClassName(NanNew<v8::String>("MyObject"));
+  tpl->SetClassName(NanNew<v8::String>("MyObject").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
-  NanSetPrototypeTemplate(tpl, "prototypeProp", NanNew("a prototype property"));
+  NanSetPrototypeTemplate(
+    tpl
+  , "prototypeProp"
+  , NanNew<v8::String>("a prototype property").ToLocalChecked());
+
   // Instance
-  NanSetInstanceTemplate(tpl, "instanceProp", NanNew("an instance property"));
+  NanSetInstanceTemplate(
+    tpl
+  , "instanceProp"
+  , NanNew<v8::String>("an instance property").ToLocalChecked());
+
   // PropertyAttributes
   NanSetInstanceTemplate(
-      tpl, NanNew("none"), NanNew("none"), v8::None);
+    tpl
+  , NanNew<v8::String>("none").ToLocalChecked()
+  , NanNew<v8::String>("none").ToLocalChecked()
+  , v8::None);
   NanSetInstanceTemplate(
-      tpl, NanNew("readOnly"), NanNew("readOnly"), v8::ReadOnly);
+    tpl
+  , NanNew<v8::String>("readOnly").ToLocalChecked()
+  , NanNew<v8::String>("readOnly").ToLocalChecked()
+  , v8::ReadOnly);
   NanSetInstanceTemplate(
-      tpl, NanNew("dontEnum"), NanNew("dontEnum"), v8::DontEnum);
+    tpl
+  , NanNew<v8::String>("dontEnum").ToLocalChecked()
+  , NanNew<v8::String>("dontEnum").ToLocalChecked()
+  , v8::DontEnum);
   NanSetInstanceTemplate(
-      tpl, NanNew("dontDelete"), NanNew("dontDelete"), v8::DontDelete);
+    tpl
+  , NanNew<v8::String>("dontDelete").ToLocalChecked()
+  , NanNew<v8::String>("dontDelete").ToLocalChecked()
+  , v8::DontDelete);
 
   constructor.Reset(tpl->GetFunction());
-  exports->Set(NanNew<v8::String>("MyObject"), tpl->GetFunction());
+  NanSet(exports
+  , NanNew<v8::String>("MyObject").ToLocalChecked()
+  , tpl->GetFunction());
 }
 
 NAN_METHOD(MyObject::New) {

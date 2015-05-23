@@ -50,6 +50,10 @@
       , "sources"     : [ "cpp/accessors.cpp" ]
     }
   , {
+        "target_name" : "accessors2"
+      , "sources"     : [ "cpp/accessors2.cpp" ]
+    }
+  , {
         "target_name" : "persistent"
       , "sources"     : [ "cpp/persistent.cpp" ]
     }
@@ -115,5 +119,9 @@
     , {
         "target_name" : "indexedinterceptors"
       , "sources"     : [ "cpp/indexedinterceptors.cpp" ]
+    }
+    , {
+        "target_name" : "converters"
+      , "sources"     : [ "cpp/converters.cpp" ]
     }
 ]}

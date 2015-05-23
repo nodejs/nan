@@ -12,13 +12,13 @@ class MyObject : public NanObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports) {
     v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-    tpl->SetClassName(NanNew("MyObject"));
+    tpl->SetClassName(NanNew("MyObject").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     NanSetPrototypeMethod(tpl, "getHandle", GetHandle);
 
     constructor.Reset(tpl->GetFunction());
-    exports->Set(NanNew("MyObject"), tpl->GetFunction());
+    NanSet(exports, NanNew("MyObject").ToLocalChecked(), tpl->GetFunction());
   }
 
  private:

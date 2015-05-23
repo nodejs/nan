@@ -18,10 +18,10 @@ using v8::String;
 // Expose synchronous and asynchronous access to our
 // Estimate() function
 void InitAll(Handle<Object> exports) {
-  exports->Set(NanNew<String>("calculateSync"),
+  exports->Set(NanNew<String>("calculateSync").ToLocalChecked(),
     NanNew<FunctionTemplate>(CalculateSync)->GetFunction());
 
-  exports->Set(NanNew<String>("calculateAsync"),
+  exports->Set(NanNew<String>("calculateAsync").ToLocalChecked(),
     NanNew<FunctionTemplate>(CalculateAsync)->GetFunction());
 }
 
