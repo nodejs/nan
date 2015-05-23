@@ -301,12 +301,11 @@ NAN_METHOD(testString) {
   t.ok(_( stringMatches( NanNew<String>().ToLocalChecked(), "")));
   t.ok(_( assertType<String>( NanNew<String>().ToLocalChecked())));
 
-  // These should be deprecated
   const uint8_t *ustring = reinterpret_cast<const uint8_t *>("unsigned chars");
   t.ok(_( stringMatches(
-      NanNew<String>(ustring).ToLocalChecked(), "unsigned chars")));
+      NanNewOneByteString(ustring).ToLocalChecked(), "unsigned chars")));
   t.ok(_( stringMatches(
-      NanNew<String>(ustring, 8).ToLocalChecked(), "unsigned")));
+      NanNewOneByteString(ustring, 8).ToLocalChecked(), "unsigned")));
 
   // === Convenience
 
