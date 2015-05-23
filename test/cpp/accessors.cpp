@@ -9,6 +9,8 @@
 #include <nan.h>
 #include <cstring>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class SetterGetter : public NanObjectWrap {
  public:
   static void Init (v8::Handle<v8::Object> target);

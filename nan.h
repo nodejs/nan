@@ -25,17 +25,44 @@
 #include <node_buffer.h>
 #include <node_version.h>
 #include <node_object_wrap.h>
+#include <algorithm>
 #include <cstring>
 #include <climits>
 #include <cstdlib>
 #if defined(_MSC_VER)
 # pragma warning( push )
 # pragma warning( disable : 4530 )
+# include <map>
 # include <string>
+# include <vector>
 # pragma warning( pop )
 #else
+# include <map>
 # include <string>
+# include <vector>
 #endif
+
+// uv helpers
+#ifdef UV_VERSION_MAJOR
+# ifndef UV_VERSION_PATCH
+#  define UV_VERSION_PATCH 0
+# endif
+# define NAUV_UVVERSION  ((UV_VERSION_MAJOR << 16) | \
+                     (UV_VERSION_MINOR <<  8) | \
+                     (UV_VERSION_PATCH))
+#else
+# define NAUV_UVVERSION 0x000b00
+#endif
+
+#if NAUV_UVVERSION < 0x000b0b
+# ifdef WIN32
+#  include <windows.h>
+# else
+#  include <pthread.h>
+# endif
+#endif
+
+namespace Nan {
 
 #if defined(__GNUC__) && !(defined(DEBUG) && DEBUG)
 # define NAN_INLINE inline __attribute__((always_inline))
@@ -150,19 +177,6 @@ class NanPersistent;
 #include "nan_converters.h"  // NOLINT(build/include)
 #include "nan_new.h"  // NOLINT(build/include)
 
-// uv helpers
-#ifdef UV_VERSION_MAJOR
-#ifndef UV_VERSION_PATCH
-#define UV_VERSION_PATCH 0
-#endif
-#define NAUV_UVVERSION  ((UV_VERSION_MAJOR << 16) | \
-                     (UV_VERSION_MINOR <<  8) | \
-                     (UV_VERSION_PATCH))
-#else
-#define NAUV_UVVERSION 0x000b00
-#endif
-
-
 #if NAUV_UVVERSION < 0x000b17
 #define NAUV_WORK_CB(func) \
     void func(uv_async_t *async, int)
@@ -200,8 +214,6 @@ inline void nauv_key_set(nauv_key_t *key, void *value) {
 
 #ifndef WIN32
 
-#include <pthread.h>
-
 typedef pthread_key_t nauv_key_t;
 
 inline int nauv_key_create(nauv_key_t* key) {
@@ -223,8 +235,6 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 }
 
 #else
-
-#include <windows.h>
 
 typedef struct {
   DWORD tls_index;
@@ -283,9 +293,8 @@ template<typename P> class NanWeakCallbackInfo;
 # include "nan_persistent_pre_12_inl.h"  // NOLINT(build/include)
 #endif
 
-namespace Nan { namespace imp {
+namespace imp {
   static const size_t kMaxLength = 0x3fffffff;
-
   template<typename T>
   NAN_INLINE
   v8::Local<T>
@@ -344,7 +353,6 @@ namespace Nan { namespace imp {
     return NanUnwrap(NanNew(val));
   }
 }  // end of namespace imp
-}  // end of namespace Nan
 
 //=== HandleScope ==============================================================
 
@@ -846,102 +854,47 @@ class NanTryCatch {
       return static_cast<T*>(isolate->GetData(0));
   }
 
-  class NanAsciiString {
-   public:
-    NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
-      size = toStr->Length();
-      buf = new char[size + 1];
-      size = toStr->WriteOneByte(reinterpret_cast<unsigned char*>(buf));
-    }
-
-    NAN_INLINE int length() const {
-      return size;
-    }
-
-
-    NAN_INLINE char* operator*() { return buf; }
-    NAN_INLINE const char* operator*() const { return buf; }
-
-    NAN_INLINE ~NanAsciiString() {
-      delete[] buf;
-    }
-
-   private:
-    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsciiString)
-
-    char *buf;
-    int size;
-  };
-
-  class NanUtf8String {
-   public:
-    NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) :
-        length_(0), str_(str_st_) {
-      if (!from.IsEmpty()) {
-        v8::Local<v8::String> string = from->ToString();
-        if (!string.IsEmpty()) {
-          size_t len = 3 * string->Length() + 1;
-          assert(len <= INT_MAX);
-          if (len > sizeof (str_st_)) {
-            str_ = static_cast<char*>(malloc(len));
-            assert(str_ != 0);
-          }
-          const int flags = v8::String::NO_NULL_TERMINATION |
-                            v8::String::REPLACE_INVALID_UTF8;
-          length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
-          str_[length_] = '\0';
+class NanUtf8String {
+ public:
+  NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) :
+      length_(0), str_(str_st_) {
+    if (!from.IsEmpty()) {
+      v8::Local<v8::String> string = from->ToString();
+      if (!string.IsEmpty()) {
+        size_t len = 3 * string->Length() + 1;
+        assert(len <= INT_MAX);
+        if (len > sizeof (str_st_)) {
+          str_ = static_cast<char*>(malloc(len));
+          assert(str_ != 0);
         }
+        const int flags = v8::String::NO_NULL_TERMINATION |
+                          v8::String::REPLACE_INVALID_UTF8;
+        length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
+        str_[length_] = '\0';
       }
     }
+  }
 
-    NAN_INLINE int length() const {
-      return length_;
+  NAN_INLINE int length() const {
+    return length_;
+  }
+
+  NAN_INLINE char* operator*() { return str_; }
+  NAN_INLINE const char* operator*() const { return str_; }
+
+  NAN_INLINE ~NanUtf8String() {
+    if (str_ != str_st_) {
+      free(str_);
     }
+  }
 
-    NAN_INLINE char* operator*() { return str_; }
-    NAN_INLINE const char* operator*() const { return str_; }
+ private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
-    NAN_INLINE ~NanUtf8String() {
-      if (str_ != str_st_) {
-        free(str_);
-      }
-    }
-
-   private:
-    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
-
-    int length_;
-    char *str_;
-    char str_st_[1024];
-  };
-
-  class NanUcs2String {
-   public:
-    NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
-      size = toStr->Length();
-      buf = new uint16_t[size + 1];
-      toStr->Write(buf);
-    }
-
-    NAN_INLINE int length() const {
-      return size;
-    }
-
-    NAN_INLINE uint16_t* operator*() { return buf; }
-    NAN_INLINE const uint16_t* operator*() const { return buf; }
-
-    NAN_INLINE ~NanUcs2String() {
-      delete[] buf;
-    }
-
-   private:
-    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUcs2String)
-
-    uint16_t *buf;
-    int size;
-  };
+  int length_;
+  char *str_;
+  char str_st_[1024];
+};
 
 #else  // Node 0.8 and 0.10
   NAN_INLINE v8::Local<v8::Primitive> NanUndefined() {
@@ -1127,25 +1080,24 @@ class NanTryCatch {
     return function_template->HasInstance(value);
   }
 
-  namespace Nan { namespace imp {
-  NAN_INLINE void
-  widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
-    size_t len = static_cast<size_t>(l);
-    if (l < 0) {
-      len = strlen(reinterpret_cast<const char*>(s));
-    }
-    assert(len <= INT_MAX && "string too long");
-    ws->resize(len);
-    std::copy(s, s + len, ws->begin());  // NOLINT(build/include_what_you_use)
+namespace imp {
+NAN_INLINE void
+widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
+  size_t len = static_cast<size_t>(l);
+  if (l < 0) {
+    len = strlen(reinterpret_cast<const char*>(s));
   }
-  }  // end of namespace imp NOLINT(readability/namespace)
-  }  // end of namespace Nan NOLINT(readability/namespace)
+  assert(len <= INT_MAX && "string too long");
+  ws->resize(len);
+  std::copy(s, s + len, ws->begin());  // NOLINT(build/include_what_you_use)
+}
+}  // end of namespace imp
 
   NAN_INLINE NanMaybeLocal<v8::String>
   NanNewOneByteString(const uint8_t * value, int length = -1) {
     std::vector<uint16_t> wideString;  // NOLINT(build/include_what_you_use)
     Nan::imp::widenString(&wideString, value, length);
-    return Nan::imp::Factory<v8::String>::return_t(v8::String::New(
+    return imp::Factory<v8::String>::return_t(v8::String::New(
         &wideString.front(), static_cast<int>(wideString.size())));
   }
 
@@ -1220,87 +1172,47 @@ class NanTryCatch {
       return static_cast<T*>(isolate->GetData());
   }
 
-  class NanAsciiString {
-   public:
-    NAN_INLINE explicit NanAsciiString(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
-      size = toStr->Length();
-      buf = new char[size + 1];
-      size = toStr->WriteAscii(buf);
+class NanUtf8String {
+ public:
+  NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) :
+      length_(0), str_(str_st_) {
+    if (!from.IsEmpty()) {
+      v8::Local<v8::String> string = from->ToString();
+      if (!string.IsEmpty()) {
+        size_t len = 3 * string->Length() + 1;
+        assert(len <= INT_MAX);
+        if (len > sizeof (str_st_)) {
+          str_ = static_cast<char*>(malloc(len));
+          assert(str_ != 0);
+        }
+        const int flags = v8::String::NO_NULL_TERMINATION |
+                          v8::String::REPLACE_INVALID_UTF8;
+        length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
+        str_[length_] = '\0';
+      }
     }
+  }
 
-    NAN_INLINE int length() const {
-      return size;
+  NAN_INLINE int length() const {
+    return length_;
+  }
+
+  NAN_INLINE char* operator*() { return str_; }
+  NAN_INLINE const char* operator*() const { return str_; }
+
+  NAN_INLINE ~NanUtf8String() {
+    if (str_ != str_st_) {
+      free(str_);
     }
+  }
 
+ private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
-    NAN_INLINE char* operator*() { return buf; }
-    NAN_INLINE const char* operator*() const { return buf; }
-
-    NAN_INLINE ~NanAsciiString() {
-      delete[] buf;
-    }
-
-   private:
-    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanAsciiString)
-
-    char *buf;
-    int size;
-  };
-
-  class NanUtf8String {
-   public:
-    NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
-      size = toStr->Utf8Length();
-      buf = new char[size + 1];
-      toStr->WriteUtf8(buf);
-    }
-
-    NAN_INLINE int length() const {
-      return size;
-    }
-
-    NAN_INLINE char* operator*() { return buf; }
-    NAN_INLINE const char* operator*() const { return buf; }
-
-    NAN_INLINE ~NanUtf8String() {
-      delete[] buf;
-    }
-
-   private:
-    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
-
-    char *buf;
-    int size;
-  };
-
-  class NanUcs2String {
-   public:
-    NAN_INLINE explicit NanUcs2String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
-      size = toStr->Length();
-      buf = new uint16_t[size + 1];
-      toStr->Write(buf);
-    }
-
-    NAN_INLINE int length() const {
-      return size;
-    }
-
-    NAN_INLINE uint16_t* operator*() { return buf; }
-    NAN_INLINE const uint16_t* operator*() const { return buf; }
-
-    NAN_INLINE ~NanUcs2String() {
-      delete[] buf;
-    }
-
-   private:
-    NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUcs2String)
-
-    uint16_t *buf;
-    int size;
-  };
+  int length_;
+  char *str_;
+  char str_st_[1024];
+};
 
 #endif  // NODE_MODULE_VERSION
 
@@ -1502,7 +1414,7 @@ class NanCallback {
 
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    return scope.Escape(Nan::imp::NanEnsureLocal(node::MakeCallback(
+    return scope.Escape(imp::NanEnsureLocal(node::MakeCallback(
         isolate
       , target
       , callback
@@ -1518,7 +1430,7 @@ class NanCallback {
 
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    return scope.Escape(Nan::imp::NanEnsureLocal(node::MakeCallback(
+    return scope.Escape(imp::NanEnsureLocal(node::MakeCallback(
         target
       , callback
       , argc
@@ -1759,7 +1671,7 @@ NAN_INLINE void NanAsyncQueueWorker (NanAsyncWorker* worker) {
   );
 }
 
-namespace Nan { namespace imp {
+namespace imp {
 
 inline
 NanExternalOneByteStringResource const*
@@ -1782,23 +1694,20 @@ IsExternal(v8::Local<v8::String> str) {
 }
 
 }  // end of namespace imp
-}  // end of namespace Nan
 
-namespace Nan {
-  enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
-}  // end of namespace Nan
+enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 
 #if NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION
 # include "nan_string_bytes.h"  // NOLINT(build/include)
 #endif
 
 NAN_INLINE v8::Local<v8::Value> NanEncode(
-    const void *buf, size_t len, enum Nan::Encoding encoding = Nan::BINARY) {
+    const void *buf, size_t len, enum Encoding encoding = BINARY) {
 #if (NODE_MODULE_VERSION >= ATOM_0_21_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   node::encoding node_enc = static_cast<node::encoding>(encoding);
 
-  if (encoding == Nan::UCS2) {
+  if (encoding == UCS2) {
     return node::Encode(
         isolate
       , reinterpret_cast<const uint16_t *>(buf)
@@ -1819,13 +1728,13 @@ NAN_INLINE v8::Local<v8::Value> NanEncode(
 # if NODE_MODULE_VERSION >= NODE_0_10_MODULE_VERSION
   return node::Encode(buf, len, static_cast<node::encoding>(encoding));
 # else
-  return Nan::imp::Encode(reinterpret_cast<const char*>(buf), len, encoding);
+  return imp::Encode(reinterpret_cast<const char*>(buf), len, encoding);
 # endif
 #endif
 }
 
 NAN_INLINE ssize_t NanDecodeBytes(
-    v8::Handle<v8::Value> val, enum Nan::Encoding encoding = Nan::BINARY) {
+    v8::Handle<v8::Value> val, enum Encoding encoding = BINARY) {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::DecodeBytes(
       v8::Isolate::GetCurrent()
@@ -1833,7 +1742,7 @@ NAN_INLINE ssize_t NanDecodeBytes(
     , static_cast<node::encoding>(encoding));
 #else
 # if (NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION)
-  if (encoding == Nan::BUFFER) {
+  if (encoding == BUFFER) {
     return node::DecodeBytes(val, node::BINARY);
   }
 # endif
@@ -1845,7 +1754,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
     char *buf
   , size_t len
   , v8::Handle<v8::Value> val
-  , enum Nan::Encoding encoding = Nan::BINARY) {
+  , enum Encoding encoding = BINARY) {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::DecodeWrite(
       v8::Isolate::GetCurrent()
@@ -1855,7 +1764,7 @@ NAN_INLINE ssize_t NanDecodeWrite(
     , static_cast<node::encoding>(encoding));
 #else
 # if (NODE_MODULE_VERSION < NODE_0_10_MODULE_VERSION)
-  if (encoding == Nan::BUFFER) {
+  if (encoding == BUFFER) {
     return node::DecodeWrite(buf, len, val, node::BINARY);
   }
 # endif
@@ -1937,33 +1846,33 @@ inline void NanSetAccessor(
   , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
   , v8::AccessControl settings = v8::DEFAULT
   , v8::PropertyAttribute attribute = v8::None
-  , Nan::imp::Sig signature = Nan::imp::Sig()) {
+  , imp::Sig signature = imp::Sig()) {
   NanScope scope;
 
-  Nan::imp::NativeGetter getter_ =
-      Nan::imp::GetterCallbackWrapper;
-  Nan::imp::NativeSetter setter_ =
-      setter ? Nan::imp::SetterCallbackWrapper : 0;
+  imp::NativeGetter getter_ =
+      imp::GetterCallbackWrapper;
+  imp::NativeSetter setter_ =
+      setter ? imp::SetterCallbackWrapper : 0;
 
   v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(Nan::imp::kAccessorFieldCount);
+  otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
   v8::Local<v8::Object> obj = otpl->NewInstance();
   NanSetInternalFieldPointer(
       obj
-    , Nan::imp::kGetterIndex
-    , Nan::imp::GetWrapper<NanGetterCallback, Nan::imp::GetterWrapper>(getter));
+    , imp::kGetterIndex
+    , imp::GetWrapper<NanGetterCallback, imp::GetterWrapper>(getter));
   v8::Local<v8::Value> val = NanNew<v8::Value>(data);
 
   if (setter != 0) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kSetterIndex
-      , Nan::imp::GetWrapper<NanSetterCallback,
-            Nan::imp::SetterWrapper>(setter));
+      , imp::kSetterIndex
+      , imp::GetWrapper<NanSetterCallback,
+            imp::SetterWrapper>(setter));
   }
 
   if (!val.IsEmpty()) {
-    obj->SetInternalField(Nan::imp::kDataIndex, val);
+    obj->SetInternalField(imp::kDataIndex, val);
   }
 
   tpl->SetAccessor(
@@ -1986,30 +1895,30 @@ inline bool NanSetAccessor(
   , v8::PropertyAttribute attribute = v8::None) {
   NanEscapableScope scope;
 
-  Nan::imp::NativeGetter getter_ =
-      Nan::imp::GetterCallbackWrapper;
-  Nan::imp::NativeSetter setter_ =
-      setter ? Nan::imp::SetterCallbackWrapper : 0;
+  imp::NativeGetter getter_ =
+      imp::GetterCallbackWrapper;
+  imp::NativeSetter setter_ =
+      setter ? imp::SetterCallbackWrapper : 0;
 
   v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(Nan::imp::kAccessorFieldCount);
+  otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
   v8::Local<v8::Object> dataobj = otpl->NewInstance();
   NanSetInternalFieldPointer(
       dataobj
-    , Nan::imp::kGetterIndex
-    , Nan::imp::GetWrapper<NanGetterCallback, Nan::imp::GetterWrapper>(getter));
+    , imp::kGetterIndex
+    , imp::GetWrapper<NanGetterCallback, imp::GetterWrapper>(getter));
   v8::Local<v8::Value> val = NanNew<v8::Value>(data);
 
   if (!val.IsEmpty()) {
-    dataobj->SetInternalField(Nan::imp::kDataIndex, val);
+    dataobj->SetInternalField(imp::kDataIndex, val);
   }
 
   if (setter) {
     NanSetInternalFieldPointer(
         dataobj
-      , Nan::imp::kPropertySetterIndex
-      , Nan::imp::GetWrapper<NanSetterCallback,
-            Nan::imp::SetterWrapper>(setter));
+      , imp::kPropertySetterIndex
+      , imp::GetWrapper<NanSetterCallback,
+            imp::SetterWrapper>(setter));
   }
 
   return obj->SetAccessor(
@@ -2031,61 +1940,61 @@ inline void NanSetNamedPropertyHandler(
   , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
   NanScope scope;
 
-  Nan::imp::NativePropertyGetter getter_ =
-      Nan::imp::PropertyGetterCallbackWrapper;
-  Nan::imp::NativePropertySetter setter_ =
-      setter ? Nan::imp::PropertySetterCallbackWrapper : 0;
-  Nan::imp::NativePropertyQuery query_ =
-      query ? Nan::imp::PropertyQueryCallbackWrapper : 0;
-  Nan::imp::NativePropertyDeleter *deleter_ =
-      deleter ? Nan::imp::PropertyDeleterCallbackWrapper : 0;
-  Nan::imp::NativePropertyEnumerator enumerator_ =
-      enumerator ? Nan::imp::PropertyEnumeratorCallbackWrapper : 0;
+  imp::NativePropertyGetter getter_ =
+      imp::PropertyGetterCallbackWrapper;
+  imp::NativePropertySetter setter_ =
+      setter ? imp::PropertySetterCallbackWrapper : 0;
+  imp::NativePropertyQuery query_ =
+      query ? imp::PropertyQueryCallbackWrapper : 0;
+  imp::NativePropertyDeleter *deleter_ =
+      deleter ? imp::PropertyDeleterCallbackWrapper : 0;
+  imp::NativePropertyEnumerator enumerator_ =
+      enumerator ? imp::PropertyEnumeratorCallbackWrapper : 0;
 
   v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(Nan::imp::kPropertyFieldCount);
+  otpl->SetInternalFieldCount(imp::kPropertyFieldCount);
   v8::Local<v8::Object> obj = otpl->NewInstance();
   NanSetInternalFieldPointer(
       obj
-    , Nan::imp::kPropertyGetterIndex
-    , Nan::imp::GetWrapper<NanPropertyGetterCallback,
-          Nan::imp::PropertyGetterWrapper>(getter));
+    , imp::kPropertyGetterIndex
+    , imp::GetWrapper<NanPropertyGetterCallback,
+          imp::PropertyGetterWrapper>(getter));
   v8::Local<v8::Value> val = NanNew<v8::Value>(data);
 
   if (setter) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kPropertySetterIndex
-      , Nan::imp::GetWrapper<NanPropertySetterCallback,
-            Nan::imp::PropertySetterWrapper>(setter));
+      , imp::kPropertySetterIndex
+      , imp::GetWrapper<NanPropertySetterCallback,
+            imp::PropertySetterWrapper>(setter));
   }
 
   if (query) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kPropertyQueryIndex
-      , Nan::imp::GetWrapper<NanPropertyQueryCallback,
-            Nan::imp::PropertyQueryWrapper>(query));
+      , imp::kPropertyQueryIndex
+      , imp::GetWrapper<NanPropertyQueryCallback,
+            imp::PropertyQueryWrapper>(query));
   }
 
   if (deleter) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kPropertyDeleterIndex
-      , Nan::imp::GetWrapper<NanPropertyDeleterCallback,
-            Nan::imp::PropertyDeleterWrapper>(deleter));
+      , imp::kPropertyDeleterIndex
+      , imp::GetWrapper<NanPropertyDeleterCallback,
+            imp::PropertyDeleterWrapper>(deleter));
   }
 
   if (enumerator) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kPropertyEnumeratorIndex
-      , Nan::imp::GetWrapper<NanPropertyEnumeratorCallback,
-            Nan::imp::PropertyEnumeratorWrapper>(enumerator));
+      , imp::kPropertyEnumeratorIndex
+      , imp::GetWrapper<NanPropertyEnumeratorCallback,
+            imp::PropertyEnumeratorWrapper>(enumerator));
   }
 
   if (!val.IsEmpty()) {
-    obj->SetInternalField(Nan::imp::kDataIndex, val);
+    obj->SetInternalField(imp::kDataIndex, val);
   }
 
 #if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
@@ -2112,61 +2021,61 @@ inline void NanSetIndexedPropertyHandler(
   , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
   NanScope scope;
 
-  Nan::imp::NativeIndexGetter getter_ =
-      Nan::imp::IndexGetterCallbackWrapper;
-  Nan::imp::NativeIndexSetter setter_ =
-      setter ? Nan::imp::IndexSetterCallbackWrapper : 0;
-  Nan::imp::NativeIndexQuery query_ =
-      query ? Nan::imp::IndexQueryCallbackWrapper : 0;
-  Nan::imp::NativeIndexDeleter deleter_ =
-      deleter ? Nan::imp::IndexDeleterCallbackWrapper : 0;
-  Nan::imp::NativeIndexEnumerator enumerator_ =
-      enumerator ? Nan::imp::IndexEnumeratorCallbackWrapper : 0;
+  imp::NativeIndexGetter getter_ =
+      imp::IndexGetterCallbackWrapper;
+  imp::NativeIndexSetter setter_ =
+      setter ? imp::IndexSetterCallbackWrapper : 0;
+  imp::NativeIndexQuery query_ =
+      query ? imp::IndexQueryCallbackWrapper : 0;
+  imp::NativeIndexDeleter deleter_ =
+      deleter ? imp::IndexDeleterCallbackWrapper : 0;
+  imp::NativeIndexEnumerator enumerator_ =
+      enumerator ? imp::IndexEnumeratorCallbackWrapper : 0;
 
   v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(Nan::imp::kIndexPropertyFieldCount);
+  otpl->SetInternalFieldCount(imp::kIndexPropertyFieldCount);
   v8::Local<v8::Object> obj = otpl->NewInstance();
   NanSetInternalFieldPointer(
       obj
-    , Nan::imp::kIndexPropertyGetterIndex
-    , Nan::imp::GetWrapper<NanIndexGetterCallback,
-          Nan::imp::IndexGetterWrapper>(getter));
+    , imp::kIndexPropertyGetterIndex
+    , imp::GetWrapper<NanIndexGetterCallback,
+          imp::IndexGetterWrapper>(getter));
   v8::Local<v8::Value> val = NanNew<v8::Value>(data);
 
   if (setter) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kIndexPropertySetterIndex
-      , Nan::imp::GetWrapper<NanIndexSetterCallback,
-            Nan::imp::IndexSetterWrapper>(setter));
+      , imp::kIndexPropertySetterIndex
+      , imp::GetWrapper<NanIndexSetterCallback,
+            imp::IndexSetterWrapper>(setter));
   }
 
   if (query) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kIndexPropertyQueryIndex
-      , Nan::imp::GetWrapper<NanIndexQueryCallback,
-            Nan::imp::IndexQueryWrapper>(query));
+      , imp::kIndexPropertyQueryIndex
+      , imp::GetWrapper<NanIndexQueryCallback,
+            imp::IndexQueryWrapper>(query));
   }
 
   if (deleter) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kIndexPropertyDeleterIndex
-      , Nan::imp::GetWrapper<NanIndexDeleterCallback,
-            Nan::imp::IndexDeleterWrapper>(deleter));
+      , imp::kIndexPropertyDeleterIndex
+      , imp::GetWrapper<NanIndexDeleterCallback,
+            imp::IndexDeleterWrapper>(deleter));
   }
 
   if (enumerator) {
     NanSetInternalFieldPointer(
         obj
-      , Nan::imp::kIndexPropertyEnumeratorIndex
-      , Nan::imp::GetWrapper<NanIndexEnumeratorCallback,
-            Nan::imp::IndexEnumeratorWrapper>(enumerator));
+      , imp::kIndexPropertyEnumeratorIndex
+      , imp::GetWrapper<NanIndexEnumeratorCallback,
+            imp::IndexEnumeratorWrapper>(enumerator));
   }
 
   if (!val.IsEmpty()) {
-    obj->SetInternalField(Nan::imp::kDataIndex, val);
+    obj->SetInternalField(imp::kDataIndex, val);
   }
 
 #if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
@@ -2246,5 +2155,7 @@ struct NanTap {
 #define NAN_EXPORT(target, function) NanExport(target, #function, function)
 
 #undef TYPE_CHECK
+
+}  // end of namespace Nan
 
 #endif  // NAN_H_

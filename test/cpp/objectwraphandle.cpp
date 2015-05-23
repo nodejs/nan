@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class MyObject : public NanObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports) {

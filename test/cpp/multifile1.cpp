@@ -9,6 +9,8 @@
 #include <nan.h>
 #include "./multifile2.h"
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 void Init (v8::Handle<v8::Object> target) {
   NanSet(target
     , NanNew<v8::String>("r").ToLocalChecked()

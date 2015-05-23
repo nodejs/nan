@@ -12,6 +12,8 @@
 #endif
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class SleepWorker : public NanAsyncWorker {
  public:
   SleepWorker(NanCallback *callback, int milliseconds)

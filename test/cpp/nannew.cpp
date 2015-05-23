@@ -23,6 +23,8 @@
 # include <string>
 #endif
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 using namespace v8;  // NOLINT(build/namespaces)
 
 namespace {

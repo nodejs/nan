@@ -9,16 +9,7 @@
 #ifndef NAN_NEW_H_
 #define NAN_NEW_H_
 
-#if defined(_MSC_VER)
-# pragma warning( push )
-# pragma warning( disable : 4530 )
-# include <string>
-# pragma warning( pop )
-#else
-# include <string>
-#endif
-
-namespace Nan { namespace imp {  // scnr
+namespace imp {  // scnr
 
 // TODO(agnat): Generalize
 template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
@@ -181,11 +172,10 @@ struct Factory<v8::StringObject> : FactoryBase<v8::StringObject> {
 };
 
 }  // end of namespace imp
-}  // end of namespace Nan
 
 #if (NODE_MODULE_VERSION >= 12)
 
-namespace Nan { namespace imp {
+namespace imp {
 
 template <>
 struct Factory<v8::UnboundScript> : MaybeFactoryBase<v8::UnboundScript> {
@@ -195,7 +185,6 @@ struct Factory<v8::UnboundScript> : MaybeFactoryBase<v8::UnboundScript> {
 };
 
 }  // end of namespace imp
-}  // end of namespace Nan
 
 # include "nan_implementation_12_inl.h"
 
@@ -297,7 +286,7 @@ NanNew(double value) {
 
 inline
 Nan::imp::Factory<v8::String>::return_t
-NanNew(std::string const& value) {
+NanNew(std::string const& value) {  // NOLINT(build/include_what_you_use)
   return NanNew<v8::String>(value);
 }
 

@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 #define _(e) NAN_TEST_EXPRESSION(e)
 
 // Based on test-thread.c from libuv.

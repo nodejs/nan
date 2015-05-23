@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 static bool prologue_called = false;
 static bool epilogue_called = false;
 
