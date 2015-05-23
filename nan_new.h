@@ -173,9 +173,6 @@ struct Factory<v8::String> : MaybeFactoryBase<v8::String> {
 
   static inline return_t New(v8::String::ExternalStringResource * value);
   static inline return_t New(NanExternalOneByteStringResource * value);
-
-  // TODO(agnat): Deprecate.
-  static inline return_t New(const uint8_t * value, int length = -1);
 };
 
 template <>
@@ -313,12 +310,6 @@ NanNew(const char * value, int length) {
 inline
 Nan::imp::Factory<v8::String>::return_t
 NanNew(const char * value) {
-  return NanNew<v8::String>(value);
-}
-
-inline
-Nan::imp::Factory<v8::String>::return_t
-NanNew(const uint8_t * value) {
   return NanNew<v8::String>(value);
 }
 
