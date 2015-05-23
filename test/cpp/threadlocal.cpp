@@ -15,8 +15,6 @@
 class TlsTest : public NanAsyncWorker {
  public:
   explicit TlsTest(NanTap *t) : NanAsyncWorker(NULL), t(t), i(0) {
-    NanScope();
-
     t->plan(7);
     t->ok(_(0 == nauv_key_create(&tls_key)));
     t->ok(_(NULL == nauv_key_get(&tls_key)));
@@ -60,8 +58,8 @@ NAN_METHOD(thread_local_storage) {
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  exports->Set(
-      NanNew<v8::String>("thread_local_storage")
+  NanSet(exports
+    , NanNew<v8::String>("thread_local_storage").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(thread_local_storage)->GetFunction()
   );
 }

@@ -9,6 +9,6 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnString) {
-  v8::Local<v8::String> s = NanNew<v8::String>(*NanUtf8String(info[0]));
+  v8::Local<v8::String> s = NanNew(*NanUtf8String(info[0])).ToLocalChecked();
   info.GetReturnValue().Set(s);
 }

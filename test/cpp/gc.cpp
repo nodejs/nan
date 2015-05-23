@@ -32,12 +32,12 @@ NAN_METHOD(Check) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("hook")
+  NanSet(target
+    , NanNew<v8::String>("hook").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Hook)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("check")
+  NanSet(target
+    , NanNew<v8::String>("check").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Check)->GetFunction()
   );
 }
