@@ -55,4 +55,75 @@ template<typename T, typename M> class NanPersistent :
   }
 };
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+template<typename T>
+class NanGlobal : public v8::Global<T> {
+ public:
+  NAN_INLINE NanGlobal() : v8::Global<T>() {}
+
+  template<typename S> NAN_INLINE NanGlobal(v8::Handle<S> that) :
+    v8::Global<T>(v8::Isolate::GetCurrent(), that) {}
+
+  template<typename S>
+  NAN_INLINE NanGlobal(const v8::PersistentBase<S> &that) :
+      v8::Global<S>(v8::Isolate::GetCurrent(), that) {}
+
+  NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
+
+  template <typename S>
+  NAN_INLINE void Reset(const v8::Handle<S> &other) {
+    v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
+  }
+
+  template <typename S>
+  NAN_INLINE void Reset(const v8::PersistentBase<S> &other) {
+    v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
+  }
+
+  template<typename P>
+  NAN_INLINE void SetWeak(
+    P *parameter
+    , typename NanWeakCallbackInfo<P>::Callback callback
+    , NanWeakCallbackType type) {
+    reinterpret_cast<NanPersistent<T>*>(this)->SetWeak(
+        parameter, callback, type);
+  }
+};
+#else
+template<typename T>
+class NanGlobal : public v8::UniquePersistent<T> {
+ public:
+  NAN_INLINE NanGlobal() : v8::UniquePersistent<T>() {}
+
+  template<typename S> NAN_INLINE NanGlobal(v8::Handle<S> that) :
+    v8::UniquePersistent<T>(v8::Isolate::GetCurrent(), that) {}
+
+  template<typename S>
+  NAN_INLINE NanGlobal(const v8::PersistentBase<S> &that) :
+      v8::UniquePersistent<S>(v8::Isolate::GetCurrent(), that) {}
+
+  NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
+
+  template <typename S>
+  NAN_INLINE void Reset(const v8::Handle<S> &other) {
+    v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
+  }
+
+  template <typename S>
+  NAN_INLINE void Reset(const v8::PersistentBase<S> &other) {
+    v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
+  }
+
+  template<typename P>
+  NAN_INLINE void SetWeak(
+    P *parameter
+    , typename NanWeakCallbackInfo<P>::Callback callback
+    , NanWeakCallbackType type) {
+    reinterpret_cast<NanPersistent<T>*>(this)->SetWeak(
+        parameter, callback, type);
+  }
+};
+#endif
+
 #endif  // NAN_PERSISTENT_12_INL_H_

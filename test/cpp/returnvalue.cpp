@@ -8,7 +8,7 @@
 
 #include <nan.h>
 
-NanPersistent<v8::Boolean> persistent;
+NanGlobal<v8::Boolean> global;
 
 NAN_METHOD(ReturnValue) {
   if (args.Length() == 1) {
@@ -26,12 +26,12 @@ NAN_METHOD(ReturnString) {
   NanReturnValue("yes, it works");
 }
 
-NAN_METHOD(ReturnPersistent) {
-  NanReturnValue(persistent);
+NAN_METHOD(ReturnGlobal) {
+  NanReturnValue(global);
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  persistent.Reset(NanNew(true));
+  global.Reset(NanNew(true));
 
   target->Set(
       NanNew<v8::String>("r")
@@ -47,7 +47,7 @@ void Init (v8::Handle<v8::Object> target) {
   );
   target->Set(
       NanNew<v8::String>("q")
-    , NanNew<v8::FunctionTemplate>(ReturnPersistent)->GetFunction()
+    , NanNew<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
   );
 }
 
