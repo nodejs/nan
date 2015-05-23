@@ -118,7 +118,7 @@ typedef v8::String::ExternalOneByteStringResource
     NanExternalOneByteStringResource;
 #endif
 
-#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
 template<typename T>
 class NanNonCopyablePersistentTraits :
     public v8::NonCopyablePersistentTraits<T> {};
@@ -138,8 +138,17 @@ template<typename T> class NanPersistentBase;
 template<typename T, typename P> class NanWeakCallbackData;
 template<typename T, typename M = NanNonCopyablePersistentTraits<T> >
 class NanPersistent;
+#endif  // NODE_MODULE_VERSION
+
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+# include "nan_maybe_43_inl.h"  // NOLINT(build/include)
+#else
+# include "nan_maybe_pre_43_inl.h"  // NOLINT(build/include)
 #endif
 
+#include "nan_converters.h"  // NOLINT(build/include)
 #include "nan_new.h"  // NOLINT(build/include)
 
 // uv helpers
@@ -277,6 +286,19 @@ template<typename P> class NanWeakCallbackInfo;
 
 namespace Nan { namespace imp {
   template<typename T>
+  NAN_INLINE
+  v8::Local<T>
+  NanUnwrap(NanMaybeLocal<T> maybe) {
+    return maybe.ToLocalChecked();
+  }
+
+  template<typename T>
+  NAN_INLINE
+  v8::Local<T> NanUnwrap(v8::Local<T> val) {
+    return val;
+  }
+
+  template<typename T>
   NAN_INLINE v8::Persistent<T> &NanEnsureHandleOrPersistent(
       v8::Persistent<T> &val) {  // NOLINT(runtime/references)
     return val;
@@ -294,8 +316,10 @@ namespace Nan { namespace imp {
   }
 
   template<typename T>
-  NAN_INLINE v8::Local<v8::Value> NanEnsureHandleOrPersistent(const T &val) {
-    return NanNew(val);
+  NAN_INLINE
+  v8::Local<v8::Value>
+  NanEnsureHandleOrPersistent(T val) {
+    return NanUnwrap(NanNew(val));
   }
 
   template<typename T>
@@ -314,8 +338,9 @@ namespace Nan { namespace imp {
   }
 
   template<typename T>
-  NAN_INLINE v8::Local<v8::Value> NanEnsureLocal(const T &val) {
-    return NanNew(val);
+  NAN_INLINE
+  v8::Local<v8::Value> NanEnsureLocal(T val) {
+    return NanUnwrap(NanNew(val));
   }
 }  // end of namespace imp
 }  // end of namespace Nan
@@ -405,9 +430,17 @@ class NanEscapableScope {
     v8::Isolate::GetCurrent()->SetAddHistogramSampleFunction(cb);
   }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
+    return v8::Isolate::GetCurrent()->IdleNotificationDeadline(
+        idle_time_in_ms * 0.001);
+  }
+# else
   NAN_INLINE bool NanIdleNotification(int idle_time_in_ms) {
     return v8::Isolate::GetCurrent()->IdleNotification(idle_time_in_ms);
   }
+#endif
 
   NAN_INLINE void NanLowMemoryNotification() {
     v8::Isolate::GetCurrent()->LowMemoryNotification();
@@ -464,6 +497,10 @@ class NanEscapableScope {
   NAN_INLINE v8::Local<v8::Boolean> NanFalse() {
     NanEscapableScope scope;
     return scope.Escape(NanNew(v8::False(v8::Isolate::GetCurrent())));
+  }
+
+  NAN_INLINE v8::Local<v8::String> NanEmptyString() {
+    return v8::String::Empty(v8::Isolate::GetCurrent());
   }
 
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
@@ -534,26 +571,26 @@ class NanEscapableScope {
   }
 
 # define X(NAME)                                                               \
-    NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *errmsg) {          \
+    NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *msg) {             \
       NanEscapableScope scope;                                                 \
-      return scope.Escape(v8::Exception::NAME(NanNew(errmsg)));                \
+      return scope.Escape(v8::Exception::NAME(NanNew(msg).ToLocalChecked()));  \
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
-    v8::Local<v8::Value> Nan ## NAME(v8::Handle<v8::String> errmsg) {          \
-      return v8::Exception::NAME(errmsg);                                      \
+    v8::Local<v8::Value> Nan ## NAME(v8::Handle<v8::String> msg) {             \
+      return v8::Exception::NAME(msg);                                         \
     }                                                                          \
                                                                                \
-    NAN_INLINE void NanThrow ## NAME(const char *errmsg) {                     \
+    NAN_INLINE void NanThrow ## NAME(const char *msg) {                        \
       NanScope scope;                                                          \
       v8::Isolate::GetCurrent()->ThrowException(                               \
-          v8::Exception::NAME(NanNew(errmsg)));                                \
+          v8::Exception::NAME(NanNew(msg).ToLocalChecked()));                  \
     }                                                                          \
                                                                                \
-    NAN_INLINE void NanThrow ## NAME(v8::Handle<v8::String> errmsg) {          \
+    NAN_INLINE void NanThrow ## NAME(v8::Handle<v8::String> msg) {             \
       NanScope scope;                                                          \
       v8::Isolate::GetCurrent()->ThrowException(                               \
-          v8::Exception::NAME(NanNew(errmsg)));                                \
+          v8::Exception::NAME(NanNew(msg)));                                   \
     }
 
   X(Error)
@@ -603,32 +640,64 @@ class NanEscapableScope {
     return NanNew(function_template)->HasInstance(value);
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
   ) {
     v8::ScriptCompiler::Source source(s, origin);
-    return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source);
+    return v8::ScriptCompiler::Compile(NanGetCurrentContext(), &source);
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
   ) {
     v8::ScriptCompiler::Source source(s);
-    return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source);
+    return v8::ScriptCompiler::Compile(NanGetCurrentContext(), &source);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
       v8::Handle<NanUnboundScript> script
   ) {
-    return script->BindToCurrentContext()->Run();
+    return script->BindToCurrentContext()->Run(NanGetCurrentContext());
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
       v8::Handle<NanBoundScript> script
   ) {
-    return script->Run();
+    return script->Run(NanGetCurrentContext());
   }
+#else
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
+      v8::Local<v8::String> s
+    , const v8::ScriptOrigin& origin
+  ) {
+    v8::ScriptCompiler::Source source(s, origin);
+    return NanMaybeLocal<NanBoundScript>(
+        v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source));
+  }
+
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
+      v8::Local<v8::String> s
+  ) {
+    v8::ScriptCompiler::Source source(s);
+    return NanMaybeLocal<NanBoundScript>(
+        v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &source));
+  }
+
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
+      v8::Handle<NanUnboundScript> script
+  ) {
+    return NanMaybeLocal<v8::Value>(script->BindToCurrentContext()->Run());
+  }
+
+  NAN_INLINE NanMaybeLocal<v8::Value> NanRunScript(
+      v8::Handle<NanBoundScript> script
+  ) {
+    return NanMaybeLocal<v8::Value>(script->Run());
+  }
+#endif
 
   NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
       v8::Handle<v8::Object> target
@@ -794,6 +863,10 @@ class NanEscapableScope {
     return scope.Escape(NanNew(v8::False()));
   }
 
+  NAN_INLINE v8::Local<v8::String> NanEmptyString() {
+    return v8::String::Empty();
+  }
+
   NAN_INLINE int NanAdjustExternalMemory(int bc) {
     return static_cast<int>(v8::V8::AdjustAmountOfExternalAllocatedMemory(bc));
   }
@@ -857,19 +930,19 @@ class NanEscapableScope {
   }
 
 # define X(NAME)                                                               \
-    NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *errmsg) {          \
+    NAN_INLINE v8::Local<v8::Value> Nan ## NAME(const char *msg) {             \
       NanEscapableScope scope;                                                 \
-      return scope.Escape(v8::Exception::NAME(NanNew(errmsg)));                \
+      return scope.Escape(v8::Exception::NAME(NanNew(msg).ToLocalChecked()));  \
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
-    v8::Local<v8::Value> Nan ## NAME(v8::Handle<v8::String> errmsg) {          \
-      return v8::Exception::NAME(errmsg);                                      \
+    v8::Local<v8::Value> Nan ## NAME(v8::Handle<v8::String> msg) {             \
+      return v8::Exception::NAME(msg);                                         \
     }                                                                          \
                                                                                \
-    NAN_INLINE void NanThrow ## NAME(const char *errmsg) {                     \
+    NAN_INLINE void NanThrow ## NAME(const char *msg) {                        \
       NanScope scope;                                                          \
-      v8::ThrowException(v8::Exception::NAME(NanNew(errmsg)));                 \
+      v8::ThrowException(v8::Exception::NAME(NanNew(msg).ToLocalChecked()));   \
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
@@ -935,21 +1008,23 @@ class NanEscapableScope {
     return function_template->HasInstance(value);
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
   ) {
-    return v8::Script::Compile(s, const_cast<v8::ScriptOrigin *>(&origin));
+    return NanMaybeLocal<NanBoundScript>(
+        v8::Script::Compile(s, const_cast<v8::ScriptOrigin *>(&origin)));
   }
 
-  NAN_INLINE v8::Local<NanBoundScript> NanCompileScript(
+  NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
     v8::Local<v8::String> s
   ) {
-    return v8::Script::Compile(s);
+    return NanMaybeLocal<NanBoundScript>(v8::Script::Compile(s));
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanRunScript(v8::Handle<v8::Script> script) {
-    return script->Run();
+  NAN_INLINE
+  NanMaybeLocal<v8::Value> NanRunScript(v8::Handle<v8::Script> script) {
+    return NanMaybeLocal<v8::Value>(script->Run());
   }
 
   NAN_INLINE v8::Local<v8::Value> NanMakeCallback(
@@ -1211,7 +1286,7 @@ class NanCallback {
 
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
     NanScope scope;
-    NanNew(handle)->Set(kCallbackIndex, fn);
+    NanSet(NanNew(handle), kCallbackIndex, fn);
   }
 
   NAN_INLINE v8::Local<v8::Function> GetFunction() const {
@@ -1323,7 +1398,7 @@ class NanCallback {
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Value> &value) {
     NanScope scope;
-    NanNew(persistentHandle)->Set(NanNew(key), value);
+    NanNew(persistentHandle)->Set(NanNew(key).ToLocalChecked(), value);
   }
 
   NAN_INLINE void SaveToPersistent(
@@ -1340,7 +1415,8 @@ class NanCallback {
 
   NAN_INLINE v8::Local<v8::Value> GetFromPersistent(const char *key) const {
     NanEscapableScope scope;
-    return scope.Escape(NanNew(persistentHandle)->Get(NanNew(key)));
+    return scope.Escape(
+        NanNew(persistentHandle)->Get(NanNew(key).ToLocalChecked()));
   }
 
   NAN_INLINE v8::Local<v8::Value>
@@ -1374,7 +1450,7 @@ class NanCallback {
     NanScope scope;
 
     v8::Local<v8::Value> argv[] = {
-        v8::Exception::Error(NanNew<v8::String>(ErrorMessage()))
+      v8::Exception::Error(NanNew<v8::String>(ErrorMessage()).ToLocalChecked())
     };
     callback->Call(1, argv);
   }
@@ -1680,7 +1756,7 @@ NAN_INLINE void NanSetPrototypeMethod(
       callback
     , v8::Handle<v8::Value>()
     , NanNew<v8::Signature>(recv))->GetFunction();
-  v8::Local<v8::String> fn_name = NanNew(name);
+  v8::Local<v8::String> fn_name = NanNew(name).ToLocalChecked();
   recv->PrototypeTemplate()->Set(fn_name, fn);
   fn->SetName(fn_name);
 }
@@ -1970,7 +2046,7 @@ inline
 void
 NanExport(v8::Handle<v8::Object> target, const char *name,
     NanFunctionCallback f) {
-  target->Set(NanNew<v8::String>(name),
+  NanSet(target, NanNew<v8::String>(name).ToLocalChecked(),
       NanNew<v8::FunctionTemplate>(f)->GetFunction());
 }
 
@@ -1978,7 +2054,7 @@ NanExport(v8::Handle<v8::Object> target, const char *name,
 
 struct NanTap {
   explicit NanTap(v8::Handle<v8::Value> t) : t_() {
-    t_.Reset(t->ToObject());
+    t_.Reset(NanTo<v8::Object>(t).ToLocalChecked());
   }
 
   ~NanTap() { t_.Reset(); }  // not sure if neccessary
@@ -1991,13 +2067,13 @@ struct NanTap {
   inline void ok(bool isOk, const char *msg = NULL) {
     v8::Handle<v8::Value> args[2];
     args[0] = NanNew(isOk);
-    if (msg) args[1] = NanNew(msg);
+    if (msg) args[1] = NanNew(msg).ToLocalChecked();
     NanMakeCallback(NanNew(t_), "ok", msg ? 2 : 1, args);
   }
 
   inline void pass(const char * msg = NULL) {
     v8::Handle<v8::Value> hmsg;
-    if (msg) hmsg = NanNew(msg);
+    if (msg) hmsg = NanNew(msg).ToLocalChecked();
     NanMakeCallback(NanNew(t_), "pass", msg ? 1 : 0, &hmsg);
   }
 

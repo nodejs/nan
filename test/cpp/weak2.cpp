@@ -19,7 +19,7 @@ void weakCallback(
 
 v8::Handle<v8::String> wrap() {
   NanEscapableScope scope;
-  v8::Local<v8::String> lstring = NanNew<v8::String>("result");
+  v8::Local<v8::String> lstring = NanNew("result").ToLocalChecked();
   v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(1);
   v8::Local<v8::Object> obj = otpl->NewInstance();
@@ -39,8 +39,8 @@ NAN_METHOD(Hustle) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("hustle")
+  NanSet(target
+    , NanNew<v8::String>("hustle").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
