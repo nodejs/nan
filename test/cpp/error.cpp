@@ -14,7 +14,7 @@
   }                                                                            \
                                                                                \
   NAN_METHOD(Throw ## NAME ## 2) {                                             \
-    return NanThrow ## NAME(NanNew("errmsg"));                                 \
+    return NanThrow ## NAME(NanNew("errmsg").ToLocalChecked());                \
   }                                                                            \
                                                                                \
   NAN_METHOD(Throw ## NAME ## 3) {                                             \
@@ -22,7 +22,7 @@
   }                                                                            \
                                                                                \
   NAN_METHOD(Throw ## NAME ## 4) {                                             \
-    return NanThrowError(Nan ## NAME(NanNew("errmsg")));                       \
+    return NanThrowError(Nan ## NAME(NanNew("errmsg").ToLocalChecked()));      \
   }
 
 X(Error)
@@ -40,7 +40,10 @@ X(TypeError)
   X(Throw ## NAME ## 4)
 
 #define X(NAME)                                                                \
-  target->Set(NanNew(#NAME), NanNew<v8::FunctionTemplate>(NAME)->GetFunction());
+  NanSet(                                                                      \
+      target                                                                   \
+    , NanNew(#NAME).ToLocalChecked()                                           \
+    , NanNew<v8::FunctionTemplate>(NAME)->GetFunction());
 
 
 void Init (v8::Handle<v8::Object> target) {

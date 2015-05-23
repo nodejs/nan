@@ -11,7 +11,11 @@
 NAN_METHOD(TryCatch) {
   NanTryCatch try_catch;
   v8::Local<v8::Value> v =
-      NanRunScript(NanNew<NanUnboundScript>(NanNew("throw 'waaa'")));
+      NanRunScript(
+          NanNew<NanUnboundScript>(
+              NanNew("throw 'waaa'").ToLocalChecked()
+          ).ToLocalChecked()
+      ).ToLocalChecked();
   if (v.IsEmpty()) {
     assert(try_catch.HasCaught());
     try_catch.ReThrow();
@@ -19,8 +23,8 @@ NAN_METHOD(TryCatch) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("r")
+  NanSet(target
+    , NanNew<v8::String>("r").ToLocalChecked()
     , NanNew<v8::FunctionTemplate>(TryCatch)->GetFunction()
   );
 }

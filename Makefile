@@ -18,14 +18,20 @@ LINT_SOURCES = \
 	nan_callbacks.h \
 	nan_callbacks_12_inl.h \
 	nan_callbacks_pre_12_inl.h \
+	nan_converters.h \
+	nan_converters_43_inl.h \
+	nan_converters_pre_43_inl.h \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
+	nan_maybe_43_inl.h \
+	nan_maybe_pre_43_inl.h \
 	nan_new.h \
 	nan_persistent_12_inl.h \
 	nan_persistent_pre_12_inl.h \
 	nan_string_bytes.h \
 	nan_weak.h \
 	test/cpp/accessors.cpp \
+	test/cpp/accessors2.cpp \
 	test/cpp/asyncworker.cpp \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncworkererror.cpp \
@@ -33,6 +39,10 @@ LINT_SOURCES = \
 	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
 	test/cpp/indexedinterceptors.cpp \
+	test/cpp/morenews.cpp \
+	test/cpp/converters.cpp \
+	test/cpp/isolatedata.cpp \
+	test/cpp/makecallback.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \
@@ -47,8 +57,10 @@ LINT_SOURCES = \
 	test/cpp/returnnull.cpp \
 	test/cpp/returnundefined.cpp \
 	test/cpp/returnvalue.cpp \
+	test/cpp/settemplate.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
+	test/cpp/threadlocal.cpp \
 	test/cpp/trycatch.cpp \
 	test/cpp/weak.cpp \
 	test/cpp/weak2.cpp \
