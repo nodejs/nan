@@ -639,6 +639,12 @@ class NanEscapableScope {
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  NAN_INLINE NanMaybeLocal<v8::String>
+  NanNewOneByteString(const uint8_t * value, int length = -1) {
+    return v8::String::NewFromOneByte(v8::Isolate::GetCurrent(), value,
+          v8::NewStringType::kNormal, length);
+  }
+
   NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
@@ -666,6 +672,15 @@ class NanEscapableScope {
     return script->Run(NanGetCurrentContext());
   }
 #else
+  NAN_INLINE NanMaybeLocal<v8::String>
+  NanNewOneByteString(const uint8_t * value, int length = -1) {
+    return NanMaybeLocal<v8::String>(
+        v8::String::NewFromOneByte(
+            v8::Isolate::GetCurrent()
+          , value
+          , v8::String::kNormalString, length));
+  }
+
   NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(
       v8::Local<v8::String> s
     , const v8::ScriptOrigin& origin
@@ -907,6 +922,28 @@ class NanEscapableScope {
     , v8::Handle<v8::Value> value
   ) {
     return function_template->HasInstance(value);
+  }
+
+  namespace Nan { namespace imp {
+  NAN_INLINE void
+  widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
+    size_t len = static_cast<size_t>(l);
+    if (l < 0) {
+      len = strlen(reinterpret_cast<const char*>(s));
+    }
+    assert(len <= INT_MAX && "string too long");
+    ws->resize(len);
+    std::copy(s, s + len, ws->begin());
+  }
+  }  // end of namespace imp
+  }  // end of namespace Nan
+
+  NAN_INLINE NanMaybeLocal<v8::String>
+  NanNewOneByteString(const uint8_t * value, int length = -1) {
+    std::vector<uint16_t> wideString;
+    Nan::imp::widenString(&wideString, value, length);
+    return Factory<v8::String>::return_t(v8::String::New(&wideString.front()
+         , static_cast<int>(wideString.size())));
   }
 
   NAN_INLINE NanMaybeLocal<NanBoundScript> NanCompileScript(

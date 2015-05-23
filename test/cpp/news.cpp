@@ -57,7 +57,7 @@ NAN_METHOD(NewUtf8String) {
 
 NAN_METHOD(NewLatin1String) {
   const uint8_t s[] = "str\xefng";
-  info.GetReturnValue().Set(NanNew(s).ToLocalChecked());
+  info.GetReturnValue().Set(NanNewOneByteString(s).ToLocalChecked());
 }
 
 NAN_METHOD(NewUcs2String) {

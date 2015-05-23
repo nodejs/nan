@@ -295,12 +295,6 @@ Factory<v8::String>::New(std::string const& value) {
 }
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(const uint8_t * value, int length) {
-  return v8::String::NewFromOneByte(v8::Isolate::GetCurrent(), value,
-        v8::NewStringType::kNormal, length);
-}
-
-Factory<v8::String>::return_t
 Factory<v8::String>::New(const uint16_t * value, int length) {
   return v8::String::NewFromTwoByte(v8::Isolate::GetCurrent(), value,
         v8::NewStringType::kNormal, length);
@@ -335,15 +329,6 @@ Factory<v8::String>::New(std::string const& value) {
         , value.data()
         , v8::String::kNormalString
         , static_cast<int>(value.size())));
-}
-
-Factory<v8::String>::return_t
-Factory<v8::String>::New(const uint8_t * value, int length) {
-  return Factory<v8::String>::return_t(
-      v8::String::NewFromOneByte(
-          v8::Isolate::GetCurrent()
-        , value
-        , v8::String::kNormalString, length));
 }
 
 Factory<v8::String>::return_t
