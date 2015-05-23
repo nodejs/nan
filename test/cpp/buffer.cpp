@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 static const size_t DATA_SIZE = 26;
 
 static char data[DATA_SIZE];

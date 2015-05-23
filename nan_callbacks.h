@@ -9,15 +9,6 @@
 #ifndef NAN_CALLBACKS_H_
 #define NAN_CALLBACKS_H_
 
-#if defined(_MSC_VER)
-# pragma warning( push )
-# pragma warning( disable : 4530 )
-# include <map>
-# pragma warning( pop )
-#else
-# include <map>
-#endif
-
 template<typename T> class NanFunctionCallbackInfo;
 template<typename T> class NanPropertyCallbackInfo;
 template<typename T> class NanGlobal;
@@ -60,7 +51,7 @@ typedef void(*NanIndexQueryCallback)(
     uint32_t,
     const NanPropertyCallbackInfo<v8::Integer>&);
 
-namespace Nan { namespace imp {
+namespace imp {
 typedef v8::Handle<v8::AccessorSignature> Sig;
 
 #define X(NAME)                                                                \
@@ -112,7 +103,7 @@ static const int kIndexPropertyFieldCount =      6;
 template<typename T, typename P>
 P *GetWrapper(T needle) {
   static std::map<T, P*> haystack;
-  typename std::map<T, P*>::iterator it =
+  typename std::map<T, P*>::iterator it =  // NOLINT(build/include_what_you_use)
       haystack.find(needle);
 
   if (it == haystack.end()) {
@@ -122,7 +113,6 @@ P *GetWrapper(T needle) {
   }
 }
 }  // end of namespace imp
-}  // end of namespace Nan
 
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
 # include "nan_callbacks_12_inl.h"  // NOLINT(build/include)

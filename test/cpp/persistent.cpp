@@ -9,6 +9,8 @@
 #include <nan.h>
 #include <cstring>  // memset()
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 static NanPersistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {

@@ -11,6 +11,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(ReturnString);
 
 #endif  // TEST_CPP_MULTIFILE2_H_

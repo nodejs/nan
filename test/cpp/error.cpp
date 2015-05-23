@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 #define X(NAME)                                                                \
   NAN_METHOD(Throw ## NAME ## 1) {                                             \
     return NanThrow ## NAME("errmsg");                                         \

@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(ToBoolean) {
   info.GetReturnValue().Set(NanTo<v8::Boolean>(info[0]).ToLocalChecked());
 }

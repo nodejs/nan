@@ -11,6 +11,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(CalculateAsync);
 
 #endif  // EXAMPLES_ASYNC_PI_ESTIMATE_ASYNC_H_
