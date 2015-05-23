@@ -16,6 +16,8 @@
 # include <string>
 #endif
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 static int magic = 1337;
 
 NAN_METHOD(NewNumber) {

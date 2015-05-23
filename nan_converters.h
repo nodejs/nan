@@ -9,7 +9,7 @@
 #ifndef NAN_CONVERTERS_H_
 #define NAN_CONVERTERS_H_
 
-namespace Nan { namespace imp {
+namespace imp {
 template<typename T> struct ToFactoryBase {
   typedef NanMaybeLocal<T> return_t;
 };
@@ -47,7 +47,6 @@ X(int32_t)
 
 #undef X
 }  // end of namespace imp
-}  // end of namespace Nan
 
 template<typename T>
 NAN_INLINE

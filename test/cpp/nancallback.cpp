@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(GlobalContext) {
   NanCallback(info[0].As<v8::Function>()).Call(0, NULL);
 }

@@ -12,6 +12,8 @@
 #endif
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class BufferWorker : public NanAsyncWorker {
  public:
   BufferWorker(

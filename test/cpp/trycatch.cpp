@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(TryCatch) {
   NanTryCatch try_catch;
   v8::Local<v8::Value> v =

@@ -10,6 +10,8 @@
 #include "sync.h"   // NOLINT(build/include)
 #include "async.h"  // NOLINT(build/include)
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 using v8::FunctionTemplate;
 using v8::Handle;
 using v8::Object;

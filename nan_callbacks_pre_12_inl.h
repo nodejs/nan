@@ -9,10 +9,9 @@
 #ifndef NAN_CALLBACKS_PRE_12_INL_H_
 #define NAN_CALLBACKS_PRE_12_INL_H_
 
-namespace Nan { namespace imp {
+namespace imp {
 template<typename T> class NanReturnValueImp;
 }  // end of namespace imp
-}  // end of namespace Nan
 
 template<typename T>
 class NanReturnValue {
@@ -235,7 +234,7 @@ class NanPropertyCallbackInfo<v8::Integer> :
   }
 };
 
-namespace Nan { namespace imp {
+namespace imp {
 template<typename T>
 class NanReturnValueImp : public NanReturnValue<T> {
  public:
@@ -445,6 +444,5 @@ v8::Handle<v8::Integer> IndexQueryCallbackWrapper(
 typedef v8::Handle<v8::Integer> (*NativeIndexQuery)
     (uint32_t, const v8::AccessorInfo &);
 }  // end of namespace imp
-}  // end of namespace Nan
 
 #endif  // NAN_CALLBACKS_PRE_12_INL_H_

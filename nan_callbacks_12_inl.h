@@ -156,7 +156,7 @@ class NanPropertyCallbackInfo {
   static const int kArgsLength = 6;
 };
 
-namespace Nan { namespace imp {
+namespace imp {
 static
 void FunctionCallbackWrapper(const v8::FunctionCallbackInfo<v8::Value> &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
@@ -467,6 +467,5 @@ void IndexQueryCallbackWrapper(
 typedef void (*NativeIndexQuery)
     (uint32_t, const v8::PropertyCallbackInfo<v8::Integer> &);
 }  // end of namespace imp
-}  // end of namespace Nan
 
 #endif  // NAN_CALLBACKS_12_INL_H_

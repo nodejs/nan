@@ -9,26 +9,11 @@
 #ifndef NAN_IMPLEMENTATION_PRE_12_INL_H_
 #define NAN_IMPLEMENTATION_PRE_12_INL_H_
 
-#include <algorithm>
-
-#if defined(_MSC_VER)
-# pragma warning( push )
-# pragma warning( disable : 4530 )
-# include <string>
-# include <vector>
-# include <map>
-# pragma warning( pop )
-#else
-# include <string>
-# include <vector>
-# include <map>
-#endif
-
 //==============================================================================
 // node v0.10 implementation
 //==============================================================================
 
-namespace Nan { namespace imp {
+namespace imp {
 
 //=== Array ====================================================================
 
@@ -102,7 +87,8 @@ Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
                                   , v8::Handle<v8::Signature> signature) {
   v8::HandleScope scope;
 
-  static std::map<NanFunctionCallback, Nan::imp::FunctionWrapper*> cbmap;
+  static std::map<NanFunctionCallback,  // NOLINT(build/include_what_you_use)
+      Nan::imp::FunctionWrapper*> cbmap;
   v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New();
   tpl->SetInternalFieldCount(Nan::imp::kFunctionFieldCount);
   v8::Local<v8::Object> obj = tpl->NewInstance();
@@ -220,7 +206,8 @@ Factory<v8::String>::New(const char * value, int length) {
 }
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(std::string const& value) {
+Factory<v8::String>::New(
+    std::string const& value) /* NOLINT(build/include_what_you_use) */ {
   assert(value.size() <= INT_MAX && "string too long");
   return Factory<v8::String>::return_t(
       v8::String::New( value.data(), static_cast<int>(value.size())));
@@ -249,7 +236,6 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
 }
 
 }  // end of namespace imp
-}  // end of namespace Nan
 
 //=== Presistents and Handles ==================================================
 

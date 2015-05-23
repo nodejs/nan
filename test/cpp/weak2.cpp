@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 static NanPersistent<v8::Function> cb;
 void weakCallback(
     const NanWeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
