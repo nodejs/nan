@@ -14,6 +14,7 @@ class NanPersistentBase {
   v8::Persistent<T> persistent;
   template<typename U, typename M>
   friend v8::Local<U> NanNew(const NanPersistent<U, M> &p);
+  template<typename S> friend class NanReturnValue;
 
  public:
   NAN_INLINE NanPersistentBase() :
@@ -97,7 +98,9 @@ class NanPersistentBase {
  private:
   NAN_INLINE explicit NanPersistentBase(v8::Persistent<T> that) :
       persistent(that) { }
+  NAN_INLINE explicit NanPersistentBase(T *val) : persistent(val) {}
   template<typename S, typename M> friend class NanPersistent;
+  template<typename S> friend class NanGlobal;
 };
 
 template<typename T>
@@ -175,6 +178,60 @@ template<typename T, typename M> class NanPersistent :
       M::Copy(that, this);
     }
   }
+};
+
+template<typename T>
+class NanGlobal : public NanPersistentBase<T> {
+  struct RValue {
+    NAN_INLINE explicit RValue(NanGlobal* obj) : object(obj) {}
+    NanGlobal* object;
+  };
+
+ public:
+  NAN_INLINE NanGlobal() : NanPersistentBase<T>(0) { }
+
+  template <typename S>
+  NAN_INLINE NanGlobal(v8::Handle<S> that)
+      : NanPersistentBase<T>(v8::Persistent<T>::New(that)) {
+    TYPE_CHECK(T, S);
+  }
+
+  template <typename S>
+  NAN_INLINE NanGlobal(const NanPersistentBase<S> &that)
+    : NanPersistentBase<T>(that) {
+    TYPE_CHECK(T, S);
+  }
+  /**
+   * Move constructor.
+   */
+  NAN_INLINE NanGlobal(RValue rvalue)
+    : NanPersistentBase<T>(rvalue.object.persistent) {
+    rvalue.object->Reset();
+  }
+  NAN_INLINE ~NanGlobal() { this->Reset(); }
+  /**
+   * Move via assignment.
+   */
+  template<typename S>
+  NAN_INLINE NanGlobal &operator=(NanGlobal<S> rhs) {
+    TYPE_CHECK(T, S);
+    this->Reset(rhs.persistent);
+    rhs.Reset();
+    return *this;
+  }
+  /**
+   * Cast operator for moves.
+   */
+  NAN_INLINE operator RValue() { return RValue(this); }
+  /**
+   * Pass allows returning uniques from functions, etc.
+   */
+  NanGlobal Pass() { return NanGlobal(RValue(this)); }
+
+ private:
+  NanGlobal(NanGlobal &);
+  void operator=(NanGlobal &);
+  template<typename S> friend class NanReturnValue;
 };
 
 #endif  // NAN_PERSISTENT_PRE_12_INL_H_
