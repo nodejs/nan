@@ -238,7 +238,7 @@ static Local<Value> Encode(const char* buf,
   Local<String> val;
   switch (encoding) {
     case Nan::BUFFER:
-      return NanNewBufferHandle(buf, buflen);
+      return NanNewBuffer(buf, buflen);
 
     case Nan::ASCII:
       if (contains_non_ascii(buf, buflen)) {
