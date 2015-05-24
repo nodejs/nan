@@ -626,7 +626,7 @@ class NanEscapableScope {
     return node::Buffer::New(v8::Isolate::GetCurrent(), size);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanBufferUse(
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
       char* data
     , uint32_t size
   ) {
@@ -1008,7 +1008,7 @@ class NanEscapableScope {
     delete[] data;
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanBufferUse(
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
       char* data
     , uint32_t size
   ) {
