@@ -605,7 +605,7 @@ class NanEscapableScope {
     v8::Isolate::GetCurrent()->ThrowException(error);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
       char *data
     , size_t length
     , node::smalloc::FreeCallback callback
@@ -615,14 +615,14 @@ class NanEscapableScope {
         v8::Isolate::GetCurrent(), data, length, callback, hint);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
       const char *data
     , uint32_t size
   ) {
     return node::Buffer::New(v8::Isolate::GetCurrent(), data, size);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(uint32_t size) {
     return node::Buffer::New(v8::Isolate::GetCurrent(), size);
   }
 
@@ -977,7 +977,7 @@ class NanEscapableScope {
     v8::ThrowException(error);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
       char *data
     , size_t length
     , node::Buffer::free_callback callback
@@ -987,7 +987,7 @@ class NanEscapableScope {
         node::Buffer::New(data, length, callback, hint)->handle_);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
       const char *data
     , uint32_t size
   ) {
@@ -999,7 +999,7 @@ class NanEscapableScope {
 #endif
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBufferHandle (uint32_t size) {
+  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(uint32_t size) {
     return NanNew(node::Buffer::New(size)->handle_);
   }
 
