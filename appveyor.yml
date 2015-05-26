@@ -28,7 +28,7 @@ test_script:
   - node --version
   - npm --version
   # run tests
-  - IF %nodejs_version% LSS 1 (npm test) ELSE (iojs node_modules\tap\bin\run.js --gc test/js/*-test.js)
+  - IF %nodejs_version% LSS 1 (npm test) ELSE (iojs node_modules\tap\bin\tap.js --gc test/js/*-test.js)
 
 # Don't actually build.
 build: off
