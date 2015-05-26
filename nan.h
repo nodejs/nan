@@ -728,29 +728,44 @@ class NanEscapableScope {
 
   class NanUtf8String {
    public:
-    NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) {
-      v8::Local<v8::String> toStr = from->ToString();
-      size = toStr->Utf8Length();
-      buf = new char[size + 1];
-      toStr->WriteUtf8(buf);
+    NAN_INLINE explicit NanUtf8String(v8::Handle<v8::Value> from) :
+        length_(0), str_(str_st_) {
+      if (!from.IsEmpty()) {
+        v8::Local<v8::String> string = from->ToString();
+        if (!string.IsEmpty()) {
+          size_t len = 3 * string->Length() + 1;
+          assert(len <= INT_MAX);
+          if (len > sizeof (str_st_)) {
+            str_ = static_cast<char*>(malloc(len));
+            assert(str_ != 0);
+          }
+          const int flags = v8::String::NO_NULL_TERMINATION |
+                            v8::String::REPLACE_INVALID_UTF8;
+          length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
+          str_[length_] = '\0';
+        }
+      }
     }
 
     NAN_INLINE int length() const {
-      return size;
+      return length_;
     }
 
-    NAN_INLINE char* operator*() { return buf; }
-    NAN_INLINE const char* operator*() const { return buf; }
+    NAN_INLINE char* operator*() { return str_; }
+    NAN_INLINE const char* operator*() const { return str_; }
 
     NAN_INLINE ~NanUtf8String() {
-      delete[] buf;
+      if (str_ != str_st_) {
+        free(str_);
+      }
     }
 
    private:
     NAN_DISALLOW_ASSIGN_COPY_MOVE(NanUtf8String)
 
-    char *buf;
-    int size;
+    int length_;
+    char *str_;
+    char str_st_[1024];
   };
 
   class NanUcs2String {
