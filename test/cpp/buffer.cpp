@@ -13,15 +13,20 @@ static const size_t DATA_SIZE = 26;
 static char data[DATA_SIZE];
 
 void callback(char* data, void* hint) {
-  fprintf(stderr, "callback\n");
+  free(data);
 }
 
 NAN_METHOD(New1) {
-  info.GetReturnValue().Set(NanNewBuffer(data, DATA_SIZE, callback, 0));
+  char *dynamic_data = static_cast<char *>(malloc(DATA_SIZE));
+  for (unsigned char i = 0; i < DATA_SIZE; i++) {
+    dynamic_data[i] = 'a' + i;
+  }
+  info.GetReturnValue().Set(
+      NanNewBuffer(dynamic_data, DATA_SIZE, callback, 0).ToLocalChecked());
 }
 
 NAN_METHOD(New2) {
-  v8::Local<v8::Object> buf = NanNewBuffer(DATA_SIZE);
+  v8::Local<v8::Object> buf = NanNewBuffer(DATA_SIZE).ToLocalChecked();
   char* pbuf = node::Buffer::Data(buf);
   for (unsigned char i = 0; i < DATA_SIZE; i++) {
     pbuf[i] = 'a' + i;
@@ -30,11 +35,15 @@ NAN_METHOD(New2) {
 }
 
 NAN_METHOD(New3) {
-  info.GetReturnValue().Set(NanNewBuffer(data, DATA_SIZE));
+  char *dynamic_data = static_cast<char *>(malloc(DATA_SIZE));
+  for (unsigned char i = 0; i < DATA_SIZE; i++) {
+    dynamic_data[i] = 'a' + i;
+  }
+  info.GetReturnValue().Set(NanNewBuffer(dynamic_data, DATA_SIZE));
 }
 
 NAN_METHOD(Copy) {
-  info.GetReturnValue().Set(NanCopyBuffer(data, DATA_SIZE));
+  info.GetReturnValue().Set(NanCopyBuffer(data, DATA_SIZE).ToLocalChecked());
 }
 
 
