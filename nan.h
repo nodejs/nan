@@ -285,6 +285,8 @@ template<typename P> class NanWeakCallbackInfo;
 #endif
 
 namespace Nan { namespace imp {
+  static const size_t kMaxLength = 0x3fffffff;
+
   template<typename T>
   NAN_INLINE
   v8::Local<T>
@@ -613,9 +615,14 @@ class NanEscapableScope {
   ) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(length <= 0x3fffffff && "too large buffer");
+    assert(length <= Nan::imp::kMaxLength && "too large buffer");
+#if NODE_MODULE_VERSION > IOJS_2_0_MODULE_VERSION
+    return node::Buffer::New(
+        v8::Isolate::GetCurrent(), data, length, callback, hint);
+#else
     return NanMaybeLocal<v8::Object>(node::Buffer::New(
         v8::Isolate::GetCurrent(), data, length, callback, hint));
+#endif
   }
 
   NAN_INLINE NanMaybeLocal<v8::Object> NanCopyBuffer(
@@ -624,17 +631,27 @@ class NanEscapableScope {
   ) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(size <= 0x3fffffff && "too large buffer");
+    assert(size <= Nan::imp::kMaxLength && "too large buffer");
+#if NODE_MODULE_VERSION > IOJS_2_0_MODULE_VERSION
+    return node::Buffer::New(
+        v8::Isolate::GetCurrent(), data, size);
+#else
     return NanMaybeLocal<v8::Object>(node::Buffer::New(
         v8::Isolate::GetCurrent(), data, size));
+#endif
   }
 
   NAN_INLINE NanMaybeLocal<v8::Object> NanNewBuffer(uint32_t size) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(size <= 0x3fffffff && "too large buffer");
+    assert(size <= Nan::imp::kMaxLength && "too large buffer");
+#if NODE_MODULE_VERSION > IOJS_2_0_MODULE_VERSION
+    return node::Buffer::New(
+        v8::Isolate::GetCurrent(), size);
+#else
     return NanMaybeLocal<v8::Object>(node::Buffer::New(
         v8::Isolate::GetCurrent(), size));
+#endif
   }
 
   NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
@@ -643,7 +660,7 @@ class NanEscapableScope {
   ) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(size <= 0x3fffffff && "too large buffer");
+    assert(size <= Nan::imp::kMaxLength && "too large buffer");
     return node::Buffer::Use(v8::Isolate::GetCurrent(), data, size);
   }
 
@@ -1000,7 +1017,7 @@ class NanEscapableScope {
     NanScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(length <= 0x3fffffff && "too large buffer");
+    assert(length <= Nan::imp::kMaxLength && "too large buffer");
     return NanMaybeLocal<v8::Object>(
         NanNew(node::Buffer::New(data, length, callback, hint)->handle_));
   }
@@ -1012,7 +1029,7 @@ class NanEscapableScope {
     NanEscapableScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(size <= 0x3fffffff && "too large buffer");
+    assert(size <= Nan::imp::kMaxLength && "too large buffer");
 #if NODE_MODULE_VERSION >= NODE_0_10_MODULE_VERSION
     return NanMaybeLocal<v8::Object>(
         scope.Escape(NanNew(node::Buffer::New(data, size)->handle_)));
@@ -1026,7 +1043,7 @@ class NanEscapableScope {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     NanEscapableScope scope;
-    assert(size <= 0x3fffffff && "too large buffer");
+    assert(size <= Nan::imp::kMaxLength && "too large buffer");
     return NanMaybeLocal<v8::Object>(
         scope.Escape(NanNew(node::Buffer::New(size)->handle_)));
   }
@@ -1043,7 +1060,7 @@ class NanEscapableScope {
     NanEscapableScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(size <= 0x3fffffff && "too large buffer");
+    assert(size <= Nan::imp::kMaxLength && "too large buffer");
     return scope.Escape(NanNew(
         node::Buffer::New(data, size, FreeData, NULL)->handle_));
   }
