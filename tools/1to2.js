@@ -43,7 +43,7 @@ for (i = 0; i < length; i++) {
 function replace(file, s) {
   var i;
 
-  s = s.replace(/(\W)args(\W)/, function (match, p1, p2) {
+  s = s.replace(/(\W)args(\W)/g, function (match, p1, p2) {
     return [p1, 'info', p2].join('');
   });
 
@@ -57,25 +57,25 @@ function replace(file, s) {
 
   s = s.replace('NanReturnNull', 'info.GetReturnValue().SetNull');
 
-  s = s.replace(/(?:v8\:\:)?Persistent/, function() { return 'NanPersistent'; });
+  s = s.replace(/(?:v8\:\:)?Persistent/g, function() { return 'NanPersistent'; });
 
-  s = s.replace(/NanSetWeak\s*\(\s*(\w+)\s*,/, function(match, p1) {
+  s = s.replace(/NanSetWeak\s*\(\s*(\w+)\s*,/g, function(match, p1) {
     return p1 + '.SetWeak(';
   });
 
-  s = s.replace(/(?:node\:\:)?ObjectWrap/, function() { return 'NanObjectWrap'; });
+  s = s.replace(/(?:node\:\:)?ObjectWrap/g, function() { return 'NanObjectWrap'; });
 
-  s = s.replace(/NanObjectWrapHandle\s*\((\w+)/, function (match, p1) {
+  s = s.replace(/NanObjectWrapHandle\s*\((\w+)/g, function (match, p1) {
     return p1 + '.handle(';
   });
 
-  s = s.replace(/(?:v8\:\:)?TryCatch/, function() { return 'NanTryCatch'; });
+  s = s.replace(/(?:v8\:\:)?TryCatch/g, function() { return 'NanTryCatch'; });
 
   s = s.replace('NanAsciiString', 'NanUtf8String');
 
   s = s.replace('NanUcs2String', 'v8::String::Value');
 
-  s = s.replace(/NanDisposePersistent\s*\(\s*(\w+)/, function(match, p1) {
+  s = s.replace(/NanDisposePersistent\s*\(\s*(\w+)/g, function(match, p1) {
     return p1 + '.Dispose(';
   });
 
