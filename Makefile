@@ -35,6 +35,7 @@ LINT_SOURCES = \
 	test/cpp/asyncworker.cpp \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncworkererror.cpp \
+	test/cpp/buffer.cpp \
 	test/cpp/bufferworkerpersistent.cpp \
 	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
