@@ -123,6 +123,9 @@
     , {
         "target_name" : "converters"
       , "sources"     : [ "cpp/converters.cpp" ]
+    }, {
+        "target_name" : "buffer"
+      , "sources"     : [ "cpp/buffer.cpp" ]
     }
     , {
         "target_name" : "trycatch"
