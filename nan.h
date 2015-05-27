@@ -605,7 +605,7 @@ class NanEscapableScope {
     v8::Isolate::GetCurrent()->ThrowException(error);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
+  NAN_INLINE NanMaybeLocal<v8::Object> NanNewBuffer(
       char *data
     , size_t length
     , node::smalloc::FreeCallback callback
@@ -614,25 +614,27 @@ class NanEscapableScope {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(length <= 0x3fffffff && "too large buffer");
-    return node::Buffer::New(
-        v8::Isolate::GetCurrent(), data, length, callback, hint);
+    return NanMaybeLocal<v8::Object>(node::Buffer::New(
+        v8::Isolate::GetCurrent(), data, length, callback, hint));
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanCopyBuffer(
+  NAN_INLINE NanMaybeLocal<v8::Object> NanCopyBuffer(
       const char *data
     , uint32_t size
   ) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= 0x3fffffff && "too large buffer");
-    return node::Buffer::New(v8::Isolate::GetCurrent(), data, size);
+    return NanMaybeLocal<v8::Object>(node::Buffer::New(
+        v8::Isolate::GetCurrent(), data, size));
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(uint32_t size) {
+  NAN_INLINE NanMaybeLocal<v8::Object> NanNewBuffer(uint32_t size) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= 0x3fffffff && "too large buffer");
-    return node::Buffer::New(v8::Isolate::GetCurrent(), size);
+    return NanMaybeLocal<v8::Object>(node::Buffer::New(
+        v8::Isolate::GetCurrent(), size));
   }
 
   NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
@@ -989,39 +991,44 @@ class NanEscapableScope {
     v8::ThrowException(error);
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(
+  NAN_INLINE NanMaybeLocal<v8::Object> NanNewBuffer(
       char *data
     , size_t length
     , node::Buffer::free_callback callback
     , void *hint
   ) {
+    NanScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(length <= 0x3fffffff && "too large buffer");
-    return NanNew(
-        node::Buffer::New(data, length, callback, hint)->handle_);
+    return NanMaybeLocal<v8::Object>(
+        NanNew(node::Buffer::New(data, length, callback, hint)->handle_));
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanCopyBuffer(
+  NAN_INLINE NanMaybeLocal<v8::Object> NanCopyBuffer(
       const char *data
     , uint32_t size
   ) {
+    NanEscapableScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= 0x3fffffff && "too large buffer");
 #if NODE_MODULE_VERSION >= NODE_0_10_MODULE_VERSION
-    return NanNew(node::Buffer::New(data, size)->handle_);
+    return NanMaybeLocal<v8::Object>(
+        scope.Escape(NanNew(node::Buffer::New(data, size)->handle_)));
 #else
-    return NanNew(
-      node::Buffer::New(const_cast<char*>(data), size)->handle_);
+    return NanMaybeLocal<v8::Object>(scope.Escape(
+        NanNew(node::Buffer::New(const_cast<char*>(data), size)->handle_)));
 #endif
   }
 
-  NAN_INLINE v8::Local<v8::Object> NanNewBuffer(uint32_t size) {
+  NAN_INLINE NanMaybeLocal<v8::Object> NanNewBuffer(uint32_t size) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
+    NanEscapableScope scope;
     assert(size <= 0x3fffffff && "too large buffer");
-    return NanNew(node::Buffer::New(size)->handle_);
+    return NanMaybeLocal<v8::Object>(
+        scope.Escape(NanNew(node::Buffer::New(size)->handle_)));
   }
 
   NAN_INLINE void FreeData(char *data, void *hint) {
@@ -1033,11 +1040,12 @@ class NanEscapableScope {
       char* data
     , uint32_t size
   ) {
+    NanEscapableScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= 0x3fffffff && "too large buffer");
-    return NanNew(
-        node::Buffer::New(data, size, FreeData, NULL)->handle_);
+    return scope.Escape(NanNew(
+        node::Buffer::New(data, size, FreeData, NULL)->handle_));
   }
 
   NAN_INLINE bool NanHasInstance(
