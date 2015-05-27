@@ -47,15 +47,19 @@ function replace(file, s) {
     return [p1, 'info', p2].join('');
   });
 
-  s = s.replace('NanScope()', 'NanScope scope');
+  s = s.replace(/NanScope\(\)/g, 'NanScope scope');
 
-  s = s.replace('NanEscapableScope()', 'NanEscapableScope scope');
+  s = s.replace(/NanEscapableScope\(\)/g, 'NanEscapableScope scope');
 
-  s = s.replace('NanReturnValue', 'info.GetReturnValue().Set');
+  s = s.replace(/NanReturnValue/g, 'info.GetReturnValue().Set');
 
-  s = s.replace('NanReturnUndefined()', 'return');
+  s = s.replace(/NanReturnUndefined\(\)/g, 'return');
 
-  s = s.replace('NanReturnNull', 'info.GetReturnValue().SetNull');
+  s = s.replace(/NanReturnNull/g, 'info.GetReturnValue().SetNull');
+
+  s = s.replace(/NanDisposePersistent\s*\(\s*(\w+)/g, function(match, p1) {
+    return p1 + '.Reset(';
+  });
 
   s = s.replace(/(?:v8\:\:)?Persistent/g, function() { return 'NanPersistent'; });
 
@@ -69,17 +73,17 @@ function replace(file, s) {
     return p1 + '.handle(';
   });
 
+  s = s.replace(/NODE_SET_METHOD/g, 'NanSetMethod');
+
+  s = s.replace(/NODE_SET_PROTOTYPE_METHOD/g, 'NanSetPrototypeMethod');
+
   s = s.replace(/(?:v8\:\:)?TryCatch/g, function() { return 'NanTryCatch'; });
 
-  s = s.replace('NanAsciiString', 'NanUtf8String');
+  s = s.replace(/NanAsciiString/g, 'NanUtf8String');
 
-  s = s.replace('NanUcs2String', 'v8::String::Value');
+  s = s.replace(/NanUcs2String/g, 'v8::String::Value');
 
-  s = s.replace(/NanDisposePersistent\s*\(\s*(\w+)/g, function(match, p1) {
-    return p1 + '.Dispose(';
-  });
-
-  s = s.replace('_NAN_', 'NAN_');
+  s = s.replace(/_NAN_/g, 'NAN_');
 
   for (i = 0; i < length; i++) {
     s = s.replace(removedregex[i], function (match, p1, p2) {
