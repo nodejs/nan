@@ -12,6 +12,8 @@
 #endif
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class ProgressWorker : public NanAsyncProgressWorker {
  public:
   ProgressWorker(

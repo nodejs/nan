@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NanGlobal<v8::Boolean> global;
 
 NAN_METHOD(ReturnValue) {

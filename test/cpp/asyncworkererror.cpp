@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class ErrorWorker : public NanAsyncWorker {
  public:
   explicit ErrorWorker(NanCallback *callback) : NanAsyncWorker(callback) {}

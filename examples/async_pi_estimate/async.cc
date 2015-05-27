@@ -10,6 +10,8 @@
 #include "pi_est.h"  // NOLINT(build/include)
 #include "async.h"  // NOLINT(build/include)
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 using v8::Function;
 using v8::Local;
 using v8::Null;

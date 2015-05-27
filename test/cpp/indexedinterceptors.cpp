@@ -9,6 +9,8 @@
 #include <nan.h>
 #include <cstring>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 class IndexedInterceptor : public NanObjectWrap {
   char buf[256];
 

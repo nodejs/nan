@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 void Init (v8::Handle<v8::Object> target) {
   NanSet(target
     , NanNew<v8::String>("key").ToLocalChecked()

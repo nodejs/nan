@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(ReturnEmptyString) {
   info.GetReturnValue().SetEmptyString();
 }

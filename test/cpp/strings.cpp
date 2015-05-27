@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(ReturnUtf8String) {
   info.GetReturnValue().Set(NanNew(*NanUtf8String(info[0])).ToLocalChecked());
 }
@@ -20,11 +22,11 @@ NAN_METHOD(HeapString) {
 }
 
 NAN_METHOD(EncodeHex) {
-  info.GetReturnValue().Set(NanEncode("hello", 5, Nan::HEX));
+  info.GetReturnValue().Set(NanEncode("hello", 5, HEX));
 }
 
 NAN_METHOD(EncodeUCS2) {
-  info.GetReturnValue().Set(NanEncode("h\0e\0l\0l\0o\0", 10, Nan::UCS2));
+  info.GetReturnValue().Set(NanEncode("h\0e\0l\0l\0o\0", 10, UCS2));
 }
 
 NanPersistent<v8::FunctionTemplate> returnUtf8String_persistent;

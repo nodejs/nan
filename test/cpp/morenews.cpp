@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(NewNumber) {
   info.GetReturnValue().Set(NanNew(0.5));
 }
