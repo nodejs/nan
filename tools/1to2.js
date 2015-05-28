@@ -6,8 +6,7 @@
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
-var events = require('events'),
-    fs = require('fs'),
+var fs = require('fs'),
     glob = require('glob'),
     removed = [
       'GetIndexedPropertiesExternalArrayDataLength',
@@ -55,6 +54,18 @@ function replace(file, s) {
 
   s = s.replace(/(\W)args(\W)/g, function (match, p1, p2) {
     return [p1, 'info', p2].join('');
+  });
+
+  s = s.replace(/NanNew(<(?:v8\:\:)?String>)?\("(.*)"\)/g, function(match, p1, p2) {
+    return ['NanNew', p1, '("', p2, '").ToLocalChecked()'].join('');
+  });
+
+  s = s.replace(/NanNew(<(?:v8\:\:)?Date>)\(.*\)/g, function(match, p1, p2) {
+    return ['NanNew', p1, '(', p2, ').ToLocalChecked()'].join('');
+  });
+
+  s = s.replace(/NanNew(<(?:v8\:\:)?RegExp>)\(.*\)/g, function(match, p1, p2) {
+    return ['NanNew', p1, '(', p2, ').ToLocalChecked()'].join('');
   });
 
   s = s.replace(/NanScope\(\)/g, 'NanScope scope');
