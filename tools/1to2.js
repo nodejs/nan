@@ -36,30 +36,65 @@ var commander = require('commander'),
       'NAN_INDEX_DELETER',
       'NAN_INDEX_QUERY'],
     callbackregex = [],
+    toconverters = [
+      'Boolean',
+      'Number',
+      'String',
+      'Object',
+      'Integer',
+      'Uint32',
+      'Int32'],
+    toconvertersregex = [],
+    tovalues = [
+      ['bool', 'Boolean'],
+      ['double', 'Number'],
+      ['int64_t', 'Integer'],
+      ['uint32_t', 'Uint32'],
+      ['int32_t', 'Int32']],
+    tovaluesregex = [],
     length,
     i;
 
-commander
-  .version(JSON.parse(fs.readFileSync('package.json', 'utf8')).version)
-  .usage('[options] <file ...>')
-  .parse(process.argv);
+fs.readFile('package.json', 'utf8', function (err, data) {
+  if (err) {
+    throw err;
+  }
 
-if (!process.argv.slice(2).length) {
-  commander.outputHelp();
-}
+  commander
+      .version(JSON.parse(data).version)
+      .usage('[options] <file ...>')
+      .parse(process.argv);
+
+  if (!process.argv.slice(2).length) {
+    commander.outputHelp();
+  }
+});
+
 
 function replace(file, s) {
   var i, length;
 
   for (i = 0, length = removedregex.length; i < length; i++) {
     s = s.replace(removedregex[i], function (match) {
-    return '// ERROR: Rewrite using Buffer\n' +  match;
+      return '// ERROR: Rewrite using Buffer\n' +  match;
     });
   }
 
   for (i = 0, length = callbackregex.length; i < length; i++) {
     s = s.replace(callbackregex[i], function (match, p1) {
-    return p1;
+      return p1;
+    });
+  }
+
+  for (i = 0, length = toconverters.length; i < length; i++) {
+    s = s.replace(toconvertersregex[i], function (match, p1) {
+      return ['NanTo<', toconverters[i], '>(',  p1].join('');
+    });
+  }
+
+  for (i = 0, length = tovaluesregex.length; i < length; i++) {
+    s = s.replace(tovaluesregex[i], function (match, p1) {
+      return ['NanTo<', tovalues[i][0], '>(',  p1].join('');
     });
   }
 
@@ -158,8 +193,18 @@ for (i = 0, length = removed.length; i < length; i++) {
 }
 
 for (i = 0, length = callbacks.length; i < length; i++) {
-  callbackregex[i] =
-      new RegExp('(' + callbacks[i] + '\\(.*\\)\\s*\\{)\\s*NanScope\\(\\)\\s*;', 'g');
+  callbackregex[i] = new RegExp(
+      '(' + callbacks[i] + '\\(.*\\)\\s*\\{)\\s*NanScope\\(\\)\\s*;', 'g');
+}
+
+for (i = 0, length = toconverters.length; i < length; i++) {
+  toconvertersregex[i] =
+      new RegExp('(\\S+)->To' + toconverters[i] + '\\(', 'g');
+}
+
+for (i = 0, length = tovalues.length; i < length; i++) {
+  tovaluesregex[i] =
+      new RegExp('(\\S+)->' + tovalues[i][1] + 'Value\\(', 'g');
 }
 
 for (i = 2, length = process.argv.length; i < length; i++) {
