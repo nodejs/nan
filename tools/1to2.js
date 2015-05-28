@@ -159,6 +159,12 @@ function replace(file, s) {
     return [p1, 'NanObjectWrap', p2].join('');
   });
 
+  s = s.replace(/(?:v8\:\:)?TryCatch/g, function() { return 'NanTryCatch'; });
+
+  s = s.replace(/(\w+)->StackTrace\(\)/g, function (match) {
+    return match + '.ToLocalChecked()';
+  });
+
   s = s.replace(/(\w+)->Equals\((\w+)/, function (match, p1, p2) {
     return ['NanEquals(', p1, ', ', p2].join('');
   });
@@ -284,8 +290,6 @@ function replace(file, s) {
   s = s.replace(/NODE_SET_METHOD/g, 'NanSetMethod');
 
   s = s.replace(/NODE_SET_PROTOTYPE_METHOD/g, 'NanSetPrototypeMethod');
-
-  s = s.replace(/(?:v8\:\:)?TryCatch/g, function() { return 'NanTryCatch'; });
 
   s = s.replace(/NanAsciiString/g, 'NanUtf8String');
 
