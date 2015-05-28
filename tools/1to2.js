@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
@@ -6,7 +7,8 @@
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
-var fs = require('fs'),
+var commander = require('commander'),
+    fs = require('fs'),
     glob = require('glob'),
     removed = [
       'GetIndexedPropertiesExternalArrayDataLength',
@@ -36,6 +38,15 @@ var fs = require('fs'),
     callbackregex = [],
     length,
     i;
+
+commander
+  .version(JSON.parse(fs.readFileSync('package.json', 'utf8')).version)
+  .usage('[options] <file ...>')
+  .parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  commander.outputHelp();
+}
 
 function replace(file, s) {
   var i, length;
