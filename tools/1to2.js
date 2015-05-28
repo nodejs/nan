@@ -86,17 +86,26 @@ function replace(file, s) {
     });
   }
 
+  for (i = 0, length = tovaluesregex.length; i < length; i++) {
+    s = s.replace(tovaluesregex[i], function (match, p1) {
+      return ['NanTo<', tovalues[i][0], '>(',  p1].join('');
+    });
+  }
+
   for (i = 0, length = toconverters.length; i < length; i++) {
     s = s.replace(toconvertersregex[i], function (match, p1) {
       return ['NanTo<', toconverters[i], '>(',  p1].join('');
     });
   }
 
-  for (i = 0, length = tovaluesregex.length; i < length; i++) {
-    s = s.replace(tovaluesregex[i], function (match, p1) {
-      return ['NanTo<', tovalues[i][0], '>(',  p1].join('');
-    });
-  }
+  s = s.replace(/(\S+)->ToDetailString\(/, function (match, p1) {
+    return 'NanToDetailString(' + p1;
+  });
+
+  s = s.replace(/(\S+)->ToArrayIndex\(/, function (match, p1) {
+    return 'NanToArrayIndex(' + p1;
+  });
+
 
   s = s.replace(/(\W)args(\W)/g, function (match, p1, p2) {
     return [p1, 'info', p2].join('');
@@ -150,8 +159,121 @@ function replace(file, s) {
     return [p1, 'NanObjectWrap', p2].join('');
   });
 
+  s = s.replace(/(\w+)->Equals\((\w+)/, function (match, p1, p2) {
+    return ['NanEquals(', p1, ', ', p2].join('');
+  });
+
+  s = s.replace(/(\w+)->NewInstance\(/g, function (match, p1) {
+    return 'NanNewInstance(' + p1;
+  });
+
+  s = s.replace(/(\w+)->GetFunction\(/g, function (match, p1) {
+    return 'NanGetFunction(' + p1;
+  });
+
   s = s.replace(/(\w+)->Set\(/g, function (match, p1) {
-    return 'NanSet(' + p1 + ', '
+    return 'NanSet(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->ForceSet\(/g, function (match, p1) {
+    return 'NanForceSet(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->Get\(/g, function (match, p1) {
+    return 'NanGet(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->GetPropertyAttributes\(/g, function (match, p1) {
+    return 'NanGetPropertyAttributes(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->Has\(/g, function (match, p1) {
+    return 'NanHas(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->Delete\(/g, function (match, p1) {
+    return 'NanDelete(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->GetPropertyNames\(/g, function (match, p1) {
+    return 'NanGetPropertyNames(' + p1;
+  });
+
+  s = s.replace(/(\w+)->GetOwnPropertyNames\(/g, function (match, p1) {
+    return 'NanGetOwnPropertyNames(' + p1;
+  });
+
+  s = s.replace(/(\w+)->SetPrototype\(/g, function (match, p1) {
+    return 'NanSetPrototype(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->ObjectProtoToString\(/g, function (match, p1) {
+    return 'NanObjectProtoToString(' + p1;
+  });
+
+  s = s.replace(/(\w+)->HasOwnProperty\(/g, function (match, p1) {
+    return 'NanHasOwnProperty(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->HasRealNamedProperty\(/g, function (match, p1) {
+    return 'NanHasRealNamedProperty(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->HasRealIndexedProperty\(/g, function (match, p1) {
+    return 'NanHasRealIndexedProperty(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->HasRealNamedCallbackProperty\(/g, function (match, p1) {
+    return 'NanHasRealNamedCallbackProperty(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->GetRealNamedPropertyInPrototypeChain\(/g,
+      function (match, p1) {
+    return 'NanGetRealNamedPropertyInPrototypeChain(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->GetRealNamedProperty\(/g, function (match, p1) {
+    return 'NanGetRealNamedProperty(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->CallAsFunction\(/g,
+      function (match, p1) {
+    return 'NanCallAsFunction(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->CallAsConstructor\(/g,
+      function (match, p1) {
+    return 'NanCallAsConstructor(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->GetSourceLine\(/g,
+      function (match, p1) {
+    return 'NanGetSourceLine(' + p1;
+  });
+
+  s = s.replace(/(\w+)->GetLineNumber\(/g,
+      function (match, p1) {
+    return 'NanGetLineNumber(' + p1;
+  });
+
+  s = s.replace(/(\w+)->GetStartColumn\(/g,
+      function (match, p1) {
+    return 'NanGetStartColumn(' + p1;
+  });
+
+  s = s.replace(/(\w+)->GetEndColumn\(/g,
+      function (match, p1) {
+    return 'NanGetEndColumn(' + p1;
+  });
+
+  s = s.replace(/(\w+)->CloneElementAt\(/g,
+      function (match, p1) {
+    return 'NanCloneElementAt(' + p1 + ', ';
+  });
+
+  s = s.replace(/(\w+)->\(/g,
+      function (match, p1) {
+    return 'NanGetStartColumn(' + p1;
   });
 
   s = s.replace(/NAN_WEAK_CALLBACK\(([^\)]+)\)/, function (match, p1) {
