@@ -82,7 +82,7 @@ groups.push([1, ['(', [
   'NanReturnUndefined',
   'NanScope'].join('|'), ')\\(\\)'].join('')]);
 
-groups.push([1, '(?:v8\\:\\:)?(TryCatch)']);
+groups.push([2, '(?:(?:v8\\:\\:)?|(Nan)?)(TryCatch)']);
 
 groups.push([1, ['(NanNew)', '(\\("[^\\"]*"[^\\)]*\\))(?!\\.ToLocalChecked\\(\\))'].join('')]);
 
@@ -192,7 +192,7 @@ function replace() {
       }
 
       if (arguments[groups[2][0]] === 'TryCatch') {
-        return 'NanTryCatch';
+        return arguments[groups[2][0] - 1] ? arguments[0] : 'NanTryCatch';
       }
 
       if (arguments[groups[3][0]] === 'NanNew') {
