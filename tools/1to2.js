@@ -29,6 +29,12 @@ fs.readFile('package.json', 'utf8', function (err, data) {
   }
 });
 
+/* construct strings representing regular expressions
+   each expression contains a unique group allowing for identification of the match
+   the index of this key group, relative to the regular expression in question,
+    is indicated by the first array member */
+
+/* simple substistutions, key group is the entire match, 0 */
 groups.push([0, [
   '_NAN_',
   'NODE_SET_METHOD',
@@ -38,16 +44,20 @@ groups.push([0, [
   'NanReturnValue',
   'NanUcs2String'].join('|')]);
 
+/* substitutions of parameterless macros, key group is 1 */
 groups.push([1, ['(', [
   'NanEscapableScope',
   'NanReturnNull',
   'NanReturnUndefined',
   'NanScope'].join('|'), ')\\(\\)'].join('')]);
 
+/* replace TryCatch with NanTryCatch once, gobbling possible namespace, key group 2 */
 groups.push([2, '(?:(?:v8\\:\\:)?|(Nan)?)(TryCatch)']);
 
+/* NanNew("string") will likely not fail a ToLocalChecked(), key group 1 */ 
 groups.push([1, ['(NanNew)', '(\\("[^\\"]*"[^\\)]*\\))(?!\\.ToLocalChecked\\(\\))'].join('')]);
 
+/* Removed v8 APIs, warn that the code needs rewriting using node::Buffer, key group 1 */
 groups.push([1, ['^.*?(', [
       'GetIndexedPropertiesExternalArrayDataLength',
       'GetIndexedPropertiesExternalArrayData',
@@ -59,6 +69,7 @@ groups.push([1, ['^.*?(', [
       'SetIndexedPropertiesToExternalArrayData',
       'SetIndexedPropertiesToPixelData'].join('|'), ')'].join('')]);
 
+/* No need for NanScope in V8-exposed methods, key group 2 */
 groups.push([2, ['((', [
       'NAN_METHOD',
       'NAN_GETTER',
@@ -74,6 +85,7 @@ groups.push([2, ['((', [
       'NAN_INDEX_DELETER',
       'NAN_INDEX_QUERY'].join('|'), ')\\([^\\)]*\\)\\s*\\{)\\s*NanScope\\(\\)\\s*;'].join('')]);
 
+/* v8::Value::ToXXXXXXX returns v8::MaybeLocal<T>, key group 3 */
 groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->(', [
       'Boolean',
       'Number',
@@ -83,6 +95,7 @@ groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->(', [
       'Uint32',
       'Int32'].join('|'), ')\\('].join('')]);
 
+/* v8::Value::XXXXXXXValue returns v8::Maybe<T>, key group 3 */
 groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->((?:', [
       'Boolean',
       'Number',
@@ -90,14 +103,18 @@ groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->((?:', [
       'Uint32',
       'Int32'].join('|'), ')Value)\\('].join('')]);
 
+/* NAN_WEAK_CALLBACK macro was removed, write out callback definition, key group 1 */
 groups.push([1, '(NAN_WEAK_CALLBACK)\\(([^\\s\\)]+)\\)']);
 
+/* node::ObjectWrap and v8::Persistent have been replaced with Nan implementations, key group 1 */
 groups.push([1, ['(', [
   'NanDisposePersistent',
   'NanObjectWrapHandle'].join('|'), ')\\s*\\(\\s*([^\\s\\)]+)'].join('')]);
 
+/* Since NanPersistent there is no need for NanMakeWeakPersistent, key group 1 */
 groups.push([1, '(NanMakeWeakPersistent)\\s*\\(\\s*([^\\s,]+)\\s*,\\s*']);
 
+/* Many methods of v8::Object and others now return v8::MaybeLocal<T>, key group 3 */
 groups.push([3, ['([\\s])([^\\s]+)->(', [
   'GetEndColumn',
   'GetFunction',
@@ -130,33 +147,46 @@ groups.push([3, ['([\\s])([^\\s]+)->(', [
   'SetNamedPropertyHandler',
   'SetPrototype'].join('|'), ')\\('].join('')]);
 
+/* You should get an error if any of these fail anyways,
+   or handle the error better, it is indicated either way, key group 2 */
 groups.push([2, ['NanNew(<(?:v8\\:\\:)?(', ['Date', 'String', 'RegExp'].join('|'), ')>)(\\([^\\)]*\\))(?!\\.ToLocalChecked\\(\\))'].join('')]);
 
+/* v8::Value::Equals now returns a v8::Maybe, key group 3 */
 groups.push([3, '([\\s\\(\\)])([^\\s\\(\\)]+)->(Equals)\\(([^\\s\\)]+)']);
 
+/* NanPersistent makes this unnecessary, key group 1 */
 groups.push([1, '(NanAssignPersistent)(?:<v8\\:\\:[^>]+>)?\\(([^,]+),\\s*']);
 
+/* args has been renamed to info, key group 2 */
 groups.push([2, '(\\W)(args)(\\W)'])
 
+/* node::ObjectWrap was replaced with NanObjectWrap, key group 2 */
 groups.push([2, '(\\W)(?:node\\:\\:)?(ObjectWrap)(\\W)']);
 
+/* v8::Persistent was replaced with NanPersistent, key group 2 */
 groups.push([2, '(\\W)(?:v8\\:\\:)?(Persistent)(\\W)']);
 
+/* counts the number of capturing groups in a well-formed regular expression,
+   ignoring non-capturing groups and escaped parentheses */
 function groupcount(s) {
   var positive = s.match(/\((?!\?)/g),
       negative = s.match(/\\\(/g);
   return (positive ? positive.length : 0) - (negative ? negative.length : 0);
 }
 
+/* compute the absolute position of each key group in the joined master RegExp */
 var total = 0;
 for (i = 1, length = groups.length; i < length; i++) {
 	total += groupcount(groups[i - 1][1]);
 	groups[i][0] += total;
 }
 
+/* create the master RegExp, whis is the union of all the groups' expressions */
 master = new RegExp(groups.map(function (a) { return a[1]; }).join('|'), 'gm');
 
+/* replacement function for String.replace, receives 21 arguments */
 function replace() {
+	/* simple expressions */
       switch (arguments[groups[0][0]]) {
         case '_NAN_':
           return 'NAN_';
@@ -177,6 +207,7 @@ function replace() {
         default:
       }
 
+      /* macros without arguments */
       switch (arguments[groups[1][0]]) {
         case 'NanEscapableScope':
           return 'NanEscapableScope scope'
@@ -187,14 +218,17 @@ function replace() {
         default:
       }
 
+      /* TryCatch, emulate negative backref */
       if (arguments[groups[2][0]] === 'TryCatch') {
         return arguments[groups[2][0] - 1] ? arguments[0] : 'NanTryCatch';
       }
 
+      /* NanNew("foo") --> NanNew("foo").ToLocalChecked() */
       if (arguments[groups[3][0]] === 'NanNew') {
         return [arguments[0], '.ToLocalChecked()'].join('');
       }
 
+      /* insert warning for removed functions as comment on new line above */
       switch (arguments[groups[4][0]]) {
         case 'GetIndexedPropertiesExternalArrayData':
         case 'GetIndexedPropertiesExternalArrayDataLength':
@@ -209,6 +243,7 @@ function replace() {
         default:
       }
 
+     /* remove unnecessary NanScope() */
       switch (arguments[groups[5][0]]) {
         case 'NAN_GETTER':
         case 'NAN_METHOD':
@@ -227,6 +262,7 @@ function replace() {
         default:
       }
 
+      /* Value converstion */
       switch (arguments[groups[6][0]]) {
         case 'Boolean':
         case 'Int32':
@@ -239,6 +275,7 @@ function replace() {
         default:
       }
 
+      /* other value conversion */
       switch (arguments[groups[7][0]]) {
         case 'BooleanValue':
           return [arguments[groups[7][0] - 2], 'NanTo<bool>(', arguments[groups[7][0] - 1]].join('');
@@ -251,11 +288,13 @@ function replace() {
         default:
       }
 
+      /* NAN_WEAK_CALLBACK */
       if (arguments[groups[8][0]] === 'NAN_WEAK_CALLBACK') {
         return ['template<typename T>\nvoid ',
           arguments[groups[8][0] + 1], '(const NanWeakCallbackInfo<T> &data)'].join('');
       }
 
+      /* use methods on NAN classes instead */
       switch (arguments[groups[9][0]]) {
         case 'NanDisposePersistent':
           return [arguments[groups[9][0] + 1], '.Reset('].join('');
@@ -264,10 +303,12 @@ function replace() {
         default:
       }
 
+      /* use method on NanPersistent instead */
       if (arguments[groups[10][0]] === 'NanMakeWeakPersistent') {
         return arguments[groups[10][0] + 1] + '.SetWeak(';
       }
 
+      /* These return Maybes, the upper ones take no arguments */
       switch (arguments[groups[11][0]]) {
         case 'GetEndColumn':
         case 'GetFunction':
@@ -304,6 +345,7 @@ function replace() {
         default:
       }
 
+      /* Automatic ToLocalChecked(), take it or leave it */
       switch (arguments[groups[12][0]]) {
         case 'Date':
         case 'String':
@@ -312,34 +354,43 @@ function replace() {
         default:
       }
 
+      /* NanEquals is now required for uniformity */
       if (arguments[groups[13][0]] === 'Equals') {
         return [arguments[groups[13][0] - 1], 'NanEquals(', arguments[groups[13][0] - 1], ', ', arguments[groups[13][0] + 1]].join('');
       }
 
+      /* use method on replacement class instead */
       if (arguments[groups[14][0]] === 'NanAssignPersistent') {
         return [arguments[groups[14][0] + 1], '.Reset('].join('');
       }
 
+      /* args --> info */
       if (arguments[groups[15][0]] === 'args') {
         return [arguments[groups[15][0] - 1], 'info', arguments[groups[15][0] + 1]].join('');
       }
 
+      /* ObjectWrap --> NanObjectWrap */
       if (arguments[groups[16][0]] === 'ObjectWrap') {
         return [arguments[groups[16][0] - 1], 'NanObjectWrap', arguments[groups[16][0] + 1]].join('');
       }
 
+      /* Persistent --> NanPersistent */
       if (arguments[groups[17][0]] === 'Persistent') {
         return [arguments[groups[17][0] - 1], 'NanPersistent', arguments[groups[17][0] + 1]].join('');
       }
 
+      /* This should not happen. A switch is probably missing a case if it does. */
       throw 'Unhandled match: ' + arguments[0];
 }
+
+/* reads a file, runs replacement and writes it back */
 function processFile(file) {
   fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
     if (err) {
       throw err;
     }
 
+    /* run replacement twice, might need more runs */
     fs.writeFile(file, data.replace(master, replace).replace(master, replace), function (err) {
       if (err) {
         throw err;
@@ -348,6 +399,7 @@ function processFile(file) {
   });
 }
 
+/* process file names from command line and process the identified files */
 for (i = 2, length = process.argv.length; i < length; i++) {
   glob(process.argv[i], function (err, matches) {
     if (err) {
