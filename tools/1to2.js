@@ -10,44 +10,6 @@
 var commander = require('commander'),
     fs = require('fs'),
     glob = require('glob'),
-    callbacks = [
-      'NAN_METHOD',
-      'NAN_GETTER',
-      'NAN_SETTER',
-      'NAN_PROPERTY_GETTER',
-      'NAN_PROPERTY_SETTER',
-      'NAN_PROPERTY_ENUMERATOR',
-      'NAN_PROPERTY_DELETER',
-      'NAN_PROPERTY_QUERY',
-      'NAN_INDEX_GETTER',
-      'NAN_INDEX_SETTER',
-      'NAN_INDEX_ENUMERATOR',
-      'NAN_INDEX_DELETER',
-      'NAN_INDEX_QUERY'],
-    removed = [
-      'GetIndexedPropertiesExternalArrayDataLength',
-      'GetIndexedPropertiesExternalArrayData',
-      'GetIndexedPropertiesExternalArrayDataType',
-      'GetIndexedPropertiesPixelData',
-      'GetIndexedPropertiesPixelDataLength',
-      'HasIndexedPropertiesInExternalArrayData',
-      'HasIndexedPropertiesInPixelData',
-      'SetIndexedPropertiesToExternalArrayData',
-      'SetIndexedPropertiesToPixelData'],
-    toconverters = [
-      'Boolean',
-      'Number',
-      'String',
-      'Object',
-      'Integer',
-      'Uint32',
-      'Int32'],
-    tovalues = [
-      ['bool', 'Boolean'],
-      ['double', 'Number'],
-      ['int64_t', 'Integer'],
-      ['uint32_t', 'Uint32'],
-      ['int32_t', 'Int32']],
     groups = [],
     length,
     i;
@@ -86,13 +48,47 @@ groups.push([2, '(?:(?:v8\\:\\:)?|(Nan)?)(TryCatch)']);
 
 groups.push([1, ['(NanNew)', '(\\("[^\\"]*"[^\\)]*\\))(?!\\.ToLocalChecked\\(\\))'].join('')]);
 
-groups.push([1, ['^.*?(', removed.join('|'), ')'].join('')]);
+groups.push([1, ['^.*?(', [
+      'GetIndexedPropertiesExternalArrayDataLength',
+      'GetIndexedPropertiesExternalArrayData',
+      'GetIndexedPropertiesExternalArrayDataType',
+      'GetIndexedPropertiesPixelData',
+      'GetIndexedPropertiesPixelDataLength',
+      'HasIndexedPropertiesInExternalArrayData',
+      'HasIndexedPropertiesInPixelData',
+      'SetIndexedPropertiesToExternalArrayData',
+      'SetIndexedPropertiesToPixelData'].join('|'), ')'].join('')]);
 
-groups.push([2, ['((', callbacks.join('|'), ')\\([^\\)]*\\)\\s*\\{)\\s*NanScope\\(\\)\\s*;'].join('')]);
+groups.push([2, ['((', [
+      'NAN_METHOD',
+      'NAN_GETTER',
+      'NAN_SETTER',
+      'NAN_PROPERTY_GETTER',
+      'NAN_PROPERTY_SETTER',
+      'NAN_PROPERTY_ENUMERATOR',
+      'NAN_PROPERTY_DELETER',
+      'NAN_PROPERTY_QUERY',
+      'NAN_INDEX_GETTER',
+      'NAN_INDEX_SETTER',
+      'NAN_INDEX_ENUMERATOR',
+      'NAN_INDEX_DELETER',
+      'NAN_INDEX_QUERY'].join('|'), ')\\([^\\)]*\\)\\s*\\{)\\s*NanScope\\(\\)\\s*;'].join('')]);
 
-groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->To(', toconverters.join('|'), ')\\('].join('')]);
+groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->(', [
+      'Boolean',
+      'Number',
+      'String',
+      'Object',
+      'Integer',
+      'Uint32',
+      'Int32'].join('|'), ')\\('].join('')]);
 
-groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->(', tovalues.map(function (x) { return x[1]; }).join('|'), 'Value)\\('].join('')]);
+groups.push([3, ['([\\s\\(\\)])([^\\s\\(\\)]+)->((?:', [
+      'Boolean',
+      'Number',
+      'Integer',
+      'Uint32',
+      'Int32'].join('|'), ')Value)\\('].join('')]);
 
 groups.push([1, '(NAN_WEAK_CALLBACK)\\(([^\\s\\)]+)\\)']);
 
