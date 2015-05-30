@@ -11,6 +11,9 @@ var commander = require('commander'),
     fs = require('fs'),
     glob = require('glob'),
     groups = [],
+    total = 0,
+    warning1 = '/* ERROR: Rewrite using Buffer */\n',
+    warning2 = '\\/\\* ERROR\\: Rewrite using Buffer \\*\\/\\n',
     length,
     i;
 
@@ -57,8 +60,8 @@ groups.push([2, '(?:(?:v8\\:\\:)?|(Nan)?)(TryCatch)']);
 /* NanNew("string") will likely not fail a ToLocalChecked(), key group 1 */ 
 groups.push([1, ['(NanNew)', '(\\("[^\\"]*"[^\\)]*\\))(?!\\.ToLocalChecked\\(\\))'].join('')]);
 
-/* Removed v8 APIs, warn that the code needs rewriting using node::Buffer, key group 1 */
-groups.push([1, ['^.*?(', [
+/* Removed v8 APIs, warn that the code needs rewriting using node::Buffer, key group 2 */
+groups.push([2, ['(', warning2, ')?', '^.*?(', [
       'GetIndexedPropertiesExternalArrayDataLength',
       'GetIndexedPropertiesExternalArrayData',
       'GetIndexedPropertiesExternalArrayDataType',
@@ -175,7 +178,6 @@ function groupcount(s) {
 }
 
 /* compute the absolute position of each key group in the joined master RegExp */
-var total = 0;
 for (i = 1, length = groups.length; i < length; i++) {
 	total += groupcount(groups[i - 1][1]);
 	groups[i][0] += total;
@@ -239,7 +241,7 @@ function replace() {
         case 'HasIndexedPropertiesInPixelData':
         case 'SetIndexedPropertiesToExternalArrayData':
         case 'SetIndexedPropertiesToPixelData':
-          return '// ERROR: Rewrite using Buffer\n' +  arguments[0];
+          return arguments[groups[4][0] - 1] ? arguments[0] : [warning1, arguments[0]].join('');
         default:
       }
 
