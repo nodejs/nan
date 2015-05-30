@@ -42,6 +42,23 @@ NAN_METHOD(CompareCallbacks) {
   NanReturnValue(NanNew<v8::Boolean>(cb1 == cb2 && cb1 != cb3));
 }
 
+NAN_METHOD(CallDirect) {
+  NanScope();
+
+  NanCallback cb(args[0].As<v8::Function>());
+  (*cb)->Call(NanGetCurrentContext()->Global(), 0, NULL);
+
+  NanReturnUndefined();
+}
+
+NAN_METHOD(CallAsFunction) {
+  NanScope();
+
+  NanCallback(args[0].As<v8::Function>())();
+
+  NanReturnUndefined();
+}
+
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("globalContext")
@@ -58,6 +75,14 @@ void Init (v8::Handle<v8::Object> target) {
   target->Set(
       NanNew<v8::String>("compareCallbacks")
     , NanNew<v8::FunctionTemplate>(CompareCallbacks)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("callDirect")
+    , NanNew<v8::FunctionTemplate>(CallDirect)->GetFunction()
+  );
+  target->Set(
+      NanNew<v8::String>("callAsFunction")
+    , NanNew<v8::FunctionTemplate>(CallAsFunction)->GetFunction()
   );
 }
 

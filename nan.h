@@ -1601,6 +1601,22 @@ class NanCallback {
     return !this->operator==(other);
   }
 
+  NAN_INLINE
+  v8::Local<v8::Function> operator*() const { return this->GetFunction(); }
+
+  NAN_INLINE v8::Local<v8::Value> operator()(
+      v8::Handle<v8::Object> target
+    , int argc = 0
+    , v8::Handle<v8::Value> argv[] = 0) const {
+    return this->Call(target, argc, argv);
+  }
+
+  NAN_INLINE v8::Local<v8::Value> operator()(
+      int argc = 0
+    , v8::Handle<v8::Value> argv[] = 0) const {
+    return this->Call(argc, argv);
+  }
+
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
     NanScope();
     NanNew(handle)->Set(kCallbackIndex, fn);
@@ -1617,7 +1633,7 @@ class NanCallback {
     return NanNew(handle)->Get(kCallbackIndex)->IsUndefined();
   }
 
-  NAN_INLINE v8::Handle<v8::Value>
+  NAN_INLINE v8::Local<v8::Value>
   Call(v8::Handle<v8::Object> target
      , int argc
      , v8::Handle<v8::Value> argv[]) const {
@@ -1629,7 +1645,7 @@ class NanCallback {
 #endif
   }
 
-  NAN_INLINE v8::Handle<v8::Value>
+  NAN_INLINE v8::Local<v8::Value>
   Call(int argc, v8::Handle<v8::Value> argv[]) const {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
@@ -1645,7 +1661,7 @@ class NanCallback {
   static const uint32_t kCallbackIndex = 0;
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
-  v8::Handle<v8::Value> Call_(v8::Isolate *isolate
+  v8::Local<v8::Value> Call_(v8::Isolate *isolate
                            , v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
@@ -1653,16 +1669,16 @@ class NanCallback {
 
     v8::Local<v8::Function> callback = NanNew(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    return NanEscapeScope(node::MakeCallback(
+    return NanEscapeScope(NanNew(node::MakeCallback(
         isolate
       , target
       , callback
       , argc
       , argv
-    ));
+    )));
   }
 #else
-  v8::Handle<v8::Value> Call_(v8::Handle<v8::Object> target
+  v8::Local<v8::Value> Call_(v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
     NanEscapableScope();
@@ -1670,12 +1686,12 @@ class NanCallback {
 #if NODE_VERSION_AT_LEAST(0, 8, 0)
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
-    return NanEscapeScope(node::MakeCallback(
+    return NanEscapeScope(NanNew(node::MakeCallback(
         target
       , callback
       , argc
       , argv
-    ));
+    )));
 #else
     v8::Local<v8::Function> callback = handle->
         Get(kCallbackIndex).As<v8::Function>();
