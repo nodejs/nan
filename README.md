@@ -295,17 +295,17 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
  * <del><a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a></del>
- * <a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a>
- * <a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a>
+ * <del><a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a></del>
+ * <del><a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a></del>
  * <del><a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a></del>
  * <del><a href="#api_nan_c_string"><b><code>NanCString</code></b></a></del>
  * <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>
  * <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a>
  * <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>
- * <a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a>
- * <a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a>
- * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanTypeError</code></b>, <b><code>NanRangeError</code></b></a>
- * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
+ * <del><a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a></del>
+ * <del><a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a></del>
+ * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanRangeError</code></b>, <b><code>NanReferenceError</code></b>, <b><code>NanSyntaxError</code></b>, <b><code>NanTypeError</code></b></a>
+ * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowReferenceError</code></b>, <b><code>NanThrowSyntaxError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
  * <del><a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a></del>
@@ -318,6 +318,9 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a>
  * <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
+ * <a href="#api_nan_fatal_exception"><b><code>NanFatalException</code></b></a>
+ * <a href="#api_nan_get_isolate_data"><b><code>NanGetIsolateData</code></b></a>
+ * <a href="#api_nan_set_isolate_data"><b><code>NanSetIsolateData</code></b></a>
  * <a href="#api_nan_encode"><b><code>NanEncode</code></b></a>
  * <a href="#api_nan_decode_bytes"><b><code>NanDecodeBytes</code></b></a>
  * <a href="#api_nan_decode_write"><b><code>NanDecodeWrite</code></b></a>
@@ -740,9 +743,10 @@ if (obj->Has(NanNew<String>("foo")))
 ```
 
 <a name="api_nan_get_pointer_safe"></a>
-### Type NanGetPointerSafe(Type *[, Type])
+### ~~Type NanGetPointerSafe(Type *[, Type])~~
 
-A helper for getting values from optional pointers. If the pointer is `NULL`, the function returns the optional default value, which defaults to `0`.  Otherwise, the function returns the value the pointer points to.
+Deprecated.
+~~A helper for getting values from optional pointers. If the pointer is `NULL`, the function returns the optional default value, which defaults to `0`.  Otherwise, the function returns the value the pointer points to.~~
 
 ```c++
 char *plugh(uint32_t *optional) {
@@ -756,9 +760,10 @@ char *plugh(uint32_t *optional) {
 ```
 
 <a name="api_nan_set_pointer_safe"></a>
-### bool NanSetPointerSafe(Type *, Type)
+### ~~bool NanSetPointerSafe(Type *, Type)~~
 
-A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply returns `false`.  Otherwise, the value is assigned to the variable the pointer points to.
+Deprecated.
+~~A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply returns `false`.  Otherwise, the value is assigned to the variable the pointer points to.~~
 
 ```c++
 const char *plugh(size_t *outputsize) {
@@ -941,11 +946,12 @@ printf(**str);
 ```
 
 <a name="api_nan_boolean_option_value"></a>
-### bool NanBooleanOptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;[, bool])
+### ~~bool NanBooleanOptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;[, bool])~~
 
-When you have an "options" object that you need to fetch properties from, boolean options can be fetched with this pair. They check first if the object exists (`IsEmpty`), then if the object has the given property (`Has`) then they get and convert/coerce the property to a `bool`.
+Deprecated.
+~~When you have an "options" object that you need to fetch properties from, boolean options can be fetched with this pair. They check first if the object exists (`IsEmpty`), then if the object has the given property (`Has`) then they get and convert/coerce the property to a `bool`.~~
 
-The optional last parameter is the *default* value, which is `false` if left off:
+~~The optional last parameter is the *default* value, which is `false` if left off:~~
 
 ```c++
 // `foo` is false unless the user supplies a truthy value for it
@@ -955,29 +961,30 @@ bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanNew<String>("bar"), true)
 ```
 
 <a name="api_nan_uint32_option_value"></a>
-### uint32_t NanUInt32OptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;, uint32_t)
+### ~~uint32_t NanUInt32OptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;, uint32_t)~~
 
-Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Can be any kind of JavaScript `Number` and it will be coerced to an unsigned 32-bit integer.
+Deprecated.
+~~Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Can be any kind of JavaScript `Number` and it will be coerced to an unsigned 32-bit integer.~~
 
-Requires all 3 arguments as a default is not optional:
+~~Requires all 3 arguments as a default is not optional:~~
 
 ```c++
 uint32_t count = NanUInt32OptionValue(optionsObj, NanNew<String>("count"), 1024);
 ```
 
 <a name="api_nan_error"></a>
-### NanError(message), NanTypeError(message), NanRangeError(message)
+### NanError(message), NanRangeError(message), NanReferenceError(message), NanSyntaxError(message), NanTypeError(message)
 
-For making `Error`, `TypeError` and `RangeError` objects.
+For making `Error`, `RangeError`, `ReferenceError`, `SyntaxError` and `TypeError` objects.
 
 ```c++
 Local<Value> res = NanError("you must supply a callback argument");
 ```
 
 <a name="api_nan_throw_error"></a>
-### NanThrowError(message), NanThrowTypeError(message), NanThrowRangeError(message), NanThrowError(Local&lt;Value&gt;), NanThrowError(Local&lt;Value&gt;, int)
+### NanThrowError(message), NanThrowRangeError(message), NanThrowReferenceError(message), NanThrowSyntaxError(message), NanThrowTypeError(message), NanThrowError(Local&lt;Value&gt;), NanThrowError(Local&lt;Value&gt;, int)
 
-For throwing `Error`, `TypeError` and `RangeError` objects.
+For throwing `Error`, `RangeError`, `ReferenceError`, `SyntaxError` and `TypeError` objects.
 
 ```c++
 NanThrowError("you must supply a callback argument");
@@ -1102,6 +1109,21 @@ Use to add instance properties on function templates.
 ### NanMakeCallback(target, func, argc, argv)
 
 Use instead of `node::MakeCallback` to call javascript functions. This (or `NanCallback`) is the only proper way of calling functions. You must _*never, ever*_ directly use `Function::Call`, it will lead to run-time failures.
+
+<a name="api_nan_fatal_exception"></a>
+### NanFatalException(const v8::TryCatch &amp;)
+
+Replaces `node::FatalException`.
+
+<a name="api_nan_get_isolate_data"></a>
+### NanGetIsolateData(v8::Isolate *)
+
+Replaces `v8::Isolate::GetData`.
+
+<a name="api_nan_set_isolate_data"></a>
+### NanSetIsolateData(v8::Isolate *, T*)
+
+Replaces `v8::Isolate::SetData`.
 
 <a name="api_nan_encode"></a>
 ### NanEncode(const void*, size_t[, enum Nan::Encoding])
