@@ -856,6 +856,15 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
     node::FatalException(v8::Isolate::GetCurrent(), try_catch);
   }
 
+  NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+          int errorno
+       ,  const char* syscall = NULL
+       ,  const char* message = NULL
+       ,  const char* path = NULL) {
+    return node::ErrnoException(v8::Isolate::GetCurrent(), errorno, syscall,
+            message, path);
+  }
+
   template<typename T>
   NAN_INLINE void NanSetIsolateData(
       v8::Isolate *isolate
@@ -1411,6 +1420,15 @@ return args.GetReturnValue().Set(Nan::imp::NanEnsureHandleOrPersistent(value))
   NAN_INLINE void NanFatalException(const v8::TryCatch& try_catch) {
     node::FatalException(const_cast<v8::TryCatch&>(try_catch));
   }
+
+  NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+          int errorno
+       ,  const char* syscall = NULL
+       ,  const char* message = NULL
+       ,  const char* path = NULL) {
+    return node::ErrnoException(errorno, syscall, message, path);
+  }
+
 
   template<typename T>
   NAN_INLINE void NanSetIsolateData(
