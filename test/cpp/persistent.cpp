@@ -11,7 +11,7 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-static NanPersistent<v8::String> persistentTest1;
+static Persistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {
   persistentTest1.Reset(info[0].As<v8::String>());
@@ -19,7 +19,7 @@ NAN_METHOD(Save1) {
 }
 
 NAN_METHOD(Get1) {
-  info.GetReturnValue().Set(NanNew(persistentTest1));
+  info.GetReturnValue().Set(New(persistentTest1));
 }
 
 NAN_METHOD(Dispose1) {
@@ -28,15 +28,15 @@ NAN_METHOD(Dispose1) {
 }
 
 NAN_METHOD(ToPersistentAndBackAgain) {
-  NanPersistent<v8::Object> persistent(info[0].As<v8::Object>());
-  v8::Local<v8::Object> object = NanNew(persistent);
+  Persistent<v8::Object> persistent(info[0].As<v8::Object>());
+  v8::Local<v8::Object> object = New(persistent);
   persistent.Reset();
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
   info.GetReturnValue().Set(object);
 }
 
 NAN_METHOD(PersistentToPersistent) {
-  NanPersistent<v8::String> persistent(info[0].As<v8::String>());
+  Persistent<v8::String> persistent(info[0].As<v8::String>());
   persistentTest1.Reset(persistent);
   persistent.Reset();
   persistentTest1.Reset();
@@ -44,35 +44,35 @@ NAN_METHOD(PersistentToPersistent) {
 }
 
 NAN_METHOD(CopyablePersistent) {
-  NanCopyablePersistentTraits<v8::String>::CopyablePersistent p;
+  CopyablePersistentTraits<v8::String>::CopyablePersistent p;
   p = persistentTest1;
-  info.GetReturnValue().Set(NanNew(p));
+  info.GetReturnValue().Set(New(p));
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  NanSet(target
-    , NanNew<v8::String>("save1").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(Save1)->GetFunction()
+  Set(target
+    , New<v8::String>("save1").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Save1)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("get1").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(Get1)->GetFunction()
+  Set(target
+    , New<v8::String>("get1").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Get1)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("dispose1").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(Dispose1)->GetFunction()
+  Set(target
+    , New<v8::String>("dispose1").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Dispose1)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("toPersistentAndBackAgain").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
+  Set(target
+    , New<v8::String>("toPersistentAndBackAgain").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("persistentToPersistent").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
+  Set(target
+    , New<v8::String>("persistentToPersistent").ToLocalChecked()
+    , New<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("copyablePersistent").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(CopyablePersistent)->GetFunction()
+  Set(target
+    , New<v8::String>("copyablePersistent").ToLocalChecked()
+    , New<v8::FunctionTemplate>(CopyablePersistent)->GetFunction()
   );
 }
 

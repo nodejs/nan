@@ -20,18 +20,18 @@ NAN_METHOD(SetAndGet) {
 
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
-  NanSetIsolateData<Dummy>(isolate, d0);
-  d1 = NanGetIsolateData<Dummy>(isolate);
+  SetIsolateData<Dummy>(isolate, d0);
+  d1 = GetIsolateData<Dummy>(isolate);
 
   delete d1;
 
-  info.GetReturnValue().Set(NanNew<v8::Boolean>(d0 == d1));
+  info.GetReturnValue().Set(New<v8::Boolean>(d0 == d1));
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  NanSet(target
-    , NanNew<v8::String>("setAndGet").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(SetAndGet)->GetFunction()
+  Set(target
+    , New<v8::String>("setAndGet").ToLocalChecked()
+    , New<v8::FunctionTemplate>(SetAndGet)->GetFunction()
   );
 }
 

@@ -14,18 +14,18 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-class ProgressWorker : public NanAsyncProgressWorker {
+class ProgressWorker : public AsyncProgressWorker {
  public:
   ProgressWorker(
-      NanCallback *callback
-    , NanCallback *progress
+      Callback *callback
+    , Callback *progress
     , int milliseconds
     , int iters)
-    : NanAsyncProgressWorker(callback), progress(progress)
+    : AsyncProgressWorker(callback), progress(progress)
     , milliseconds(milliseconds), iters(iters) {}
   ~ProgressWorker() {}
 
-  void Execute (const NanAsyncProgressWorker::ExecutionProgress& progress) {
+  void Execute (const AsyncProgressWorker::ExecutionProgress& progress) {
     for (int i = 0; i < iters; ++i) {
       progress.Send(reinterpret_cast<const char*>(&i), sizeof(int));
       Sleep(milliseconds);
@@ -33,34 +33,34 @@ class ProgressWorker : public NanAsyncProgressWorker {
   }
 
   void HandleProgressCallback(const char *data, size_t size) {
-    NanScope scope;
+    Scope scope;
 
     v8::Local<v8::Value> argv[] = {
-        NanNew<v8::Integer>(*reinterpret_cast<int*>(const_cast<char*>(data)))
+        New<v8::Integer>(*reinterpret_cast<int*>(const_cast<char*>(data)))
     };
     progress->Call(1, argv);
   }
 
  private:
-  NanCallback *progress;
+  Callback *progress;
   int milliseconds;
   int iters;
 };
 
 NAN_METHOD(DoProgress) {
-  NanCallback *progress = new NanCallback(info[2].As<v8::Function>());
-  NanCallback *callback = new NanCallback(info[3].As<v8::Function>());
-  NanAsyncQueueWorker(new ProgressWorker(
+  Callback *progress = new Callback(info[2].As<v8::Function>());
+  Callback *callback = new Callback(info[3].As<v8::Function>());
+  AsyncQueueWorker(new ProgressWorker(
       callback
     , progress
-    , NanTo<uint32_t>(info[0]).FromJust()
-    , NanTo<uint32_t>(info[1]).FromJust()));
+    , To<uint32_t>(info[0]).FromJust()
+    , To<uint32_t>(info[1]).FromJust()));
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  NanSet(exports
-    , NanNew<v8::String>("a").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(DoProgress)->GetFunction());
+  Set(exports
+    , New<v8::String>("a").ToLocalChecked()
+    , New<v8::FunctionTemplate>(DoProgress)->GetFunction());
 }
 
 NODE_MODULE(asyncprogressworker, Init)

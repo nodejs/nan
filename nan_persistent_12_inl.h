@@ -9,16 +9,16 @@
 #ifndef NAN_PERSISTENT_12_INL_H_
 #define NAN_PERSISTENT_12_INL_H_
 
-template<typename T, typename M> class NanPersistent :
+template<typename T, typename M> class Persistent :
     public v8::Persistent<T, M> {
  public:
-  NAN_INLINE NanPersistent() : v8::Persistent<T, M>() {}
+  NAN_INLINE Persistent() : v8::Persistent<T, M>() {}
 
-  template<typename S> NAN_INLINE NanPersistent(v8::Handle<S> that) :
+  template<typename S> NAN_INLINE Persistent(v8::Handle<S> that) :
       v8::Persistent<T, M>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S, typename M2>
-  NAN_INLINE NanPersistent(const v8::Persistent<S, M2> &that) :
+  NAN_INLINE Persistent(const v8::Persistent<S, M2> &that) :
       v8::Persistent<T, M2>(v8::Isolate::GetCurrent(), that) {}
 
   NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
@@ -36,14 +36,14 @@ template<typename T, typename M> class NanPersistent :
   template<typename P>
   NAN_INLINE void SetWeak(
     P *parameter
-    , typename NanWeakCallbackInfo<P>::Callback callback
-    , NanWeakCallbackType type);
+    , typename WeakCallbackInfo<P>::Callback callback
+    , WeakCallbackType type);
 
  private:
-  NAN_INLINE T *operator*() const { return *NanPersistentBase<T>::persistent; }
+  NAN_INLINE T *operator*() const { return *PersistentBase<T>::persistent; }
 
   template<typename S, typename M2>
-  NAN_INLINE void Copy(const NanPersistent<S, M2> &that) {
+  NAN_INLINE void Copy(const Persistent<S, M2> &that) {
     TYPE_CHECK(T, S);
 
     this->Reset();
@@ -58,15 +58,15 @@ template<typename T, typename M> class NanPersistent :
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 template<typename T>
-class NanGlobal : public v8::Global<T> {
+class Global : public v8::Global<T> {
  public:
-  NAN_INLINE NanGlobal() : v8::Global<T>() {}
+  NAN_INLINE Global() : v8::Global<T>() {}
 
-  template<typename S> NAN_INLINE NanGlobal(v8::Handle<S> that) :
+  template<typename S> NAN_INLINE Global(v8::Handle<S> that) :
     v8::Global<T>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S>
-  NAN_INLINE NanGlobal(const v8::PersistentBase<S> &that) :
+  NAN_INLINE Global(const v8::PersistentBase<S> &that) :
       v8::Global<S>(v8::Isolate::GetCurrent(), that) {}
 
   NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
@@ -84,23 +84,23 @@ class NanGlobal : public v8::Global<T> {
   template<typename P>
   NAN_INLINE void SetWeak(
     P *parameter
-    , typename NanWeakCallbackInfo<P>::Callback callback
-    , NanWeakCallbackType type) {
-    reinterpret_cast<NanPersistent<T>*>(this)->SetWeak(
+    , typename WeakCallbackInfo<P>::Callback callback
+    , WeakCallbackType type) {
+    reinterpret_cast<Persistent<T>*>(this)->SetWeak(
         parameter, callback, type);
   }
 };
 #else
 template<typename T>
-class NanGlobal : public v8::UniquePersistent<T> {
+class Global : public v8::UniquePersistent<T> {
  public:
-  NAN_INLINE NanGlobal() : v8::UniquePersistent<T>() {}
+  NAN_INLINE Global() : v8::UniquePersistent<T>() {}
 
-  template<typename S> NAN_INLINE NanGlobal(v8::Handle<S> that) :
+  template<typename S> NAN_INLINE Global(v8::Handle<S> that) :
     v8::UniquePersistent<T>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S>
-  NAN_INLINE NanGlobal(const v8::PersistentBase<S> &that) :
+  NAN_INLINE Global(const v8::PersistentBase<S> &that) :
       v8::UniquePersistent<S>(v8::Isolate::GetCurrent(), that) {}
 
   NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
@@ -118,9 +118,9 @@ class NanGlobal : public v8::UniquePersistent<T> {
   template<typename P>
   NAN_INLINE void SetWeak(
     P *parameter
-    , typename NanWeakCallbackInfo<P>::Callback callback
-    , NanWeakCallbackType type) {
-    reinterpret_cast<NanPersistent<T>*>(this)->SetWeak(
+    , typename WeakCallbackInfo<P>::Callback callback
+    , WeakCallbackType type) {
+    reinterpret_cast<Persistent<T>*>(this)->SetWeak(
         parameter, callback, type);
   }
 };

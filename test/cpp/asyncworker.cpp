@@ -14,10 +14,10 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-class SleepWorker : public NanAsyncWorker {
+class SleepWorker : public AsyncWorker {
  public:
-  SleepWorker(NanCallback *callback, int milliseconds)
-    : NanAsyncWorker(callback), milliseconds(milliseconds) {}
+  SleepWorker(Callback *callback, int milliseconds)
+    : AsyncWorker(callback), milliseconds(milliseconds) {}
   ~SleepWorker() {}
 
   void Execute () {
@@ -29,15 +29,15 @@ class SleepWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(DoSleep) {
-  NanCallback *callback = new NanCallback(info[1].As<v8::Function>());
-  NanAsyncQueueWorker(
-      new SleepWorker(callback, NanTo<uint32_t>(info[0]).FromJust()));
+  Callback *callback = new Callback(info[1].As<v8::Function>());
+  AsyncQueueWorker(
+      new SleepWorker(callback, To<uint32_t>(info[0]).FromJust()));
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  NanSet(exports
-    , NanNew<v8::String>("a").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
+  Set(exports
+    , New<v8::String>("a").ToLocalChecked()
+    , New<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
 NODE_MODULE(asyncworker, Init)

@@ -15,9 +15,9 @@ NAN_METHOD(ReturnNull) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  NanSet(target
-    , NanNew<v8::String>("r").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(ReturnNull)->GetFunction()
+  Set(target
+    , New<v8::String>("r").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnNull)->GetFunction()
   );
 }
 

@@ -11,6 +11,6 @@
 using namespace Nan;  // NOLINT(build/namespaces)
 
 NAN_METHOD(ReturnString) {
-  v8::Local<v8::String> s = NanNew(*NanUtf8String(info[0])).ToLocalChecked();
+  v8::Local<v8::String> s = New(*Utf8String(info[0])).ToLocalChecked();
   info.GetReturnValue().Set(s);
 }

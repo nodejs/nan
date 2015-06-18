@@ -14,9 +14,9 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 // Based on test-thread.c from libuv.
 
-class TlsTest : public NanAsyncWorker {
+class TlsTest : public AsyncWorker {
  public:
-  explicit TlsTest(NanTap *t) : NanAsyncWorker(NULL), t(t), i(0) {
+  explicit TlsTest(Tap *t) : AsyncWorker(NULL), t(t), i(0) {
     t->plan(7);
     t->ok(_(0 == nauv_key_create(&tls_key)));
     t->ok(_(NULL == nauv_key_get(&tls_key)));
@@ -31,7 +31,7 @@ class TlsTest : public NanAsyncWorker {
     ok(_(NULL == nauv_key_get(&tls_key)));
   }
   void WorkComplete() {
-    NanScope scope;
+    Scope scope;
     for (unsigned j = 0; j < i; ++j)
       t->ok(res[j].ok, res[j].msg);
     nauv_key_delete(&tls_key);
@@ -42,7 +42,7 @@ class TlsTest : public NanAsyncWorker {
  private:
   nauv_key_t tls_key;
 
-  NanTap *t;
+  Tap *t;
   struct { bool ok; const char* msg; } res[3];
   unsigned i;
   void ok(bool isOk, const char *msg) {
@@ -54,15 +54,15 @@ class TlsTest : public NanAsyncWorker {
 };
 
 NAN_METHOD(thread_local_storage) {
-  NanTap *t = new NanTap(info[0]);
-  NanAsyncQueueWorker(new TlsTest(t));
+  Tap *t = new Tap(info[0]);
+  AsyncQueueWorker(new TlsTest(t));
   info.GetReturnValue().SetUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  NanSet(exports
-    , NanNew<v8::String>("thread_local_storage").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(thread_local_storage)->GetFunction()
+  Set(exports
+    , New<v8::String>("thread_local_storage").ToLocalChecked()
+    , New<v8::FunctionTemplate>(thread_local_storage)->GetFunction()
   );
 }
 

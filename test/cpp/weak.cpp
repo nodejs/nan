@@ -10,22 +10,22 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-static NanPersistent<v8::Function> cb;
+static Persistent<v8::Function> cb;
 
 void weakCallback(
-    const NanWeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
+    const WeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
   int *parameter = data.GetParameter();
-  v8::Local<v8::Value> val = NanNew(*parameter);
-  NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(cb), 1, &val);
+  v8::Local<v8::Value> val = New(*parameter);
+  MakeCallback(GetCurrentContext()->Global(), New(cb), 1, &val);
   delete parameter;
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-  NanEscapableScope scope;
-  v8::Local<v8::String> lstring = NanNew<v8::String>("result").ToLocalChecked();
+  EscapableScope scope;
+  v8::Local<v8::String> lstring = New<v8::String>("result").ToLocalChecked();
   int *parameter = new int(42);
-  NanPersistent<v8::Function> persistent(func);
-  persistent.SetWeak(parameter, weakCallback, NanWeakCallbackType::kParameter);
+  Persistent<v8::Function> persistent(func);
+  persistent.SetWeak(parameter, weakCallback, WeakCallbackType::kParameter);
   assert(persistent.IsWeak());
   return scope.Escape(lstring);
 }
@@ -36,9 +36,9 @@ NAN_METHOD(Hustle) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  NanSet(target
-    , NanNew<v8::String>("hustle").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
+  Set(target
+    , New<v8::String>("hustle").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 

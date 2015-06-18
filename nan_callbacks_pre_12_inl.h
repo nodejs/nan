@@ -10,21 +10,21 @@
 #define NAN_CALLBACKS_PRE_12_INL_H_
 
 namespace imp {
-template<typename T> class NanReturnValueImp;
+template<typename T> class ReturnValueImp;
 }  // end of namespace imp
 
 template<typename T>
-class NanReturnValue {
+class ReturnValue {
   v8::Isolate *isolate_;
   v8::Persistent<T> *value_;
-  friend class Nan::imp::NanReturnValueImp<T>;
+  friend class imp::ReturnValueImp<T>;
 
  public:
   template <class S>
-  explicit inline NanReturnValue(v8::Isolate *isolate, v8::Persistent<S> *p) :
+  explicit inline ReturnValue(v8::Isolate *isolate, v8::Persistent<S> *p) :
       isolate_(isolate), value_(p) {}
   template <class S>
-  explicit inline NanReturnValue(const NanReturnValue<S>& that)
+  explicit inline ReturnValue(const ReturnValue<S>& that)
       : isolate_(that.isolate_), value_(that.value_) {
     TYPE_CHECK(T, S);
   }
@@ -36,11 +36,11 @@ class NanReturnValue {
     *value_ = v8::Persistent<T>::New(handle);
   }
 
-  template <typename S> inline void Set(const NanGlobal<S> &handle) {
+  template <typename S> inline void Set(const Global<S> &handle) {
     TYPE_CHECK(T, S);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(handle.persistent);
-    const_cast<NanGlobal<S> &>(handle).Reset();
+    const_cast<Global<S> &>(handle).Reset();
   }
 
   // Fast primitive setters
@@ -98,14 +98,14 @@ class NanReturnValue {
 };
 
 template<typename T>
-class NanFunctionCallbackInfo {
+class FunctionCallbackInfo {
   const v8::Arguments &args_;
   v8::Local<v8::Value> data_;
-  NanReturnValue<T> return_value_;
+  ReturnValue<T> return_value_;
   v8::Persistent<T> retval_;
 
  public:
-  explicit inline NanFunctionCallbackInfo(
+  explicit inline FunctionCallbackInfo(
       const v8::Arguments &args
     , v8::Local<v8::Value> data) :
           args_(args)
@@ -113,8 +113,8 @@ class NanFunctionCallbackInfo {
         , return_value_(args.GetIsolate(), &retval_)
         , retval_(v8::Persistent<T>::New(v8::Undefined())) {}
 
-  inline NanReturnValue<T> GetReturnValue() const {
-    return NanReturnValue<T>(return_value_);
+  inline ReturnValue<T> GetReturnValue() const {
+    return ReturnValue<T>(return_value_);
   }
 
   inline v8::Local<v8::Function> Callee() const { return args_.Callee(); }
@@ -139,12 +139,12 @@ class NanFunctionCallbackInfo {
 };
 
 template<typename T>
-class NanPropertyCallbackInfoBase {
+class PropertyCallbackInfoBase {
   const v8::AccessorInfo &info_;
   const v8::Local<v8::Value> &data_;
 
  public:
-  explicit inline NanPropertyCallbackInfoBase(
+  explicit inline PropertyCallbackInfoBase(
       const v8::AccessorInfo &info
     , const v8::Local<v8::Value> &data) :
           info_(info)
@@ -166,82 +166,82 @@ class NanPropertyCallbackInfoBase {
 };
 
 template<typename T>
-class NanPropertyCallbackInfo : public NanPropertyCallbackInfoBase<T> {
-  NanReturnValue<T> return_value_;
+class PropertyCallbackInfo : public PropertyCallbackInfoBase<T> {
+  ReturnValue<T> return_value_;
   v8::Persistent<T> retval_;
 
  public:
-  explicit inline NanPropertyCallbackInfo(
+  explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
     , const v8::Local<v8::Value> &data) :
-          NanPropertyCallbackInfoBase<T>(info, data)
+          PropertyCallbackInfoBase<T>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<T>::New(v8::Undefined())) {}
-  inline NanReturnValue<T> GetReturnValue() const { return return_value_; }
+  inline ReturnValue<T> GetReturnValue() const { return return_value_; }
 };
 
 template<>
-class NanPropertyCallbackInfo<v8::Array> :
-    public NanPropertyCallbackInfoBase<v8::Array> {
-  NanReturnValue<v8::Array> return_value_;
+class PropertyCallbackInfo<v8::Array> :
+    public PropertyCallbackInfoBase<v8::Array> {
+  ReturnValue<v8::Array> return_value_;
   v8::Persistent<v8::Array> retval_;
 
  public:
-  explicit inline NanPropertyCallbackInfo(
+  explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
     , const v8::Local<v8::Value> &data) :
-          NanPropertyCallbackInfoBase<v8::Array>(info, data)
+          PropertyCallbackInfoBase<v8::Array>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Array>::New(v8::Local<v8::Array>())) {}
-  inline NanReturnValue<v8::Array> GetReturnValue() const {
+  inline ReturnValue<v8::Array> GetReturnValue() const {
     return return_value_;
   }
 };
 
 template<>
-class NanPropertyCallbackInfo<v8::Boolean> :
-    public NanPropertyCallbackInfoBase<v8::Boolean> {
-  NanReturnValue<v8::Boolean> return_value_;
+class PropertyCallbackInfo<v8::Boolean> :
+    public PropertyCallbackInfoBase<v8::Boolean> {
+  ReturnValue<v8::Boolean> return_value_;
   v8::Persistent<v8::Boolean> retval_;
 
  public:
-  explicit inline NanPropertyCallbackInfo(
+  explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
     , const v8::Local<v8::Value> &data) :
-          NanPropertyCallbackInfoBase<v8::Boolean>(info, data)
+          PropertyCallbackInfoBase<v8::Boolean>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Boolean>::New(v8::Local<v8::Boolean>())) {}
-  inline NanReturnValue<v8::Boolean> GetReturnValue() const {
+  inline ReturnValue<v8::Boolean> GetReturnValue() const {
     return return_value_;
   }
 };
 
 template<>
-class NanPropertyCallbackInfo<v8::Integer> :
-    public NanPropertyCallbackInfoBase<v8::Integer> {
-  NanReturnValue<v8::Integer> return_value_;
+class PropertyCallbackInfo<v8::Integer> :
+    public PropertyCallbackInfoBase<v8::Integer> {
+  ReturnValue<v8::Integer> return_value_;
   v8::Persistent<v8::Integer> retval_;
 
  public:
-  explicit inline NanPropertyCallbackInfo(
+  explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
     , const v8::Local<v8::Value> &data) :
-          NanPropertyCallbackInfoBase<v8::Integer>(info, data)
+          PropertyCallbackInfoBase<v8::Integer>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Integer>::New(v8::Local<v8::Integer>())) {}
-  inline NanReturnValue<v8::Integer> GetReturnValue() const {
+  inline ReturnValue<v8::Integer> GetReturnValue() const {
     return return_value_;
   }
 };
 
 namespace imp {
 template<typename T>
-class NanReturnValueImp : public NanReturnValue<T> {
+class ReturnValueImp : public ReturnValue<T> {
  public:
-  explicit NanReturnValueImp(NanReturnValue<T> that) :
-      NanReturnValue<T>(that) {}
+  explicit ReturnValueImp(ReturnValue<T> that) :
+      ReturnValue<T>(that) {}
   NAN_INLINE v8::Handle<T> Value() {
-      return *NanReturnValue<T>::value_;
+      return *ReturnValue<T>::value_;
   }
 };
 
@@ -250,10 +250,10 @@ v8::Handle<v8::Value> FunctionCallbackWrapper(const v8::Arguments &args) {
   v8::Local<v8::Object> obj = args.Data().As<v8::Object>();
   FunctionWrapper *wrapper = static_cast<FunctionWrapper*>(
       obj->GetPointerFromInternalField(kFunctionIndex));
-  NanFunctionCallbackInfo<v8::Value>
+  FunctionCallbackInfo<v8::Value>
       cbinfo(args, obj->GetInternalField(kDataIndex));
   wrapper->callback(cbinfo);
-  return NanReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Value> (*NativeFunction)(const v8::Arguments &);
@@ -262,12 +262,12 @@ static
 v8::Handle<v8::Value> GetterCallbackWrapper(
     v8::Local<v8::String> property, const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Value>
+  PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   GetterWrapper *wrapper = static_cast<GetterWrapper*>(
       obj->GetPointerFromInternalField(kGetterIndex));
   wrapper->callback(property, cbinfo);
-  return NanReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Value> (*NativeGetter)
@@ -279,7 +279,7 @@ void SetterCallbackWrapper(
   , v8::Local<v8::Value> value
   , const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<void>
+  PropertyCallbackInfo<void>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   SetterWrapper *wrapper = static_cast<SetterWrapper*>(
       obj->GetPointerFromInternalField(kSetterIndex));
@@ -293,12 +293,12 @@ static
 v8::Handle<v8::Value> PropertyGetterCallbackWrapper(
     v8::Local<v8::String> property, const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Value>
+  PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   PropertyGetterWrapper *wrapper = static_cast<PropertyGetterWrapper*>(
       obj->GetPointerFromInternalField(kPropertyGetterIndex));
   wrapper->callback(property, cbinfo);
-  return NanReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Value> (*NativePropertyGetter)
@@ -310,12 +310,12 @@ v8::Handle<v8::Value> PropertySetterCallbackWrapper(
   , v8::Local<v8::Value> value
   , const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Value>
+  PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   PropertySetterWrapper *wrapper = static_cast<PropertySetterWrapper*>(
       obj->GetPointerFromInternalField(kPropertySetterIndex));
   wrapper->callback(property, value, cbinfo);
-  return NanReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Value> (*NativePropertySetter)
@@ -325,12 +325,12 @@ static
 v8::Handle<v8::Array> PropertyEnumeratorCallbackWrapper(
     const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Array>
+  PropertyCallbackInfo<v8::Array>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   PropertyEnumeratorWrapper *wrapper = static_cast<PropertyEnumeratorWrapper*>(
       obj->GetPointerFromInternalField(kPropertyEnumeratorIndex));
   wrapper->callback(cbinfo);
-  return NanReturnValueImp<v8::Array>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Array>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Array> (*NativePropertyEnumerator)
@@ -341,12 +341,12 @@ v8::Handle<v8::Boolean> PropertyDeleterCallbackWrapper(
     v8::Local<v8::String> property
   , const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Boolean>
+  PropertyCallbackInfo<v8::Boolean>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   PropertyDeleterWrapper *wrapper = static_cast<PropertyDeleterWrapper*>(
       obj->GetPointerFromInternalField(kPropertyDeleterIndex));
   wrapper->callback(property, cbinfo);
-  return NanReturnValueImp<v8::Boolean>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Boolean>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Boolean> (NativePropertyDeleter)
@@ -356,12 +356,12 @@ static
 v8::Handle<v8::Integer> PropertyQueryCallbackWrapper(
     v8::Local<v8::String> property, const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Integer>
+  PropertyCallbackInfo<v8::Integer>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   PropertyQueryWrapper *wrapper = static_cast<PropertyQueryWrapper*>(
       obj->GetPointerFromInternalField(kPropertyQueryIndex));
   wrapper->callback(property, cbinfo);
-  return NanReturnValueImp<v8::Integer>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Integer>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Integer> (*NativePropertyQuery)
@@ -371,12 +371,12 @@ static
 v8::Handle<v8::Value> IndexGetterCallbackWrapper(
     uint32_t index, const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Value>
+  PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   IndexGetterWrapper *wrapper = static_cast<IndexGetterWrapper*>(
       obj->GetPointerFromInternalField(kIndexPropertyGetterIndex));
   wrapper->callback(index, cbinfo);
-  return NanReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Value> (*NativeIndexGetter)
@@ -388,12 +388,12 @@ v8::Handle<v8::Value> IndexSetterCallbackWrapper(
   , v8::Local<v8::Value> value
   , const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Value>
+  PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   IndexSetterWrapper *wrapper = static_cast<IndexSetterWrapper*>(
       obj->GetPointerFromInternalField(kIndexPropertySetterIndex));
   wrapper->callback(index, value, cbinfo);
-  return NanReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Value>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Value> (*NativeIndexSetter)
@@ -403,12 +403,12 @@ static
 v8::Handle<v8::Array> IndexEnumeratorCallbackWrapper(
     const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Array>
+  PropertyCallbackInfo<v8::Array>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   IndexEnumeratorWrapper *wrapper = static_cast<IndexEnumeratorWrapper*>(
       obj->GetPointerFromInternalField(kIndexPropertyEnumeratorIndex));
   wrapper->callback(cbinfo);
-  return NanReturnValueImp<v8::Array>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Array>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Array> (*NativeIndexEnumerator)
@@ -418,12 +418,12 @@ static
 v8::Handle<v8::Boolean> IndexDeleterCallbackWrapper(
     uint32_t index, const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Boolean>
+  PropertyCallbackInfo<v8::Boolean>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   IndexDeleterWrapper *wrapper = static_cast<IndexDeleterWrapper*>(
       obj->GetPointerFromInternalField(kIndexPropertyDeleterIndex));
   wrapper->callback(index, cbinfo);
-  return NanReturnValueImp<v8::Boolean>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Boolean>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Boolean> (*NativeIndexDeleter)
@@ -433,12 +433,12 @@ static
 v8::Handle<v8::Integer> IndexQueryCallbackWrapper(
     uint32_t index, const v8::AccessorInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  NanPropertyCallbackInfo<v8::Integer>
+  PropertyCallbackInfo<v8::Integer>
       cbinfo(info, obj->GetInternalField(kDataIndex));
   IndexQueryWrapper *wrapper = static_cast<IndexQueryWrapper*>(
       obj->GetPointerFromInternalField(kIndexPropertyQueryIndex));
   wrapper->callback(index, cbinfo);
-  return NanReturnValueImp<v8::Integer>(cbinfo.GetReturnValue()).Value();
+  return ReturnValueImp<v8::Integer>(cbinfo.GetReturnValue()).Value();
 }
 
 typedef v8::Handle<v8::Integer> (*NativeIndexQuery)

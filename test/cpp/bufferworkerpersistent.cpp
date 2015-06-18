@@ -14,16 +14,16 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-class BufferWorker : public NanAsyncWorker {
+class BufferWorker : public AsyncWorker {
  public:
   BufferWorker(
-          NanCallback *callback
+          Callback *callback
         , int milliseconds
         , v8::Local<v8::Object> &bufferHandle
       )
-    : NanAsyncWorker(callback), milliseconds(milliseconds) {
+    : AsyncWorker(callback), milliseconds(milliseconds) {
       SaveToPersistent("buffer", bufferHandle);
-      SaveToPersistent(NanNew("puffer").ToLocalChecked(), bufferHandle);
+      SaveToPersistent(New("puffer").ToLocalChecked(), bufferHandle);
       SaveToPersistent(0u, bufferHandle);
     }
 
@@ -34,12 +34,12 @@ class BufferWorker : public NanAsyncWorker {
   }
 
   void HandleOKCallback () {
-    NanScope scope;
+    Scope scope;
 
     v8::Local<v8::Value> handle = GetFromPersistent("buffer");
     callback->Call(1, &handle);
 
-    handle = GetFromPersistent(NanNew("puffer").ToLocalChecked());
+    handle = GetFromPersistent(New("puffer").ToLocalChecked());
     callback->Call(1, &handle);
 
     handle = GetFromPersistent(0u);
@@ -52,18 +52,18 @@ class BufferWorker : public NanAsyncWorker {
 
 NAN_METHOD(DoSleep) {
   v8::Local<v8::Object> bufferHandle = info[1].As<v8::Object>();
-  NanCallback *callback = new NanCallback(info[2].As<v8::Function>());
+  Callback *callback = new Callback(info[2].As<v8::Function>());
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
-  NanAsyncQueueWorker(new BufferWorker(
+  AsyncQueueWorker(new BufferWorker(
       callback
-    , NanTo<uint32_t>(info[0]).FromJust()
+    , To<uint32_t>(info[0]).FromJust()
     , bufferHandle));
 }
 
 void Init(v8::Handle<v8::Object> exports) {
-  NanSet(exports
-    , NanNew<v8::String>("a").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
+  Set(exports
+    , New<v8::String>("a").ToLocalChecked()
+    , New<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
 NODE_MODULE(bufferworkerpersistent, Init)
