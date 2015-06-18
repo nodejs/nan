@@ -227,26 +227,26 @@ static Local<Value> Encode(const char* buf,
                            enum Encoding encoding) {
   assert(buflen <= node::Buffer::kMaxLength);
   if (!buflen && encoding != BUFFER)
-    return NanNew("").ToLocalChecked();
+    return New("").ToLocalChecked();
 
   Local<String> val;
   switch (encoding) {
     case BUFFER:
-      return NanCopyBuffer(buf, buflen).ToLocalChecked();
+      return CopyBuffer(buf, buflen).ToLocalChecked();
 
     case ASCII:
       if (contains_non_ascii(buf, buflen)) {
         char* out = new char[buflen];
         force_ascii(buf, out, buflen);
-        val = NanNew<String>(out, buflen).ToLocalChecked();
+        val = New<String>(out, buflen).ToLocalChecked();
         delete[] out;
       } else {
-        val = NanNew<String>(buf, buflen).ToLocalChecked();
+        val = New<String>(buf, buflen).ToLocalChecked();
       }
       break;
 
     case UTF8:
-      val = NanNew<String>(buf, buflen).ToLocalChecked();
+      val = New<String>(buf, buflen).ToLocalChecked();
       break;
 
     case BINARY: {
@@ -257,7 +257,7 @@ static Local<Value> Encode(const char* buf,
         // XXX is the following line platform independent?
         twobytebuf[i] = cbuf[i];
       }
-      val = NanNew<String>(twobytebuf, buflen).ToLocalChecked();
+      val = New<String>(twobytebuf, buflen).ToLocalChecked();
       delete[] twobytebuf;
       break;
     }
@@ -269,14 +269,14 @@ static Local<Value> Encode(const char* buf,
       size_t written = base64_encode(buf, buflen, dst, dlen);
       assert(written == dlen);
 
-      val = NanNew<String>(dst, dlen).ToLocalChecked();
+      val = New<String>(dst, dlen).ToLocalChecked();
       delete[] dst;
       break;
     }
 
     case UCS2: {
       const uint16_t* data = reinterpret_cast<const uint16_t*>(buf);
-      val = NanNew<String>(data, buflen / 2).ToLocalChecked();
+      val = New<String>(data, buflen / 2).ToLocalChecked();
       break;
     }
 
@@ -286,7 +286,7 @@ static Local<Value> Encode(const char* buf,
       size_t written = hex_encode(buf, buflen, dst, dlen);
       assert(written == dlen);
 
-      val = NanNew<String>(dst, dlen).ToLocalChecked();
+      val = New<String>(dst, dlen).ToLocalChecked();
       delete[] dst;
       break;
     }

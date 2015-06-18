@@ -10,9 +10,9 @@
 #define NAN_CONVERTERS_43_INL_H_
 
 #define X(TYPE)                                                                \
-Nan::imp::ToFactory<v8::TYPE>::return_t                                        \
-Nan::imp::ToFactory<v8::TYPE>::convert(v8::Handle<v8::Value> val) {            \
-  return val->To ## TYPE(NanGetCurrentContext());                              \
+imp::ToFactory<v8::TYPE>::return_t                                             \
+imp::ToFactory<v8::TYPE>::convert(v8::Handle<v8::Value> val) {                 \
+  return val->To ## TYPE(GetCurrentContext());                                 \
 }
 
 X(Boolean)
@@ -26,9 +26,9 @@ X(Int32)
 #undef X
 
 #define X(TYPE, NAME)                                                          \
-Nan::imp::ToFactory<TYPE>::return_t                                            \
-Nan::imp::ToFactory<TYPE>::convert(v8::Handle<v8::Value> val) {                \
-  return val->NAME ##Value(NanGetCurrentContext());                            \
+imp::ToFactory<TYPE>::return_t                                                 \
+imp::ToFactory<TYPE>::convert(v8::Handle<v8::Value> val) {                     \
+  return val->NAME ## Value(GetCurrentContext());                              \
 }
 
 X(bool, Boolean)

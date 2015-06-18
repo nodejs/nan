@@ -10,17 +10,17 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-class MyObject : public NanObjectWrap {
+class MyObject : public ObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports) {
-    v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-    tpl->SetClassName(NanNew("MyObject").ToLocalChecked());
+    v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("MyObject").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-    NanSetPrototypeMethod(tpl, "getHandle", GetHandle);
+    SetPrototypeMethod(tpl, "getHandle", GetHandle);
 
     constructor.Reset(tpl->GetFunction());
-    NanSet(exports, NanNew("MyObject").ToLocalChecked(), tpl->GetFunction());
+    Set(exports, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
   }
 
  private:
@@ -36,21 +36,21 @@ class MyObject : public NanObjectWrap {
     } else {
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {info[0]};
-      v8::Local<v8::Function> cons = NanNew(constructor);
+      v8::Local<v8::Function> cons = Nan::New(constructor);
       info.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
   }
 
   static NAN_METHOD(GetHandle) {
-    MyObject* obj = NanObjectWrap::Unwrap<MyObject>(info.This());
+    MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.This());
     info.GetReturnValue().Set(obj->handle());
   }
 
-  static NanPersistent<v8::Function> constructor;
+  static Persistent<v8::Function> constructor;
   double value_;
 };
 
-NanPersistent<v8::Function> MyObject::constructor;
+Persistent<v8::Function> MyObject::constructor;
 
 void Init(v8::Handle<v8::Object> exports) {
   MyObject::Init(exports);

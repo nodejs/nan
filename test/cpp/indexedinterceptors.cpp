@@ -11,7 +11,7 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-class IndexedInterceptor : public NanObjectWrap {
+class IndexedInterceptor : public ObjectWrap {
   char buf[256];
 
  public:
@@ -27,7 +27,7 @@ class IndexedInterceptor : public NanObjectWrap {
   static NAN_INDEX_QUERY(PropertyQuery);
 };
 
-static NanPersistent<v8::FunctionTemplate> indexedinterceptors_constructor;
+static Persistent<v8::FunctionTemplate> indexedinterceptors_constructor;
 
 NAN_METHOD(CreateNew) {
   info.GetReturnValue().Set(IndexedInterceptor::NewInstance());
@@ -35,13 +35,13 @@ NAN_METHOD(CreateNew) {
 
 void IndexedInterceptor::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
-    NanNew<v8::FunctionTemplate>(IndexedInterceptor::New);
+    Nan::New<v8::FunctionTemplate>(IndexedInterceptor::New);
   indexedinterceptors_constructor.Reset(tpl);
-  tpl->SetClassName(NanNew("IndexedInterceptor").ToLocalChecked());
+  tpl->SetClassName(Nan::New("IndexedInterceptor").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   v8::Local<v8::ObjectTemplate> inst = tpl->InstanceTemplate();
 
-  NanSetIndexedPropertyHandler(
+  SetIndexedPropertyHandler(
       inst
     , IndexedInterceptor::PropertyGetter
     , IndexedInterceptor::PropertySetter
@@ -50,14 +50,14 @@ void IndexedInterceptor::Init(v8::Handle<v8::Object> target) {
     , IndexedInterceptor::PropertyEnumerator);
 
   v8::Local<v8::Function> createnew =
-    NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
-  NanSet(target, NanNew("create").ToLocalChecked(), createnew);
+    Nan::New<v8::FunctionTemplate>(CreateNew)->GetFunction();
+  Set(target, Nan::New("create").ToLocalChecked(), createnew);
 }
 
 v8::Handle<v8::Value> IndexedInterceptor::NewInstance () {
-  NanEscapableScope scope;
+  EscapableScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
-      NanNew(indexedinterceptors_constructor);
+      Nan::New(indexedinterceptors_constructor);
   v8::Local<v8::Object> instance =
     constructorHandle->GetFunction()->NewInstance(0, NULL);
   return scope.Escape(instance);
@@ -72,17 +72,17 @@ NAN_METHOD(IndexedInterceptor::New) {
 
 NAN_INDEX_GETTER(IndexedInterceptor::PropertyGetter) {
   IndexedInterceptor* interceptor =
-    NanObjectWrap::Unwrap<IndexedInterceptor>(info.This());
+    ObjectWrap::Unwrap<IndexedInterceptor>(info.This());
   if (index == 0) {
-    info.GetReturnValue().Set(NanNew(interceptor->buf).ToLocalChecked());
+    info.GetReturnValue().Set(Nan::New(interceptor->buf).ToLocalChecked());
   } else {
-    info.GetReturnValue().Set(NanNew("bar").ToLocalChecked());
+    info.GetReturnValue().Set(Nan::New("bar").ToLocalChecked());
   }
 }
 
 NAN_INDEX_SETTER(IndexedInterceptor::PropertySetter) {
   IndexedInterceptor* interceptor =
-    NanObjectWrap::Unwrap<IndexedInterceptor>(info.This());
+    ObjectWrap::Unwrap<IndexedInterceptor>(info.This());
   if (index == 0) {
     std::strncpy(
         interceptor->buf
@@ -95,21 +95,21 @@ NAN_INDEX_SETTER(IndexedInterceptor::PropertySetter) {
 }
 
 NAN_INDEX_ENUMERATOR(IndexedInterceptor::PropertyEnumerator) {
-  v8::Local<v8::Array> arr = NanNew<v8::Array>();
-  NanSet(arr, 0, NanNew("whee").ToLocalChecked());
+  v8::Local<v8::Array> arr = Nan::New<v8::Array>();
+  Set(arr, 0, Nan::New("whee").ToLocalChecked());
   info.GetReturnValue().Set(arr);
 }
 
 NAN_INDEX_DELETER(IndexedInterceptor::PropertyDeleter) {
   IndexedInterceptor* interceptor =
-    NanObjectWrap::Unwrap<IndexedInterceptor>(info.This());
+    ObjectWrap::Unwrap<IndexedInterceptor>(info.This());
   std::strncpy(interceptor->buf, "goober", sizeof (interceptor->buf));
-  info.GetReturnValue().Set(NanTrue());
+  info.GetReturnValue().Set(True());
 }
 
 NAN_INDEX_QUERY(IndexedInterceptor::PropertyQuery) {
   if (index == 1) {
-    info.GetReturnValue().Set(NanNew<v8::Integer>(v8::DontEnum));
+    info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
   }
 }
 

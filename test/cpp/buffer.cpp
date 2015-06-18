@@ -24,11 +24,11 @@ NAN_METHOD(New1) {
     dynamic_data[i] = 'a' + i;
   }
   info.GetReturnValue().Set(
-      NanNewBuffer(dynamic_data, DATA_SIZE, callback, 0).ToLocalChecked());
+      NewBuffer(dynamic_data, DATA_SIZE, callback, 0).ToLocalChecked());
 }
 
 NAN_METHOD(New2) {
-  v8::Local<v8::Object> buf = NanNewBuffer(DATA_SIZE).ToLocalChecked();
+  v8::Local<v8::Object> buf = NewBuffer(DATA_SIZE).ToLocalChecked();
   char* pbuf = node::Buffer::Data(buf);
   for (unsigned char i = 0; i < DATA_SIZE; i++) {
     pbuf[i] = 'a' + i;
@@ -41,11 +41,11 @@ NAN_METHOD(New3) {
   for (unsigned char i = 0; i < DATA_SIZE; i++) {
     dynamic_data[i] = 'a' + i;
   }
-  info.GetReturnValue().Set(NanNewBuffer(dynamic_data, DATA_SIZE));
+  info.GetReturnValue().Set(NewBuffer(dynamic_data, DATA_SIZE));
 }
 
 NAN_METHOD(Copy) {
-  info.GetReturnValue().Set(NanCopyBuffer(data, DATA_SIZE).ToLocalChecked());
+  info.GetReturnValue().Set(CopyBuffer(data, DATA_SIZE).ToLocalChecked());
 }
 
 
@@ -53,21 +53,21 @@ void Init (v8::Handle<v8::Object> target) {
   for (unsigned char i = 0; i < DATA_SIZE; i++) {
     data[i] = 'a' + i;
   }
-  NanSet(target
-    , NanNew<v8::String>("new1").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(New1)->GetFunction()
+  Set(target
+    , New<v8::String>("new1").ToLocalChecked()
+    , New<v8::FunctionTemplate>(New1)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("new2").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(New2)->GetFunction()
+  Set(target
+    , New<v8::String>("new2").ToLocalChecked()
+    , New<v8::FunctionTemplate>(New2)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("new3").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(New3)->GetFunction()
+  Set(target
+    , New<v8::String>("new3").ToLocalChecked()
+    , New<v8::FunctionTemplate>(New3)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("copy").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(Copy)->GetFunction()
+  Set(target
+    , New<v8::String>("copy").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Copy)->GetFunction()
   );
 }
 

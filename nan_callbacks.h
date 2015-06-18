@@ -9,56 +9,56 @@
 #ifndef NAN_CALLBACKS_H_
 #define NAN_CALLBACKS_H_
 
-template<typename T> class NanFunctionCallbackInfo;
-template<typename T> class NanPropertyCallbackInfo;
-template<typename T> class NanGlobal;
+template<typename T> class FunctionCallbackInfo;
+template<typename T> class PropertyCallbackInfo;
+template<typename T> class Global;
 
-typedef void(*NanFunctionCallback)(const NanFunctionCallbackInfo<v8::Value>&);
-typedef void(*NanGetterCallback)
-    (v8::Local<v8::String>, const NanPropertyCallbackInfo<v8::Value>&);
-typedef void(*NanSetterCallback)(
+typedef void(*FunctionCallback)(const FunctionCallbackInfo<v8::Value>&);
+typedef void(*GetterCallback)
+    (v8::Local<v8::String>, const PropertyCallbackInfo<v8::Value>&);
+typedef void(*SetterCallback)(
     v8::Local<v8::String>,
     v8::Local<v8::Value>,
-    const NanPropertyCallbackInfo<void>&);
-typedef void(*NanPropertyGetterCallback)(
+    const PropertyCallbackInfo<void>&);
+typedef void(*PropertyGetterCallback)(
     v8::Local<v8::String>,
-    const NanPropertyCallbackInfo<v8::Value>&);
-typedef void(*NanPropertySetterCallback)(
+    const PropertyCallbackInfo<v8::Value>&);
+typedef void(*PropertySetterCallback)(
     v8::Local<v8::String>,
     v8::Local<v8::Value>,
-    const NanPropertyCallbackInfo<v8::Value>&);
-typedef void(*NanPropertyEnumeratorCallback)
-    (const NanPropertyCallbackInfo<v8::Array>&);
-typedef void(*NanPropertyDeleterCallback)(
+    const PropertyCallbackInfo<v8::Value>&);
+typedef void(*PropertyEnumeratorCallback)
+    (const PropertyCallbackInfo<v8::Array>&);
+typedef void(*PropertyDeleterCallback)(
     v8::Local<v8::String>,
-    const NanPropertyCallbackInfo<v8::Boolean>&);
-typedef void(*NanPropertyQueryCallback)(
+    const PropertyCallbackInfo<v8::Boolean>&);
+typedef void(*PropertyQueryCallback)(
     v8::Local<v8::String>,
-    const NanPropertyCallbackInfo<v8::Integer>&);
-typedef void(*NanIndexGetterCallback)(
+    const PropertyCallbackInfo<v8::Integer>&);
+typedef void(*IndexGetterCallback)(
     uint32_t,
-    const NanPropertyCallbackInfo<v8::Value>&);
-typedef void(*NanIndexSetterCallback)(
+    const PropertyCallbackInfo<v8::Value>&);
+typedef void(*IndexSetterCallback)(
     uint32_t,
     v8::Local<v8::Value>,
-    const NanPropertyCallbackInfo<v8::Value>&);
-typedef void(*NanIndexEnumeratorCallback)
-    (const NanPropertyCallbackInfo<v8::Array>&);
-typedef void(*NanIndexDeleterCallback)(
+    const PropertyCallbackInfo<v8::Value>&);
+typedef void(*IndexEnumeratorCallback)
+    (const PropertyCallbackInfo<v8::Array>&);
+typedef void(*IndexDeleterCallback)(
     uint32_t,
-    const NanPropertyCallbackInfo<v8::Boolean>&);
-typedef void(*NanIndexQueryCallback)(
+    const PropertyCallbackInfo<v8::Boolean>&);
+typedef void(*IndexQueryCallback)(
     uint32_t,
-    const NanPropertyCallbackInfo<v8::Integer>&);
+    const PropertyCallbackInfo<v8::Integer>&);
 
 namespace imp {
 typedef v8::Handle<v8::AccessorSignature> Sig;
 
 #define X(NAME)                                                                \
 struct NAME ## Wrapper {                                                       \
-  explicit NAME ## Wrapper(Nan ## NAME ## Callback callback_) :                \
+  explicit NAME ## Wrapper(NAME ## Callback callback_) :                       \
       callback(callback_) {}                                                   \
-  Nan ## NAME ## Callback callback;                                            \
+   NAME ## Callback callback;                                                  \
 };
 
 X(Function)

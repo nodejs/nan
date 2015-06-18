@@ -11,7 +11,7 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-class SetterGetter : public NanObjectWrap {
+class SetterGetter : public ObjectWrap {
  public:
   static void Init (v8::Handle<v8::Object> target);
   static v8::Handle<v8::Value> NewInstance ();
@@ -28,7 +28,7 @@ class SetterGetter : public NanObjectWrap {
   char prop2[256];
 };
 
-static NanPersistent<v8::FunctionTemplate> settergetter_constructor;
+static Persistent<v8::FunctionTemplate> settergetter_constructor;
 
 NAN_METHOD(CreateNew) {
   info.GetReturnValue().Set(SetterGetter::NewInstance());
@@ -43,29 +43,29 @@ SetterGetter::SetterGetter() {
 
 void SetterGetter::Init(v8::Handle<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
-    NanNew<v8::FunctionTemplate>(SetterGetter::New);
+    Nan::New<v8::FunctionTemplate>(SetterGetter::New);
   settergetter_constructor.Reset(tpl);
-  tpl->SetClassName(NanNew<v8::String>("SetterGetter").ToLocalChecked());
+  tpl->SetClassName(Nan::New<v8::String>("SetterGetter").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  NanSetPrototypeMethod(tpl, "log", SetterGetter::Log);
+  SetPrototypeMethod(tpl, "log", SetterGetter::Log);
   v8::Local<v8::Function> createnew =
-    NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
-  NanSet(target, NanNew<v8::String>("create").ToLocalChecked(), createnew);
+    Nan::New<v8::FunctionTemplate>(CreateNew)->GetFunction();
+  Set(target, Nan::New<v8::String>("create").ToLocalChecked(), createnew);
 }
 
 v8::Handle<v8::Value> SetterGetter::NewInstance () {
-  NanEscapableScope scope;
+  EscapableScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
-      NanNew(settergetter_constructor);
+      Nan::New(settergetter_constructor);
   v8::Local<v8::Object> instance =
     constructorHandle->GetFunction()->NewInstance(0, NULL);
-  NanSetAccessor(
+  SetAccessor(
       instance
-    , NanNew("prop1").ToLocalChecked()
+    , Nan::New("prop1").ToLocalChecked()
     , SetterGetter::GetProp1);
-  NanSetAccessor(
+  SetAccessor(
       instance
-    , NanNew<v8::String>("prop2").ToLocalChecked()
+    , Nan::New<v8::String>("prop2").ToLocalChecked()
     , SetterGetter::GetProp2
     , SetterGetter::SetProp2
   );
@@ -86,7 +86,7 @@ NAN_METHOD(SetterGetter::New) {
 
 NAN_GETTER(SetterGetter::GetProp1) {
   SetterGetter* settergetter =
-    NanObjectWrap::Unwrap<SetterGetter>(info.This());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -103,12 +103,12 @@ NAN_GETTER(SetterGetter::GetProp1) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  info.GetReturnValue().Set(NanNew(settergetter->prop1).ToLocalChecked());
+  info.GetReturnValue().Set(Nan::New(settergetter->prop1).ToLocalChecked());
 }
 
 NAN_GETTER(SetterGetter::GetProp2) {
   SetterGetter* settergetter =
-    NanObjectWrap::Unwrap<SetterGetter>(info.This());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -125,12 +125,12 @@ NAN_GETTER(SetterGetter::GetProp2) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  info.GetReturnValue().Set(NanNew(settergetter->prop2).ToLocalChecked());
+  info.GetReturnValue().Set(Nan::New(settergetter->prop2).ToLocalChecked());
 }
 
 NAN_SETTER(SetterGetter::SetProp2) {
   SetterGetter* settergetter =
-      NanObjectWrap::Unwrap<SetterGetter>(info.This());
+      ObjectWrap::Unwrap<SetterGetter>(info.This());
   strncpy(
       settergetter->prop2
     , *v8::String::Utf8Value(value)
@@ -155,9 +155,9 @@ NAN_SETTER(SetterGetter::SetProp2) {
 
 NAN_METHOD(SetterGetter::Log) {
   SetterGetter* settergetter =
-    NanObjectWrap::Unwrap<SetterGetter>(info.This());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
 
-  info.GetReturnValue().Set(NanNew(settergetter->log).ToLocalChecked());
+  info.GetReturnValue().Set(Nan::New(settergetter->log).ToLocalChecked());
 }
 
 NODE_MODULE(accessors2, SetterGetter::Init)

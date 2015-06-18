@@ -70,7 +70,7 @@ Factory<v8::External>::New(void * value) {
 //=== Function =================================================================
 
 Factory<v8::Function>::return_t
-Factory<v8::Function>::New( NanFunctionCallback callback
+Factory<v8::Function>::New( FunctionCallback callback
                           , v8::Handle<v8::Value> data) {
   return Factory<v8::FunctionTemplate>::New( callback
                                            , data
@@ -82,31 +82,31 @@ Factory<v8::Function>::New( NanFunctionCallback callback
 //=== FunctionTemplate =========================================================
 
 Factory<v8::FunctionTemplate>::return_t
-Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
+Factory<v8::FunctionTemplate>::New( FunctionCallback callback
                                   , v8::Handle<v8::Value> data
                                   , v8::Handle<v8::Signature> signature) {
   v8::HandleScope scope;
 
-  static std::map<NanFunctionCallback,  // NOLINT(build/include_what_you_use)
-      Nan::imp::FunctionWrapper*> cbmap;
+  static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
+      imp::FunctionWrapper*> cbmap;
   v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New();
-  tpl->SetInternalFieldCount(Nan::imp::kFunctionFieldCount);
+  tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
   v8::Local<v8::Object> obj = tpl->NewInstance();
 
   obj->SetPointerInInternalField(
-      Nan::imp::kFunctionIndex
-    , Nan::imp::GetWrapper<NanFunctionCallback,
-          Nan::imp::FunctionWrapper>(callback));
+      imp::kFunctionIndex
+    , imp::GetWrapper<FunctionCallback,
+          imp::FunctionWrapper>(callback));
   v8::Local<v8::Value> val = v8::Local<v8::Value>::New(data);
 
   if (!val.IsEmpty()) {
-    obj->SetInternalField(Nan::imp::kDataIndex, val);
+    obj->SetInternalField(imp::kDataIndex, val);
   }
 
   // Note(agnat): Emulate length argument here. Unfortunately, I couldn't find
   // a way. Have at it though...
   return scope.Close(
-      v8::FunctionTemplate::New( Nan::imp::FunctionCallbackWrapper
+      v8::FunctionTemplate::New(imp::FunctionCallbackWrapper
                                , obj
                                , signature));
 }
@@ -240,17 +240,17 @@ Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
 //=== Presistents and Handles ==================================================
 
 template <typename T>
-inline v8::Local<T> NanNew(v8::Handle<T> h) {
+inline v8::Local<T> New(v8::Handle<T> h) {
   return v8::Local<T>::New(h);
 }
 
 template <typename T>
-inline v8::Local<T> NanNew(v8::Persistent<T> const& p) {
+inline v8::Local<T> New(v8::Persistent<T> const& p) {
   return v8::Local<T>::New(p);
 }
 
 template <typename T, typename M>
-inline v8::Local<T> NanNew(NanPersistent<T, M> const& p) {
+inline v8::Local<T> New(Persistent<T, M> const& p) {
   return v8::Local<T>::New(p.persistent);
 }
 

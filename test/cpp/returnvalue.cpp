@@ -10,15 +10,15 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-NanGlobal<v8::Boolean> global;
+Global<v8::Boolean> global;
 
-NAN_METHOD(ReturnValue) {
-  const NanFunctionCallbackInfo<v8::Value> cbinfo = info;
-  NanReturnValue<v8::Value> ret = cbinfo.GetReturnValue();
+NAN_METHOD(ReturnAValue) {
+  const FunctionCallbackInfo<v8::Value> cbinfo = info;
+  ReturnValue<v8::Value> ret = cbinfo.GetReturnValue();
   if (cbinfo.Length() == 1) {
     ret.Set(info[0].As<v8::String>());
   } else {
-    ret.Set(NanNew("default").ToLocalChecked());
+    ret.Set(New("default").ToLocalChecked());
   }
 }
 
@@ -31,19 +31,19 @@ NAN_METHOD(ReturnGlobal) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  global.Reset(NanNew(true));
+  global.Reset(New(true));
 
-  NanSet(target
-    , NanNew<v8::String>("r").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
+  Set(target
+    , New<v8::String>("r").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnAValue)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("p").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
+  Set(target
+    , New<v8::String>("p").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
   );
-  NanSet(target
-    , NanNew<v8::String>("q").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
+  Set(target
+    , New<v8::String>("q").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
   );
 }
 

@@ -10,27 +10,27 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-static NanPersistent<v8::Function> cb;
+static Persistent<v8::Function> cb;
 void weakCallback(
-    const NanWeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
+    const WeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
   int *parameter = static_cast<int*>(data.GetInternalField(0));
-  v8::Local<v8::Value> val = NanNew(*parameter);
-  NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(cb), 1, &val);
+  v8::Local<v8::Value> val = New(*parameter);
+  MakeCallback(GetCurrentContext()->Global(), New(cb), 1, &val);
   delete parameter;
 }
 
 v8::Handle<v8::String> wrap() {
-  NanEscapableScope scope;
-  v8::Local<v8::String> lstring = NanNew("result").ToLocalChecked();
-  v8::Local<v8::ObjectTemplate> otpl = NanNew<v8::ObjectTemplate>();
+  EscapableScope scope;
+  v8::Local<v8::String> lstring = New("result").ToLocalChecked();
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(1);
   v8::Local<v8::Object> obj = otpl->NewInstance();
-  NanSetInternalFieldPointer(obj, 0, new int(42));
-  NanPersistent<v8::Object> persistent(obj);
+  SetInternalFieldPointer(obj, 0, new int(42));
+  Persistent<v8::Object> persistent(obj);
   persistent.SetWeak(
       static_cast<int*>(0)
     , weakCallback
-    , NanWeakCallbackType::kInternalFields);
+    , WeakCallbackType::kInternalFields);
   assert(persistent.IsWeak());
   return scope.Escape(lstring);
 }
@@ -41,9 +41,9 @@ NAN_METHOD(Hustle) {
 }
 
 void Init (v8::Handle<v8::Object> target) {
-  NanSet(target
-    , NanNew<v8::String>("hustle").ToLocalChecked()
-    , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
+  Set(target
+    , New<v8::String>("hustle").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 

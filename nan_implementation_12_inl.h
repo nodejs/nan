@@ -56,7 +56,7 @@ Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
   v8::Local<v8::Date> ret;
-  if (v8::Date::New(NanGetCurrentContext(), value).
+  if (v8::Date::New(GetCurrentContext(), value).
       ToLocal(reinterpret_cast<v8::Local<v8::Value>*>(&ret))) {
     return v8::MaybeLocal<v8::Date>(ret);
   } else {
@@ -81,13 +81,13 @@ Factory<v8::External>::New(void * value) {
 //=== Function =================================================================
 
 Factory<v8::Function>::return_t
-Factory<v8::Function>::New( NanFunctionCallback callback
+Factory<v8::Function>::New( FunctionCallback callback
                           , v8::Handle<v8::Value> data) {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
-  static std::map<NanFunctionCallback, Nan::imp::FunctionWrapper*> cbmap;
+  static std::map<FunctionCallback, imp::FunctionWrapper*> cbmap;
   v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
-  tpl->SetInternalFieldCount(Nan::imp::kFunctionFieldCount);
+  tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
   v8::Local<v8::Object> obj =
@@ -97,32 +97,32 @@ Factory<v8::Function>::New( NanFunctionCallback callback
 #endif
 
   obj->SetAlignedPointerInInternalField(
-      Nan::imp::kFunctionIndex
-    , Nan::imp::GetWrapper<NanFunctionCallback,
-          Nan::imp::FunctionWrapper>(callback));
+      imp::kFunctionIndex
+    , imp::GetWrapper<FunctionCallback,
+          imp::FunctionWrapper>(callback));
   v8::Local<v8::Value> val = v8::Local<v8::Value>::New(isolate, data);
 
   if (!val.IsEmpty()) {
-    obj->SetInternalField(Nan::imp::kDataIndex, val);
+    obj->SetInternalField(imp::kDataIndex, val);
   }
 
   return scope.Escape(v8::Function::New( isolate
-                          , Nan::imp::FunctionCallbackWrapper
+                          , imp::FunctionCallbackWrapper
                           , obj));
 }
 
 //=== Function Template ========================================================
 
 Factory<v8::FunctionTemplate>::return_t
-Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
+Factory<v8::FunctionTemplate>::New( FunctionCallback callback
                                   , v8::Handle<v8::Value> data
                                   , v8::Handle<v8::Signature> signature) {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
-  static std::map<NanFunctionCallback,  // NOLINT(build/include_what_you_use)
-      Nan::imp::FunctionWrapper*> cbmap;
+  static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
+      imp::FunctionWrapper*> cbmap;
   v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
-  tpl->SetInternalFieldCount(Nan::imp::kFunctionFieldCount);
+  tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
   v8::Local<v8::Object> obj =
@@ -132,17 +132,17 @@ Factory<v8::FunctionTemplate>::New( NanFunctionCallback callback
 #endif
 
   obj->SetAlignedPointerInInternalField(
-      Nan::imp::kFunctionIndex
-    , Nan::imp::GetWrapper<NanFunctionCallback,
-          Nan::imp::FunctionWrapper>(callback));
+      imp::kFunctionIndex
+    , imp::GetWrapper<FunctionCallback,
+          imp::FunctionWrapper>(callback));
   v8::Local<v8::Value> val = v8::Local<v8::Value>::New(isolate, data);
 
   if (!val.IsEmpty()) {
-    obj->SetInternalField(Nan::imp::kDataIndex, val);
+    obj->SetInternalField(imp::kDataIndex, val);
   }
 
   return scope.Escape(v8::FunctionTemplate::New( isolate
-                                  , Nan::imp::FunctionCallbackWrapper
+                                  , imp::FunctionCallbackWrapper
                                   , obj
                                   , signature));
 }
@@ -210,7 +210,7 @@ Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Handle<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return v8::RegExp::New(NanGetCurrentContext(), pattern, flags);
+  return v8::RegExp::New(GetCurrentContext(), pattern, flags);
 }
 #else
 Factory<v8::RegExp>::return_t
@@ -228,14 +228,14 @@ Factory<v8::RegExp>::New(
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
-  return v8::ScriptCompiler::Compile(NanGetCurrentContext(), &src);
+  return v8::ScriptCompiler::Compile(GetCurrentContext(), &src);
 }
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin) {
   v8::ScriptCompiler::Source src(source, origin);
-  return v8::ScriptCompiler::Compile(NanGetCurrentContext(), &src);
+  return v8::ScriptCompiler::Compile(GetCurrentContext(), &src);
 }
 #else
 Factory<v8::Script>::return_t
@@ -296,7 +296,7 @@ Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
 }
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(NanExternalOneByteStringResource * value) {
+Factory<v8::String>::New(ExternalOneByteStringResource * value) {
   return v8::String::NewExternalOneByte(v8::Isolate::GetCurrent(), value);
 }
 #else
@@ -339,7 +339,7 @@ Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
 }
 
 Factory<v8::String>::return_t
-Factory<v8::String>::New(NanExternalOneByteStringResource * value) {
+Factory<v8::String>::New(ExternalOneByteStringResource * value) {
   return Factory<v8::String>::return_t(
       v8::String::NewExternal(v8::Isolate::GetCurrent(), value));
 }
@@ -392,17 +392,17 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
 //=== Presistents and Handles ==================================================
 
 template <typename T>
-inline v8::Local<T> NanNew(v8::Handle<T> h) {
+inline v8::Local<T> New(v8::Handle<T> h) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), h);
 }
 
 template <typename T, typename M>
-inline v8::Local<T> NanNew(v8::Persistent<T, M> const& p) {
+inline v8::Local<T> New(v8::Persistent<T, M> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 
 template <typename T, typename M>
-inline v8::Local<T> NanNew(NanPersistent<T, M> const& p) {
+inline v8::Local<T> New(Persistent<T, M> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 

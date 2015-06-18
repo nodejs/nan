@@ -19,10 +19,10 @@ class MyObject : public node::ObjectWrap {
   ~MyObject();
 
   static NAN_METHOD(New);
-  static NanPersistent<v8::Function> constructor;
+  static Persistent<v8::Function> constructor;
 };
 
-NanPersistent<v8::Function> MyObject::constructor;
+Persistent<v8::Function> MyObject::constructor;
 
 MyObject::MyObject() {
 }
@@ -32,47 +32,47 @@ MyObject::~MyObject() {
 
 void MyObject::Init(v8::Handle<v8::Object> exports) {
   // Prepare constructor template
-  v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-  tpl->SetClassName(NanNew<v8::String>("MyObject").ToLocalChecked());
+  v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
+  tpl->SetClassName(Nan::New<v8::String>("MyObject").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
-  NanSetPrototypeTemplate(
+  SetPrototypeTemplate(
     tpl
   , "prototypeProp"
-  , NanNew<v8::String>("a prototype property").ToLocalChecked());
+  , Nan::New<v8::String>("a prototype property").ToLocalChecked());
 
   // Instance
-  NanSetInstanceTemplate(
+  SetInstanceTemplate(
     tpl
   , "instanceProp"
-  , NanNew<v8::String>("an instance property").ToLocalChecked());
+  , Nan::New<v8::String>("an instance property").ToLocalChecked());
 
   // PropertyAttributes
-  NanSetInstanceTemplate(
+  SetInstanceTemplate(
     tpl
-  , NanNew<v8::String>("none").ToLocalChecked()
-  , NanNew<v8::String>("none").ToLocalChecked()
+  , Nan::New<v8::String>("none").ToLocalChecked()
+  , Nan::New<v8::String>("none").ToLocalChecked()
   , v8::None);
-  NanSetInstanceTemplate(
+  SetInstanceTemplate(
     tpl
-  , NanNew<v8::String>("readOnly").ToLocalChecked()
-  , NanNew<v8::String>("readOnly").ToLocalChecked()
+  , Nan::New<v8::String>("readOnly").ToLocalChecked()
+  , Nan::New<v8::String>("readOnly").ToLocalChecked()
   , v8::ReadOnly);
-  NanSetInstanceTemplate(
+  SetInstanceTemplate(
     tpl
-  , NanNew<v8::String>("dontEnum").ToLocalChecked()
-  , NanNew<v8::String>("dontEnum").ToLocalChecked()
+  , Nan::New<v8::String>("dontEnum").ToLocalChecked()
+  , Nan::New<v8::String>("dontEnum").ToLocalChecked()
   , v8::DontEnum);
-  NanSetInstanceTemplate(
+  SetInstanceTemplate(
     tpl
-  , NanNew<v8::String>("dontDelete").ToLocalChecked()
-  , NanNew<v8::String>("dontDelete").ToLocalChecked()
+  , Nan::New<v8::String>("dontDelete").ToLocalChecked()
+  , Nan::New<v8::String>("dontDelete").ToLocalChecked()
   , v8::DontDelete);
 
   constructor.Reset(tpl->GetFunction());
-  NanSet(exports
-  , NanNew<v8::String>("MyObject").ToLocalChecked()
+  Set(exports
+  , Nan::New<v8::String>("MyObject").ToLocalChecked()
   , tpl->GetFunction());
 }
 
@@ -82,7 +82,7 @@ NAN_METHOD(MyObject::New) {
     obj->Wrap(info.This());
     info.GetReturnValue().Set(info.This());
   } else {
-    v8::Local<v8::Function> cons = NanNew<v8::Function>(constructor);
+    v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
     info.GetReturnValue().Set(cons->NewInstance());
   }
 }

@@ -11,9 +11,9 @@
 
 namespace imp {
 template<typename T> struct ToFactoryBase {
-  typedef NanMaybeLocal<T> return_t;
+  typedef MaybeLocal<T> return_t;
 };
-template<typename T> struct ValueFactoryBase { typedef NanMaybe<T> return_t; };
+template<typename T> struct ValueFactoryBase { typedef Maybe<T> return_t; };
 
 template<typename T> struct ToFactory;
 
@@ -50,8 +50,8 @@ X(int32_t)
 
 template<typename T>
 NAN_INLINE
-typename Nan::imp::ToFactory<T>::return_t NanTo(v8::Handle<v8::Value> val) {
-  return Nan::imp::ToFactory<T>::convert(val);
+typename imp::ToFactory<T>::return_t To(v8::Handle<v8::Value> val) {
+  return imp::ToFactory<T>::convert(val);
 }
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
