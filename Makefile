@@ -61,7 +61,6 @@ LINT_SOURCES = \
 	test/cpp/returnundefined.cpp \
 	test/cpp/returnvalue.cpp \
 	test/cpp/settemplate.cpp \
-	test/cpp/settergetter.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
 	test/cpp/threadlocal.cpp \
