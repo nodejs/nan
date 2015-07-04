@@ -117,6 +117,7 @@ namespace Nan {
 #define IOJS_1_0_MODULE_VERSION  42
 #define IOJS_1_1_MODULE_VERSION  43
 #define IOJS_2_0_MODULE_VERSION  44
+#define IOJS_3_0_MODULE_VERSION  45
 
 #define TYPE_CHECK(T, S)                                                       \
     while (false) {                                                            \
@@ -314,11 +315,13 @@ namespace imp {
     return val;
   }
 
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
   template<typename T>
   NAN_INLINE
   v8::Handle<T> EnsureHandleOrPersistent(const v8::Handle<T> &val) {
     return val;
   }
+#endif
 
   template<typename T>
   NAN_INLINE v8::Local<T> EnsureHandleOrPersistent(const v8::Local<T> &val) {
@@ -342,10 +345,12 @@ namespace imp {
     return New(val);
   }
 
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
   template<typename T>
   NAN_INLINE v8::Local<T> EnsureLocal(const v8::Handle<T> &val) {
     return New(val);
   }
+#endif
 
   template<typename T>
   NAN_INLINE
