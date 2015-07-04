@@ -12,11 +12,10 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 NAN_METHOD(TryCatchTest) {
   TryCatch try_catch;
-  v8::Local<v8::Value> v =
-      RunScript(New<UnboundScript>(
-          New("throw 'waaa'").ToLocalChecked()).ToLocalChecked())
-              .ToLocalChecked();
-  if (v.IsEmpty()) {
+  v8::Local<v8::String> s = New("throw 'waaa'").ToLocalChecked();
+  v8::Local<UnboundScript> script = New<UnboundScript>(s).ToLocalChecked();
+  MaybeLocal<v8::Value> result = RunScript(script);
+  if (result.IsEmpty()) {
     assert(try_catch.HasCaught());
     try_catch.ReThrow();
   }
