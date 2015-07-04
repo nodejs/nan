@@ -1513,7 +1513,7 @@ class Callback {
         New(persistentHandle)->Get(New(key).ToLocalChecked()));
   }
 
-  NAN_INLINE v8::Local<v8::Object>
+  NAN_INLINE v8::Local<v8::Value>
   GetFromPersistent(const v8::Local<v8::String> &key) const {
     EscapableHandleScope scope;
     return scope.Escape(New(persistentHandle)->Get(key));
