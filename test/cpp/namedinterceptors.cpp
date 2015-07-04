@@ -55,7 +55,7 @@ void NamedInterceptor::Init(v8::Handle<v8::Object> target) {
 }
 
 v8::Handle<v8::Value> NamedInterceptor::NewInstance () {
-  EscapableScope scope;
+  EscapableHandleScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
       Nan::New(namedinterceptors_constructor);
   v8::Local<v8::Object> instance =

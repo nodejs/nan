@@ -33,7 +33,7 @@ class ProgressWorker : public AsyncProgressWorker {
   }
 
   void HandleProgressCallback(const char *data, size_t size) {
-    Scope scope;
+    HandleScope scope;
 
     v8::Local<v8::Value> argv[] = {
         New<v8::Integer>(*reinterpret_cast<int*>(const_cast<char*>(data)))

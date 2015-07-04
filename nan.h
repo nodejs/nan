@@ -356,17 +356,17 @@ namespace imp {
 
 //=== HandleScope ==============================================================
 
-class Scope {
+class HandleScope {
   v8::HandleScope scope;
 
  public:
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
-  inline Scope() : scope(v8::Isolate::GetCurrent()) {}
+  inline HandleScope() : scope(v8::Isolate::GetCurrent()) {}
   inline static int NumberOfHandles() {
     return v8::HandleScope::NumberOfHandles(v8::Isolate::GetCurrent());
   }
 #else
-  inline Scope() : scope() {}
+  inline HandleScope() : scope() {}
   inline static int NumberOfHandles() {
     return v8::HandleScope::NumberOfHandles();
   }
@@ -375,16 +375,16 @@ class Scope {
  private:
   // Make it hard to create heap-allocated or illegal handle scopes by
   // disallowing certain operations.
-  Scope(const Scope &);
-  void operator=(const Scope &);
+  HandleScope(const HandleScope &);
+  void operator=(const HandleScope &);
   void *operator new(size_t size);
   void operator delete(void *, size_t);
 };
 
-class EscapableScope {
+class EscapableHandleScope {
  public:
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
-  inline EscapableScope() : scope(v8::Isolate::GetCurrent()) {}
+  inline EscapableHandleScope() : scope(v8::Isolate::GetCurrent()) {}
 
   inline static int NumberOfHandles() {
     return v8::EscapableHandleScope::NumberOfHandles(v8::Isolate::GetCurrent());
@@ -398,7 +398,7 @@ class EscapableScope {
  private:
   v8::EscapableHandleScope scope;
 #else
-  inline EscapableScope() : scope() {}
+  inline EscapableHandleScope() : scope() {}
 
   inline static int NumberOfHandles() {
     return v8::HandleScope::NumberOfHandles();
@@ -416,8 +416,8 @@ class EscapableScope {
  private:
   // Make it hard to create heap-allocated or illegal handle scopes by
   // disallowing certain operations.
-  EscapableScope(const EscapableScope &);
-  void operator=(const EscapableScope &);
+  EscapableHandleScope(const EscapableHandleScope &);
+  void operator=(const EscapableHandleScope &);
   void *operator new(size_t size);
   void operator delete(void *, size_t);
 };
@@ -536,22 +536,22 @@ class TryCatch {
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)  // Node 0.12
   NAN_INLINE v8::Local<v8::Primitive> Undefined() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::Undefined(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE v8::Local<v8::Primitive> Null() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::Null(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> True() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::True(v8::Isolate::GetCurrent())));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> False() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::False(v8::Isolate::GetCurrent())));
   }
 
@@ -628,7 +628,7 @@ class TryCatch {
 
 # define X(NAME)                                                               \
     NAN_INLINE v8::Local<v8::Value> NAME(const char *msg) {                    \
-      EscapableScope scope;                                                    \
+      EscapableHandleScope scope;                                              \
       return scope.Escape(v8::Exception::NAME(New(msg).ToLocalChecked()));     \
     }                                                                          \
                                                                                \
@@ -638,13 +638,13 @@ class TryCatch {
     }                                                                          \
                                                                                \
     NAN_INLINE void Throw ## NAME(const char *msg) {                           \
-      Scope scope;                                                             \
+      HandleScope scope;                                                       \
       v8::Isolate::GetCurrent()->ThrowException(                               \
           v8::Exception::NAME(New(msg).ToLocalChecked()));                     \
     }                                                                          \
                                                                                \
     NAN_INLINE void Throw ## NAME(v8::Handle<v8::String> msg) {                \
-      Scope scope;                                                             \
+      HandleScope scope;                                                       \
       v8::Isolate::GetCurrent()->ThrowException(                               \
           v8::Exception::NAME(New(msg)));                                      \
     }
@@ -902,22 +902,22 @@ class Utf8String {
 
 #else  // Node 0.8 and 0.10
   NAN_INLINE v8::Local<v8::Primitive> Undefined() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::Undefined()));
   }
 
   NAN_INLINE v8::Local<v8::Primitive> Null() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::Null()));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> True() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::True()));
   }
 
   NAN_INLINE v8::Local<v8::Boolean> False() {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(v8::False()));
   }
 
@@ -989,7 +989,7 @@ class Utf8String {
 
 # define X(NAME)                                                               \
     NAN_INLINE v8::Local<v8::Value> NAME(const char *msg) {                    \
-      EscapableScope scope;                                                    \
+      EscapableHandleScope scope;                                              \
       return scope.Escape(v8::Exception::NAME(New(msg).ToLocalChecked()));     \
     }                                                                          \
                                                                                \
@@ -999,7 +999,7 @@ class Utf8String {
     }                                                                          \
                                                                                \
     NAN_INLINE void Throw ## NAME(const char *msg) {                           \
-      Scope scope;                                                             \
+      HandleScope scope;                                                       \
       v8::ThrowException(v8::Exception::NAME(New(msg).ToLocalChecked()));      \
     }                                                                          \
                                                                                \
@@ -1026,7 +1026,7 @@ class Utf8String {
     , node::Buffer::free_callback callback
     , void *hint
   ) {
-    Scope scope;
+    HandleScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(length <= imp::kMaxLength && "too large buffer");
@@ -1038,7 +1038,7 @@ class Utf8String {
       const char *data
     , uint32_t size
   ) {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= imp::kMaxLength && "too large buffer");
@@ -1054,7 +1054,7 @@ class Utf8String {
   NAN_INLINE MaybeLocal<v8::Object> NewBuffer(uint32_t size) {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    EscapableScope scope;
+    EscapableHandleScope scope;
     assert(size <= imp::kMaxLength && "too large buffer");
     return MaybeLocal<v8::Object>(
         scope.Escape(New(node::Buffer::New(size)->handle_)));
@@ -1069,7 +1069,7 @@ class Utf8String {
       char* data
     , uint32_t size
   ) {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= imp::kMaxLength && "too large buffer");
@@ -1322,13 +1322,13 @@ typedef void NAN_INDEX_QUERY_RETURN_TYPE;
 class Callback {
  public:
   Callback() {
-    Scope scope;
+    HandleScope scope;
     v8::Local<v8::Object> obj = New<v8::Object>();
     handle.Reset(obj);
   }
 
   explicit Callback(const v8::Handle<v8::Function> &fn) {
-    Scope scope;
+    HandleScope scope;
     v8::Local<v8::Object> obj = New<v8::Object>();
     handle.Reset(obj);
     SetFunction(fn);
@@ -1340,7 +1340,7 @@ class Callback {
   }
 
   bool operator==(const Callback &other) const {
-    Scope scope;
+    HandleScope scope;
     v8::Local<v8::Value> a = New(handle)->Get(kCallbackIndex);
     v8::Local<v8::Value> b = New(other.handle)->Get(kCallbackIndex);
     return a->StrictEquals(b);
@@ -1367,18 +1367,18 @@ class Callback {
   }
 
   NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
-    Scope scope;
+    HandleScope scope;
     Set(New(handle), kCallbackIndex, fn);
   }
 
   NAN_INLINE v8::Local<v8::Function> GetFunction() const {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(handle)->Get(kCallbackIndex)
         .As<v8::Function>());
   }
 
   NAN_INLINE bool IsEmpty() const {
-    Scope scope;
+    HandleScope scope;
     return New(handle)->Get(kCallbackIndex)->IsUndefined();
   }
 
@@ -1414,7 +1414,7 @@ class Callback {
                            , v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
-    EscapableScope scope;
+    EscapableHandleScope scope;
 
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
@@ -1430,7 +1430,7 @@ class Callback {
   v8::Local<v8::Value> Call_(v8::Handle<v8::Object> target
                            , int argc
                            , v8::Handle<v8::Value> argv[]) const {
-    EscapableScope scope;
+    EscapableHandleScope scope;
 
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
@@ -1450,13 +1450,13 @@ class Callback {
       : callback(callback_), errmsg_(NULL) {
     request.data = this;
 
-    Scope scope;
+    HandleScope scope;
     v8::Local<v8::Object> obj = New<v8::Object>();
     persistentHandle.Reset(obj);
   }
 
   virtual ~AsyncWorker() {
-    Scope scope;
+    HandleScope scope;
 
     if (!persistentHandle.IsEmpty())
       persistentHandle.Reset();
@@ -1467,7 +1467,7 @@ class Callback {
   }
 
   virtual void WorkComplete() {
-    Scope scope;
+    HandleScope scope;
 
     if (errmsg_ == NULL)
       HandleOKCallback();
@@ -1479,36 +1479,36 @@ class Callback {
 
   NAN_INLINE void SaveToPersistent(
       const char *key, const v8::Local<v8::Value> &value) {
-    Scope scope;
+    HandleScope scope;
     New(persistentHandle)->Set(New(key).ToLocalChecked(), value);
   }
 
   NAN_INLINE void SaveToPersistent(
       const v8::Handle<v8::String> &key, const v8::Local<v8::Value> &value) {
-    Scope scope;
+    HandleScope scope;
     New(persistentHandle)->Set(key, value);
   }
 
   NAN_INLINE void SaveToPersistent(
       uint32_t index, const v8::Local<v8::Value> &value) {
-    Scope scope;
+    HandleScope scope;
     New(persistentHandle)->Set(index, value);
   }
 
   NAN_INLINE v8::Local<v8::Value> GetFromPersistent(const char *key) const {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(
         New(persistentHandle)->Get(New(key).ToLocalChecked()));
   }
 
   NAN_INLINE v8::Local<v8::Object>
   GetFromPersistent(const v8::Local<v8::String> &key) const {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(persistentHandle)->Get(key));
   }
 
   NAN_INLINE v8::Local<v8::Value> GetFromPersistent(uint32_t index) const {
-    EscapableScope scope;
+    EscapableHandleScope scope;
     return scope.Escape(New(persistentHandle)->Get(index));
   }
 
@@ -1529,7 +1529,7 @@ class Callback {
   }
 
   virtual void HandleErrorCallback() {
-    Scope scope;
+    HandleScope scope;
 
     v8::Local<v8::Value> argv[] = {
       v8::Exception::Error(New<v8::String>(ErrorMessage()).ToLocalChecked())
@@ -1819,7 +1819,7 @@ NAN_INLINE void SetMethod(
     const T &recv
   , const char *name
   , FunctionCallback callback) {
-  Scope scope;
+  HandleScope scope;
   v8::Local<v8::Function> fn = New<v8::FunctionTemplate>(
       callback)->GetFunction();
   v8::Local<v8::String> fn_name = New(name);
@@ -1830,7 +1830,7 @@ NAN_INLINE void SetMethod(
 NAN_INLINE void SetPrototypeMethod(
     v8::Handle<v8::FunctionTemplate> recv
   , const char* name, FunctionCallback callback) {
-  Scope scope;
+  HandleScope scope;
   v8::Local<v8::Function> fn = New<v8::FunctionTemplate>(
       callback
     , v8::Handle<v8::Value>()
@@ -1851,7 +1851,7 @@ inline void SetAccessor(
   , v8::AccessControl settings = v8::DEFAULT
   , v8::PropertyAttribute attribute = v8::None
   , imp::Sig signature = imp::Sig()) {
-  Scope scope;
+  HandleScope scope;
 
   imp::NativeGetter getter_ =
       imp::GetterCallbackWrapper;
@@ -1897,7 +1897,7 @@ inline bool SetAccessor(
   , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
   , v8::AccessControl settings = v8::DEFAULT
   , v8::PropertyAttribute attribute = v8::None) {
-  EscapableScope scope;
+  EscapableHandleScope scope;
 
   imp::NativeGetter getter_ =
       imp::GetterCallbackWrapper;
@@ -1942,7 +1942,7 @@ inline void SetNamedPropertyHandler(
   , PropertyDeleterCallback deleter = 0
   , PropertyEnumeratorCallback enumerator = 0
   , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
-  Scope scope;
+  HandleScope scope;
 
   imp::NativePropertyGetter getter_ =
       imp::PropertyGetterCallbackWrapper;
@@ -2023,7 +2023,7 @@ inline void SetIndexedPropertyHandler(
   , IndexDeleterCallback deleter = 0
   , IndexEnumeratorCallback enumerator = 0
   , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
-  Scope scope;
+  HandleScope scope;
 
   imp::NativeIndexGetter getter_ =
       imp::IndexGetterCallbackWrapper;

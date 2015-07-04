@@ -21,7 +21,7 @@ void weakCallback(
 }
 
 v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-  EscapableScope scope;
+  EscapableHandleScope scope;
   v8::Local<v8::String> lstring = New<v8::String>("result").ToLocalChecked();
   int *parameter = new int(42);
   Persistent<v8::Function> persistent(func);
