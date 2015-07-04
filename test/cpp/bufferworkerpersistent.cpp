@@ -34,7 +34,7 @@ class BufferWorker : public AsyncWorker {
   }
 
   void HandleOKCallback () {
-    Scope scope;
+    HandleScope scope;
 
     v8::Local<v8::Value> handle = GetFromPersistent("buffer");
     callback->Call(1, &handle);

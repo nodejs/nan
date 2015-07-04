@@ -43,7 +43,7 @@ NAN_METHOD(ToInt32) {
 }
 
 NAN_METHOD(ToArrayIndex) {
-  Scope();
+  HandleScope scope;
   info.GetReturnValue().Set(ToArrayIndex(info[0]).ToLocalChecked());
 }
 

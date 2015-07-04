@@ -20,7 +20,7 @@ void weakCallback(
 }
 
 v8::Handle<v8::String> wrap() {
-  EscapableScope scope;
+  EscapableHandleScope scope;
   v8::Local<v8::String> lstring = New("result").ToLocalChecked();
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(1);

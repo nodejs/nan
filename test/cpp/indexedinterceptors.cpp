@@ -55,7 +55,7 @@ void IndexedInterceptor::Init(v8::Handle<v8::Object> target) {
 }
 
 v8::Handle<v8::Value> IndexedInterceptor::NewInstance () {
-  EscapableScope scope;
+  EscapableHandleScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
       Nan::New(indexedinterceptors_constructor);
   v8::Local<v8::Object> instance =

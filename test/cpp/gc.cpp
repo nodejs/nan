@@ -28,7 +28,7 @@ NAN_METHOD(Hook) {
 }
 
 NAN_METHOD(Check) {
-  Scope();
+  HandleScope scope;
   info.GetReturnValue().Set(
       New(prologue_called && epilogue_called));
 }
