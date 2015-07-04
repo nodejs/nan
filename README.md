@@ -319,6 +319,7 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
  * <a href="#api_nan_fatal_exception"><b><code>NanFatalException</code></b></a>
+ * <a href="#api_nan_errno_exception"><b><code>NanErrnoException</code></b></a>
  * <a href="#api_nan_get_isolate_data"><b><code>NanGetIsolateData</code></b></a>
  * <a href="#api_nan_set_isolate_data"><b><code>NanSetIsolateData</code></b></a>
  * <a href="#api_nan_encode"><b><code>NanEncode</code></b></a>
@@ -1114,6 +1115,11 @@ Use instead of `node::MakeCallback` to call javascript functions. This (or `NanC
 ### NanFatalException(const v8::TryCatch &amp;)
 
 Replaces `node::FatalException`.
+
+<a name="api_nan_errno_exception"></a>
+### NanErrnoException(int errorno, const char *syscall = NULL, const char *message = NULL, const char *path = NULL)
+
+Replaces `node::ErrnoException`.
 
 <a name="api_nan_get_isolate_data"></a>
 ### NanGetIsolateData(v8::Isolate *)
