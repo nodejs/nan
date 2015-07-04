@@ -41,7 +41,8 @@ NAN_METHOD(New3) {
   for (unsigned char i = 0; i < DATA_SIZE; i++) {
     dynamic_data[i] = 'a' + i;
   }
-  info.GetReturnValue().Set(NewBuffer(dynamic_data, DATA_SIZE));
+  info.GetReturnValue().Set(
+      NewBuffer(dynamic_data, DATA_SIZE).ToLocalChecked());
 }
 
 NAN_METHOD(Copy) {
