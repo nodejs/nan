@@ -669,7 +669,11 @@ class TryCatch {
   NAN_INLINE MaybeLocal<v8::Object> NewBuffer(
       char *data
     , size_t length
+#if NODE_MODULE_VERSION > IOJS_2_0_MODULE_VERSION
+    , node::Buffer::FreeCallback callback
+#else
     , node::smalloc::FreeCallback callback
+#endif
     , void *hint
   ) {
     // arbitrary buffer lengths requires
