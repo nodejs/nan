@@ -58,7 +58,7 @@ typedef v8::Handle<v8::AccessorSignature> Sig;
 struct NAME ## Wrapper {                                                       \
   explicit NAME ## Wrapper(NAME ## Callback callback_) :                       \
       callback(callback_) {}                                                   \
-   NAME ## Callback callback;                                                  \
+  NAME ## Callback callback;                                                   \
 };
 
 X(Function)
