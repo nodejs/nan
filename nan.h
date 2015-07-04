@@ -717,7 +717,7 @@ class TryCatch {
 #endif
   }
 
-  NAN_INLINE v8::Local<v8::Object> NewBuffer(
+  NAN_INLINE MaybeLocal<v8::Object> NewBuffer(
       char* data
     , uint32_t size
   ) {
@@ -727,7 +727,8 @@ class TryCatch {
 #if NODE_MODULE_VERSION > IOJS_2_0_MODULE_VERSION
     return node::Buffer::New(v8::Isolate::GetCurrent(), data, size);
 #else
-    return node::Buffer::Use(v8::Isolate::GetCurrent(), data, size);
+    return MaybeLocal<v8::Object>(
+        node::Buffer::Use(v8::Isolate::GetCurrent(), data, size));
 #endif
   }
 
@@ -1074,7 +1075,7 @@ class Utf8String {
     delete[] data;
   }
 
-  NAN_INLINE v8::Local<v8::Object> NewBuffer(
+  NAN_INLINE MaybeLocal<v8::Object> NewBuffer(
       char* data
     , uint32_t size
   ) {
@@ -1082,8 +1083,8 @@ class Utf8String {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(size <= imp::kMaxLength && "too large buffer");
-    return scope.Escape(New(
-        node::Buffer::New(data, size, FreeData, NULL)->handle_));
+    return MaybeLocal<v8::Object>(scope.Escape(New(
+        node::Buffer::New(data, size, FreeData, NULL)->handle_)));
   }
 
   NAN_INLINE bool HasInstance(
