@@ -101,6 +101,7 @@ class PersistentBase {
   NAN_INLINE explicit PersistentBase(T *val) : persistent(val) {}
   template<typename S, typename M> friend class Persistent;
   template<typename S> friend class Global;
+  friend class ObjectWrap;
 };
 
 template<typename T>
