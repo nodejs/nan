@@ -671,13 +671,6 @@ class TryCatch {
 #endif
   }
 
-  NAN_INLINE bool HasInstance(
-      const v8::Persistent<v8::FunctionTemplate>& function_template
-    , v8::Handle<v8::Value> value
-  ) {
-    return New(function_template)->HasInstance(value);
-  }
-
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
   NAN_INLINE MaybeLocal<v8::String>
@@ -1024,13 +1017,6 @@ class Utf8String {
     assert(size <= imp::kMaxLength && "too large buffer");
     return MaybeLocal<v8::Object>(scope.Escape(New(
         node::Buffer::New(data, size, FreeData, NULL)->handle_)));
-  }
-
-  NAN_INLINE bool HasInstance(
-      const v8::Persistent<v8::FunctionTemplate>& function_template
-    , v8::Handle<v8::Value> value
-  ) {
-    return function_template->HasInstance(value);
   }
 
 namespace imp {
