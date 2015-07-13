@@ -310,32 +310,6 @@ namespace imp {
   }
 
   template<typename T>
-  NAN_INLINE v8::Persistent<T> &EnsureHandleOrPersistent(
-      v8::Persistent<T> &val) {  // NOLINT(runtime/references)
-    return val;
-  }
-
-# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-  template<typename T>
-  NAN_INLINE
-  v8::Handle<T> EnsureHandleOrPersistent(const v8::Handle<T> &val) {
-    return val;
-  }
-#endif
-
-  template<typename T>
-  NAN_INLINE v8::Local<T> EnsureHandleOrPersistent(const v8::Local<T> &val) {
-    return val;
-  }
-
-  template<typename T>
-  NAN_INLINE
-  v8::Local<v8::Value>
-  EnsureHandleOrPersistent(T val) {
-    return Unwrap(New(val));
-  }
-
-  template<typename T>
   NAN_INLINE v8::Local<T> EnsureLocal(const v8::Local<T> &val) {
     return val;
   }
