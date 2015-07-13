@@ -296,18 +296,6 @@ template<typename P> class WeakCallbackInfo;
 
 namespace imp {
   static const size_t kMaxLength = 0x3fffffff;
-  template<typename T>
-  NAN_INLINE
-  v8::Local<T>
-  Unwrap(MaybeLocal<T> maybe) {
-    return maybe.ToLocalChecked();
-  }
-
-  template<typename T>
-  NAN_INLINE
-  v8::Local<T> Unwrap(v8::Local<T> val) {
-    return val;
-  }
 }  // end of namespace imp
 
 //=== HandleScope ==============================================================
