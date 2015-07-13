@@ -2036,10 +2036,20 @@ inline void SetIndexedPropertyHandler(
 //=== ObjectWrap ===============================================================
 
 class ObjectWrap : public node::ObjectWrap {
-#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
  public:
+#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
   inline v8::Local<v8::Object> handle() { return New(handle_); }
-  inline v8::Persistent<v8::Object> &persistent() { return handle_; }
+  inline Persistent<v8::Object> &persistent() {
+    Persistent<v8::Object> temp(handle_);
+    std::memcpy(&persistent_, &temp, sizeof(persistent_));
+    return persistent_;
+  }
+ private:
+  Persistent<v8::Object> persistent_;
+#else
+  inline Persistent<v8::Object> &persistent() {
+    return static_cast<Persistent<v8::Object>&>(node::ObjectWrap::persistent());
+  }
 #endif
 };
 
