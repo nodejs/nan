@@ -1834,7 +1834,7 @@ NAN_INLINE void SetMethod(
   HandleScope scope;
   v8::Local<v8::Function> fn = New<v8::FunctionTemplate>(
       callback)->GetFunction();
-  v8::Local<v8::String> fn_name = New(name);
+  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   fn->SetName(fn_name);
   recv->Set(fn_name, fn);
 }
