@@ -308,29 +308,6 @@ namespace imp {
   v8::Local<T> Unwrap(v8::Local<T> val) {
     return val;
   }
-
-  template<typename T>
-  NAN_INLINE v8::Local<T> EnsureLocal(const v8::Local<T> &val) {
-    return val;
-  }
-
-  template<typename T>
-  NAN_INLINE v8::Local<T> EnsureLocal(const v8::Persistent<T> &val) {
-    return New(val);
-  }
-
-# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-  template<typename T>
-  NAN_INLINE v8::Local<T> EnsureLocal(const v8::Handle<T> &val) {
-    return New(val);
-  }
-#endif
-
-  template<typename T>
-  NAN_INLINE
-  v8::Local<v8::Value> EnsureLocal(T val) {
-    return Unwrap(New(val));
-  }
 }  // end of namespace imp
 
 //=== HandleScope ==============================================================
@@ -1404,7 +1381,7 @@ class Callback {
 
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    return scope.Escape(imp::EnsureLocal(node::MakeCallback(
+    return scope.Escape(New(node::MakeCallback(
         isolate
       , target
       , callback
@@ -1420,7 +1397,7 @@ class Callback {
 
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
-    return scope.Escape(imp::EnsureLocal(node::MakeCallback(
+    return scope.Escape(New(node::MakeCallback(
         target
       , callback
       , argc
