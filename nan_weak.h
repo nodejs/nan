@@ -256,7 +256,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , parameter);
     v8::PersistentBase<T>::SetWeak(wcbd, wcbd->invokeparameter, type);
   } else {
-    v8::Handle<T>* self = reinterpret_cast<v8::Handle<T>*>(this);
+    v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
     int count = (*self)->InternalFieldCount();
     void *internal_fields[kInternalFieldsInWeakCallback] = {0, 0};
@@ -291,7 +291,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , parameter);
     v8::PersistentBase<T>::SetPhantom(wcbd, wcbd->invokeparameter);
   } else {
-    v8::Handle<T>* self = reinterpret_cast<v8::Handle<T>*>(this);
+    v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
     int count = (*self)->InternalFieldCount();
     void *internal_fields[kInternalFieldsInWeakCallback] = {0, 0};
@@ -327,7 +327,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , parameter);
     v8::PersistentBase<T>::SetPhantom(wcbd, wcbd->invokeparameter);
   } else {
-    v8::Handle<T>* self = reinterpret_cast<v8::Handle<T>*>(this);
+    v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
     int count = (*self)->InternalFieldCount();
     void *internal_fields[kInternalFieldsInWeakCallback] = {0, 0};
@@ -362,7 +362,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , parameter);
     v8::PersistentBase<T>::SetWeak(wcbd, wcbd->invoke);
   } else {
-    v8::Handle<T>* self = reinterpret_cast<v8::Handle<T>*>(this);
+    v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
     int count = (*self)->InternalFieldCount();
     void *internal_fields[kInternalFieldsInWeakCallback] = {0, 0};
@@ -393,7 +393,7 @@ NAN_INLINE void PersistentBase<T>::SetWeak(
       , parameter);
     persistent.MakeWeak(wcbd, wcbd->invoke);
   } else {
-    v8::Handle<T>* self = reinterpret_cast<v8::Handle<T>*>(this);
+    v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
     int count = (*self)->InternalFieldCount();
     void *internal_fields[kInternalFieldsInWeakCallback] = {0, 0};

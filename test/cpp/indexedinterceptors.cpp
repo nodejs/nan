@@ -16,8 +16,8 @@ class IndexedInterceptor : public ObjectWrap {
 
  public:
   IndexedInterceptor() { std::strncpy(this->buf, "foo", sizeof (this->buf)); }
-  static void Init (v8::Handle<v8::Object> target);
-  static v8::Handle<v8::Value> NewInstance ();
+  static NAN_MODULE_INIT(Init);
+  static v8::Local<v8::Value> NewInstance ();
   static NAN_METHOD(New);
 
   static NAN_INDEX_GETTER(PropertyGetter);
@@ -33,7 +33,7 @@ NAN_METHOD(CreateNew) {
   info.GetReturnValue().Set(IndexedInterceptor::NewInstance());
 }
 
-void IndexedInterceptor::Init(v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(IndexedInterceptor::Init) {
   v8::Local<v8::FunctionTemplate> tpl =
     Nan::New<v8::FunctionTemplate>(IndexedInterceptor::New);
   indexedinterceptors_constructor.Reset(tpl);
@@ -54,7 +54,7 @@ void IndexedInterceptor::Init(v8::Handle<v8::Object> target) {
   Set(target, Nan::New("create").ToLocalChecked(), createnew);
 }
 
-v8::Handle<v8::Value> IndexedInterceptor::NewInstance () {
+v8::Local<v8::Value> IndexedInterceptor::NewInstance () {
   EscapableHandleScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
       Nan::New(indexedinterceptors_constructor);

@@ -11,7 +11,7 @@
 
 #define X(TYPE)                                                                \
 imp::ToFactory<v8::TYPE>::return_t                                             \
-imp::ToFactory<v8::TYPE>::convert(v8::Handle<v8::Value> val) {                 \
+imp::ToFactory<v8::TYPE>::convert(v8::Local<v8::Value> val) {                  \
   return val->To ## TYPE(GetCurrentContext());                                 \
 }
 
@@ -27,7 +27,7 @@ X(Int32)
 
 #define X(TYPE, NAME)                                                          \
 imp::ToFactory<TYPE>::return_t                                                 \
-imp::ToFactory<TYPE>::convert(v8::Handle<v8::Value> val) {                     \
+imp::ToFactory<TYPE>::convert(v8::Local<v8::Value> val) {                      \
   return val->NAME ## Value(GetCurrentContext());                              \
 }
 

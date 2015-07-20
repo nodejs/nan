@@ -20,7 +20,7 @@ void weakCallback(
   delete parameter;
 }
 
-v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
+v8::Local<v8::String> wrap(v8::Local<v8::Function> func) {
   EscapableHandleScope scope;
   v8::Local<v8::String> lstring = New<v8::String>("result").ToLocalChecked();
   int *parameter = new int(42);
@@ -35,7 +35,7 @@ NAN_METHOD(Hustle) {
   info.GetReturnValue().Set(wrap(info[0].As<v8::Function>()));
 }
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hustle").ToLocalChecked()
     , New<v8::FunctionTemplate>(Hustle)->GetFunction()

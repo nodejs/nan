@@ -26,8 +26,8 @@ NAN_METHOD(Work) {
   info.GetReturnValue().SetUndefined();
 }
 
-void Init (v8::Handle<v8::Object> exports) {
-  Set(exports
+NAN_MODULE_INIT(Init) {
+  Set(target
     , New("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(Work)->GetFunction());
 }

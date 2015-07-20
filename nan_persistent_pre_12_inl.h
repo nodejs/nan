@@ -26,7 +26,7 @@ class PersistentBase {
   }
 
   template<typename S>
-  NAN_INLINE void Reset(const v8::Handle<S> &other) {
+  NAN_INLINE void Reset(const v8::Local<S> &other) {
     TYPE_CHECK(T, S);
 
     if (!persistent.IsEmpty()) {
@@ -65,7 +65,7 @@ class PersistentBase {
   }
 
   template<typename S>
-  NAN_INLINE bool operator==(const v8::Handle<S> &that) {
+  NAN_INLINE bool operator==(const v8::Local<S> &that) {
     return this->persistent == that;
   }
 
@@ -75,7 +75,7 @@ class PersistentBase {
   }
 
   template<typename S>
-  NAN_INLINE bool operator!=(const v8::Handle<S> &that) {
+  NAN_INLINE bool operator!=(const v8::Local<S> &that) {
     return !operator==(that);
   }
 
@@ -192,7 +192,7 @@ class Global : public PersistentBase<T> {
   NAN_INLINE Global() : PersistentBase<T>(0) { }
 
   template <typename S>
-  NAN_INLINE Global(v8::Handle<S> that)
+  NAN_INLINE Global(v8::Local<S> that)
       : PersistentBase<T>(v8::Persistent<T>::New(that)) {
     TYPE_CHECK(T, S);
   }

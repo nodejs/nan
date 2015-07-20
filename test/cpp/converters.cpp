@@ -68,7 +68,7 @@ NAN_METHOD(Int32Value) {
   info.GetReturnValue().Set(New(To<int32_t>(info[0]).FromJust()));
 }
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("toBoolean").ToLocalChecked()
     , New<v8::FunctionTemplate>(ToBoolean)->GetFunction()

@@ -65,7 +65,7 @@ NAN_METHOD(NewExternalAsciiStringResource) {
   info.GetReturnValue().Set(ext);
 }
 
-void Init(v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New("newNumber").ToLocalChecked()
     , New<v8::FunctionTemplate>(NewNumber)->GetFunction()

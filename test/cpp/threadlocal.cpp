@@ -59,8 +59,8 @@ NAN_METHOD(thread_local_storage) {
   info.GetReturnValue().SetUndefined();
 }
 
-void Init(v8::Handle<v8::Object> exports) {
-  Set(exports
+NAN_MODULE_INIT(Init) {
+  Set(target
     , New<v8::String>("thread_local_storage").ToLocalChecked()
     , New<v8::FunctionTemplate>(thread_local_storage)->GetFunction()
   );

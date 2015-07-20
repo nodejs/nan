@@ -22,12 +22,11 @@
 #ifndef NAN_STRING_BYTES_H_
 #define NAN_STRING_BYTES_H_
 
-// Decodes a v8::Handle<v8::String> or Buffer to a raw char*
+// Decodes a v8::Local<v8::String> or Buffer to a raw char*
 
 namespace imp {
 
 using v8::Local;
-using v8::Handle;
 using v8::Object;
 using v8::String;
 using v8::Value;

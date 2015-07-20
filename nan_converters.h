@@ -20,7 +20,7 @@ template<typename T> struct ToFactory;
 #define X(TYPE)                                                                \
     template<>                                                                 \
     struct ToFactory<v8::TYPE> : ToFactoryBase<v8::TYPE> {                     \
-      static inline return_t convert(v8::Handle<v8::Value> val);               \
+      static inline return_t convert(v8::Local<v8::Value> val);                \
     };
 
 X(Boolean)
@@ -36,7 +36,7 @@ X(Int32)
 #define X(TYPE)                                                                \
     template<>                                                                 \
     struct ToFactory<TYPE> : ValueFactoryBase<TYPE> {                          \
-      static inline return_t convert(v8::Handle<v8::Value> val);               \
+      static inline return_t convert(v8::Local<v8::Value> val);                \
     };
 
 X(bool)
@@ -50,7 +50,7 @@ X(int32_t)
 
 template<typename T>
 NAN_INLINE
-typename imp::ToFactory<T>::return_t To(v8::Handle<v8::Value> val) {
+typename imp::ToFactory<T>::return_t To(v8::Local<v8::Value> val) {
   return imp::ToFactory<T>::convert(val);
 }
 

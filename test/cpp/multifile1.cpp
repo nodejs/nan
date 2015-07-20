@@ -11,7 +11,7 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("r").ToLocalChecked()
     , New<v8::FunctionTemplate>(ReturnString)->GetFunction()

@@ -45,8 +45,8 @@ Factory<v8::BooleanObject>::New(bool value) {
 
 Factory<v8::Context>::return_t
 Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
-                         , v8::Handle<v8::ObjectTemplate> tmpl
-                         , v8::Handle<v8::Value> obj) {
+                         , v8::Local<v8::ObjectTemplate> tmpl
+                         , v8::Local<v8::Value> obj) {
   v8::Persistent<v8::Context> ctx = v8::Context::New(extensions, tmpl, obj);
   v8::Local<v8::Context> lctx = v8::Local<v8::Context>::New(ctx);
   ctx.Dispose();
@@ -71,10 +71,10 @@ Factory<v8::External>::New(void * value) {
 
 Factory<v8::Function>::return_t
 Factory<v8::Function>::New( FunctionCallback callback
-                          , v8::Handle<v8::Value> data) {
+                          , v8::Local<v8::Value> data) {
   return Factory<v8::FunctionTemplate>::New( callback
                                            , data
-                                           , v8::Handle<v8::Signature>()
+                                           , v8::Local<v8::Signature>()
                                            )->GetFunction();
 }
 
@@ -83,8 +83,8 @@ Factory<v8::Function>::New( FunctionCallback callback
 
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( FunctionCallback callback
-                                  , v8::Handle<v8::Value> data
-                                  , v8::Handle<v8::Signature> signature) {
+                                  , v8::Local<v8::Value> data
+                                  , v8::Local<v8::Signature> signature) {
   v8::HandleScope scope;
 
   static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
@@ -168,7 +168,7 @@ Factory<v8::ObjectTemplate>::New() {
 
 Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
-    v8::Handle<v8::String> pattern
+    v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
   return Factory<v8::RegExp>::return_t(v8::RegExp::New(pattern, flags));
 }
@@ -231,7 +231,7 @@ Factory<v8::String>::New(v8::String::ExternalAsciiStringResource * value) {
 //=== String Object ============================================================
 
 Factory<v8::StringObject>::return_t
-Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
+Factory<v8::StringObject>::New(v8::Local<v8::String> value) {
   return v8::StringObject::New(value).As<v8::StringObject>();
 }
 
