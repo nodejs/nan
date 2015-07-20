@@ -431,7 +431,7 @@ namespace Nan { namespace imp {
 # define _NAN_PROPERTY_GETTER_RETURN_TYPE void
 
 # define _NAN_PROPERTY_SETTER_ARGS_TYPE                                        \
-    const v8::PropertyCallbackInfo<v8::Value>&
+    const v8::PropertyCallbackInfo<void>&
 # define _NAN_PROPERTY_SETTER_ARGS _NAN_PROPERTY_SETTER_ARGS_TYPE args
 # define _NAN_PROPERTY_SETTER_RETURN_TYPE void
 
