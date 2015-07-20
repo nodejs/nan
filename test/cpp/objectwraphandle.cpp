@@ -12,7 +12,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 class MyObject : public ObjectWrap {
  public:
-  static void Init(v8::Handle<v8::Object> exports) {
+  static NAN_MODULE_INIT(Init) {
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
     tpl->SetClassName(Nan::New("MyObject").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -20,7 +20,7 @@ class MyObject : public ObjectWrap {
     SetPrototypeMethod(tpl, "getHandle", GetHandle);
 
     constructor.Reset(tpl->GetFunction());
-    Set(exports, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
+    Set(target, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
   }
 
  private:
@@ -52,8 +52,4 @@ class MyObject : public ObjectWrap {
 
 Persistent<v8::Function> MyObject::constructor;
 
-void Init(v8::Handle<v8::Object> exports) {
-  MyObject::Init(exports);
-}
-
-NODE_MODULE(objectwraphandle, Init)
+NODE_MODULE(objectwraphandle, MyObject::Init)

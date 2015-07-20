@@ -33,7 +33,7 @@ NAN_METHOD(Check) {
       New(prologue_called && epilogue_called));
 }
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hook").ToLocalChecked()
     , New<v8::FunctionTemplate>(Hook)->GetFunction()

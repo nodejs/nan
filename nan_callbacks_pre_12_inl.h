@@ -30,7 +30,7 @@ class ReturnValue {
   }
 
   // Handle setters
-  template <typename S> inline void Set(const v8::Handle<S> &handle) {
+  template <typename S> inline void Set(const v8::Local<S> &handle) {
     TYPE_CHECK(T, S);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(handle);

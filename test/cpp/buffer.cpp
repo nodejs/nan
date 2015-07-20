@@ -50,7 +50,7 @@ NAN_METHOD(Copy) {
 }
 
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   for (unsigned char i = 0; i < DATA_SIZE; i++) {
     data[i] = 'a' + i;
   }

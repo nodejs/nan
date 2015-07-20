@@ -12,7 +12,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 class MyObject : public node::ObjectWrap {
  public:
-  static void Init(v8::Handle<v8::Object> exports);
+  static NAN_MODULE_INIT(Init);
 
  private:
   MyObject();
@@ -30,7 +30,7 @@ MyObject::MyObject() {
 MyObject::~MyObject() {
 }
 
-void MyObject::Init(v8::Handle<v8::Object> exports) {
+NAN_MODULE_INIT(MyObject::Init) {
   // Prepare constructor template
   v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
   tpl->SetClassName(Nan::New<v8::String>("MyObject").ToLocalChecked());
@@ -71,7 +71,7 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
   , v8::DontDelete);
 
   constructor.Reset(tpl->GetFunction());
-  Set(exports
+  Set(target
   , Nan::New<v8::String>("MyObject").ToLocalChecked()
   , tpl->GetFunction());
 }
@@ -87,8 +87,4 @@ NAN_METHOD(MyObject::New) {
   }
 }
 
-void Init(v8::Handle<v8::Object> exports) {
-  MyObject::Init(exports);
-}
-
-NODE_MODULE(settemplate, Init)
+NODE_MODULE(settemplate, MyObject::Init)

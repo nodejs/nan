@@ -124,6 +124,17 @@ namespace Nan {
       *(static_cast<T *volatile *>(0)) = static_cast<S*>(0);                   \
     }
 
+//=== RegistrationFunction =====================================================
+
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+  typedef v8::Handle<v8::Object> ADDON_REGISTER_FUNCTION_ARGS_TYPE;
+#else
+  typedef v8::Local<v8::Object> ADDON_REGISTER_FUNCTION_ARGS_TYPE;
+#endif
+
+#define NAN_MODULE_INIT(name)                                                  \
+    void name(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target)
+
 //=== CallbackInfo =============================================================
 
 #include "nan_callbacks.h"  // NOLINT(build/include)
@@ -270,8 +281,10 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 #endif
 #endif
 
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
 template<typename T>
 v8::Local<T> New(v8::Handle<T>);
+#endif
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
@@ -381,7 +394,13 @@ class TryCatch {
 
   NAN_INLINE bool CanContinue() const { return try_catch_.CanContinue(); }
 
-  NAN_INLINE v8::Handle<v8::Value> ReThrow() { return try_catch_.ReThrow(); }
+  NAN_INLINE v8::Local<v8::Value> ReThrow() {
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+    return New(try_catch_.ReThrow());
+#else
+    return try_catch_.ReThrow();
+#endif
+  }
 
   NAN_INLINE v8::Local<v8::Value> Exception() const {
     return try_catch_.Exception();
@@ -480,23 +499,39 @@ class TryCatch {
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)  // Node 0.12
   NAN_INLINE v8::Local<v8::Primitive> Undefined() {
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     EscapableHandleScope scope;
     return scope.Escape(New(v8::Undefined(v8::Isolate::GetCurrent())));
+# else
+    return v8::Undefined(v8::Isolate::GetCurrent());
+# endif
   }
 
   NAN_INLINE v8::Local<v8::Primitive> Null() {
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     EscapableHandleScope scope;
     return scope.Escape(New(v8::Null(v8::Isolate::GetCurrent())));
+# else
+    return v8::Null(v8::Isolate::GetCurrent());
+# endif
   }
 
   NAN_INLINE v8::Local<v8::Boolean> True() {
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     EscapableHandleScope scope;
     return scope.Escape(New(v8::True(v8::Isolate::GetCurrent())));
+# else
+    return v8::True(v8::Isolate::GetCurrent());
+# endif
   }
 
   NAN_INLINE v8::Local<v8::Boolean> False() {
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     EscapableHandleScope scope;
     return scope.Escape(New(v8::False(v8::Isolate::GetCurrent())));
+# else
+    return v8::False(v8::Isolate::GetCurrent());
+# endif
   }
 
   NAN_INLINE v8::Local<v8::String> EmptyString() {
@@ -509,16 +544,16 @@ class TryCatch {
   }
 
   NAN_INLINE void SetTemplate(
-      v8::Handle<v8::Template> templ
+      v8::Local<v8::Template> templ
     , const char *name
-    , v8::Handle<v8::Data> value) {
+    , v8::Local<v8::Data> value) {
     templ->Set(v8::Isolate::GetCurrent(), name, value);
   }
 
   NAN_INLINE void SetTemplate(
-      v8::Handle<v8::Template> templ
-    , v8::Handle<v8::String> name
-    , v8::Handle<v8::Data> value
+      v8::Local<v8::Template> templ
+    , v8::Local<v8::String> name
+    , v8::Local<v8::Data> value
     , v8::PropertyAttribute attributes) {
     templ->Set(name, value, attributes);
   }
@@ -528,13 +563,13 @@ class TryCatch {
   }
 
   NAN_INLINE void* GetInternalFieldPointer(
-      v8::Handle<v8::Object> object
+      v8::Local<v8::Object> object
     , int index) {
     return object->GetAlignedPointerFromInternalField(index);
   }
 
   NAN_INLINE void SetInternalFieldPointer(
-      v8::Handle<v8::Object> object
+      v8::Local<v8::Object> object
     , int index
     , void* value) {
     object->SetAlignedPointerInInternalField(index, value);
@@ -577,7 +612,7 @@ class TryCatch {
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
-    v8::Local<v8::Value> NAME(v8::Handle<v8::String> msg) {                    \
+    v8::Local<v8::Value> NAME(v8::Local<v8::String> msg) {                     \
       return v8::Exception::NAME(msg);                                         \
     }                                                                          \
                                                                                \
@@ -587,10 +622,10 @@ class TryCatch {
           v8::Exception::NAME(New(msg).ToLocalChecked()));                     \
     }                                                                          \
                                                                                \
-    NAN_INLINE void Throw ## NAME(v8::Handle<v8::String> msg) {                \
+    NAN_INLINE void Throw ## NAME(v8::Local<v8::String> msg) {                 \
       HandleScope scope;                                                       \
       v8::Isolate::GetCurrent()->ThrowException(                               \
-          v8::Exception::NAME(New(msg)));                                      \
+          v8::Exception::NAME(msg));                                           \
     }
 
   X(Error)
@@ -601,7 +636,7 @@ class TryCatch {
 
 # undef X
 
-  NAN_INLINE void ThrowError(v8::Handle<v8::Value> error) {
+  NAN_INLINE void ThrowError(v8::Local<v8::Value> error) {
     v8::Isolate::GetCurrent()->ThrowException(error);
   }
 
@@ -695,13 +730,13 @@ class TryCatch {
   }
 
   NAN_INLINE MaybeLocal<v8::Value> RunScript(
-      v8::Handle<UnboundScript> script
+      v8::Local<UnboundScript> script
   ) {
     return script->BindToCurrentContext()->Run(GetCurrentContext());
   }
 
   NAN_INLINE MaybeLocal<v8::Value> RunScript(
-      v8::Handle<BoundScript> script
+      v8::Local<BoundScript> script
   ) {
     return script->Run(GetCurrentContext());
   }
@@ -733,43 +768,58 @@ class TryCatch {
   }
 
   NAN_INLINE MaybeLocal<v8::Value> RunScript(
-      v8::Handle<UnboundScript> script
+      v8::Local<UnboundScript> script
   ) {
     return MaybeLocal<v8::Value>(script->BindToCurrentContext()->Run());
   }
 
   NAN_INLINE MaybeLocal<v8::Value> RunScript(
-      v8::Handle<BoundScript> script
+      v8::Local<BoundScript> script
   ) {
     return MaybeLocal<v8::Value>(script->Run());
   }
 #endif
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
-      v8::Handle<v8::Object> target
-    , v8::Handle<v8::Function> func
+      v8::Local<v8::Object> target
+    , v8::Local<v8::Function> func
     , int argc
-    , v8::Handle<v8::Value>* argv) {
+    , v8::Local<v8::Value>* argv) {
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     return New(node::MakeCallback(
         v8::Isolate::GetCurrent(), target, func, argc, argv));
+#else
+    return node::MakeCallback(
+        v8::Isolate::GetCurrent(), target, func, argc, argv);
+#endif
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
-      v8::Handle<v8::Object> target
-    , v8::Handle<v8::String> symbol
+      v8::Local<v8::Object> target
+    , v8::Local<v8::String> symbol
     , int argc
-    , v8::Handle<v8::Value>* argv) {
+    , v8::Local<v8::Value>* argv) {
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     return New(node::MakeCallback(
         v8::Isolate::GetCurrent(), target, symbol, argc, argv));
+#else
+    return node::MakeCallback(
+        v8::Isolate::GetCurrent(), target, symbol, argc, argv);
+#endif
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
-      v8::Handle<v8::Object> target
+      v8::Local<v8::Object> target
     , const char* method
     , int argc
-    , v8::Handle<v8::Value>* argv) {
+    , v8::Local<v8::Value>* argv) {
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     return New(node::MakeCallback(
         v8::Isolate::GetCurrent(), target, method, argc, argv));
+#else
+    return node::MakeCallback(
+        v8::Isolate::GetCurrent(), target, method, argc, argv);
+#endif
   }
 
   NAN_INLINE void FatalException(const TryCatch& try_catch) {
@@ -802,7 +852,7 @@ class TryCatch {
 
 class Utf8String {
  public:
-  NAN_INLINE explicit Utf8String(v8::Handle<v8::Value> from) :
+  NAN_INLINE explicit Utf8String(v8::Local<v8::Value> from) :
       length_(0), str_(str_st_) {
     if (!from.IsEmpty()) {
       v8::Local<v8::String> string = from->ToString();
@@ -872,16 +922,16 @@ class Utf8String {
   }
 
   NAN_INLINE void SetTemplate(
-      v8::Handle<v8::Template> templ
+      v8::Local<v8::Template> templ
     , const char *name
-    , v8::Handle<v8::Data> value) {
+    , v8::Local<v8::Data> value) {
     templ->Set(name, value);
   }
 
   NAN_INLINE void SetTemplate(
-      v8::Handle<v8::Template> templ
-    , v8::Handle<v8::String> name
-    , v8::Handle<v8::Data> value
+      v8::Local<v8::Template> templ
+    , v8::Local<v8::String> name
+    , v8::Local<v8::Data> value
     , v8::PropertyAttribute attributes) {
     templ->Set(name, value, attributes);
   }
@@ -891,13 +941,13 @@ class Utf8String {
   }
 
   NAN_INLINE void* GetInternalFieldPointer(
-      v8::Handle<v8::Object> object
+      v8::Local<v8::Object> object
     , int index) {
     return object->GetPointerFromInternalField(index);
   }
 
   NAN_INLINE void SetInternalFieldPointer(
-      v8::Handle<v8::Object> object
+      v8::Local<v8::Object> object
     , int index
     , void* value) {
     object->SetPointerInInternalField(index, value);
@@ -936,7 +986,7 @@ class Utf8String {
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
-    v8::Local<v8::Value> NAME(v8::Handle<v8::String> msg) {                    \
+    v8::Local<v8::Value> NAME(v8::Local<v8::String> msg) {                     \
       return v8::Exception::NAME(msg);                                         \
     }                                                                          \
                                                                                \
@@ -946,7 +996,7 @@ class Utf8String {
     }                                                                          \
                                                                                \
     NAN_INLINE                                                                 \
-    void Throw ## NAME(v8::Handle<v8::String> errmsg) {                        \
+    void Throw ## NAME(v8::Local<v8::String> errmsg) {                         \
       v8::ThrowException(v8::Exception::NAME(errmsg));                         \
     }
 
@@ -958,7 +1008,7 @@ class Utf8String {
 
 # undef X
 
-  NAN_INLINE void ThrowError(v8::Handle<v8::Value> error) {
+  NAN_INLINE void ThrowError(v8::Local<v8::Value> error) {
     v8::ThrowException(error);
   }
 
@@ -1055,31 +1105,31 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
   }
 
   NAN_INLINE
-  MaybeLocal<v8::Value> RunScript(v8::Handle<v8::Script> script) {
+  MaybeLocal<v8::Value> RunScript(v8::Local<v8::Script> script) {
     return MaybeLocal<v8::Value>(script->Run());
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
-      v8::Handle<v8::Object> target
-    , v8::Handle<v8::Function> func
+      v8::Local<v8::Object> target
+    , v8::Local<v8::Function> func
     , int argc
-    , v8::Handle<v8::Value>* argv) {
+    , v8::Local<v8::Value>* argv) {
     return New(node::MakeCallback(target, func, argc, argv));
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
-      v8::Handle<v8::Object> target
-    , v8::Handle<v8::String> symbol
+      v8::Local<v8::Object> target
+    , v8::Local<v8::String> symbol
     , int argc
-    , v8::Handle<v8::Value>* argv) {
+    , v8::Local<v8::Value>* argv) {
     return New(node::MakeCallback(target, symbol, argc, argv));
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
-      v8::Handle<v8::Object> target
+      v8::Local<v8::Object> target
     , const char* method
     , int argc
-    , v8::Handle<v8::Value>* argv) {
+    , v8::Local<v8::Value>* argv) {
     return New(node::MakeCallback(target, method, argc, argv));
   }
 
@@ -1113,7 +1163,7 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
 
 class Utf8String {
  public:
-  NAN_INLINE explicit Utf8String(v8::Handle<v8::Value> from) :
+  NAN_INLINE explicit Utf8String(v8::Local<v8::Value> from) :
       length_(0), str_(str_st_) {
     if (!from.IsEmpty()) {
       v8::Local<v8::String> string = from->ToString();
@@ -1264,7 +1314,7 @@ class Callback {
     handle.Reset(obj);
   }
 
-  explicit Callback(const v8::Handle<v8::Function> &fn) {
+  explicit Callback(const v8::Local<v8::Function> &fn) {
     HandleScope scope;
     v8::Local<v8::Object> obj = New<v8::Object>();
     handle.Reset(obj);
@@ -1291,19 +1341,19 @@ class Callback {
   v8::Local<v8::Function> operator*() const { return this->GetFunction(); }
 
   NAN_INLINE v8::Local<v8::Value> operator()(
-      v8::Handle<v8::Object> target
+      v8::Local<v8::Object> target
     , int argc = 0
-    , v8::Handle<v8::Value> argv[] = 0) const {
+    , v8::Local<v8::Value> argv[] = 0) const {
     return this->Call(target, argc, argv);
   }
 
   NAN_INLINE v8::Local<v8::Value> operator()(
       int argc = 0
-    , v8::Handle<v8::Value> argv[] = 0) const {
+    , v8::Local<v8::Value> argv[] = 0) const {
     return this->Call(argc, argv);
   }
 
-  NAN_INLINE void SetFunction(const v8::Handle<v8::Function> &fn) {
+  NAN_INLINE void SetFunction(const v8::Local<v8::Function> &fn) {
     HandleScope scope;
     Set(New(handle), kCallbackIndex, fn);
   }
@@ -1320,9 +1370,9 @@ class Callback {
   }
 
   NAN_INLINE v8::Local<v8::Value>
-  Call(v8::Handle<v8::Object> target
+  Call(v8::Local<v8::Object> target
      , int argc
-     , v8::Handle<v8::Value> argv[]) const {
+     , v8::Local<v8::Value> argv[]) const {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     return Call_(isolate, target, argc, argv);
@@ -1332,7 +1382,7 @@ class Callback {
   }
 
   NAN_INLINE v8::Local<v8::Value>
-  Call(int argc, v8::Handle<v8::Value> argv[]) const {
+  Call(int argc, v8::Local<v8::Value> argv[]) const {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     return Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv);
@@ -1348,13 +1398,14 @@ class Callback {
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   v8::Local<v8::Value> Call_(v8::Isolate *isolate
-                           , v8::Handle<v8::Object> target
+                           , v8::Local<v8::Object> target
                            , int argc
-                           , v8::Handle<v8::Value> argv[]) const {
+                           , v8::Local<v8::Value> argv[]) const {
     EscapableHandleScope scope;
 
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
+# if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     return scope.Escape(New(node::MakeCallback(
         isolate
       , target
@@ -1362,11 +1413,20 @@ class Callback {
       , argc
       , argv
     )));
+# else
+    return scope.Escape(node::MakeCallback(
+        isolate
+      , target
+      , callback
+      , argc
+      , argv
+    ));
+# endif
   }
 #else
-  v8::Local<v8::Value> Call_(v8::Handle<v8::Object> target
+  v8::Local<v8::Value> Call_(v8::Local<v8::Object> target
                            , int argc
-                           , v8::Handle<v8::Value> argv[]) const {
+                           , v8::Local<v8::Value> argv[]) const {
     EscapableHandleScope scope;
 
     v8::Local<v8::Function> callback = New(handle)->
@@ -1421,7 +1481,7 @@ class Callback {
   }
 
   NAN_INLINE void SaveToPersistent(
-      const v8::Handle<v8::String> &key, const v8::Local<v8::Value> &value) {
+      const v8::Local<v8::String> &key, const v8::Local<v8::Value> &value) {
     HandleScope scope;
     New(persistentHandle)->Set(key, value);
   }
@@ -1675,7 +1735,7 @@ NAN_INLINE v8::Local<v8::Value> Encode(
 }
 
 NAN_INLINE ssize_t DecodeBytes(
-    v8::Handle<v8::Value> val, enum Encoding encoding = BINARY) {
+    v8::Local<v8::Value> val, enum Encoding encoding = BINARY) {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::DecodeBytes(
       v8::Isolate::GetCurrent()
@@ -1694,7 +1754,7 @@ NAN_INLINE ssize_t DecodeBytes(
 NAN_INLINE ssize_t DecodeWrite(
     char *buf
   , size_t len
-  , v8::Handle<v8::Value> val
+  , v8::Local<v8::Value> val
   , enum Encoding encoding = BINARY) {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   return node::DecodeWrite(
@@ -1720,15 +1780,15 @@ NAN_INLINE ssize_t DecodeWrite(
 NAN_INLINE void SetPrototypeTemplate(
     v8::Local<v8::FunctionTemplate> templ
   , const char *name
-  , v8::Handle<v8::Data> value
+  , v8::Local<v8::Data> value
 ) {
   SetTemplate(templ->PrototypeTemplate(), name, value);
 }
 
 NAN_INLINE void SetPrototypeTemplate(
     v8::Local<v8::FunctionTemplate> templ
-  , v8::Handle<v8::String> name
-  , v8::Handle<v8::Data> value
+  , v8::Local<v8::String> name
+  , v8::Local<v8::Data> value
   , v8::PropertyAttribute attributes
 ) {
   SetTemplate(templ->PrototypeTemplate(), name, value, attributes);
@@ -1737,15 +1797,15 @@ NAN_INLINE void SetPrototypeTemplate(
 NAN_INLINE void SetInstanceTemplate(
     v8::Local<v8::FunctionTemplate> templ
   , const char *name
-  , v8::Handle<v8::Data> value
+  , v8::Local<v8::Data> value
 ) {
   SetTemplate(templ->InstanceTemplate(), name, value);
 }
 
 NAN_INLINE void SetInstanceTemplate(
     v8::Local<v8::FunctionTemplate> templ
-  , v8::Handle<v8::String> name
-  , v8::Handle<v8::Data> value
+  , v8::Local<v8::String> name
+  , v8::Local<v8::Data> value
   , v8::PropertyAttribute attributes
 ) {
   SetTemplate(templ->InstanceTemplate(), name, value, attributes);
@@ -1765,12 +1825,12 @@ NAN_INLINE void SetMethod(
 }
 
 NAN_INLINE void SetPrototypeMethod(
-    v8::Handle<v8::FunctionTemplate> recv
+    v8::Local<v8::FunctionTemplate> recv
   , const char* name, FunctionCallback callback) {
   HandleScope scope;
   v8::Local<v8::Function> fn = New<v8::FunctionTemplate>(
       callback
-    , v8::Handle<v8::Value>()
+    , v8::Local<v8::Value>()
     , New<v8::Signature>(recv))->GetFunction();
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   recv->PrototypeTemplate()->Set(fn_name, fn);
@@ -1780,11 +1840,11 @@ NAN_INLINE void SetPrototypeMethod(
 //=== Accessors and Such =======================================================
 
 inline void SetAccessor(
-    v8::Handle<v8::ObjectTemplate> tpl
-  , v8::Handle<v8::String> name
+    v8::Local<v8::ObjectTemplate> tpl
+  , v8::Local<v8::String> name
   , GetterCallback getter
   , SetterCallback setter = 0
-  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()
   , v8::AccessControl settings = v8::DEFAULT
   , v8::PropertyAttribute attribute = v8::None
   , imp::Sig signature = imp::Sig()) {
@@ -1802,7 +1862,6 @@ inline void SetAccessor(
       obj
     , imp::kGetterIndex
     , imp::GetWrapper<GetterCallback, imp::GetterWrapper>(getter));
-  v8::Local<v8::Value> val = New<v8::Value>(data);
 
   if (setter != 0) {
     SetInternalFieldPointer(
@@ -1812,8 +1871,8 @@ inline void SetAccessor(
             imp::SetterWrapper>(setter));
   }
 
-  if (!val.IsEmpty()) {
-    obj->SetInternalField(imp::kDataIndex, val);
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
   }
 
   tpl->SetAccessor(
@@ -1827,11 +1886,11 @@ inline void SetAccessor(
 }
 
 inline bool SetAccessor(
-    v8::Handle<v8::Object> obj
-  , v8::Handle<v8::String> name
+    v8::Local<v8::Object> obj
+  , v8::Local<v8::String> name
   , GetterCallback getter
   , SetterCallback setter = 0
-  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()
   , v8::AccessControl settings = v8::DEFAULT
   , v8::PropertyAttribute attribute = v8::None) {
   EscapableHandleScope scope;
@@ -1848,10 +1907,9 @@ inline bool SetAccessor(
       dataobj
     , imp::kGetterIndex
     , imp::GetWrapper<GetterCallback, imp::GetterWrapper>(getter));
-  v8::Local<v8::Value> val = New<v8::Value>(data);
 
-  if (!val.IsEmpty()) {
-    dataobj->SetInternalField(imp::kDataIndex, val);
+  if (!data.IsEmpty()) {
+    dataobj->SetInternalField(imp::kDataIndex, data);
   }
 
   if (setter) {
@@ -1872,13 +1930,13 @@ inline bool SetAccessor(
 }
 
 inline void SetNamedPropertyHandler(
-    v8::Handle<v8::ObjectTemplate> tpl
+    v8::Local<v8::ObjectTemplate> tpl
   , PropertyGetterCallback getter
   , PropertySetterCallback setter = 0
   , PropertyQueryCallback query = 0
   , PropertyDeleterCallback deleter = 0
   , PropertyEnumeratorCallback enumerator = 0
-  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
   HandleScope scope;
 
   imp::NativePropertyGetter getter_ =
@@ -1900,7 +1958,6 @@ inline void SetNamedPropertyHandler(
     , imp::kPropertyGetterIndex
     , imp::GetWrapper<PropertyGetterCallback,
           imp::PropertyGetterWrapper>(getter));
-  v8::Local<v8::Value> val = New<v8::Value>(data);
 
   if (setter) {
     SetInternalFieldPointer(
@@ -1934,8 +1991,8 @@ inline void SetNamedPropertyHandler(
             imp::PropertyEnumeratorWrapper>(enumerator));
   }
 
-  if (!val.IsEmpty()) {
-    obj->SetInternalField(imp::kDataIndex, val);
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
   }
 
 #if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
@@ -1953,13 +2010,13 @@ inline void SetNamedPropertyHandler(
 }
 
 inline void SetIndexedPropertyHandler(
-    v8::Handle<v8::ObjectTemplate> tpl
+    v8::Local<v8::ObjectTemplate> tpl
   , IndexGetterCallback getter
   , IndexSetterCallback setter = 0
   , IndexQueryCallback query = 0
   , IndexDeleterCallback deleter = 0
   , IndexEnumeratorCallback enumerator = 0
-  , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
   HandleScope scope;
 
   imp::NativeIndexGetter getter_ =
@@ -1981,7 +2038,6 @@ inline void SetIndexedPropertyHandler(
     , imp::kIndexPropertyGetterIndex
     , imp::GetWrapper<IndexGetterCallback,
           imp::IndexGetterWrapper>(getter));
-  v8::Local<v8::Value> val = New<v8::Value>(data);
 
   if (setter) {
     SetInternalFieldPointer(
@@ -2015,8 +2071,8 @@ inline void SetIndexedPropertyHandler(
             imp::IndexEnumeratorWrapper>(enumerator));
   }
 
-  if (!val.IsEmpty()) {
-    obj->SetInternalField(imp::kDataIndex, val);
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
   }
 
 #if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
@@ -2061,7 +2117,7 @@ class ObjectWrap : public node::ObjectWrap {
 
 inline
 void
-Export(v8::Handle<v8::Object> target, const char *name,
+Export(ADDON_REGISTER_FUNCTION_ARGS_TYPE target, const char *name,
     FunctionCallback f) {
   Set(target, New<v8::String>(name).ToLocalChecked(),
       New<v8::FunctionTemplate>(f)->GetFunction());
@@ -2070,26 +2126,26 @@ Export(v8::Handle<v8::Object> target, const char *name,
 //=== Tap Reverse Binding =====================================================
 
 struct Tap {
-  explicit Tap(v8::Handle<v8::Value> t) : t_() {
+  explicit Tap(v8::Local<v8::Value> t) : t_() {
     t_.Reset(To<v8::Object>(t).ToLocalChecked());
   }
 
   ~Tap() { t_.Reset(); }  // not sure if neccessary
 
   inline void plan(int i) {
-    v8::Handle<v8::Value> arg = New(i);
+    v8::Local<v8::Value> arg = New(i);
     MakeCallback(New(t_), "plan", 1, &arg);
   }
 
   inline void ok(bool isOk, const char *msg = NULL) {
-    v8::Handle<v8::Value> args[2];
+    v8::Local<v8::Value> args[2];
     args[0] = New(isOk);
     if (msg) args[1] = New(msg).ToLocalChecked();
     MakeCallback(New(t_), "ok", msg ? 2 : 1, args);
   }
 
   inline void pass(const char * msg = NULL) {
-    v8::Handle<v8::Value> hmsg;
+    v8::Local<v8::Value> hmsg;
     if (msg) hmsg = New(msg).ToLocalChecked();
     MakeCallback(New(t_), "pass", msg ? 1 : 0, &hmsg);
   }

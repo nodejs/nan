@@ -52,7 +52,7 @@ typedef void(*IndexQueryCallback)(
     const PropertyCallbackInfo<v8::Integer>&);
 
 namespace imp {
-typedef v8::Handle<v8::AccessorSignature> Sig;
+typedef v8::Local<v8::AccessorSignature> Sig;
 
 #define X(NAME)                                                                \
 struct NAME ## Wrapper {                                                       \

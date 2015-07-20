@@ -49,7 +49,7 @@ NAN_METHOD(CopyablePersistent) {
   info.GetReturnValue().Set(New(p));
 }
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("save1").ToLocalChecked()
     , New<v8::FunctionTemplate>(Save1)->GetFunction()

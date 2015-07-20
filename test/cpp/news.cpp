@@ -102,7 +102,7 @@ NAN_METHOD(NewSignature) {
       New<v8::FunctionTemplate>(NewSignature);
   v8::Local<v8::Signature> sig = New<v8::Signature>(tmpl);
   tmpl = New<v8::FunctionTemplate>(
-      NewSignature, v8::Handle<v8::Value>(), sig);
+      NewSignature, v8::Local<v8::Value>(), sig);
   info.GetReturnValue().Set(New("string").ToLocalChecked());
 }
 
@@ -162,7 +162,7 @@ NAN_METHOD(NewBoolean2) {
 #endif
 }
 
-void Init(v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("newNumber").ToLocalChecked()
     , New<v8::FunctionTemplate>(NewNumber)->GetFunction()

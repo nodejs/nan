@@ -12,7 +12,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 class MyObject : public node::ObjectWrap {
  public:
-  static void Init(v8::Handle<v8::Object> exports);
+  static NAN_MODULE_INIT(Init);
 
  private:
   MyObject();
@@ -31,7 +31,7 @@ MyObject::MyObject() {
 MyObject::~MyObject() {
 }
 
-void MyObject::Init(v8::Handle<v8::Object> exports) {
+NAN_MODULE_INIT(MyObject::Init) {
   // Prepare constructor template
   v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
   tpl->SetClassName(Nan::New<v8::String>("MyObject").ToLocalChecked());
@@ -40,7 +40,7 @@ void MyObject::Init(v8::Handle<v8::Object> exports) {
   SetPrototypeMethod(tpl, "call_emit", CallEmit);
 
   constructor.Reset(tpl->GetFunction());
-  Set(exports, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
+  Set(target, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
 }
 
 NAN_METHOD(MyObject::New) {
@@ -55,7 +55,7 @@ NAN_METHOD(MyObject::New) {
 }
 
 NAN_METHOD(MyObject::CallEmit) {
-  v8::Handle<v8::Value> argv[1] = {
+  v8::Local<v8::Value> argv[1] = {
     Nan::New("event").ToLocalChecked(),  // event name
   };
 
@@ -63,8 +63,4 @@ NAN_METHOD(MyObject::CallEmit) {
   info.GetReturnValue().SetUndefined();
 }
 
-void Init(v8::Handle<v8::Object> exports) {
-  MyObject::Init(exports);
-}
-
-NODE_MODULE(makecallback, Init)
+NODE_MODULE(makecallback, MyObject::Init)

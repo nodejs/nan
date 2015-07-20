@@ -14,7 +14,7 @@ template<typename T, typename M> class Persistent :
  public:
   NAN_INLINE Persistent() : v8::Persistent<T, M>() {}
 
-  template<typename S> NAN_INLINE Persistent(v8::Handle<S> that) :
+  template<typename S> NAN_INLINE Persistent(v8::Local<S> that) :
       v8::Persistent<T, M>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S, typename M2>
@@ -24,7 +24,7 @@ template<typename T, typename M> class Persistent :
   NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
 
   template <typename S>
-  NAN_INLINE void Reset(const v8::Handle<S> &other) {
+  NAN_INLINE void Reset(const v8::Local<S> &other) {
     v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
   }
 
@@ -62,7 +62,7 @@ class Global : public v8::Global<T> {
  public:
   NAN_INLINE Global() : v8::Global<T>() {}
 
-  template<typename S> NAN_INLINE Global(v8::Handle<S> that) :
+  template<typename S> NAN_INLINE Global(v8::Local<S> that) :
     v8::Global<T>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S>
@@ -72,7 +72,7 @@ class Global : public v8::Global<T> {
   NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
 
   template <typename S>
-  NAN_INLINE void Reset(const v8::Handle<S> &other) {
+  NAN_INLINE void Reset(const v8::Local<S> &other) {
     v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
   }
 
@@ -96,7 +96,7 @@ class Global : public v8::UniquePersistent<T> {
  public:
   NAN_INLINE Global() : v8::UniquePersistent<T>() {}
 
-  template<typename S> NAN_INLINE Global(v8::Handle<S> that) :
+  template<typename S> NAN_INLINE Global(v8::Local<S> that) :
     v8::UniquePersistent<T>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S>
@@ -106,7 +106,7 @@ class Global : public v8::UniquePersistent<T> {
   NAN_INLINE void Reset() { v8::PersistentBase<T>::Reset(); }
 
   template <typename S>
-  NAN_INLINE void Reset(const v8::Handle<S> &other) {
+  NAN_INLINE void Reset(const v8::Local<S> &other) {
     v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
   }
 

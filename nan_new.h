@@ -12,26 +12,26 @@
 namespace imp {  // scnr
 
 // TODO(agnat): Generalize
-template <typename T> v8::Local<T> To(v8::Handle<v8::Integer> i);
+template <typename T> v8::Local<T> To(v8::Local<v8::Integer> i);
 
 template <>
 inline
 v8::Local<v8::Integer>
-To<v8::Integer>(v8::Handle<v8::Integer> i) {
+To<v8::Integer>(v8::Local<v8::Integer> i) {
   return Nan::To<v8::Integer>(i).ToLocalChecked();
 }
 
 template <>
 inline
 v8::Local<v8::Int32>
-To<v8::Int32>(v8::Handle<v8::Integer> i) {
+To<v8::Int32>(v8::Local<v8::Integer> i) {
   return Nan::To<v8::Int32>(i).ToLocalChecked();
 }
 
 template <>
 inline
 v8::Local<v8::Uint32>
-To<v8::Uint32>(v8::Handle<v8::Integer> i) {
+To<v8::Uint32>(v8::Local<v8::Integer> i) {
   return Nan::To<v8::Uint32>(i).ToLocalChecked();
 }
 
@@ -66,8 +66,8 @@ struct Factory<v8::Context> : FactoryBase<v8::Context> {
   static inline
   return_t
   New( v8::ExtensionConfiguration* extensions = NULL
-     , v8::Handle<v8::ObjectTemplate> tmpl = v8::Handle<v8::ObjectTemplate>()
-     , v8::Handle<v8::Value> obj = v8::Handle<v8::Value>());
+     , v8::Local<v8::ObjectTemplate> tmpl = v8::Local<v8::ObjectTemplate>()
+     , v8::Local<v8::Value> obj = v8::Local<v8::Value>());
 };
 
 template <>
@@ -85,7 +85,7 @@ struct Factory<v8::Function> : FactoryBase<v8::Function> {
   static inline
   return_t
   New( FunctionCallback callback
-     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>());
+     , v8::Local<v8::Value> data = v8::Local<v8::Value>());
 };
 
 template <>
@@ -93,8 +93,8 @@ struct Factory<v8::FunctionTemplate> : FactoryBase<v8::FunctionTemplate> {
   static inline
   return_t
   New( FunctionCallback callback = NULL
-     , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
-     , v8::Handle<v8::Signature> signature = v8::Handle<v8::Signature>());
+     , v8::Local<v8::Value> data = v8::Local<v8::Value>()
+     , v8::Local<v8::Signature> signature = v8::Local<v8::Signature>());
 };
 
 template <>
@@ -139,7 +139,7 @@ struct Factory<v8::ObjectTemplate> : FactoryBase<v8::ObjectTemplate> {
 template <>
 struct Factory<v8::RegExp> : MaybeFactoryBase<v8::RegExp> {
   static inline return_t New(
-      v8::Handle<v8::String> pattern, v8::RegExp::Flags flags);
+      v8::Local<v8::String> pattern, v8::RegExp::Flags flags);
 };
 
 template <>
@@ -151,7 +151,7 @@ struct Factory<v8::Script> : MaybeFactoryBase<v8::Script> {
 
 template <>
 struct Factory<v8::Signature> : FactoryBase<v8::Signature> {
-  typedef v8::Handle<v8::FunctionTemplate> FTH;
+  typedef v8::Local<v8::FunctionTemplate> FTH;
   static inline return_t New(FTH receiver = FTH());
 };
 
@@ -168,7 +168,7 @@ struct Factory<v8::String> : MaybeFactoryBase<v8::String> {
 
 template <>
 struct Factory<v8::StringObject> : FactoryBase<v8::StringObject> {
-  static inline return_t New(v8::Handle<v8::String> value);
+  static inline return_t New(v8::Local<v8::String> value);
 };
 
 }  // end of namespace imp
@@ -235,7 +235,7 @@ New(A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
 template <typename T>
 typename imp::Factory<T>::return_t
 New( FunctionCallback callback
-      , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()) {
+      , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
     return imp::Factory<T>::New(callback, data);
 }
 
@@ -243,14 +243,17 @@ New( FunctionCallback callback
 template <typename T, typename A2>
 typename imp::Factory<T>::return_t
 New( FunctionCallback callback
-      , v8::Handle<v8::Value> data = v8::Handle<v8::Value>()
+      , v8::Local<v8::Value> data = v8::Local<v8::Value>()
       , A2 a2 = A2()) {
     return imp::Factory<T>::New(callback, data, a2);
 }
 
 // Convenience
 
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
 template <typename T> inline v8::Local<T> New(v8::Handle<T> h);
+#endif
+
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
 template <typename T, typename M>
     inline v8::Local<T> New(v8::Persistent<T, M> const& p);
@@ -322,7 +325,7 @@ New(ExternalOneByteStringResource * value) {
 
 inline
 imp::Factory<v8::RegExp>::return_t
-New(v8::Handle<v8::String> pattern, v8::RegExp::Flags flags) {
+New(v8::Local<v8::String> pattern, v8::RegExp::Flags flags) {
   return New<v8::RegExp>(pattern, flags);
 }
 

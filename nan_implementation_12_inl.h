@@ -44,8 +44,8 @@ Factory<v8::BooleanObject>::New(bool value) {
 
 Factory<v8::Context>::return_t
 Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
-                         , v8::Handle<v8::ObjectTemplate> tmpl
-                         , v8::Handle<v8::Value> obj) {
+                         , v8::Local<v8::ObjectTemplate> tmpl
+                         , v8::Local<v8::Value> obj) {
   return v8::Context::New(v8::Isolate::GetCurrent(), extensions, tmpl, obj);
 }
 
@@ -82,7 +82,7 @@ Factory<v8::External>::New(void * value) {
 
 Factory<v8::Function>::return_t
 Factory<v8::Function>::New( FunctionCallback callback
-                          , v8::Handle<v8::Value> data) {
+                          , v8::Local<v8::Value> data) {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
   static std::map<FunctionCallback, imp::FunctionWrapper*> cbmap;
@@ -115,8 +115,8 @@ Factory<v8::Function>::New( FunctionCallback callback
 
 Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( FunctionCallback callback
-                                  , v8::Handle<v8::Value> data
-                                  , v8::Handle<v8::Signature> signature) {
+                                  , v8::Local<v8::Value> data
+                                  , v8::Local<v8::Signature> signature) {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
   static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
@@ -208,14 +208,14 @@ Factory<v8::ObjectTemplate>::New() {
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
-    v8::Handle<v8::String> pattern
+    v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
   return v8::RegExp::New(GetCurrentContext(), pattern, flags);
 }
 #else
 Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
-    v8::Handle<v8::String> pattern
+    v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
   return Factory<v8::RegExp>::return_t(v8::RegExp::New(pattern, flags));
 }
@@ -348,7 +348,7 @@ Factory<v8::String>::New(ExternalOneByteStringResource * value) {
 //=== String Object ============================================================
 
 Factory<v8::StringObject>::return_t
-Factory<v8::StringObject>::New(v8::Handle<v8::String> value) {
+Factory<v8::StringObject>::New(v8::Local<v8::String> value) {
   return v8::StringObject::New(value).As<v8::StringObject>();
 }
 
@@ -391,10 +391,12 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
 
 //=== Presistents and Handles ==================================================
 
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
 template <typename T>
 inline v8::Local<T> New(v8::Handle<T> h) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), h);
 }
+#endif
 
 template <typename T, typename M>
 inline v8::Local<T> New(v8::Persistent<T, M> const& p) {

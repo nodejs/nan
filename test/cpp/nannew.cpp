@@ -108,12 +108,12 @@ NAN_METHOD(testContext) {
   t.ok(_( assertType<Context>( New<Context>(&extensions))));
   t.ok(_( assertType<Context>(
           New<Context>(static_cast<ExtensionConfiguration *>(NULL)
-          , Handle<ObjectTemplate>()))));
+          , Local<ObjectTemplate>()))));
   t.ok(_( assertType<Context>(
-          New<Context>(&extensions, Handle<ObjectTemplate>()))));
+          New<Context>(&extensions, Local<ObjectTemplate>()))));
   t.ok(_( assertType<Context>(
           New<Context>(&extensions
-          , Handle<ObjectTemplate>(), Handle<Value>()))));
+          , Local<ObjectTemplate>(), Local<Value>()))));
 
   info.GetReturnValue().SetUndefined();
 }
@@ -345,19 +345,6 @@ NAN_METHOD(testStringObject) {
 }
 #undef V
 
-template <typename T> Handle<T> asHandle(Local<T> l) { return l; }
-NAN_METHOD(testHandles) {
-  Tap t(info[0]);
-
-  t.plan(2);
-
-  t.ok(_( assertType<String>(
-      New( asHandle(New("foo").ToLocalChecked())))));
-  t.ok(_( assertType<Uint32>( New( asHandle(New(5u))))));
-
-  info.GetReturnValue().SetUndefined();
-}
-
 NAN_METHOD(testPersistents) {
   Tap t(info[0]);
 
@@ -456,38 +443,37 @@ NAN_METHOD(newExternal) {
   info.GetReturnValue().Set(New<External>(&ttt));
 }
 
-void Init(Handle<Object> exports) {
-  NAN_EXPORT(exports, testArray);
-  NAN_EXPORT(exports, testBoolean);
-  NAN_EXPORT(exports, testBooleanObject);
-  NAN_EXPORT(exports, testContext);
-  NAN_EXPORT(exports, testDate);
-  NAN_EXPORT(exports, testExternal);
-  NAN_EXPORT(exports, testFunction);
-  NAN_EXPORT(exports, testFunctionTemplate);
-  NAN_EXPORT(exports, testNumber);
-  NAN_EXPORT(exports, testNumberObject);
-  NAN_EXPORT(exports, testObject);
-  NAN_EXPORT(exports, testObjectTemplate);
-  NAN_EXPORT(exports, testScript);
-  NAN_EXPORT(exports, testSignature);
-  NAN_EXPORT(exports, testString);
-  NAN_EXPORT(exports, testStringObject);
+NAN_MODULE_INIT(Init) {
+  NAN_EXPORT(target, testArray);
+  NAN_EXPORT(target, testBoolean);
+  NAN_EXPORT(target, testBooleanObject);
+  NAN_EXPORT(target, testContext);
+  NAN_EXPORT(target, testDate);
+  NAN_EXPORT(target, testExternal);
+  NAN_EXPORT(target, testFunction);
+  NAN_EXPORT(target, testFunctionTemplate);
+  NAN_EXPORT(target, testNumber);
+  NAN_EXPORT(target, testNumberObject);
+  NAN_EXPORT(target, testObject);
+  NAN_EXPORT(target, testObjectTemplate);
+  NAN_EXPORT(target, testScript);
+  NAN_EXPORT(target, testSignature);
+  NAN_EXPORT(target, testString);
+  NAN_EXPORT(target, testStringObject);
 
-  NAN_EXPORT(exports, testHandles);
-  NAN_EXPORT(exports, testPersistents);
+  NAN_EXPORT(target, testPersistents);
 
-  NAN_EXPORT(exports, testRegression212);
-  NAN_EXPORT(exports, testRegression242);
+  NAN_EXPORT(target, testRegression212);
+  NAN_EXPORT(target, testRegression242);
 
-  NAN_EXPORT(exports, newIntegerWithValue);
-  NAN_EXPORT(exports, newNumberWithValue);
-  NAN_EXPORT(exports, newUint32WithValue);
-  NAN_EXPORT(exports, newStringFromChars);
-  NAN_EXPORT(exports, newStringFromCharsWithLength);
-  NAN_EXPORT(exports, newStringFromStdString);
+  NAN_EXPORT(target, newIntegerWithValue);
+  NAN_EXPORT(target, newNumberWithValue);
+  NAN_EXPORT(target, newUint32WithValue);
+  NAN_EXPORT(target, newStringFromChars);
+  NAN_EXPORT(target, newStringFromCharsWithLength);
+  NAN_EXPORT(target, newStringFromStdString);
 
-  NAN_EXPORT(exports, newExternal);
+  NAN_EXPORT(target, newExternal);
 }
 
 }  // end of anonymous namespace

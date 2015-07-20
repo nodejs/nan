@@ -41,7 +41,7 @@ NAN_METHOD(CallAsFunction) {
   Callback(info[0].As<v8::Function>())();
 }
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("globalContext").ToLocalChecked()
     , New<v8::FunctionTemplate>(GlobalContext)->GetFunction()
