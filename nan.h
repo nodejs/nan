@@ -47,9 +47,9 @@
 # ifndef UV_VERSION_PATCH
 #  define UV_VERSION_PATCH 0
 # endif
-# define NAUV_UVVERSION  ((UV_VERSION_MAJOR << 16) | \
-                     (UV_VERSION_MINOR <<  8) | \
-                     (UV_VERSION_PATCH))
+# define NAUV_UVVERSION ((UV_VERSION_MAJOR << 16) | \
+                         (UV_VERSION_MINOR <<  8) | \
+                         (UV_VERSION_PATCH))
 #else
 # define NAUV_UVVERSION 0x000b00
 #endif
