@@ -9,6 +9,7 @@ Due to the evolution of the V8 API, it is necessary for NAN to provide a wrapper
  - <a href="#api_nan_copyable_persistent_traits"><b><code>Nan::CopyablePersistentTraits & v8::CopyablePersistentTraits</code></b></a>
  - <a href="#api_nan_persistent"><b><code>Nan::Persistent</code></b></a>
  - <a href="#api_nan_global"><b><code>Nan::Global</code></b></a>
+ - <a href="#api_nan_weak_callback_info"><b><code>Nan::WeakCallbackInfo</code></b></a>
 
 <a name="api_nan_persistent_base"></a>
 ### Nan::PersistentBase & v8::PersistentBase
@@ -228,3 +229,42 @@ template<typename T> class Global : public PersistentBase<T> {
 ```
 
 See the V8 documentation for [`Global`](https://v8docs.nodesource.com/io.js-3.0/d5/d40/classv8_1_1_global.html) for further information.
+
+<a name="api_nan_weak_callback_info"></a>
+## Nan::WeakCallbackInfo
+
+`Nan::WeakCallbackInfo` is used as an argument when setting a persistent reference as weak. You may need to free any external resources attached to the object.
+
+Definition:
+
+```c++
+template<typename T> class WeakCallbackInfo {
+ public:
+  typedef void (*Callback)(const WeakCallbackInfo<T>& data);
+
+  v8::Isolate *GetIsolate() const;
+
+  /**
+   * Get the parameter that was associated with the weak handle.
+   */
+  T *GetParameter() const;
+
+  /**
+   * Get pointer from internal field, index can be 0 or 1.
+   */
+  void *GetInternalField(int index) const;
+};
+```
+
+Example usage:
+
+```c++
+void weakCallback(const WeakCallbackInfo<int> &data) {
+  int *parameter = data.GetParameter();
+  delete parameter;
+}
+
+Persistent<v8::Object> obj;
+int *data = new int(0);
+obj.SetWeak(data, callback, WeakCallbackType::kParameter);
+```
