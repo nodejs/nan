@@ -292,9 +292,6 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_dispose_persistent"><b><code>NanDisposePersistent</code></b></a>
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
  * <a href="#api_nan_make_weak_persistent"><b><code>NanMakeWeakPersistent</code></b></a>
- * <a href="#api_nan_set_template"><b><code>NanSetTemplate</code></b></a>
- * <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a>
- * <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
  * <a href="#api_nan_fatal_exception"><b><code>NanFatalException</code></b></a>
  * <a href="#api_nan_errno_exception"><b><code>NanErrnoException</code></b></a>
@@ -873,21 +870,6 @@ Local<Function> func;
 int *parameter = new int(0);
 NanMakeWeakPersistent(func, parameter, &weakCallback);
 ```
-
-<a name="api_nan_set_template"></a>
-### NanSetTemplate(templ, name, value [, attributes])
-
-Use to add properties on object and function templates.
-
-<a name="api_nan_set_prototype_template"></a>
-### NanSetPrototypeTemplate(templ, name, value [, attributes])
-
-Use to add prototype properties on function templates.
-
-<a name="api_nan_set_instance_template"></a>
-### NanSetInstanceTemplate(templ, name, value [, attributes])
-
-Use to add instance properties on function templates.
 
 <a name="api_nan_make_callback"></a>
 ### NanMakeCallback(target, func, argc, argv)
