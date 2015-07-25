@@ -5,6 +5,7 @@ Across the versions of V8 supported by NAN, JavaScript-accessible method signatu
 * **Method argument types**
  - <a href="#api_nan_function_callback_info"><b><code>Nan::FunctionCallbackInfo</code></b></a>
  - <a href="#api_nan_property_callback_info"><b><code>Nan::PropertyCallbackInfo</code></b></a>
+ - <a href="#api_nan_property_callback_info"><b><code>Nan::ReturnValue</code></b></a>
 * **Method declarations**
  - <a href="#api_nan_method"><b>Method declaration</b></a>
  - <a href="#api_nan_getter"><b>Getter declaration</b></a>
@@ -33,34 +34,84 @@ Across the versions of V8 supported by NAN, JavaScript-accessible method signatu
 
 `Nan::FunctionCallbackInfo` should be used in place of [`v8::FunctionCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html), even with older versions of Node where `v8::FunctionCallbackInfo` does not exist.
 
-The following methods are available:
+Definition:
 
-* `Nan::ReturnValue<T> GetReturnValue()`
-* `v8::Local<v8::Function> Callee()`
-* `v8::Local<v8::Value> Data()`
-* `v8::Local<v8::Object> Holder()`
-* `bool IsConstructCall()`
-* `int Length()`
-* `v8::Local<v8::Value> operator[](int i)`
-* `v8::Local<v8::Object> This()`
-* `v8::Isolate *GetIsolate()`
+```c++
+template<typename T> class FunctionCallbackInfo {
+ public:
+  ReturnValue<T> GetReturnValue() const;
+  v8::Local<v8::Function> Callee();
+  v8::Local<v8::Value> Data();
+  v8::Local<v8::Object> Holder();
+  bool IsConstructCall();
+  int Length() const;
+  v8::Local<v8::Value> operator[](int i) const;
+  v8::Local<v8::Object> This() const;
+  v8::Isolate *GetIsolate() const;
+};
+```
 
-See the [`v8::FunctionCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html) documentation for usage details on these. Note that `Nan::ReturnValue` is also a mirror of the equivalent `v8::ReturnValue` type for similar reasons.
+See the [`v8::FunctionCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from methods.
 
 <a name="api_nan_property_callback_info"></a>
 ### Nan::PropertyCallbackInfo
 
 `Nan::PropertyCallbackInfo` should be used in place of [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html), even with older versions of Node where `v8::PropertyCallbackInfo` does not exist.
 
-The following methods are available:
+Definition:
 
-* `v8::Isolate* GetIsolate()`
-* `v8::Local<v8::Value> Data()`
-* `v8::Local<v8::Object> This()`
-* `v8::Local<v8::Object> Holder()`
-* `Nan::ReturnValue<T> GetReturnValue()`
+```c++
+template<typename T> class PropertyCallbackInfo : public PropertyCallbackInfoBase<T> {
+ public:
+  ReturnValue<T> GetReturnValue() const;
+  v8::Isolate* GetIsolate() const;
+  v8::Local<v8::Value> Data() const;
+  v8::Local<v8::Object> This() const;
+  v8::Local<v8::Object> Holder() const;
+};
+```
 
-See the [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html) documentation for usage details on these. Note that `Nan::ReturnValue` is also a mirror of the equivalent `v8::ReturnValue` type for similar reasons.
+See the [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from property accessor methods.
+
+<a name="api_nan_return_value"></a>
+### Nan::ReturnValue
+
+`Nan::ReturnValue` is used in place of [`v8::ReturnValue](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) on both [`Nan::FunctionCallbackInfo`](#api_nan_function_callback_info) and [`Nan::PropertyCallbackInfo`](#api_nan_property_callback_info) as the return type of `GetReturnValue()`.
+
+Example usage:
+
+```c++
+void EmptyArray(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  info.GetReturnValue().Set(Nan::New<v8::Array>());
+}
+```
+
+Definition:
+
+```c++
+template<typename T> class ReturnValue {
+ public:
+  // Handle setters
+  template <typename S> void Set(const v8::Local<S> &handle);
+  template <typename S> void Set(const Nan::Global<S> &handle);
+
+  // Fast primitive setters
+  void Set(bool value);
+  void Set(double i);
+  void Set(int32_t i);
+  void Set(uint32_t i);
+
+  // Fast JS primitive setters
+  void SetNull();
+  void SetUndefined();
+  void SetEmptyString();
+
+  // Convenience getter for isolate
+  v8::Isolate *GetIsolate() const;
+};
+```
+
+See the documentation on [`v8::ReturnValue](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) for further information on this.
 
 <a name="api_nan_method"></a>
 ### Method declaration
@@ -68,8 +119,15 @@ See the [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/d
 JavaScript-accessible methods should be declared with the following signature to form a `Nan::FunctionCallback`:
 
 ```c++
-void MethodName(const Nan::FunctionCallbackInfo<v8::Value>& info);
+typedef void(*FunctionCallback)(const FunctionCallbackInfo<v8::Value>&);
 ```
+
+Example:
+
+```c++
+void MethodName(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  ...
+}
 
 You do not need to declare a new `HandleScope` within a method as one is implicitly created for you.
 
@@ -127,8 +185,17 @@ Use [`Nan::SetPrototypeMethod`](#api_nan_set_prototype_method) to attach a metho
 JavaScript-accessible getters should be declared with the following signature to form a `Nan::GetterCallback`:
 
 ```c++
+typedef void(*GetterCallback)(v8::Local<v8::String>,
+                              const PropertyCallbackInfo<v8::Value>&);
+```
+
+Example:
+
+```c++
 void GetterName(v8::Local<v8::String> property,
-                const Nan::PropertyCallbackInfo<v8::Value>& info);
+                const Nan::PropertyCallbackInfo<v8::Value>& info) {
+  ...
+}
 ```
 
 You do not need to declare a new `HandleScope` within a getter as one is implicitly created for you.
@@ -141,9 +208,19 @@ A helper macro `NAN_GETTER(methodname)` exists, compatible with NAN v1 method de
 JavaScript-accessible setters should be declared with the following signature to form a <b><code>Nan::SetterCallback</code></b>:
 
 ```c++
+typedef void(*SetterCallback)(v8::Local<v8::String>,
+                              v8::Local<v8::Value>,
+                              const PropertyCallbackInfo<void>&);
+```
+
+Example:
+
+```c++
 void SetterName(v8::Local<v8::String> property,
                 v8::Local<v8::Value> value,
-                const Nan::PropertyCallbackInfo<v8::Value>& info);
+                const Nan::PropertyCallbackInfo<v8::Value>& info) {
+  ...
+}
 ```
 
 You do not need to declare a new `HandleScope` within a setter as one is implicitly created for you.
@@ -156,8 +233,17 @@ A helper macro `NAN_SETTER(methodname)` exists, compatible with NAN v1 method de
 JavaScript-accessible property getters should be declared with the following signature to form a <b><code>Nan::PropertyGetterCallback</code></b>:
 
 ```c++
+typedef void(*PropertyGetterCallback)(v8::Local<v8::String>,
+                                      const PropertyCallbackInfo<v8::Value>&);
+```
+
+Example:
+
+```c++
 void PropertyGetterName(v8::Local<v8::String> property,
-                        const Nan::PropertyCallbackInfo<v8::Value>& info);
+                        const Nan::PropertyCallbackInfo<v8::Value>& info) {
+  ...
+}
 ```
 
 You do not need to declare a new `HandleScope` within a property getter as one is implicitly created for you.
@@ -169,6 +255,14 @@ A helper macro `NAN_PROPERTY_GETTER(methodname)` exists, compatible with NAN v1 
 ### Property setter declaration
 
 JavaScript-accessible property setters should be declared with the following signature to form a <b><code>Nan::PropertySetterCallback</code></b>:
+
+```c++
+typedef void(*PropertySetterCallback)(v8::Local<v8::String>,
+                                      v8::Local<v8::Value>,
+                                      const PropertyCallbackInfo<v8::Value>&);
+```
+
+Example:
 
 ```c++
 void PropertySetterName(v8::Local<v8::String> property,
@@ -186,6 +280,12 @@ A helper macro `NAN_PROPERTY_SETTER(methodname)` exists, compatible with NAN v1 
 JavaScript-accessible property enumerators should be declared with the following signature to form a <b><code>Nan::PropertyEnumeratorCallback</code></b>:
 
 ```c++
+typedef void(*PropertyEnumeratorCallback)(const PropertyCallbackInfo<v8::Array>&);
+```
+
+Example:
+
+```c++
 void PropertyEnumeratorName(const Nan::PropertyCallbackInfo<v8::Array>& info);
 ```
 
@@ -197,6 +297,13 @@ A helper macro `NAN_PROPERTY_ENUMERATOR(methodname)` exists, compatible with NAN
 ### Property deleter declaration
 
 JavaScript-accessible property deleters should be declared with the following signature to form a <b><code>Nan::PropertyDeleterCallback</code></b>:
+
+```c++
+typedef void(*PropertyDeleterCallback)(v8::Local<v8::String>,
+                                       const PropertyCallbackInfo<v8::Boolean>&);
+```
+
+Example:
 
 ```c++
 void PropertyDeleterName(v8::Local<v8::String> property,
@@ -213,6 +320,13 @@ A helper macro `NAN_PROPERTY_DELETER(methodname)` exists, compatible with NAN v1
 JavaScript-accessible property query methods should be declared with the following signature to form a <b><code>Nan::PropertyQueryCallback</code></b>:
 
 ```c++
+typedef void(*PropertyQueryCallback)(v8::Local<v8::String>,
+                                     const PropertyCallbackInfo<v8::Integer>&);
+```
+
+Example:
+
+```c++
 void PropertyQueryName(v8::Local<v8::String> property,
                        const Nan::PropertyCallbackInfo<v8::Integer>& info);
 ```
@@ -227,6 +341,13 @@ A helper macro `NAN_PROPERTY_QUERY(methodname)` exists, compatible with NAN v1 m
 JavaScript-accessible index getter methods should be declared with the following signature to form a <b><code>Nan::IndexGetterCallback</code></b>:
 
 ```c++
+typedef void(*IndexGetterCallback)(uint32_t,
+                                   const PropertyCallbackInfo<v8::Value>&);
+```
+
+Example:
+
+```c++
 void IndexGetterName(uint32_t index, const PropertyCallbackInfo<v8::Value>& info);
 ```
 
@@ -238,6 +359,14 @@ A helper macro `NAN_INDEX_GETTER(methodname)` exists, compatible with NAN v1 met
 ### Index setter declaration
 
 JavaScript-accessible index setter methods should be declared with the following signature to form a <b><code>Nan::IndexSetterCallback</code></b>:
+
+```c++
+typedef void(*IndexSetterCallback)(uint32_t,
+                                   v8::Local<v8::Value>,
+                                   const PropertyCallbackInfo<v8::Value>&);
+```
+
+Example:
 
 ```c++
 void IndexSetterName(uint32_t index,
@@ -255,6 +384,12 @@ A helper macro `NAN_INDEX_SETTER(methodname)` exists, compatible with NAN v1 met
 JavaScript-accessible index enumerator methods should be declared with the following signature to form a <b><code>Nan::IndexEnumeratorCallback</code></b>:
 
 ```c++
+typedef void(*IndexEnumeratorCallback)(const PropertyCallbackInfo<v8::Array>&);
+```
+
+Example:
+
+```c++
 void IndexEnumeratorName(const PropertyCallbackInfo<v8::Array>& info);
 ```
 
@@ -268,6 +403,13 @@ A helper macro `NAN_INDEX_ENUMERATOR(methodname)` exists, compatible with NAN v1
 JavaScript-accessible index deleter methods should be declared with the following signature to form a <b><code>Nan::IndexDeleterCallback</code></b>:
 
 ```c++
+typedef void(*IndexDeleterCallback)(uint32_t,
+                                    const PropertyCallbackInfo<v8::Boolean>&);
+```
+
+Example:
+
+```c++
 void IndexDeleterName(uint32_t index, const PropertyCallbackInfo<v8::Boolean>& info);
 ```
 
@@ -279,6 +421,13 @@ A helper macro `NAN_INDEX_DELETER(methodname)` exists, compatible with NAN v1 me
 ### Index query declaration
 
 JavaScript-accessible index query methods should be declared with the following signature to form a <b><code>Nan::IndexQueryCallback</code></b>:
+
+```c++
+typedef void(*IndexQueryCallback)(uint32_t,
+                                  const PropertyCallbackInfo<v8::Integer>&);
+```
+
+Example:
 
 ```c++
 void IndexQueryName(uint32_t index, const PropertyCallbackInfo<v8::Integer>& info);
