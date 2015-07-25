@@ -10,6 +10,7 @@ Due to the evolution of the V8 API, it is necessary for NAN to provide a wrapper
  - <a href="#api_nan_persistent"><b><code>Nan::Persistent</code></b></a>
  - <a href="#api_nan_global"><b><code>Nan::Global</code></b></a>
  - <a href="#api_nan_weak_callback_info"><b><code>Nan::WeakCallbackInfo</code></b></a>
+ - <a href="#api_nan_weak_callback_type"><b><code>Nan::WeakCallbackType</code></b></a>
 
 <a name="api_nan_persistent_base"></a>
 ### Nan::PersistentBase & v8::PersistentBase
@@ -230,10 +231,13 @@ template<typename T> class Global : public PersistentBase<T> {
 
 See the V8 documentation for [`Global`](https://v8docs.nodesource.com/io.js-3.0/d5/d40/classv8_1_1_global.html) for further information.
 
+<a name="api_nan_weak_callback_type"></a>
+## Nan::WeakCallbackType
+
 <a name="api_nan_weak_callback_info"></a>
 ## Nan::WeakCallbackInfo
 
-`Nan::WeakCallbackInfo` is used as an argument when setting a persistent reference as weak. You may need to free any external resources attached to the object.
+`Nan::WeakCallbackInfo` is used as an argument when setting a persistent reference as weak. You may need to free any external resources attached to the object. It is a mirror of `v8:WeakCallbackInfo` as found in newer versions of V8.
 
 Definition:
 
@@ -267,4 +271,17 @@ void weakCallback(const WeakCallbackInfo<int> &data) {
 Persistent<v8::Object> obj;
 int *data = new int(0);
 obj.SetWeak(data, callback, WeakCallbackType::kParameter);
+```
+
+See the V8 documentation for [`WeakCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/d8/d06/classv8_1_1_weak_callback_info.html) for further information.
+
+<a name="api_nan_weak_callback_type"></a>
+## Nan::WeakCallbackType
+
+_TODO: explain this_
+
+Definition:
+
+```c++
+enum class WeakCallbackType { kParameter, kInternalFields };
 ```
