@@ -271,8 +271,6 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
  * <a href="#api_nan_escapable_scope"><b><code>NanEscapableScope</code></b></a>
  * <a href="#api_nan_escape_scope"><b><code>NanEscapeScope</code></b></a>
- * <a href="#api_nan_get_internal_field_pointer"><b><code>NanGetInternalFieldPointer</code></b></a>
- * <a href="#api_nan_set_internal_field_pointer"><b><code>NanSetInternalFieldPointer</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
  * <del><a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a></del>
  * <del><a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a></del>
@@ -307,7 +305,6 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_decode_write"><b><code>NanDecodeWrite</code></b></a>
  * <a href="#api_nan_compile_script"><b><code>NanCompileScript</code></b></a>
  * <a href="#api_nan_run_script"><b><code>NanRunScript</code></b></a>
- * <a href="#api_nan_adjust_external_memory"><b><code>NanAdjustExternalMemory</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
@@ -516,27 +513,6 @@ Handle<String> Foo::Bar() {
 ### Local&lt;T&gt; NanEscapeScope(Handle&lt;T&gt; value);
 Use together with `NanEscapableScope` to escape the scope. Corresponds to `HandleScope::Close` or `EscapableHandleScope::Escape`.
 
-<a name="api_nan_get_internal_field_pointer"></a>
-### void * NanGetInternalFieldPointer(Handle&lt;Object&gt;, int)
-
-Gets a pointer to the internal field with at `index` from a V8 `Object` handle.
-
-```c++
-Local<Object> obj;
-...
-NanGetInternalFieldPointer(obj, 0);
-```
-<a name="api_nan_set_internal_field_pointer"></a>
-### void NanSetInternalFieldPointer(Handle&lt;Object&gt;, int, void *)
-
-Sets the value of the internal field at `index` on a V8 `Object` handle.
-
-```c++
-static Persistent<Function> dataWrapperCtor;
-...
-Local<Object> wrapper = NanNew(dataWrapperCtor)->NewInstance();
-NanSetInternalFieldPointer(wrapper, 0, this);
-```
 
 <a name="api_nan_object_wrap_handle"></a>
 ### Local&lt;Object&gt; NanObjectWrapHandle(const node::ObjectWrap &amp;obj)
@@ -962,11 +938,6 @@ Use to create new scripts bound to the current context.
 ### NanRunScript(script)
 
 Use to run both bound and unbound scripts.
-
-<a name="api_nan_adjust_external_memory"></a>
-### NanAdjustExternalMemory(int change_in_bytes)
-
-Simply does `AdjustAmountOfExternalAllocatedMemory`, note that the argument and returned value have type `int`.
 
 <a name="api_nan_callback"></a>
 ### NanCallback
