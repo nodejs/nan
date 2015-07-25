@@ -1,11 +1,20 @@
-#Asyncworker
-These classes make working with asynchronous code easier.
+## Asynchronous work helpers
 
-##AsyncWorker
-`AsyncWorker` is an abstract class that you can subclass to have much of the annoying async queuing and handling taken care of for you.
-It can even store arbitrary V8 objects for you and have them persist while the async work is in progress.
+`Nan::AsyncWorker` and `Nan::AsyncProgressWorker` are helper classes that make working with asynchronous code easier.
+
+ - <a href="#api_nan_async_worker"><b><code>Nan::AsyncWorker</code></b></a>
+ - <a href="#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorker</code></b></a>
+ - <a href="#api_nan_async_queue_worker"><b><code>Nan::AsyncQueueWorker</code></b></a>
+
+<a name="api_nan_async_worker"></a>
+### Nan::AsyncWorker
+
+`Nan::AsyncWorker` is an _abstract_ class that you can subclass to have much of the annoying asynchronous queuing and handling taken care of for you. It can even store arbitrary V8 objects for you and have them persist while the asynchronous work is in progress.
+
+Definition:
+
 ```c++
-/* abstract */ class AsyncWorker {
+class AsyncWorker {
  public:
   explicit AsyncWorker(Callback *callback_);
 
@@ -13,19 +22,17 @@ It can even store arbitrary V8 objects for you and have them persist while the a
 
   virtual void WorkComplete();
 
-  void SaveToPersistent(
-      const char *key, const v8::Local<v8::Value> &value);
+  void SaveToPersistent(const char *key, const v8::Local<v8::Value> &value);
 
-  void SaveToPersistent(
-      const v8::Handle<v8::String> &key, const v8::Local<v8::Value> &value);
+  void SaveToPersistent(const v8::Handle<v8::String> &key,
+                        const v8::Local<v8::Value> &value);
 
-  void SaveToPersistent(
-      uint32_t index, const v8::Local<v8::Value> &value);
+  void SaveToPersistent(uint32_t index,
+                        const v8::Local<v8::Value> &value);
 
   v8::Local<v8::Value> GetFromPersistent(const char *key) const;
 
-  v8::Local<v8::Value>
-  GetFromPersistent(const v8::Local<v8::String> &key) const;
+  v8::Local<v8::Value> GetFromPersistent(const v8::Local<v8::String> &key) const;
 
   v8::Local<v8::Value> GetFromPersistent(uint32_t index) const;
 
@@ -37,6 +44,7 @@ It can even store arbitrary V8 objects for you and have them persist while the a
 
  protected:
   Persistent<v8::Object> persistentHandle;
+
   Callback *callback;
 
   virtual void HandleOKCallback();
@@ -49,17 +57,15 @@ It can even store arbitrary V8 objects for you and have them persist while the a
 };
 ```
 
-###Example
-```c++
-Callback callback;
-AsyncWorker *worker = new AsyncWorker(callback);
-```
+<a name="api_nan_async_progress_worker"></a>
+### Nan::AsyncProgressWorker
 
-##AsyncProgressWorker
-`AsyncProgressWorker` is an abstract class that you can subclass to have much of the annoying async queuing and handling taken care of for you.
-It is derived from `AsyncWorker` with additional progress reporting callbacks.
+`Nan::AsyncProgressWorker` is an _abstract_ class that extends `Nan::AsyncWorker` and adds additional progress reporting callbacks that can be used during the asynchronous work execution to provide progress data back to JavaScript.
+
+Definition:
+
 ```c++
-/* abstract */ class AsyncProgressWorker : public AsyncWorker {
+class AsyncProgressWorker : public AsyncWorker {
  public:
   explicit AsyncProgressWorker(Callback *callback_);
 
@@ -73,27 +79,19 @@ It is derived from `AsyncWorker` with additional progress reporting callbacks.
   };
 
   virtual void Execute(const ExecutionProgress& progress) = 0;
+
   virtual void HandleProgressCallback(const char *data, size_t size) = 0;
 
   virtual void Destroy();
 ```
 
-###Example
-```c++
-Callback callback;
-AsyncProgressWorker *worker = new AsyncProgressWorker(callback);
-```
+<a name="api_nan_async_queue_worker"></a>
+### Nan::AsyncQueueWorker
 
-##AsyncQueueWorker
-`AsyncQueueWorker` will run a `AsyncWorker` asynchronously via libuv.
-Both the `execute` and `after_work` steps are taken care of for you.
-Most of the logic for this is embedded in `AsyncWorker`.
+`Nan::AsyncQueueWorker` will run a `Nan::AsyncWorker` asynchronously via libuv. Both the `execute` and `after_work` steps are taken care of for you. Most of the logic for this is embedded in `Nan::AsyncWorker`.
+
+Definition:
+
 ```c++
 void AsyncQueueWorker(AsyncWorker *);
-```
-
-###Example
-```c++
-AsyncWorker *worker = new AsyncWorker(/* ... */);
-AsyncQueueWorker(worker);
 ```
