@@ -270,31 +270,17 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_null"><b><code>NanNull</code></b></a>
  * <a href="#api_nan_true"><b><code>NanTrue</code></b></a>
  * <a href="#api_nan_false"><b><code>NanFalse</code></b></a>
- * <a href="#api_nan_return_value"><b><code>NanReturnValue</code></b></a>
- * <a href="#api_nan_return_undefined"><b><code>NanReturnUndefined</code></b></a>
- * <a href="#api_nan_return_null"><b><code>NanReturnNull</code></b></a>
- * <a href="#api_nan_return_empty_string"><b><code>NanReturnEmptyString</code></b></a>
- * <a href="#api_nan_return_this"><b><code>NanReturnThis</code></b></a>
- * <a href="#api_nan_return_holder"><b><code>NanReturnHolder</code></b></a>
  * <a href="#api_nan_scope"><b><code>NanScope</code></b></a>
  * <a href="#api_nan_escapable_scope"><b><code>NanEscapableScope</code></b></a>
  * <a href="#api_nan_escape_scope"><b><code>NanEscapeScope</code></b></a>
  * <a href="#api_nan_object_wrap_handle"><b><code>NanObjectWrapHandle</code></b></a>
- * <del><a href="#api_nan_symbol"><b><code>NanSymbol</code></b></a></del>
- * <del><a href="#api_nan_get_pointer_safe"><b><code>NanGetPointerSafe</code></b></a></del>
- * <del><a href="#api_nan_set_pointer_safe"><b><code>NanSetPointerSafe</code></b></a></del>
- * <del><a href="#api_nan_raw_string"><b><code>NanRawString</code></b></a></del>
- * <del><a href="#api_nan_c_string"><b><code>NanCString</code></b></a></del>
  * <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>
  * <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a>
  * <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>
- * <del><a href="#api_nan_boolean_option_value"><b><code>NanBooleanOptionValue</code></b></a></del>
- * <del><a href="#api_nan_uint32_option_value"><b><code>NanUInt32OptionValue</code></b></a></del>
  * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanRangeError</code></b>, <b><code>NanReferenceError</code></b>, <b><code>NanSyntaxError</code></b>, <b><code>NanTypeError</code></b></a>
  * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowReferenceError</code></b>, <b><code>NanThrowSyntaxError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
- * <del><a href="#api_nan_new_context_handle"><b><code>NanNewContextHandle</code></b></a></del>
  * <a href="#api_nan_get_current_context"><b><code>NanGetCurrentContext</code></b></a>
  * <a href="#api_nan_has_instance"><b><code>NanHasInstance</code></b></a>
  * <a href="#api_nan_dispose_persistent"><b><code>NanDisposePersistent</code></b></a>
@@ -389,95 +375,6 @@ Use instead of `True()`
 
 Use instead of `False()`
 
-<a name="api_nan_return_value"></a>
-### NanReturnValue(Handle&lt;Value&gt;)
-
-Use `NanReturnValue` when you want to return a value from your V8 accessible method:
-
-```c++
-NAN_METHOD(Foo::Bar) {
-  ...
-
-  NanReturnValue(NanNew<String>("FooBar!"));
-}
-```
-
-No `return` statement required.
-
-For convenience, `NanReturnValue` also accepts common primitives directly by implicitly performing an overloaded `NanNew(T)`.
-
-```c++
-NanReturnValue("FooBar!");
-NanReturnValue(true);
-NanReturnValue(12);
-NanReturnValue(3.14);
-```
-
-<a name="api_nan_return_undefined"></a>
-### NanReturnUndefined()
-
-Use `NanReturnUndefined` when you don't want to return anything from your V8 accessible method:
-
-```c++
-NAN_METHOD(Foo::Baz) {
-  ...
-
-  NanReturnUndefined();
-}
-```
-
-<a name="api_nan_return_null"></a>
-### NanReturnNull()
-
-Use `NanReturnNull` when you want to return `Null` from your V8 accessible method:
-
-```c++
-NAN_METHOD(Foo::Baz) {
-  ...
-
-  NanReturnNull();
-}
-```
-
-<a name="api_nan_return_empty_string"></a>
-### NanReturnEmptyString()
-
-Use `NanReturnEmptyString` when you want to return an empty `String` from your V8 accessible method:
-
-```c++
-NAN_METHOD(Foo::Baz) {
-  ...
-
-  NanReturnEmptyString();
-}
-```
-
-<a name="api_nan_return_this"></a>
-### NanReturnThis()
-
-Use `NanReturnThis` when you want to return `This` from your V8 accessible method:
-
-```c++
-NAN_METHOD(Foo::Baz) {
-  ...
-
-  NanReturnThis();
-}
-```
-
-<a name="api_nan_return_holder"></a>
-### NanReturnHolder()
-
-Use `NanReturnHolder` when you want to return `Holder` from your V8 accessible method:
-
-```c++
-NAN_METHOD(Foo::Baz) {
-  ...
-
-  NanReturnHolder();
-}
-```
-
 <a name="api_nan_scope"></a>
 ### NanScope()
 
@@ -526,82 +423,6 @@ When you want to fetch the V8 object handle from a native object you've wrapped 
 
 ```c++
 NanObjectWrapHandle(iterator)->Get(NanNew<String>("end"))
-```
-
-<a name="api_nan_symbol"></a>
-### ~~Local&lt;String&gt; NanSymbol(const char *)~~
-
-Deprecated. Use `NanNew<String>` instead.
-~~Use to create string symbol objects (i.e. `v8::String::NewSymbol(x)`), for getting and setting object properties, or names of objects.~~
-
-```c++
-bool foo = false;
-if (obj->Has(NanNew<String>("foo")))
-  foo = optionsObj->Get(NanNew<String>("foo"))->BooleanValue()
-```
-
-<a name="api_nan_get_pointer_safe"></a>
-### ~~Type NanGetPointerSafe(Type *[, Type])~~
-
-Deprecated.
-~~A helper for getting values from optional pointers. If the pointer is `NULL`, the function returns the optional default value, which defaults to `0`.  Otherwise, the function returns the value the pointer points to.~~
-
-```c++
-char *plugh(uint32_t *optional) {
-  char res[] = "xyzzy";
-  uint32_t param = NanGetPointerSafe<uint32_t>(optional, 0x1337);
-  switch (param) {
-    ...
-  }
-  NanSetPointerSafe<uint32_t>(optional, 0xDEADBEEF);
-}  
-```
-
-<a name="api_nan_set_pointer_safe"></a>
-### ~~bool NanSetPointerSafe(Type *, Type)~~
-
-Deprecated.
-~~A helper for setting optional argument pointers. If the pointer is `NULL`, the function simply returns `false`.  Otherwise, the value is assigned to the variable the pointer points to.~~
-
-```c++
-const char *plugh(size_t *outputsize) {
-  char res[] = "xyzzy";
-  if !(NanSetPointerSafe<size_t>(outputsize, strlen(res) + 1)) {
-    ...
-  }
-
-  ...
-}
-```
-
-<a name="api_nan_raw_string"></a>
-### ~~void* NanRawString(Handle&lt;Value&gt;, enum Nan::Encoding, size_t *, void *, size_t, int)~~
-
-Deprecated. Use something else.
-
-~~When you want to convert a V8 `String` to a `char*` buffer, use `NanRawString`. You have to supply an encoding as well as a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows setting `String::WriteOptions`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:~~
-
-```c++
-size_t count;
-void* decoded = NanRawString(args[1], Nan::BASE64, &count, NULL, 0, String::HINT_MANY_WRITES_EXPECTED);
-...
-delete[] reinterpret_cast<char*>(decoded);
-```
-
-<a name="api_nan_c_string"></a>
-### ~~char* NanCString(Handle&lt;Value&gt;, size_t *[, char *, size_t, int])~~
-
-Deprecated. Use `String::Utf8Value` or `NanUtf8String` instead.
-
-~~When you want to convert a V8 `String` to a null-terminated C `char*` use `NanCString`. The resulting `char*` will be UTF-8-encoded, and you need to supply a pointer to a variable that will be assigned the number of bytes in the returned string. It is also possible to supply a buffer and its length to the function in order not to have a new buffer allocated. The final argument allows optionally setting `String::WriteOptions`, which default to `v8::String::NO_OPTIONS`.
-Just remember that you'll end up with an object that you'll need to `delete[]` at some point unless you supply your own buffer:~~
-
-```c++
-size_t count;
-char* name = NanCString(args[0], &count);
-...
-delete[] name;
 ```
 
 <a name="api_nan_ascii_string"></a>
@@ -734,33 +555,6 @@ NAN_METHOD(bar) {
 printf(**str);
 ```
 
-<a name="api_nan_boolean_option_value"></a>
-### ~~bool NanBooleanOptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;[, bool])~~
-
-Deprecated.
-~~When you have an "options" object that you need to fetch properties from, boolean options can be fetched with this pair. They check first if the object exists (`IsEmpty`), then if the object has the given property (`Has`) then they get and convert/coerce the property to a `bool`.~~
-
-~~The optional last parameter is the *default* value, which is `false` if left off:~~
-
-```c++
-// `foo` is false unless the user supplies a truthy value for it
-bool foo = NanBooleanOptionValue(optionsObj, NanNew<String>("foo"));
-// `bar` is true unless the user supplies a falsy value for it
-bool bar = NanBooleanOptionValueDefTrue(optionsObj, NanNew<String>("bar"), true);
-```
-
-<a name="api_nan_uint32_option_value"></a>
-### ~~uint32_t NanUInt32OptionValue(Handle&lt;Value&gt;, Handle&lt;String&gt;, uint32_t)~~
-
-Deprecated.
-~~Similar to `NanBooleanOptionValue`, use `NanUInt32OptionValue` to fetch an integer option from your options object. Can be any kind of JavaScript `Number` and it will be coerced to an unsigned 32-bit integer.~~
-
-~~Requires all 3 arguments as a default is not optional:~~
-
-```c++
-uint32_t count = NanUInt32OptionValue(optionsObj, NanNew<String>("count"), 1024);
-```
-
 <a name="api_nan_error"></a>
 ### NanError(message), NanRangeError(message), NanReferenceError(message), NanSyntaxError(message), NanTypeError(message)
 
@@ -810,19 +604,6 @@ careless use can lead to "double free or corruption" and other cryptic failures.
 ### bool NanHasInstance(Persistent&lt;FunctionTemplate&gt;&, Handle&lt;Value&gt;)
 
 Can be used to check the type of an object to determine it is of a particular class you have already defined and have a `Persistent<FunctionTemplate>` handle for.
-
-<a name="api_nan_new_context_handle"></a>
-### ~~Local&lt;Context&gt; NanNewContextHandle([ExtensionConfiguration*, Handle&lt;ObjectTemplate&gt;, Handle&lt;Value&gt;])~~
-
-Deprecated. Use `NanNew<Context>` instead.
-
-~~Creates a new `Local<Context>` handle.~~
-
-```c++
-Local<FunctionTemplate> ftmpl = NanNew<FunctionTemplate>();
-Local<ObjectTemplate> otmpl = ftmpl->InstanceTemplate();
-Local<Context> ctx =  NanNewContextHandle(NULL, otmpl);
-```
 
 <a name="api_nan_get_current_context"></a>
 ### Local&lt;Context&gt; NanGetCurrentContext()
