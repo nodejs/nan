@@ -254,21 +254,7 @@ NAN_METHOD(CalculateAsync) {
 <a name="api"></a>
 ## API
 
- * <a href="#api_nan_method"><b><code>NAN_METHOD</code></b></a>
- * <a href="#api_nan_getter"><b><code>NAN_GETTER</code></b></a>
- * <a href="#api_nan_setter"><b><code>NAN_SETTER</code></b></a>
- * <a href="#api_nan_property_getter"><b><code>NAN_PROPERTY_GETTER</code></b></a>
- * <a href="#api_nan_property_setter"><b><code>NAN_PROPERTY_SETTER</code></b></a>
- * <a href="#api_nan_property_enumerator"><b><code>NAN_PROPERTY_ENUMERATOR</code></b></a>
- * <a href="#api_nan_property_deleter"><b><code>NAN_PROPERTY_DELETER</code></b></a>
- * <a href="#api_nan_property_query"><b><code>NAN_PROPERTY_QUERY</code></b></a>
- * <a href="#api_nan_index_getter"><b><code>NAN_INDEX_GETTER</code></b></a>
- * <a href="#api_nan_index_setter"><b><code>NAN_INDEX_SETTER</code></b></a>
- * <a href="#api_nan_index_enumerator"><b><code>NAN_INDEX_ENUMERATOR</code></b></a>
- * <a href="#api_nan_index_deleter"><b><code>NAN_INDEX_DELETER</code></b></a>
- * <a href="#api_nan_index_query"><b><code>NAN_INDEX_QUERY</code></b></a>
- * <a href="#api_nan_gc_callback"><b><code>NAN_GC_CALLBACK</code></b></a>
- * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK</code></b></a>
+ * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK(callbackname)</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
  * <a href="#api_nan_new"><b><code>NanNew</code></b></a>
@@ -322,147 +308,12 @@ NAN_METHOD(CalculateAsync) {
  * <a href="#api_nan_compile_script"><b><code>NanCompileScript</code></b></a>
  * <a href="#api_nan_run_script"><b><code>NanRunScript</code></b></a>
  * <a href="#api_nan_adjust_external_memory"><b><code>NanAdjustExternalMemory</code></b></a>
- * <a href="#api_nan_add_gc_epilogue_callback"><b><code>NanAddGCEpilogueCallback</code></b></a>
- * <a href="#api_nan_add_gc_prologue_callback"><b><code>NanAddGCPrologueCallback</code></b></a>
- * <a href="#api_nan_remove_gc_epilogue_callback"><b><code>NanRemoveGCEpilogueCallback</code></b></a>
- * <a href="#api_nan_remove_gc_prologue_callback"><b><code>NanRemoveGCPrologueCallback</code></b></a>
- * <a href="#api_nan_get_heap_statistics"><b><code>NanGetHeapStatistics</code></b></a>
- * <a href="#api_nan_set_counter_function"><b><code>NanSetCounterFunction</code></b></a>
- * <a href="#api_nan_set_create_histogram_function"><b><code>NanSetCreateHistogramFunction</code></b></a>
- * <a href="#api_nan_set_add_histogram_sample_function"><b><code>NanSetAddHistogramSampleFunction</code></b></a>
- * <a href="#api_nan_idle_notification"><b><code>NanIdleNotification</code></b></a>
- * <a href="#api_nan_low_memory_notification"><b><code>NanLowMemoryNotification</code></b></a>
- * <a href="#api_nan_context_disposed_notification"><b><code>NanContextDisposedNotification</code></b></a>
  * <a href="#api_nan_callback"><b><code>NanCallback</code></b></a>
  * <a href="#api_nan_async_worker"><b><code>NanAsyncWorker</code></b></a>
  * <a href="#api_nan_async_queue_worker"><b><code>NanAsyncQueueWorker</code></b></a>
 
-<a name="api_nan_method"></a>
-### NAN_METHOD(methodname)
-
-Use `NAN_METHOD` to define your V8 accessible methods:
-
-```c++
-// .h:
-class Foo : public node::ObjectWrap {
-  ...
-
-  static NAN_METHOD(Bar);
-  static NAN_METHOD(Baz);
-}
-
-
-// .cc:
-NAN_METHOD(Foo::Bar) {
-  ...
-}
-
-NAN_METHOD(Foo::Baz) {
-  ...
-}
-```
-
-The reason for this macro is because of the method signature change in 0.11:
-
-```c++
-// 0.10 and below:
-Handle<Value> name(const Arguments& args)
-
-// 0.11 and above
-void name(const FunctionCallbackInfo<Value>& args)
-```
-
-The introduction of `FunctionCallbackInfo` brings additional complications:
-
-<a name="api_nan_getter"></a>
-### NAN_GETTER(methodname)
-
-Use `NAN_GETTER` to declare your V8 accessible getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act like the `args` argument to a `NAN_METHOD` call.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_GETTER`.
-
-<a name="api_nan_setter"></a>
-### NAN_SETTER(methodname)
-
-Use `NAN_SETTER` to declare your V8 accessible setters. Same as `NAN_GETTER` but you also get a `Local<Value>` `value` object to work with.
-
-<a name="api_nan_property_getter"></a>
-### NAN_PROPERTY_GETTER(cbname)
-Use `NAN_PROPERTY_GETTER` to declare your V8 accessible property getters. You get a `Local<String>` `property` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_GETTER`.
-
-<a name="api_nan_property_setter"></a>
-### NAN_PROPERTY_SETTER(cbname)
-Use `NAN_PROPERTY_SETTER` to declare your V8 accessible property setters. Same as `NAN_PROPERTY_GETTER` but you also get a `Local<Value>` `value` object to work with.
-
-<a name="api_nan_property_enumerator"></a>
-### NAN_PROPERTY_ENUMERATOR(cbname)
-Use `NAN_PROPERTY_ENUMERATOR` to declare your V8 accessible property enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_PROPERTY_GETTER` call.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_ENUMERATOR`.
-
-<a name="api_nan_property_deleter"></a>
-### NAN_PROPERTY_DELETER(cbname)
-Use `NAN_PROPERTY_DELETER` to declare your V8 accessible property deleters. Same as `NAN_PROPERTY_GETTER`.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_DELETER`.
-
-<a name="api_nan_property_query"></a>
-### NAN_PROPERTY_QUERY(cbname)
-Use `NAN_PROPERTY_QUERY` to declare your V8 accessible property queries. Same as `NAN_PROPERTY_GETTER`.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_PROPERTY_QUERY`.
-
-<a name="api_nan_index_getter"></a>
-### NAN_INDEX_GETTER(cbname)
-Use `NAN_INDEX_GETTER` to declare your V8 accessible index getters. You get a `uint32_t` `index` and an appropriately typed `args` object that can act similar to the `args` argument to a `NAN_METHOD` call.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_GETTER`.
-
-<a name="api_nan_index_setter"></a>
-### NAN_INDEX_SETTER(cbname)
-Use `NAN_INDEX_SETTER` to declare your V8 accessible index setters. Same as `NAN_INDEX_GETTER` but you also get a `Local<Value>` `value` object to work with.
-
-<a name="api_nan_index_enumerator"></a>
-### NAN_INDEX_ENUMERATOR(cbname)
-Use `NAN_INDEX_ENUMERATOR` to declare your V8 accessible index enumerators. You get an appropriately typed `args` object like the `args` argument to a `NAN_INDEX_GETTER` call.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_ENUMERATOR`.
-
-<a name="api_nan_index_deleter"></a>
-### NAN_INDEX_DELETER(cbname)
-Use `NAN_INDEX_DELETER` to declare your V8 accessible index deleters. Same as `NAN_INDEX_GETTER`.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_DELETER`.
-
-<a name="api_nan_index_query"></a>
-### NAN_INDEX_QUERY(cbname)
-Use `NAN_INDEX_QUERY` to declare your V8 accessible index queries. Same as `NAN_INDEX_GETTER`.
-
-You can use `NanReturnNull()`, `NanReturnEmptyString()`, `NanReturnUndefined()` and `NanReturnValue()` in a `NAN_INDEX_QUERY`.
-
-<a name="api_nan_gc_callback"></a>
-### NAN_GC_CALLBACK(cbname)
-Use `NAN_GC_CALLBACK` to declare your callbacks for `NanAddGCEpilogueCallback` and `NanAddGCPrologueCallback`. You get arguments `GCType type` and `GCCallbackFlags flags`.
-
-```c++
-static Persistent<Function> callback;
-
-NAN_GC_CALLBACK(gcPrologueCallback) {
-  Local<Value> argv[] = {NanNew("prologue")};
-  NanMakeCallback(NanGetCurrentContext()->Global(), NanNew(callback), 1, argv);
-}
-
-NAN_METHOD(Hook) {
-  NanAssignPersistent(callback, args[0].As<Function>());
-  NanAddGCPrologueCallback(gcPrologueCallback);
-  NanReturnValue(args.Holder());
-}
-```
-
 <a name="api_nan_weak_callback"></a>
-### NAN_WEAK_CALLBACK(cbname)
+### NAN_WEAK_CALLBACK(callbackname)
 
 Use `NAN_WEAK_CALLBACK` to define your V8 WeakReference callbacks. There is an argument object `const _NanWeakCallbackData<T, P> &data` allowing access to the weak object and the supplied parameter through its `GetValue` and `GetParameter` methods. You can even access the weak callback info object through the `GetCallbackInfo()`method, but you probably should not. `Revive()` keeps the weak object alive until the next GC round.
 
@@ -1116,61 +967,6 @@ Use to run both bound and unbound scripts.
 ### NanAdjustExternalMemory(int change_in_bytes)
 
 Simply does `AdjustAmountOfExternalAllocatedMemory`, note that the argument and returned value have type `int`.
-
-<a name="api_nan_add_gc_epilogue_callback"></a>
-### NanAddGCEpilogueCallback(GCEpilogueCallback callback, GCType gc_type_filter=kGCTypeAll)
-
-Simply does `AddGCEpilogueCallback`
-
-<a name="api_nan_add_gc_prologue_callback"></a>
-### NanAddGCPrologueCallback(GCPrologueCallback callback, GCType gc_type_filter=kGCTypeAll)
-
-Simply does `AddGCPrologueCallback`
-
-<a name="api_nan_remove_gc_epilogue_callback"></a>
-### NanRemoveGCEpilogueCallback(GCEpilogueCallback callback)
-
-Simply does `RemoveGCEpilogueCallback`
-
-<a name="api_nan_remove_gc_prologue_callback"></a>
-### NanRemoveGCPrologueCallback(GCPrologueCallback callback)
-
-Simply does `RemoveGCPrologueCallback`
-
-<a name="api_nan_get_heap_statistics"></a>
-### NanGetHeapStatistics(HeapStatistics *heap_statistics)
-
-Simply does `GetHeapStatistics`
-
-<a name="api_nan_set_counter_function"></a>
-### NanSetCounterFunction(CounterLookupCallback cb)
-
-Simply does `SetCounterFunction`
-
-<a name="api_nan_set_create_histogram_function"></a>
-### NanSetCreateHistogramFunction(CreateHistogramCallback cb)
-
-Simply does `SetCreateHistogramFunction`
-
-<a name="api_nan_set_add_histogram_sample_function"></a>
-### NanSetAddHistogramSampleFunction(AddHistogramSampleCallback cb)
-
-Simply does `SetAddHistogramSampleFunction`
-
-<a name="api_nan_idle_notification"></a>
-### NanIdleNotification(int idle_time_in_ms)
-
-Simply does `IdleNotification`
-
-<a name="api_nan_low_memory_notification"></a>
-### NanLowMemoryNotification()
-
-Simply does `LowMemoryNotification`
-
-<a name="api_nan_context_disposed_notification"></a>
-### NanContextDisposedNotification()
-
-Simply does `ContextDisposedNotification`
 
 <a name="api_nan_callback"></a>
 ### NanCallback
