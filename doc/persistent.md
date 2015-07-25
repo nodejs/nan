@@ -1,53 +1,59 @@
-# Persistent
-An object reference that is independent of any handle scope. Where a Local
-handle only lives as long as the `HandleScope` in which it was allocated,
-a `Persistent` handle remains valid until it is explicitly disposed.
+## Persistent references
 
-## PersistentBase
-A persistent handle contains a reference to a storage cell within
-the v8 engine which holds an object value and which is updated by
-the garbage collector whenever the object is moved.  A new storage
-cell can be created using the constructor or `PersistentBase::Reset`.
-Existing handles can be disposed using `PersistentBase::Reset`.
+An object reference that is independent of any `HandleScope` is a _persistent_ reference. Where a `Local` handle only lives as long as the `HandleScope` in which it was allocated, a `Persistent` handle remains valid until it is explicitly disposed.
+
+Due to the evolution of the V8 API, it is necessary for NAN to provide a wrapper implementation of the `Persistent` classes to supply compatibility across the V8 versions supported.
+
+ - <a href="#api_nan_persistent_base"><b><code>Nan::PersistentBase & v8::PersistentBase</code></b></a>
+ - <a href="#api_nan_non_copyable_persistent_traits"><b><code>Nan::NonCopyablePersistentTraits & v8::NonCopyablePersistentTraits</code></b></a>
+ - <a href="#api_nan_copyable_persistent_traits"><b><code>Nan::CopyablePersistentTraits & v8::CopyablePersistentTraits</code></b></a>
+ - <a href="#api_nan_persistent"><b><code>Nan::Persistent</code></b></a>
+ - <a href="#api_nan_global"><b><code>Nan::Global</code></b></a>
+
+<a name="api_nan_persistent_base"></a>
+### Nan::PersistentBase & v8::PersistentBase
+
+A persistent handle contains a reference to a storage cell in V8 which holds an object value and which is updated by the garbage collector whenever the object is moved. A new storage cell can be created using the constructor or `Nan::PersistentBase::Reset()`. Existing handles can be disposed using an argument-less `Nan::PersistentBase::Reset()`.
+
+Definition:
+
+_(note: this is implemented as `Nan::PersistentBase` for older versions of V8 and the native `v8::PersistentBase` is used for newer versions of V8)_
+
 ```c++
-template<typename T>
-class PersistentBase {
+template<typename T> class PersistentBase {
  public:
   /**
    * If non-empty, destroy the underlying storage cell
-   * IsEmpty() will return true after this call.
    */
   void Reset();
 
   /**
-   * If non-empty, destroy the underlying storage cell
-   * and create a new one with the contents of other if other is non empty
+   * If non-empty, destroy the underlying storage cell and create a new one with
+   * the contents of another if it is also non-empty
    */
-  template<typename S>
-  void Reset(const v8::Handle<S> &other);
+  template<typename S> void Reset(const v8::Local<S> &other);
+
+  /**
+   * If non-empty, destroy the underlying storage cell and create a new one with
+   * the contents of another if it is also non-empty
+   */
+  template<typename S> void Reset(const PersistentBase<S> &other);
 
   /**
    * If non-empty, destroy the underlying storage cell
-   * and create a new one with the contents of other if other is non empty
+   * IsEmpty() will return true after this call.
    */
-  template<typename S>
-  void Reset(const PersistentBase<S> &other);
-
   bool IsEmpty();
 
   void Empty();
 
-  template<typename S>
-  bool operator==(const PersistentBase<S> &that);
+  template<typename S> bool operator==(const PersistentBase<S> &that);
 
-  template<typename S>
-  bool operator==(const v8::Handle<S> &that);
+  template<typename S> bool operator==(const v8::Local<S> &that);
 
-  template<typename S>
-  bool operator!=(const PersistentBase<S> &that);
+  template<typename S> bool operator!=(const PersistentBase<S> &that);
 
-  template<typename S>
-  bool operator!=(const v8::Handle<S> &that);
+  template<typename S> bool operator!=(const v8::Local<S> &that);
 
    /**
    *  Install a finalization callback on this object.
@@ -59,10 +65,9 @@ class PersistentBase {
    *  fields in the dying object.
    */
   template<typename P>
-  void SetWeak(
-      P *parameter,
-      typename WeakCallbackInfo<P>::Callback callback,
-      WeakCallbackType type);
+  void SetWeak(P *parameter,
+               typename WeakCallbackInfo<P>::Callback callback,
+               WeakCallbackType type);
 
   void ClearWeak();
 
@@ -84,37 +89,69 @@ class PersistentBase {
 };
 ```
 
-## NonCopyablePersistentTraits
-Default traits for `Persistent`. This class does not allow use of the copy
-constructor or assignment operator. At present `kResetInDestructor` is not
-set, but that will change in a future version.
+See the V8 documentation for [`PersistentBase`](https://v8docs.nodesource.com/io.js-3.0/d4/dca/classv8_1_1_persistent_base.html) for further information.
+
+<a name="api_nan_non_copyable_persistent_traits"></a>
+## Nan::NonCopyablePersistentTraits & v8::NonCopyablePersistentTraits
+
+Default traits for `Nan::Persistent`. This class does not allow use of the a copy constructor or assignment operator. At present `kResetInDestructor` is not set, but that will change in a future version.
+
+Definition:
+
+_(note: this is implemented as `Nan::NonCopyablePersistentTraits` for older versions of V8 and the native `v8::NonCopyablePersistentTraits` is used for newer versions of V8)_
+
 ```c++
-template<typename T>
-class NonCopyablePersistentTraits {
+template<typename T> class NonCopyablePersistentTraits {
  public:
   typedef Persistent<T, NonCopyablePersistentTraits<T> > NonCopyablePersistent;
+  
   static const bool kResetInDestructor = false;
-  template<typename S, typename M>
+  
+  template<typename S, typename M> 
+  static void Copy(const Persistent<S, M> &source,
+                   NonCopyablePersistent *dest);
+
+  template<typename O> static void Uncompilable();
 };
 ```
 
-## CopyablePersistentTraits
-Helper class traits to allow copying and assignment of `Persistent`.
-This will clone the contents of storage cell, but not any of the flags, etc.
+See the V8 documentation for [`NonCopyablePersistentTraits`](https://v8docs.nodesource.com/io.js-3.0/de/d73/classv8_1_1_non_copyable_persistent_traits.html) for further information.
+
+<a name="api_nan_copyable_persistent_traits"></a>
+## Nan::CopyablePersistentTraits & v8::CopyablePersistentTraits
+
+A helper class of traits to allow copying and assignment of `Persistent`. This will clone the contents of storage cell, but not any of the flags, etc..
+
+Definition:
+
+_(note: this is implemented as `Nan::CopyablePersistentTraits` for older versions of V8 and the native `v8::NonCopyablePersistentTraits` is used for newer versions of V8)_
+
 ```c++
 template<typename T>
 class CopyablePersistentTraits {
  public:
   typedef Persistent<T, CopyablePersistentTraits<T> > CopyablePersistent;
+
   static const bool kResetInDestructor = true;
+
+  template<typename S, typename M>
+  static void Copy(const Persistent<S, M> &source,
+                   CopyablePersistent *dest);
 };
 ```
 
-## Persistent
-A `PersistentBase` which allows copy and assignment.
-Copy, assignment and destructor bevavior is controlled by the traits class `M`.
+See the V8 documentation for [`CopyablePersistentTraits`](https://v8docs.nodesource.com/io.js-3.0/da/d5c/structv8_1_1_copyable_persistent_traits.html) for further information.
+
+<a name="api_nan_persistent"></a>
+## Nan::Persistent
+
+A type of `PersistentBase` which allows copy and assignment. Copy, assignment and destructor behavior is controlled by the traits class `M`.
+
+Definition:
+
 ```c++
-template<typename T, typename M = NonCopyablePersistentTraits<T> > class Persistent;
+template<typename T, typename M = NonCopyablePersistentTraits<T> >
+class Persistent;
 
 template<typename T, typename M> class Persistent : public PersistentBase<T> {
  public:
@@ -124,25 +161,23 @@ template<typename T, typename M> class Persistent : public PersistentBase<T> {
   Persistent();
 
   /**
-   * Construct a Persistent from a v8::Handle.
-   * When the v8::Handle is non-empty, a new storage cell is created
-   * pointing to the same object, and no flags are set.
+   * Construct a Persistent from a v8::Local. When the v8::Local is non-empty, a
+   * new storage cell is created pointing to the same object, and no flags are
+   * set.
    */
-  template<typename S>
-  Persistent(v8::Handle<S> that);
+  template<typename S> Persistent(v8::Local<S> that);
 
   /**
-   * Construct a Persistent from a Persistent.
-   * When the Persistent is non-empty, a new storage cell is created
-   * pointing to the same object, and no flags are set.
+   * Construct a Persistent from a Persistent. When the Persistent is non-empty,
+   * a new storage cell is created pointing to the same object, and no flags are
+   * set.
    */
   Persistent(const Persistent &that);
 
   /**
-   * The copy constructors and assignment operator create a Persistent
-   * exactly as the Persistent constructor, but the Copy function from the
-   * traits class is called, allowing the setting of flags based on the
-   * copied Persistent.
+   * The copy constructors and assignment operator create a Persistent exactly
+   * as the Persistent constructor, but the Copy function from the traits class
+   * is called, allowing the setting of flags based on the copied Persistent.
    */
   Persistent &operator=(const Persistent &that);
 
@@ -150,19 +185,23 @@ template<typename T, typename M> class Persistent : public PersistentBase<T> {
   Persistent &operator=(const Persistent<S, M2> &that);
 
   /**
-   * The destructor will dispose the Persistent based on the
-   * kResetInDestructor flags in the traits class.  Since not calling dispose
-   * can result in a memory leak, it is recommended to always set this flag.
+   * The destructor will dispose the Persistent based on the kResetInDestructor
+   * flags in the traits class.  Since not calling dispose can result in a
+   * memory leak, it is recommended to always set this flag.
    */
   ~Persistent();
 };
 ```
 
-## Global
-A `PersistentBase` which has move semantics.
+See the V8 documentation for [`Persistent`](https://v8docs.nodesource.com/io.js-3.0/d2/d78/classv8_1_1_persistent.html) for further information.
+
+<a name="api_nan_global"></a>
+## Nan::Global
+
+A type of `PersistentBase` which has move semantics.
+
 ```c++
-template<typename T>
-class Global : public PersistentBase<T> {
+template<typename T> class Global : public PersistentBase<T> {
  public:
   /**
    * A Global with no storage cell.
@@ -170,19 +209,16 @@ class Global : public PersistentBase<T> {
   Global();
 
   /**
-   * Construct a Global from a v8::Handle.
-   * When the v8::Handle is non-empty, a new storage cell is created
-   * pointing to the same object, and no flags are set.
+   * Construct a Global from a v8::Local. When the v8::Local is non-empty, a new
+   * storage cell is created pointing to the same object, and no flags are set.
    */
-  template<typename S>
-  Global(v8::Handle<S> that);
+  template<typename S> Global(v8::Local<S> that);
   /**
-   * Construct a Global from a PersistentBase.
-   * When the Persistent is non-empty, a new storage cell is created
-   * pointing to the same object, and no flags are set.
+   * Construct a Global from a PersistentBase. When the Persistent is non-empty,
+   * a new storage cell is created pointing to the same object, and no flags are
+   * set.
    */
-  template<typename S>
-  Global(const PersistentBase<S> &that);
+  template<typename S> Global(const PersistentBase<S> &that);
 
   /**
    * Pass allows returning globals from functions, etc.
@@ -190,3 +226,5 @@ class Global : public PersistentBase<T> {
   Global Pass();
 };
 ```
+
+See the V8 documentation for [`Global`](https://v8docs.nodesource.com/io.js-3.0/d5/d40/classv8_1_1_global.html) for further information.
