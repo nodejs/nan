@@ -27,81 +27,6 @@ This project also contains some helper utilities that make addon development a b
 <a name="news"></a>
 ## News & Updates
 
-### Apr-2015: 1.8.0 release
-
-* Support V8 4.2
-* Removed support for creating `Signature`s with arguments
-* Backported thread local storage routines for libuv
-
-### Feb-2015: 1.7.0 release
-
-* Made `NanCallback::Call` accept optional target
-* Support atom-shell 0.21
-
-Node 0.12.0 is out and supported by NAN. So is atom-shell 0.21. `NanCallback::Call` now accepts an optional `target` argument like `NanMakeCallback`.
-
-### Jan-2015: 1.6.0 release
-
-* Deprecated `NanNewContextHandle` in favor of `NanNew<Context>`
-* Added `NanSetCounterFunction`, `NanSetCreateHistogramFunction`, `NanSetAddHistogramSampleFunction`
-* Added `NanIdleNotification`, `NanLowMemoryNotification`, `NanContextDisposedNotification`
-* Added `NanEncode`, `NanDecodeBytes` and `NanDecodeWrite`
-
-### Jan-2015: 1.5.0 release
-
-* Support [io.js](https://github.com/iojs/io.js) thanks to [Ben Noordhuis](bnoordhuis)
-* Rewritten NanNew internals thanks to [David Siegel](agnat)
-* NanAsyncWorker now supports progress reporting thanks to [Brett Lawson](brett19)
-
-### Aug-2014: 1.3.0 release
-
-* `NanCString()` and `NanRawString()` have been deprecated in favour of new <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>, <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a> and <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>. These classes manage the underlying memory for you in a safer way than just handing off an allocated array. You should now `*NanAsciiString(handle)` to access the raw `char` data, you can also allocate on the heap if you need to keep a reference.
-* Two more <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a> overloads have been added to for parity with Node core.
-* You can now `NanNew(std::string)` (use `NanNew<std::string&>(std::string&)` to pass by reference)
-* <a href="#api_nan_set_template"><b><code>NanSetTemplate</code></b></a>, <a href="#api_nan_set_prototype_template"><b><code>NanSetPrototypeTemplate</code></b></a> and <a href="#api_nan_set_instance_template"><b><code>NanSetInstanceTemplate</code></b></a> have been added.
-
-### May-2014: 1.1.0 release
-
-* We've deprecated `NanSymbol()`, you should just use `NanNew<String>()` now.
-* `NanNull()`, `NanUndefined()`, `NanTrue()`, `NanFalse()` all return `Local`s now.
-* `nan_isolate` is gone, it was intended to be internal-only but if you were using it then you should switch to `v8::Isolate::GetCurrent()`.
-* `NanNew()` has received some additional overload-love so you should be able to give it many kinds of values without specifying the `<Type>`.
-* Lots of small fixes and additions to expand the V8 API coverage, *use the source, Luke*.
-
-
-### May-2014: Major changes for V8 3.25 / Node 0.11.13
-
-Node 0.11.11 and 0.11.12 were both broken releases for native add-ons, you simply can't properly compile against either of them for different reasons. But we now have a 0.11.13 release that jumps a couple of versions of V8 ahead and includes some more, major (traumatic) API changes.
-
-Because we are now nearing Node 0.12 and estimate that the version of V8 we are using in Node 0.11.13 will be close to the API we get for 0.12, we have taken the opportunity to not only *fix* NAN for 0.11.13 but make some major changes to improve the NAN API.
-
-We have **removed support for Node 0.11 versions prior to 0.11.13**. As usual, our tests are run against (and pass) the last 5 versions of Node 0.8 and Node 0.10. We also include Node 0.11.13 obviously.
-
-The major change is something that [Benjamin Byholm](kkoopa) has put many hours in to. We now have a fantastic new `NanNew<T>(args)` interface for creating new `Local`s, this replaces `NanNewLocal()` and much more. If you look in [./nan.h](nan.h) you'll see a large number of overloaded versions of this method. In general you should be able to `NanNew<Type>(arguments)` for any type you want to make a `Local` from. This includes `Persistent` types, so we now have a `Local<T> NanNew(const Persistent<T> arg)` to replace `NanPersistentToLocal()`.
-
-We also now have `NanUndefined()`, `NanNull()`, `NanTrue()` and `NanFalse()`. Mainly because of the new requirement for an `Isolate` argument for each of the native V8 versions of this.
-
-V8 has now introduced an `EscapableHandleScope` from which you `scope.Escape(Local<T> value)` to *return* a value from a one scope to another. This replaces the standard `HandleScope` and `scope.Close(Local<T> value)`, although `HandleScope` still exists for when you don't need to return a handle to the caller. For NAN we are exposing it as `NanEscapableScope()` and `NanEscapeScope()`, while `NanScope()` is still how you create a new scope that doesn't need to return handles. For older versions of Node/V8, it'll still map to the older `HandleScope` functionality.
-
-`NanFromV8String()` was deprecated and has now been removed. You should use `NanCString()` or `NanRawString()` instead.
-
-Because `node::MakeCallback()` now takes an `Isolate`, and because it doesn't exist in older versions of Node, we've introduced `NanMakeCallback()`. You should *always* use this when calling a JavaScript function from C++.
-
-There's lots more, check out the Changelog in nan.h or look through [#86](https://github.com/nodejs/nan/pull/86) for all the gory details.
-
-### Dec-2013: NanCString and NanRawString
-
-Two new functions have been introduced to replace the functionality that's been provided by `NanFromV8String` until now. NanCString has sensible defaults so it's super easy to fetch a null-terminated c-style string out of a `v8::String`. `NanFromV8String` is still around and has defaults that allow you to pass a single handle to fetch a `char*` while `NanRawString` requires a little more attention to arguments.
-
-### Nov-2013: Node 0.11.9+ breaking V8 change
-
-The version of V8 that's shipping with Node 0.11.9+ has changed the signature for new `Local`s to: `v8::Local<T>::New(isolate, value)`, i.e. introducing the `isolate` argument and therefore breaking all new `Local` declarations for previous versions. NAN 0.6+ now includes a `NanNewLocal<T>(value)` that can be used in place to work around this incompatibility and maintain compatibility with 0.8->0.11.9+ (minus a few early 0.11 releases).
-
-For example, if you wanted to return a `null` on a callback you will have to change the argument from `v8::Local<v8::Value>::New(v8::Null())` to `NanNewLocal<v8::Value>(v8::Null())`.
-
-### Nov-2013: Change to binding.gyp `"include_dirs"` for NAN
-
-Inclusion of NAN in a project's binding.gyp is now greatly simplified. You can now just use `"<!(node -e \"require('nan')\")"` in your `"include_dirs"`, see example below (note Windows needs the quoting around `require` to be just right: `"require('nan')"` with appropriate `\` escaping).
 
 <a name="usage"></a>
 ## Usage
@@ -254,6 +179,15 @@ NAN_METHOD(CalculateAsync) {
 <a name="api"></a>
 ## API
 
+<!-- START API -->
+
+API docs in here
+
+<!-- END API -->
+
+
+
+```
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK(callbackname)</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
@@ -307,7 +241,6 @@ NAN_WEAK_CALLBACK(weakCallback) {
     delete parameter;
   }
 }
-```
 
 <a name="api_nan_deprecated"></a>
 ### NAN_DEPRECATED
