@@ -83,6 +83,13 @@ forcetest:
 	cd test/ && node-gyp rebuild && cd ..
 	npm test
 
+docs: README.md doc/.build.sh doc/asyncworker.md doc/buffers.md doc/callback.md \
+		doc/converters.md doc/errors.md doc/maybe_types.md doc/methods.md doc/new.md \
+		doc/node_misc.md doc/persistent.md doc/scopes.md doc/script.md doc/string_bytes.md \
+		doc/v8_internals.md doc/v8_misc.md
+	doc/.build.sh
+
+
 $(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h \
 		nan_callbacks.h nan_callbacks_12_inl.h nan_callbacks_pre_12_inl.h \
 		nan_converters.h nan_converters_43_inl.h nan_converters_pre_43_inl.h \
