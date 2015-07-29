@@ -3,6 +3,11 @@
 NAN provides a `Nan::New()` helper for the creation of new JavaScript objects in a way that's compatible across the supported versions of V8.
 
  - <a href="#api_nan_new"><b><code>Nan::New()</code></b></a>
+ - <a href="#api_nan_undefined"><b><code>Nan::Undefined()</code></b></a>
+ - <a href="#api_nan_null"><b><code>Nan::Null()</code></b></a>
+ - <a href="#api_nan_true"><b><code>Nan::True()</code></b></a>
+ - <a href="#api_nan_false"><b><code>Nan::False()</code></b></a>
+ - <a href="#api_nan_empty_string"><b><code>Nan::EmptyString()</code></b></a>
 
 
 <a name="api_nan_new"></a>
@@ -120,4 +125,17 @@ Signature:
 
 ```c++
 v8::Local<v8::String> Nan::EmptyString() 
+```
+
+
+<a name="api_nan_new_one_byte_string"></a>
+### Nan::NewOneByteString()
+
+An implementation of [`v8::String::NewFromOneByte()`](https://v8docs.nodesource.com/io.js-3.0/d2/db3/classv8_1_1_string.html#a5264d50b96d2c896ce525a734dc10f09) provided for consistent availability and API across supported versions of V8. Allocates a new string from Latin-1 data.
+
+Signature:
+
+```c++
+Nan::MaybeLocal<v8::String> Nan::NewOneByteString(const uint8_t * value,
+                                                  int length = -1) 
 ```
