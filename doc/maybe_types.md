@@ -7,7 +7,6 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
  - <a href="#api_nan_nothing"><b><code>Nan::Nothing</code></b></a>
  - <a href="#api_nan_just"><b><code>Nan::Just</code></b></a>
 
-<a name="api_nan_maybe"></a>
 <a name="api_nan_maybe_local"></a>
 ### Nan::MaybeLocal
 
