@@ -2,6 +2,7 @@
 
 files="           \
   methods.md      \
+  scopes.md       \
   persistent.md   \
   new.md          \
   converters.md   \
