@@ -2,6 +2,11 @@
 
 `Nan::Callback` makes it easier to use `v8::Function` handles as callbacks. A class that wraps a `v8::Function` handle, protecting it from garbage collection and making it particularly useful for storage and use across asynchronous execution.
 
+ - <a href="#api_nan_callback"><b><code>Nan::Callback</code></b></a>
+
+<a name="api_nan_callback"></a>
+## Nan::Callback
+
 ```c++
 class Callback {
  public:
