@@ -8,6 +8,7 @@ files="           \
   converters.md   \
   maybe_types.md  \
   errors.md       \
+  buffers.md      \
   callback.md     \
   asyncworker.md  \
   v8_internals.md \
