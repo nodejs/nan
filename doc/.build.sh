@@ -11,6 +11,7 @@ files="           \
   buffers.md      \
   callback.md     \
   asyncworker.md  \
+  string_bytes.md \
   v8_internals.md \
 "
 
