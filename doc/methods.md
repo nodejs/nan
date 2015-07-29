@@ -202,6 +202,8 @@ You do not need to declare a new `HandleScope` within a getter as one is implici
 
 A helper macro `NAN_GETTER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on [Accessors](https://developers.google.com/v8/embed#accesssors).
+
 <a name="api_nan_setter"></a>
 ### Setter declaration
 
@@ -227,6 +229,8 @@ You do not need to declare a new `HandleScope` within a setter as one is implici
 
 A helper macro `NAN_SETTER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on [Accessors](https://developers.google.com/v8/embed#accesssors).
+
 <a name="api_nan_property_getter"></a>
 ### Property getter declaration
 
@@ -250,6 +254,7 @@ You do not need to declare a new `HandleScope` within a property getter as one i
 
 A helper macro `NAN_PROPERTY_GETTER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on named property [Interceptors](https://developers.google.com/v8/embed#interceptors).
 
 <a name="api_nan_property_setter"></a>
 ### Property setter declaration
@@ -274,6 +279,8 @@ You do not need to declare a new `HandleScope` within a property setter as one i
 
 A helper macro `NAN_PROPERTY_SETTER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on named property [Interceptors](https://developers.google.com/v8/embed#interceptors).
+
 <a name="api_nan_property_enumerator"></a>
 ### Property enumerator declaration
 
@@ -292,6 +299,8 @@ void PropertyEnumeratorName(const Nan::PropertyCallbackInfo<v8::Array>& info);
 You do not need to declare a new `HandleScope` within a property enumerator as one is implicitly created for you.
 
 A helper macro `NAN_PROPERTY_ENUMERATOR(methodname)` exists, compatible with NAN v1 method declarations.
+
+Also see the V8 Embedders Guide documentation on named property [Interceptors](https://developers.google.com/v8/embed#interceptors).
 
 <a name="api_nan_property_deleter"></a>
 ### Property deleter declaration
@@ -314,6 +323,8 @@ You do not need to declare a new `HandleScope` within a property deleter as one 
 
 A helper macro `NAN_PROPERTY_DELETER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on named property [Interceptors](https://developers.google.com/v8/embed#interceptors).
+
 <a name="api_nan_property_query"></a>
 ### Property query declaration
 
@@ -335,6 +346,8 @@ You do not need to declare a new `HandleScope` within a property query method as
 
 A helper macro `NAN_PROPERTY_QUERY(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on named property [Interceptors](https://developers.google.com/v8/embed#interceptors).
+
 <a name="api_nan_index_getter"></a>
 ### Index getter declaration
 
@@ -354,6 +367,8 @@ void IndexGetterName(uint32_t index, const PropertyCallbackInfo<v8::Value>& info
 You do not need to declare a new `HandleScope` within a index getter as one is implicitly created for you.
 
 A helper macro `NAN_INDEX_GETTER(methodname)` exists, compatible with NAN v1 method declarations.
+
+Also see the V8 Embedders Guide documentation on indexed property [Interceptors](https://developers.google.com/v8/embed#interceptors).
 
 <a name="api_nan_index_setter"></a>
 ### Index setter declaration
@@ -378,6 +393,8 @@ You do not need to declare a new `HandleScope` within a index setter as one is i
 
 A helper macro `NAN_INDEX_SETTER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on indexed property [Interceptors](https://developers.google.com/v8/embed#interceptors).
+
 <a name="api_nan_index_enumerator"></a>
 ### Index enumerator declaration
 
@@ -396,6 +413,8 @@ void IndexEnumeratorName(const PropertyCallbackInfo<v8::Array>& info);
 You do not need to declare a new `HandleScope` within a index enumerator as one is implicitly created for you.
 
 A helper macro `NAN_INDEX_ENUMERATOR(methodname)` exists, compatible with NAN v1 method declarations.
+
+Also see the V8 Embedders Guide documentation on indexed property [Interceptors](https://developers.google.com/v8/embed#interceptors).
 
 <a name="api_nan_index_deleter"></a>
 ### Index deleter declaration
@@ -417,6 +436,8 @@ You do not need to declare a new `HandleScope` within a index deleter as one is 
 
 A helper macro `NAN_INDEX_DELETER(methodname)` exists, compatible with NAN v1 method declarations.
 
+Also see the V8 Embedders Guide documentation on indexed property [Interceptors](https://developers.google.com/v8/embed#interceptors).
+
 <a name="api_nan_index_query"></a>
 ### Index query declaration
 
@@ -436,6 +457,8 @@ void IndexQueryName(uint32_t index, const PropertyCallbackInfo<v8::Integer>& inf
 You do not need to declare a new `HandleScope` within a index query method as one is implicitly created for you.
 
 A helper macro `NAN_INDEX_QUERY(methodname)` exists, compatible with NAN v1 method declarations.
+
+Also see the V8 Embedders Guide documentation on indexed property [Interceptors](https://developers.google.com/v8/embed#interceptors).
 
 <a name="api_nan_set_method"></a>
 ### Nan::SetMethod()
