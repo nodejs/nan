@@ -294,8 +294,6 @@ The hooks to access V8 internals—including GC and statistics—are different a
  * <a href="#api_nan_ascii_string"><b><code>NanAsciiString</code></b></a>
  * <a href="#api_nan_utf8_string"><b><code>NanUtf8String</code></b></a>
  * <a href="#api_nan_ucs2_string"><b><code>NanUcs2String</code></b></a>
- * <a href="#api_nan_error"><b><code>NanError</code></b>, <b><code>NanRangeError</code></b>, <b><code>NanReferenceError</code></b>, <b><code>NanSyntaxError</code></b>, <b><code>NanTypeError</code></b></a>
- * <a href="#api_nan_throw_error"><b><code>NanThrowError</code></b>, <b><code>NanThrowRangeError</code></b>, <b><code>NanThrowReferenceError</code></b>, <b><code>NanThrowSyntaxError</code></b>, <b><code>NanThrowTypeError</code></b>, <b><code>NanThrowError(Handle<Value>)</code></b>, <b><code>NanThrowError(Handle<Value>, int)</code></b></a>
  * <a href="#api_nan_new_buffer_handle"><b><code>NanNewBufferHandle(char *, size_t, FreeCallback, void *)</code></b>, <b><code>NanNewBufferHandle(char *, uint32_t)</code></b>, <b><code>NanNewBufferHandle(uint32_t)</code></b></a>
  * <a href="#api_nan_buffer_use"><b><code>NanBufferUse(char *, uint32_t)</code></b></a>
  * <a href="#api_nan_get_current_context"><b><code>NanGetCurrentContext</code></b></a>
@@ -304,8 +302,6 @@ The hooks to access V8 internals—including GC and statistics—are different a
  * <a href="#api_nan_assign_persistent"><b><code>NanAssignPersistent</code></b></a>
  * <a href="#api_nan_make_weak_persistent"><b><code>NanMakeWeakPersistent</code></b></a>
  * <a href="#api_nan_make_callback"><b><code>NanMakeCallback</code></b></a>
- * <a href="#api_nan_fatal_exception"><b><code>NanFatalException</code></b></a>
- * <a href="#api_nan_errno_exception"><b><code>NanErrnoException</code></b></a>
  * <a href="#api_nan_get_isolate_data"><b><code>NanGetIsolateData</code></b></a>
  * <a href="#api_nan_set_isolate_data"><b><code>NanSetIsolateData</code></b></a>
  * <a href="#api_nan_encode"><b><code>NanEncode</code></b></a>
@@ -571,25 +567,6 @@ NAN_METHOD(bar) {
 printf(**str);
 ```
 
-<a name="api_nan_error"></a>
-### NanError(message), NanRangeError(message), NanReferenceError(message), NanSyntaxError(message), NanTypeError(message)
-
-For making `Error`, `RangeError`, `ReferenceError`, `SyntaxError` and `TypeError` objects.
-
-```c++
-Local<Value> res = NanError("you must supply a callback argument");
-```
-
-<a name="api_nan_throw_error"></a>
-### NanThrowError(message), NanThrowRangeError(message), NanThrowReferenceError(message), NanThrowSyntaxError(message), NanThrowTypeError(message), NanThrowError(Local&lt;Value&gt;), NanThrowError(Local&lt;Value&gt;, int)
-
-For throwing `Error`, `RangeError`, `ReferenceError`, `SyntaxError` and `TypeError` objects.
-
-```c++
-NanThrowError("you must supply a callback argument");
-```
-
-Can also handle any custom object you may want to throw. If used with the error code argument, it will add the supplied error code to the error object as a property called `code`.
 
 <a name="api_nan_new_buffer_handle"></a>
 ### Local&lt;Object&gt; NanNewBufferHandle(char *, uint32_t), Local&lt;Object&gt; NanNewBufferHandle(uint32_t)
@@ -680,16 +657,6 @@ NanMakeWeakPersistent(func, parameter, &weakCallback);
 ### NanMakeCallback(target, func, argc, argv)
 
 Use instead of `node::MakeCallback` to call javascript functions. This (or `NanCallback`) is the only proper way of calling functions. You must _*never, ever*_ directly use `Function::Call`, it will lead to run-time failures.
-
-<a name="api_nan_fatal_exception"></a>
-### NanFatalException(const v8::TryCatch &amp;)
-
-Replaces `node::FatalException`.
-
-<a name="api_nan_errno_exception"></a>
-### NanErrnoException(int errorno, const char *syscall = NULL, const char *message = NULL, const char *path = NULL)
-
-Replaces `node::ErrnoException`.
 
 <a name="api_nan_get_isolate_data"></a>
 ### NanGetIsolateData(v8::Isolate *)
