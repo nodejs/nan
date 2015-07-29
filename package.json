@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "tap --gc test/js/*-test.js",
-    "rebuild-tests": "pangyp rebuild --msvs_version=2013 --directory test"
+    "rebuild-tests": "pangyp rebuild --msvs_version=2013 --directory test",
+    "docs": "doc/.build.sh"
   },
   "contributors": [
     "Rod Vagg <r@va.gg> (https://github.com/rvagg)",

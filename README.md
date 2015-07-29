@@ -181,13 +181,104 @@ NAN_METHOD(CalculateAsync) {
 
 <!-- START API -->
 
-API docs in here
+### JavaScript-accessible methods
+
+Across the versions of V8 supported by NAN, JavaScript-accessible method signatures vary widely, NAN fully abstracts method declaration and provides you with an interface that is similar to the most recent V8 API but is backward-compatible with older versions that still use the now-deceased `v8::Argument` type.
+
+* **Method argument types**
+ - <a href="doc/methods.md#api_nan_function_callback_info"><b><code>Nan::FunctionCallbackInfo</code></b></a>
+ - <a href="doc/methods.md#api_nan_property_callback_info"><b><code>Nan::PropertyCallbackInfo</code></b></a>
+ - <a href="doc/methods.md#api_nan_property_callback_info"><b><code>Nan::ReturnValue</code></b></a>
+* **Method declarations**
+ - <a href="doc/methods.md#api_nan_method"><b>Method declaration</b></a>
+ - <a href="doc/methods.md#api_nan_getter"><b>Getter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_setter"><b>Setter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_property_getter"><b>Property getter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_property_setter"><b>Property setter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_property_enumerator"><b>Property enumerator declaration</b></a>
+ - <a href="doc/methods.md#api_nan_property_deleter"><b>Property deleter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_property_query"><b>Property query declaration</b></a>
+ - <a href="doc/methods.md#api_nan_index_getter"><b>Index getter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_index_setter"><b>Index setter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_index_enumerator"><b>Index enumerator declaration</b></a>
+ - <a href="doc/methods.md#api_nan_index_deleter"><b>Index deleter declaration</b></a>
+ - <a href="doc/methods.md#api_nan_index_query"><b>Index query declaration</b></a>
+* Method and template helpers
+ - <a href="doc/methods.md#api_nan_set_method"><b><code>Nan::SetMethod()</code></b></a>
+ - <a href="doc/methods.md#api_nan_set_named_property_handler"><b><code>Nan::SetNamedPropertyHandler()</code></b></a>
+ - <a href="doc/methods.md#api_nan_set_indexed_property_handler"><b><code>Nan::SetIndexedPropertyHandler()</code></b></a>
+ - <a href="doc/methods.md#api_nan_set_prototype_method"><b><code>Nan::SetPrototypeMethod()</code></b></a>
+ - <a href="doc/methods.md#api_nan_set_template"><b><code>Nan::SetTemplate()</code></b></a>
+ - <a href="doc/methods.md#api_nan_set_prototype_template"><b><code>Nan::SetPrototypeTemplate()</code></b></a>
+ - <a href="doc/methods.md#api_nan_set_instance_template"><b><code>Nan::SetInstanceTemplate()</code></b></a>
+
+### Persistent references
+
+An object reference that is independent of any `HandleScope` is a _persistent_ reference. Where a `Local` handle only lives as long as the `HandleScope` in which it was allocated, a `Persistent` handle remains valid until it is explicitly disposed.
+
+Due to the evolution of the V8 API, it is necessary for NAN to provide a wrapper implementation of the `Persistent` classes to supply compatibility across the V8 versions supported.
+
+ - <a href="doc/persistent.md#api_nan_persistent_base"><b><code>Nan::PersistentBase & v8::PersistentBase</code></b></a>
+ - <a href="doc/persistent.md#api_nan_non_copyable_persistent_traits"><b><code>Nan::NonCopyablePersistentTraits & v8::NonCopyablePersistentTraits</code></b></a>
+ - <a href="doc/persistent.md#api_nan_copyable_persistent_traits"><b><code>Nan::CopyablePersistentTraits & v8::CopyablePersistentTraits</code></b></a>
+ - <a href="doc/persistent.md#api_nan_persistent"><b><code>Nan::Persistent</code></b></a>
+ - <a href="doc/persistent.md#api_nan_global"><b><code>Nan::Global</code></b></a>
+ - <a href="doc/persistent.md#api_nan_weak_callback_info"><b><code>Nan::WeakCallbackInfo</code></b></a>
+ - <a href="doc/persistent.md#api_nan_weak_callback_type"><b><code>Nan::WeakCallbackType</code></b></a>
+
+### Converters
+
+NAN contains functions that convert `v8::Value`s to other `v8::Value` types and native types. Since type conversion is not guaranteed to succeed, they return `Nan::Maybe` types. These converters can be used in place of `value->ToX()` and `value->XValue()` (where `X` is one of the types, e.g. `Boolean`) in a way that provides a consistent interface across V8 versions. Newer versions of V8 use the new `v8::Maybe` and `v8::MaybeLocal` types for these conversions, older versions don't have this functionality so it is provided by NAN.
+
+ - <a href="doc/converters.md#api_nan_to"><b><code>Nan::To</code></b></a>
+
+### Maybe Types
+
+The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Local` handles that _may be empty_.
+
+ - <a href="doc/maybe_types.md#api_nan_maybe_local"><b><code>Nan::MaybeLocal</code></b></a>
+ - <a href="doc/maybe_types.md#api_nan_maybe"><b><code>Nan::Maybe</code></b></a>
+ - <a href="doc/maybe_types.md#api_nan_nothing"><b><code>Nan::Nothing</code></b></a>
+ - <a href="doc/maybe_types.md#api_nan_just"><b><code>Nan::Just</code></b></a>
+
+### Nan::Callback
+
+`Nan::Callback` makes it easier to use `v8::Function` handles as callbacks. A class that wraps a `v8::Function` handle, protecting it from garbage collection and making it particularly useful for storage and use across asynchronous execution.
+
+ - <a href="doc/callback.md#api_nan_callback"><b><code>Nan::Callback</code></b></a>
+
+### Asynchronous work helpers
+
+`Nan::AsyncWorker` and `Nan::AsyncProgressWorker` are helper classes that make working with asynchronous code easier.
+
+ - <a href="doc/asyncworker.md#api_nan_async_worker"><b><code>Nan::AsyncWorker</code></b></a>
+ - <a href="doc/asyncworker.md#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorker</code></b></a>
+ - <a href="doc/asyncworker.md#api_nan_async_queue_worker"><b><code>Nan::AsyncQueueWorker</code></b></a>
+
+### V8 internals
+
+The hooks to access V8 internals—including GC and statistics—are different across the supported versions of V8, therefore NAN provides its own hooks that call the appropriate V8 methods.
+
+ - <a href="doc/v8_internals.md#api_nan_gc_callback"><b><code>NAN_GC_CALLBACK()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_add_gc_epilogue_callback"><b><code>Nan::AddGCEpilogueCallback()</code></b></a
+ - <a href="doc/v8_internals.md#api_nan_remove_gc_epilogue_callback"><b><code>Nan::RemoveGCEpilogueCallback()</code></b></a
+ - <a href="doc/v8_internals.md#api_nan_add_gc_prologue_callback"><b><code>Nan::AddGCPrologueCallback()</code></b></a
+ - <a href="doc/v8_internals.md#api_nan_remove_gc_prologue_callback"><b><code>Nan::RemoveGCPrologueCallback()</code></b></a
+ - <a href="doc/v8_internals.md#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a
+ - <a href="doc/v8_internals.md#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_set_counter_function"><b><code>Nan::SetCounterFunction()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_set_create_histogram_function"><b><code>Nan::SetCreateHistogramFunction()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_set_add_histogram_sample_function"><b><code>Nan::SetAddHistogramSampleFunction()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_idle_notification"><b><code>Nan::IdleNotification()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_low_memory_notification"><b><code>Nan::LowMemoryNotification()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_context_disposed_notification"><b><code>Nan::ContextDisposedNotification()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_get_internal_field_pointer"><b><code>Nan::GetInternalFieldPointer()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_set_internal_field_pointer"><b><code>Nan::SetInternalFieldPointer()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_adjust_external_memory"><b><code>Nan::AdjustExternalMemory()</code></b></a>
 
 <!-- END API -->
 
 
-
-```
  * <a href="#api_nan_weak_callback"><b><code>NAN_WEAK_CALLBACK(callbackname)</code></b></a>
  * <a href="#api_nan_deprecated"><b><code>NAN_DEPRECATED</code></b></a>
  * <a href="#api_nan_inline"><b><code>NAN_INLINE</code></b></a>
