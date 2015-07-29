@@ -7,6 +7,7 @@ files="           \
   new.md          \
   converters.md   \
   maybe_types.md  \
+  script.md       \
   errors.md       \
   buffers.md      \
   callback.md     \
