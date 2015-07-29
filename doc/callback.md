@@ -5,7 +5,7 @@
  - <a href="#api_nan_callback"><b><code>Nan::Callback</code></b></a>
 
 <a name="api_nan_callback"></a>
-## Nan::Callback
+### Nan::Callback
 
 ```c++
 class Callback {

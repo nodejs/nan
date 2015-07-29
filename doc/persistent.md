@@ -94,7 +94,7 @@ template<typename T> class PersistentBase {
 See the V8 documentation for [`PersistentBase`](https://v8docs.nodesource.com/io.js-3.0/d4/dca/classv8_1_1_persistent_base.html) for further information.
 
 <a name="api_nan_non_copyable_persistent_traits"></a>
-## Nan::NonCopyablePersistentTraits & v8::NonCopyablePersistentTraits
+### Nan::NonCopyablePersistentTraits & v8::NonCopyablePersistentTraits
 
 Default traits for `Nan::Persistent`. This class does not allow use of the a copy constructor or assignment operator. At present `kResetInDestructor` is not set, but that will change in a future version.
 
@@ -120,7 +120,7 @@ template<typename T> class NonCopyablePersistentTraits {
 See the V8 documentation for [`NonCopyablePersistentTraits`](https://v8docs.nodesource.com/io.js-3.0/de/d73/classv8_1_1_non_copyable_persistent_traits.html) for further information.
 
 <a name="api_nan_copyable_persistent_traits"></a>
-## Nan::CopyablePersistentTraits & v8::CopyablePersistentTraits
+### Nan::CopyablePersistentTraits & v8::CopyablePersistentTraits
 
 A helper class of traits to allow copying and assignment of `Persistent`. This will clone the contents of storage cell, but not any of the flags, etc..
 
@@ -145,7 +145,7 @@ class CopyablePersistentTraits {
 See the V8 documentation for [`CopyablePersistentTraits`](https://v8docs.nodesource.com/io.js-3.0/da/d5c/structv8_1_1_copyable_persistent_traits.html) for further information.
 
 <a name="api_nan_persistent"></a>
-## Nan::Persistent
+### Nan::Persistent
 
 A type of `PersistentBase` which allows copy and assignment. Copy, assignment and destructor behavior is controlled by the traits class `M`.
 
@@ -198,7 +198,7 @@ template<typename T, typename M> class Persistent : public PersistentBase<T> {
 See the V8 documentation for [`Persistent`](https://v8docs.nodesource.com/io.js-3.0/d2/d78/classv8_1_1_persistent.html) for further information.
 
 <a name="api_nan_global"></a>
-## Nan::Global
+### Nan::Global
 
 A type of `PersistentBase` which has move semantics.
 
@@ -232,10 +232,10 @@ template<typename T> class Global : public PersistentBase<T> {
 See the V8 documentation for [`Global`](https://v8docs.nodesource.com/io.js-3.0/d5/d40/classv8_1_1_global.html) for further information.
 
 <a name="api_nan_weak_callback_type"></a>
-## Nan::WeakCallbackType
+### Nan::WeakCallbackType
 
 <a name="api_nan_weak_callback_info"></a>
-## Nan::WeakCallbackInfo
+### Nan::WeakCallbackInfo
 
 `Nan::WeakCallbackInfo` is used as an argument when setting a persistent reference as weak. You may need to free any external resources attached to the object. It is a mirror of `v8:WeakCallbackInfo` as found in newer versions of V8.
 
@@ -276,7 +276,7 @@ obj.SetWeak(data, callback, WeakCallbackType::kParameter);
 See the V8 documentation for [`WeakCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/d8/d06/classv8_1_1_weak_callback_info.html) for further information.
 
 <a name="api_nan_weak_callback_type"></a>
-## Nan::WeakCallbackType
+### Nan::WeakCallbackType
 
 _TODO: explain this_
 
