@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-files="         \
+files="           \
   methods.md      \
   persistent.md   \
+  new.md          \
   converters.md   \
   maybe_types.md  \
+  errors.md       \
   callback.md     \
   asyncworker.md  \
   v8_internals.md \
