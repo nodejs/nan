@@ -65,3 +65,59 @@ v8::Local<v8::RegExp> Nan::New<T>(v8::Local<v8::String> pattern, v8::RegExp::Fla
 ```
 
 Note that `Nan::ExternalOneByteStringResource` maps to [`v8::String::ExternalOneByteStringResource`](https://v8docs.nodesource.com/io.js-3.0/d9/db3/classv8_1_1_string_1_1_external_one_byte_string_resource.html), and `v8::String::ExternalAsciiStringResource` in older versions of V8.
+
+
+<a name="api_nan_undefined"></a>
+### Nan::Undefined()
+
+A helper method to create a new `v8::Undefined` object in a way that is compatible across all supported versions of V8.
+
+Signature:
+
+```c++
+v8::Local<v8::Primitive> Nan::Undefined()
+```
+
+<a name="api_nan_null"></a>
+### Nan::Null()
+
+A helper method to create a new `v8::Null` object in a way that is compatible across all supported versions of V8.
+
+Signature:
+
+```c++
+v8::Local<v8::Primitive> Nan::Null()
+```
+
+<a name="api_nan_true"></a>
+### Nan::True()
+
+A helper method to create a new `v8::Boolean` object representing a `true` value in a way that is compatible across all supported versions of V8.
+
+Signature:
+
+```c++
+v8::Local<v8::Boolean> Nan::True()
+```
+
+<a name="api_nan_false"></a>
+### Nan::False()
+
+A helper method to create a new `v8::Boolean` object representing a `false` value in a way that is compatible across all supported versions of V8.
+
+Signature:
+
+```c++
+v8::Local<v8::Boolean> Nan::False()
+```
+
+<a name="api_nan_empty_string"></a>
+### Nan::EmptyString()
+
+Call [`v8::String::Empty`](https://v8docs.nodesource.com/io.js-3.0/d2/db3/classv8_1_1_string.html#a7c1bc8886115d7ee46f1d571dd6ebc6d) to create a zero-length string in a way that is compatible across all supported versions of V8.
+
+Signature:
+
+```c++
+v8::Local<v8::String> Nan::EmptyString() 
+```
