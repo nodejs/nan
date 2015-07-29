@@ -14,6 +14,8 @@ files="           \
   asyncworker.md  \
   string_bytes.md \
   v8_internals.md \
+  v8_misc.md      \
+  node_misc.md    \
 "
 
 __dirname=$(dirname "${BASH_SOURCE[0]}")
