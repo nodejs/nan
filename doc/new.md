@@ -1,0 +1,67 @@
+## New
+
+NAN provides a `Nan::New()` helper for the creation of new JavaScript objects in a way that's compatible across the supported versions of V8.
+
+ - <a href="#api_nan_new"><b><code>Nan::New()</code></b></a>
+
+
+<a name="api_nan_new"></a>
+### Nan::New()
+
+`Nan::New()` should be used to instantiate new JavaScript objects.
+
+Refer to the specific V8 type in the [V8 documentation](https://v8docs.nodesource.com/io.js-3.0/d1/d83/classv8_1_1_data.html) for information on the types of arguments required for instantiation.
+
+Signatures:
+
+Return types are mostly omitted from the signatures for simplicity. In most cases the type will be contained within a `v8::Local<T>`. The following types will be contained within a `Nan::MaybeLocal<T>`: `v8::String`, `v8::Date`, `v8::RegExp`, `v8::Script`, `v8::UnboundScript`.
+
+Empty objects:
+
+```c++
+Nan::New<T>();
+```
+
+Generic single and multiple-argument:
+
+```c++
+Nan::New<T>(A0 arg0);
+Nan::New<T>(A0 arg0, A1 arg1);
+Nan::New<T>(A0 arg0, A1 arg1, A2 arg2);
+Nan::New<T>(A0 arg0, A1 arg1, A2 arg2, A3 arg3);
+```
+
+For creating `v8::FunctionTemplate` and `v8::Function` objects:
+
+_The definition of `Nan::FunctionCallback` can be found in the [Method declaration](./methods.md#api_nan_method) documentation._
+
+```c++
+Nan::New<T>(Nan::FunctionCallback callback,
+            v8::Local<v8::Value> data = v8::Local<v8::Value>());
+Nan::New<T>(Nan::FunctionCallback callback,
+            v8::Local<v8::Value> data = v8::Local<v8::Value>(),
+            A2 a2 = A2());
+```
+
+Native types:
+
+```c++
+v8::Local<v8::Boolean> Nan::New<T>(bool value);
+v8::Local<v8::Int32> Nan::New<T>(int32_t value);
+v8::Local<v8::Uint32> Nan::New<T>(uint32_t value);
+v8::Local<v8::Number> Nan::New<T>(double value);
+v8::Local<v8::String> Nan::New<T>(std::string const& value);
+v8::Local<v8::String> Nan::New<T>(const char * value, int length);
+v8::Local<v8::String> Nan::New<T>(const char * value);
+v8::Local<v8::String> Nan::New<T>(const uint16_t * value);
+```
+
+Specialized types:
+
+```c++
+v8::Local<v8::String> Nan::New<T>(v8::String::ExternalStringResource * value);
+v8::Local<v8::String> Nan::New<T>(Nan::ExternalOneByteStringResource * value);
+v8::Local<v8::RegExp> Nan::New<T>(v8::Local<v8::String> pattern, v8::RegExp::Flags flags);
+```
+
+Note that `Nan::ExternalOneByteStringResource` maps to [`v8::String::ExternalOneByteStringResource`](https://v8docs.nodesource.com/io.js-3.0/d9/db3/classv8_1_1_string_1_1_external_one_byte_string_resource.html), and `v8::String::ExternalAsciiStringResource` in older versions of V8.
