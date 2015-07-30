@@ -7,7 +7,7 @@ NAN contains functions that convert `v8::Value`s to other `v8::Value` types and 
 <a name="api_nan_to"></a>
 ### Nan::To
 
-Converts a `v8::Handle<v8::Value>` to a different subtype of `v8::Value` or to a native data type. Returns a `Nan::MaybeLocal<>` or a `Nan::Maybe<>` accordingly.
+Converts a `v8::Local<v8::Value>` to a different subtype of `v8::Value` or to a native data type. Returns a `Nan::MaybeLocal<>` or a `Nan::Maybe<>` accordingly.
 
 See [maybe_types.md](./maybe_types.md) for more information on `Nan::Maybe` types.
 
@@ -15,20 +15,20 @@ Signatures:
 
 ```c++
 // V8 types
-Nan::MaybeLocal<v8::Boolean> Nan::To<v8::Boolean>(v8::Handle<v8::Value> val);
-Nan::MaybeLocal<v8::Int32> Nan::To<v8::Int32>(v8::Handle<v8::Value> val);
-Nan::MaybeLocal<v8::Integer> Nan::To<v8::Integer>(v8::Handle<v8::Value> val);
-Nan::MaybeLocal<v8::Object> Nan::To<v8::Object>(v8::Handle<v8::Value> val);
-Nan::MaybeLocal<v8::Number> Nan::To<v8::Number>(v8::Handle<v8::Value> val);
-Nan::MaybeLocal<v8::String> Nan::To<v8::String>(v8::Handle<v8::Value> val);
-Nan::MaybeLocal<v8::Uint32> Nan::To<v8::Uint32>(v8::Handle<v8::Value> val);
+Nan::MaybeLocal<v8::Boolean> Nan::To<v8::Boolean>(v8::Local<v8::Value> val);
+Nan::MaybeLocal<v8::Int32> Nan::To<v8::Int32>(v8::Local<v8::Value> val);
+Nan::MaybeLocal<v8::Integer> Nan::To<v8::Integer>(v8::Local<v8::Value> val);
+Nan::MaybeLocal<v8::Object> Nan::To<v8::Object>(v8::Local<v8::Value> val);
+Nan::MaybeLocal<v8::Number> Nan::To<v8::Number>(v8::Local<v8::Value> val);
+Nan::MaybeLocal<v8::String> Nan::To<v8::String>(v8::Local<v8::Value> val);
+Nan::MaybeLocal<v8::Uint32> Nan::To<v8::Uint32>(v8::Local<v8::Value> val);
 
 // Native types
-Nan::Maybe<bool> Nan::To<bool>(v8::Handle<v8::Value> val);
-Nan::Maybe<double> Nan::To<double>(v8::Handle<v8::Value> val);
-Nan::Maybe<int32_t> Nan::To<int32_t>(v8::Handle<v8::Value> val);
-Nan::Maybe<int64_t> Nan::To<int64_t>(v8::Handle<v8::Value> val);
-Nan::Maybe<uint32_t> Nan::To<uint32_t>(v8::Handle<v8::Value> val);
+Nan::Maybe<bool> Nan::To<bool>(v8::Local<v8::Value> val);
+Nan::Maybe<double> Nan::To<double>(v8::Local<v8::Value> val);
+Nan::Maybe<int32_t> Nan::To<int32_t>(v8::Local<v8::Value> val);
+Nan::Maybe<int64_t> Nan::To<int64_t>(v8::Local<v8::Value> val);
+Nan::Maybe<uint32_t> Nan::To<uint32_t>(v8::Local<v8::Value> val);
 ```
 
 ### Example
