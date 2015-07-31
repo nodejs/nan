@@ -483,7 +483,7 @@ Sets a method with a given name on a `FunctionTemplate`'s prototype where the me
 Signature:
 
 ```c++
-void Nan::SetPrototypeMethod(v8::Handle<v8::FunctionTemplate> recv,
+void Nan::SetPrototypeMethod(v8::Local<v8::FunctionTemplate> recv,
                              const char* name,
                              Nan::FunctionCallback callback)
 ```
@@ -496,19 +496,19 @@ Sets getters and setters for a property with a given name on an `ObjectTemplate`
 Signature:
 
 ```c++
-void SetAccessor(v8::Handle<v8::ObjectTemplate> tpl,
-                 v8::Handle<v8::String> name,
+void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
+                 v8::Local<v8::String> name,
                  Nan::GetterCallback getter,
                  Nan::SetterCallback setter = 0,
-                 v8::Handle<v8::Value> data = v8::Handle<v8::Value>(),
+                 v8::Local<v8::Value> data = v8::Local<v8::Value>(),
                  v8::AccessControl settings = v8::DEFAULT,
                  v8::PropertyAttribute attribute = v8::None,
                  imp::Sig signature = imp::Sig())
-bool SetAccessor(v8::Handle<v8::Object> obj,
-                 v8::Handle<v8::String> name,
+bool SetAccessor(v8::Local<v8::Object> obj,
+                 v8::Local<v8::String> name,
                  Nan::GetterCallback getter,
                  Nan::SetterCallback setter = 0,
-                 v8::Handle<v8::Value> data = v8::Handle<v8::Value>(),
+                 v8::Local<v8::Value> data = v8::Local<v8::Value>(),
                  v8::AccessControl settings = v8::DEFAULT,
                  v8::PropertyAttribute attribute = v8::None)
 ```
@@ -529,13 +529,13 @@ Sets named property getters, setters, query, deleter and enumerator methods on a
 Signature:
 
 ```c++
-void SetNamedPropertyHandler(v8::Handle<v8::ObjectTemplate> tpl,
+void SetNamedPropertyHandler(v8::Local<v8::ObjectTemplate> tpl,
                              Nan::PropertyGetterCallback getter,
                              Nan::PropertySetterCallback setter = 0,
                              Nan::PropertyQueryCallback query = 0,
                              Nan::PropertyDeleterCallback deleter = 0,
                              Nan::PropertyEnumeratorCallback enumerator = 0,
-                             v8::Handle<v8::Value> data = v8::Handle<v8::Value>())
+                             v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
 See the V8 [`ObjectTemplate#SetNamedPropertyHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#a34d1cc45b642cd131706663801aadd76) for further information about how to use `Nan::SetNamedPropertyHandler()`.
@@ -554,13 +554,13 @@ Sets indexed property getters, setters, query, deleter and enumerator methods on
 Signature:
 
 ```c++
-void SetIndexedPropertyHandler(v8::Handle<v8::ObjectTemplate> tpl,
+void SetIndexedPropertyHandler(v8::Local<v8::ObjectTemplate> tpl,
                              Nan::IndexGetterCallback getter,
                              Nan::IndexSetterCallback setter = 0,
                              Nan::IndexQueryCallback query = 0,
                              Nan::IndexDeleterCallback deleter = 0,
                              Nan::IndexEnumeratorCallback enumerator = 0,
-                             v8::Handle<v8::Value> data = v8::Handle<v8::Value>())
+                             v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
 See the V8 [`ObjectTemplate#SetIndexedPropertyHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#ac0234cbede45d51778bb5f6a32a9e125) for further information about how to use `Nan::SetIndexedPropertyHandler()`.
@@ -594,10 +594,10 @@ Signature:
 ```c++
 void Nan::SetPrototypeTemplate(v8::Local<v8::FunctionTemplate> templ,
                                const char *name,
-                               v8::Handle<v8::Data> value)
+                               v8::Local<v8::Data> value)
 void Nan::SetPrototypeTemplate(v8::Local<v8::FunctionTemplate> templ,
-                               v8::Handle<v8::String> name,
-                               v8::Handle<v8::Data> value,
+                               v8::Local<v8::String> name,
+                               v8::Local<v8::Data> value,
                                v8::PropertyAttribute attributes)
 ```
 
@@ -613,10 +613,10 @@ Signature:
 ```c++
 void Nan::SetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ,
                               const char *name,
-                              v8::Handle<v8::Data> value)
+                              v8::Local<v8::Data> value)
 void Nan::SetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ,
-                              v8::Handle<v8::String> name,
-                              v8::Handle<v8::Data> value,
+                              v8::Local<v8::String> name,
+                              v8::Local<v8::Data> value,
                               v8::PropertyAttribute attributes)
 ```
 
