@@ -1,6 +1,31 @@
 # NAN ChangeLog
 
-**Version 1.9.0: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 2.5.0**
+**Version 2.0.0: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.0.0**
+
+### 2.0.0 Jul 31 2015
+
+  - Change: Renamed identifiers with leading underscores	b5932b4
+  - Change: Replaced NanObjectWrapHandle with class NanObjectWrap	464f1e1
+  - Change: Replace NanScope and NanEscpableScope macros with classes	47751c4
+  - Change: Rename NanNewBufferHandle to NanNewBuffer	6745f99
+  - Change: Rename NanBufferUse to NanNewBuffer	3e8b0a5
+  - Change: Rename NanNewBuffer to NanCopyBuffer	d6af78d
+  - Change: Remove Nan prefix from all names	72d1f67
+  - Change: Update Buffer API for new upstream changes	d5d3291
+  - Change: Rename Scope and EscapableScope to HandleScope and EscapableHandleScope	21a7a6a
+  - Change: Get rid of Handles	 e6c0daf
+  - Feature: Support io.js 3 with V8 4.4
+  - Feature: Introduce NanPersistent	7fed696
+  - Feature: Introduce NanGlobal	4408da1
+  - Feature: Added NanTryCatch	10f1ca4
+  - Feature: Update for V8 v4.3	4b6404a
+  - Feature: Introduce NanNewOneByteString	c543d32
+  - Feature: Introduce namespace Nan	67ed1b1
+  - Removal: Remove NanLocker and NanUnlocker	dd6e401
+  - Removal: Remove string converters, except NanUtf8String, which now follows the node implementation b5d00a9
+  - Removal: Remove NanReturn* macros	d90a25c
+  - Removal: Remove HasInstance	e8f84fe
+
 
 ### 1.9.0 Jul 31 2015
 
