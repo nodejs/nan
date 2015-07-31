@@ -10,21 +10,21 @@
 #include "sync.h"   // NOLINT(build/include)
 #include "async.h"  // NOLINT(build/include)
 
-using namespace Nan;  // NOLINT(build/namespaces)
-
 using v8::FunctionTemplate;
 using v8::Handle;
 using v8::Object;
 using v8::String;
+using Nan::New;
+using Nan::Set;
 
 // Expose synchronous and asynchronous access to our
 // Estimate() function
-void InitAll(Handle<Object> exports) {
-  exports->Set(NanNew<String>("calculateSync").ToLocalChecked(),
-    NanNew<FunctionTemplate>(CalculateSync)->GetFunction());
+NAN_MODULE_INIT(InitAll) {
+  Set(target, New<String>("calculateSync").ToLocalChecked(),
+    New<FunctionTemplate>(CalculateSync)->GetFunction());
 
-  exports->Set(NanNew<String>("calculateAsync").ToLocalChecked(),
-    NanNew<FunctionTemplate>(CalculateAsync)->GetFunction());
+  Set(target, New<String>("calculateAsync").ToLocalChecked(),
+    New<FunctionTemplate>(CalculateAsync)->GetFunction());
 }
 
 NODE_MODULE(addon, InitAll)

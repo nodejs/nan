@@ -10,10 +10,6 @@
 #include "pi_est.h"  // NOLINT(build/include)
 #include "sync.h"  // NOLINT(build/include)
 
-using namespace Nan;  // NOLINT(build/namespaces)
-
-using v8::Number;
-
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {
   // expect a number as the first argument
