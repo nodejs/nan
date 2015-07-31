@@ -8,6 +8,8 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 static bool prologue_called = false;
 static bool epilogue_called = false;
 
@@ -20,25 +22,25 @@ NAN_GC_CALLBACK(gcEpilogueCallback) {
 }
 
 NAN_METHOD(Hook) {
-  NanScope();
-  NanAddGCPrologueCallback(gcPrologueCallback);
-  NanAddGCEpilogueCallback(gcEpilogueCallback);
-  NanReturnUndefined();
+  AddGCPrologueCallback(gcPrologueCallback);
+  AddGCEpilogueCallback(gcEpilogueCallback);
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(Check) {
-  NanScope();
-  NanReturnValue(NanNew(prologue_called && epilogue_called));
+  HandleScope scope;
+  info.GetReturnValue().Set(
+      New(prologue_called && epilogue_called));
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("hook")
-    , NanNew<v8::FunctionTemplate>(Hook)->GetFunction()
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("hook").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Hook)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("check")
-    , NanNew<v8::FunctionTemplate>(Check)->GetFunction()
+  Set(target
+    , New<v8::String>("check").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Check)->GetFunction()
   );
 }
 

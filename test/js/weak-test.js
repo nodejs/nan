@@ -13,24 +13,19 @@ const test     = require('tap').test
 test('weak', function (t) {
   t.plan(3);
 
-  var weak = bindings;
+  var weak = bindings, count = 0;
   t.type(weak.hustle, 'function');
 
-  function f() {
-    var count = 0;
-    weak.hustle(function () {
-      t.ok(count++ < 2);
-    });
-  };
-
-  f();
-
-  // run weak callback, should not dispose
-  gc();
+  weak.hustle(function () {}, function (val) {
+    t.equal(val, 42);
+    count++;
+  });
 
   // run weak callback, should dispose
   gc();
 
   // do not run weak callback
   gc();
+
+  t.equal(count, 1);
 });

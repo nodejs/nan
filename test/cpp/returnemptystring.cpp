@@ -8,15 +8,16 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(ReturnEmptyString) {
-  NanScope();
-  NanReturnEmptyString();
+  info.GetReturnValue().SetEmptyString();
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("r")
-    , NanNew<v8::FunctionTemplate>(ReturnEmptyString)->GetFunction()
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("r").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnEmptyString)->GetFunction()
   );
 }
 

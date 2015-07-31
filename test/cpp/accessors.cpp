@@ -9,10 +9,12 @@
 #include <nan.h>
 #include <cstring>
 
-class SetterGetter : public node::ObjectWrap {
+using namespace Nan;  // NOLINT(build/namespaces)
+
+class SetterGetter : public ObjectWrap {
  public:
-  static void Init (v8::Handle<v8::Object> target);
-  static v8::Handle<v8::Value> NewInstance ();
+  static NAN_MODULE_INIT(Init);
+  static v8::Local<v8::Value> NewInstance ();
   static NAN_METHOD(New);
   static NAN_METHOD(Log);
   static NAN_GETTER(GetProp1);
@@ -26,11 +28,10 @@ class SetterGetter : public node::ObjectWrap {
   char prop2[256];
 };
 
-static v8::Persistent<v8::FunctionTemplate> settergetter_constructor;
+static Persistent<v8::FunctionTemplate> settergetter_constructor;
 
 NAN_METHOD(CreateNew) {
-  NanScope();
-  NanReturnValue(SetterGetter::NewInstance());
+  info.GetReturnValue().Set(SetterGetter::NewInstance());
 }
 
 SetterGetter::SetterGetter() {
@@ -40,53 +41,54 @@ SetterGetter::SetterGetter() {
   prop2[0] = '\0';
 }
 
-void SetterGetter::Init(v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(SetterGetter::Init) {
   v8::Local<v8::FunctionTemplate> tpl =
-    NanNew<v8::FunctionTemplate>(SetterGetter::New);
-  NanAssignPersistent(settergetter_constructor, tpl);
-  tpl->SetClassName(NanNew<v8::String>("SetterGetter"));
+    Nan::New<v8::FunctionTemplate>(SetterGetter::New);
+  settergetter_constructor.Reset(tpl);
+  tpl->SetClassName(Nan::New<v8::String>("SetterGetter").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "log", SetterGetter::Log);
+  SetPrototypeMethod(tpl, "log", SetterGetter::Log);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
-  proto->SetAccessor(NanNew<v8::String>("prop1"), SetterGetter::GetProp1);
-  proto->SetAccessor(
-    NanNew<v8::String>("prop2")
-  , SetterGetter::GetProp2
-  , SetterGetter::SetProp2
+  SetAccessor(
+      proto
+    , Nan::New("prop1").ToLocalChecked()
+    , SetterGetter::GetProp1);
+  SetAccessor(
+      proto
+    , Nan::New<v8::String>("prop2").ToLocalChecked()
+    , SetterGetter::GetProp2
+    , SetterGetter::SetProp2
   );
 
   v8::Local<v8::Function> createnew =
-    NanNew<v8::FunctionTemplate>(CreateNew)->GetFunction();
-  target->Set(NanNew<v8::String>("create"), createnew);
+    Nan::New<v8::FunctionTemplate>(CreateNew)->GetFunction();
+  Set(target, Nan::New<v8::String>("create").ToLocalChecked(), createnew);
 }
 
-v8::Handle<v8::Value> SetterGetter::NewInstance () {
+v8::Local<v8::Value> SetterGetter::NewInstance () {
+  EscapableHandleScope scope;
   v8::Local<v8::FunctionTemplate> constructorHandle =
-      NanNew(settergetter_constructor);
+      Nan::New(settergetter_constructor);
   v8::Local<v8::Object> instance =
     constructorHandle->GetFunction()->NewInstance(0, NULL);
-  return instance;
+  return scope.Escape(instance);
 }
 
 NAN_METHOD(SetterGetter::New) {
-  NanScope();
-
   SetterGetter* settergetter = new SetterGetter();
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
     , "New()\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
-  settergetter->Wrap(args.This());
+  settergetter->Wrap(info.This());
 
-  NanReturnValue(args.This());
+  info.GetReturnValue().Set(info.This());
 }
 
 NAN_GETTER(SetterGetter::GetProp1) {
-  NanScope();
-
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -103,14 +105,12 @@ NAN_GETTER(SetterGetter::GetProp1) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  NanReturnValue(NanNew(settergetter->prop1));
+  info.GetReturnValue().Set(Nan::New(settergetter->prop1).ToLocalChecked());
 }
 
 NAN_GETTER(SetterGetter::GetProp2) {
-  NanScope();
-
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -127,17 +127,15 @@ NAN_GETTER(SetterGetter::GetProp2) {
     , ")\n"
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
 
-  NanReturnValue(NanNew(settergetter->prop2));
+  info.GetReturnValue().Set(Nan::New(settergetter->prop2).ToLocalChecked());
 }
 
 NAN_SETTER(SetterGetter::SetProp2) {
-  NanScope();
-
   SetterGetter* settergetter =
-      node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+      ObjectWrap::Unwrap<SetterGetter>(info.This());
   strncpy(
       settergetter->prop2
-    , *NanUtf8String(value)
+    , *Utf8String(value)
     , sizeof (settergetter->prop2));
   settergetter->prop2[sizeof (settergetter->prop2) - 1] = '\0';
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
@@ -158,12 +156,10 @@ NAN_SETTER(SetterGetter::SetProp2) {
 }
 
 NAN_METHOD(SetterGetter::Log) {
-  NanScope();
-
   SetterGetter* settergetter =
-    node::ObjectWrap::Unwrap<SetterGetter>(args.This());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
 
-  NanReturnValue(NanNew(settergetter->log));
+  info.GetReturnValue().Set(Nan::New(settergetter->log).ToLocalChecked());
 }
 
-NODE_MODULE(settergetter, SetterGetter::Init)
+NODE_MODULE(accessors, SetterGetter::Init)

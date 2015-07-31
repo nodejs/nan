@@ -8,37 +8,33 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(NewNumber) {
-  NanScope();
-  NanReturnValue(NanNew(0.5));
+  info.GetReturnValue().Set(New(0.5));
 }
 
 NAN_METHOD(NewNegativeInteger) {
-  NanScope();
-  NanReturnValue(NanNew(-1));
+  info.GetReturnValue().Set(New(-1));
 }
 
 NAN_METHOD(NewPositiveInteger) {
-  NanScope();
-  NanReturnValue(NanNew(1));
+  info.GetReturnValue().Set(New(1));
 }
 
 NAN_METHOD(NewUtf8String) {
-  NanScope();
   const char s[] = "strïng";
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(New(s).ToLocalChecked());
 }
 
 NAN_METHOD(NewLatin1String) {
-  NanScope();
   const uint8_t s[] = "str\xefng";
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(NewOneByteString(s).ToLocalChecked());
 }
 
 NAN_METHOD(NewUcs2String) {
-  NanScope();
   uint16_t s[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
-  NanReturnValue(NanNew(s));
+  info.GetReturnValue().Set(New(s).ToLocalChecked());
 }
 
 static const uint16_t ws[] = {'s', 't', 'r', 0xef, 'n', 'g', '\0'};
@@ -52,7 +48,7 @@ class ExtString : public v8::String::ExternalStringResource {
 };
 
 
-class ExtAsciiString : public NanExternalOneByteStringResource {
+class ExtAsciiString : public ExternalOneByteStringResource {
  public:
   ~ExtAsciiString() { }
   const char *data() const { return s; }
@@ -60,49 +56,47 @@ class ExtAsciiString : public NanExternalOneByteStringResource {
 };
 
 NAN_METHOD(NewExternalStringResource) {
-  NanScope();
-  v8::Local<v8::String> ext = NanNew(new ExtString());
-  NanReturnValue(ext);
+  v8::Local<v8::String> ext = New(new ExtString()).ToLocalChecked();
+  info.GetReturnValue().Set(ext);
 }
 
 NAN_METHOD(NewExternalAsciiStringResource) {
-  NanScope();
-  v8::Local<v8::String> ext = NanNew(new ExtAsciiString());
-  NanReturnValue(ext);
+  v8::Local<v8::String> ext = New(new ExtAsciiString()).ToLocalChecked();
+  info.GetReturnValue().Set(ext);
 }
 
-void Init(v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew("newNumber")
-    , NanNew<v8::FunctionTemplate>(NewNumber)->GetFunction()
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New("newNumber").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewNumber)->GetFunction()
   );
-  target->Set(
-      NanNew("newNegativeInteger")
-    , NanNew<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
+  Set(target
+    , New("newNegativeInteger").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
   );
-  target->Set(
-      NanNew("newPositiveInteger")
-    , NanNew<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
+  Set(target
+    , New("newPositiveInteger").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
   );
-  target->Set(
-      NanNew("newUtf8String")
-    , NanNew<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
+  Set(target
+    , New("newUtf8String").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
   );
-  target->Set(
-      NanNew("newLatin1String")
-    , NanNew<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
+  Set(target
+    , New("newLatin1String").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
   );
-  target->Set(
-      NanNew("newUcs2String")
-    , NanNew<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
+  Set(target
+    , New("newUcs2String").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
   );
-  target->Set(
-      NanNew("newExternalStringResource")
-    , NanNew<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
+  Set(target
+    , New("newExternalStringResource").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
   );
-  target->Set(
-      NanNew("newExternalAsciiStringResource")
-    , NanNew<v8::FunctionTemplate>(NewExternalAsciiStringResource)
+  Set(target
+    , New("newExternalAsciiStringResource").ToLocalChecked()
+    , New<v8::FunctionTemplate>(NewExternalAsciiStringResource)
     ->GetFunction()
   );
 }

@@ -8,30 +8,30 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 struct Dummy {
   int value;
 };
 
 NAN_METHOD(SetAndGet) {
-  NanScope();
-
   Dummy *d0 = new Dummy;
   Dummy *d1 = NULL;
 
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
-  NanSetIsolateData<Dummy>(isolate, d0);
-  d1 = NanGetIsolateData<Dummy>(isolate);
+  SetIsolateData<Dummy>(isolate, d0);
+  d1 = GetIsolateData<Dummy>(isolate);
 
   delete d1;
 
-  NanReturnValue(NanNew<v8::Boolean>(d0 == d1));
+  info.GetReturnValue().Set(New<v8::Boolean>(d0 == d1));
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("setAndGet")
-    , NanNew<v8::FunctionTemplate>(SetAndGet)->GetFunction()
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("setAndGet").ToLocalChecked()
+    , New<v8::FunctionTemplate>(SetAndGet)->GetFunction()
   );
 }
 

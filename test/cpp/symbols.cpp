@@ -8,8 +8,13 @@
 
 #include <nan.h>
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(NanNew<v8::String>("key"), NanNew<v8::String>("a property"));
+using namespace Nan;  // NOLINT(build/namespaces)
+
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("key").ToLocalChecked()
+    , New<v8::String>("a property").ToLocalChecked()
+  );
 }
 
 NODE_MODULE(symbols, Init)

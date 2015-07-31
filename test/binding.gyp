@@ -46,8 +46,12 @@
       , "sources"     : [ "cpp/asyncworker.cpp" ]
     }
   , {
-        "target_name" : "settergetter"
-      , "sources"     : [ "cpp/settergetter.cpp" ]
+        "target_name" : "accessors"
+      , "sources"     : [ "cpp/accessors.cpp" ]
+    }
+  , {
+        "target_name" : "accessors2"
+      , "sources"     : [ "cpp/accessors2.cpp" ]
     }
   , {
         "target_name" : "persistent"
@@ -56,6 +60,10 @@
   , {
         "target_name" : "weak"
       , "sources"     : [ "cpp/weak.cpp" ]
+    }
+  , {
+        "target_name" : "weak2"
+      , "sources"     : [ "cpp/weak2.cpp" ]
     }
   , {
         "target_name" : "bufferworkerpersistent"
@@ -103,5 +111,24 @@
     , {
         "target_name" : "error"
       , "sources"     : [ "cpp/error.cpp" ]
+    }
+    , {
+        "target_name" : "namedinterceptors"
+      , "sources"     : [ "cpp/namedinterceptors.cpp" ]
+    }
+    , {
+        "target_name" : "indexedinterceptors"
+      , "sources"     : [ "cpp/indexedinterceptors.cpp" ]
+    }
+    , {
+        "target_name" : "converters"
+      , "sources"     : [ "cpp/converters.cpp" ]
+    }, {
+        "target_name" : "buffer"
+      , "sources"     : [ "cpp/buffer.cpp" ]
+    }
+    , {
+        "target_name" : "trycatch"
+      , "sources"     : [ "cpp/trycatch.cpp" ]
     }
 ]}

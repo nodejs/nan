@@ -12,20 +12,18 @@
 #endif
 #include <nan.h>
 
-class BufferWorker : public NanAsyncWorker {
+using namespace Nan;  // NOLINT(build/namespaces)
+
+class BufferWorker : public AsyncWorker {
  public:
   BufferWorker(
-          NanCallback *callback
+          Callback *callback
         , int milliseconds
         , v8::Local<v8::Object> &bufferHandle
       )
-    : NanAsyncWorker(callback), milliseconds(milliseconds) {
-
-      NanScope();
-
-     /* test them all */
+    : AsyncWorker(callback), milliseconds(milliseconds) {
       SaveToPersistent("buffer", bufferHandle);
-      SaveToPersistent(NanNew("puffer"), bufferHandle);
+      SaveToPersistent(New("puffer").ToLocalChecked(), bufferHandle);
       SaveToPersistent(0u, bufferHandle);
     }
 
@@ -36,12 +34,12 @@ class BufferWorker : public NanAsyncWorker {
   }
 
   void HandleOKCallback () {
-    NanScope();
+    HandleScope scope;
 
     v8::Local<v8::Value> handle = GetFromPersistent("buffer");
     callback->Call(1, &handle);
 
-    handle = GetFromPersistent(NanNew("puffer"));
+    handle = GetFromPersistent(New("puffer").ToLocalChecked());
     callback->Call(1, &handle);
 
     handle = GetFromPersistent(0u);
@@ -53,19 +51,19 @@ class BufferWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(DoSleep) {
-  NanScope();
-  v8::Local<v8::Object> bufferHandle = args[1].As<v8::Object>();
-  NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+  v8::Local<v8::Object> bufferHandle = info[1].As<v8::Object>();
+  Callback *callback = new Callback(info[2].As<v8::Function>());
   assert(!callback->IsEmpty() && "Callback shoud not be empty");
-  NanAsyncQueueWorker(
-      new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
-  NanReturnUndefined();
+  AsyncQueueWorker(new BufferWorker(
+      callback
+    , To<uint32_t>(info[0]).FromJust()
+    , bufferHandle));
 }
 
-void Init(v8::Handle<v8::Object> exports) {
-  exports->Set(
-      NanNew<v8::String>("a")
-    , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("a").ToLocalChecked()
+    , New<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
 NODE_MODULE(bufferworkerpersistent, Init)

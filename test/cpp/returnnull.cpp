@@ -9,14 +9,13 @@
 #include <nan.h>
 
 NAN_METHOD(ReturnNull) {
-  NanScope();
-  NanReturnNull();
+  info.GetReturnValue().SetNull();
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("r")
-    , NanNew<v8::FunctionTemplate>(ReturnNull)->GetFunction()
+NAN_MODULE_INIT(Init) {
+  Nan::Set(target
+    , Nan::New<v8::String>("r").ToLocalChecked()
+    , Nan::New<v8::FunctionTemplate>(ReturnNull)->GetFunction()
   );
 }
 

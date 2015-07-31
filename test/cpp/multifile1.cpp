@@ -9,10 +9,12 @@
 #include <nan.h>
 #include "./multifile2.h"
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("r")
-    , NanNew<v8::FunctionTemplate>(ReturnString)->GetFunction()
+using namespace Nan;  // NOLINT(build/namespaces)
+
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("r").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnString)->GetFunction()
   );
 }
 

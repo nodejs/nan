@@ -8,50 +8,42 @@
 
 #include <nan.h>
 
-v8::Persistent<v8::Boolean> persistent;
+using namespace Nan;  // NOLINT(build/namespaces)
 
-NAN_METHOD(ReturnValue) {
-  NanScope();
-  if (args.Length() == 1) {
-    NanReturnValue(args[0]);
+Global<v8::Boolean> global;
+
+NAN_METHOD(ReturnAValue) {
+  const FunctionCallbackInfo<v8::Value> cbinfo = info;
+  ReturnValue<v8::Value> ret = cbinfo.GetReturnValue();
+  if (cbinfo.Length() == 1) {
+    ret.Set(info[0].As<v8::String>());
   } else {
-    NanReturnValue(NanNew<v8::String>("default"));
+    ret.Set(New("default").ToLocalChecked());
   }
 }
 
 NAN_METHOD(ReturnPrimitive) {
-  NanScope();
-  NanReturnValue(true);
+  info.GetReturnValue().Set(true);
 }
 
-NAN_METHOD(ReturnString) {
-  NanScope();
-  NanReturnValue("yes, it works");
+NAN_METHOD(ReturnGlobal) {
+  info.GetReturnValue().Set(global);
 }
 
-NAN_METHOD(ReturnPersistent) {
-  NanScope();
-  NanReturnValue(persistent);
-}
+NAN_MODULE_INIT(Init) {
+  global.Reset(New(true));
 
-void Init (v8::Handle<v8::Object> target) {
-  NanAssignPersistent(persistent, NanNew(true));
-
-  target->Set(
-      NanNew<v8::String>("r")
-    , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
+  Set(target
+    , New<v8::String>("r").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnAValue)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("p")
-    , NanNew<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
+  Set(target
+    , New<v8::String>("p").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
   );
-  target->Set(
-      NanNew<v8::String>("s")
-    , NanNew<v8::FunctionTemplate>(ReturnString)->GetFunction()
-  );
-  target->Set(
-      NanNew<v8::String>("q")
-    , NanNew<v8::FunctionTemplate>(ReturnPersistent)->GetFunction()
+  Set(target
+    , New<v8::String>("q").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
   );
 }
 

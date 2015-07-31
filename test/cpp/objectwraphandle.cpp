@@ -8,18 +8,19 @@
 
 #include <nan.h>
 
-class MyObject : public node::ObjectWrap {
+using namespace Nan;  // NOLINT(build/namespaces)
+
+class MyObject : public ObjectWrap {
  public:
-  static void Init(v8::Handle<v8::Object> exports) {
-    NanScope();
-    v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
-    tpl->SetClassName(NanNew("MyObject"));
+  static NAN_MODULE_INIT(Init) {
+    v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
+    tpl->SetClassName(Nan::New("MyObject").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getHandle", GetHandle);
+    SetPrototypeMethod(tpl, "getHandle", GetHandle);
 
-    NanAssignPersistent(constructor, tpl->GetFunction());
-    exports->Set(NanNew("MyObject"), tpl->GetFunction());
+    constructor.Reset(tpl->GetFunction());
+    Set(target, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
   }
 
  private:
@@ -27,35 +28,28 @@ class MyObject : public node::ObjectWrap {
   ~MyObject() {}
 
   static NAN_METHOD(New) {
-    NanScope();
-
-    if (args.IsConstructCall()) {
-      double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+    if (info.IsConstructCall()) {
+      double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
       MyObject *obj = new MyObject(value);
-      obj->Wrap(args.This());
-      NanReturnThis();
+      obj->Wrap(info.This());
+      info.GetReturnValue().Set(info.This());
     } else {
       const int argc = 1;
-      v8::Local<v8::Value> argv[argc] = {args[0]};
-      v8::Local<v8::Function> cons = NanNew(constructor);
-      NanReturnValue(cons->NewInstance(argc, argv));
+      v8::Local<v8::Value> argv[argc] = {info[0]};
+      v8::Local<v8::Function> cons = Nan::New(constructor);
+      info.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
   }
 
   static NAN_METHOD(GetHandle) {
-    NanScope();
-    MyObject* obj = node::ObjectWrap::Unwrap<MyObject>(args.This());
-    NanReturnValue(NanObjectWrapHandle(obj));
+    MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.This());
+    info.GetReturnValue().Set(obj->handle());
   }
 
-  static v8::Persistent<v8::Function> constructor;
+  static Persistent<v8::Function> constructor;
   double value_;
 };
 
-v8::Persistent<v8::Function> MyObject::constructor;
+Persistent<v8::Function> MyObject::constructor;
 
-void Init(v8::Handle<v8::Object> exports) {
-  MyObject::Init(exports);
-}
-
-NODE_MODULE(objectwraphandle, Init)
+NODE_MODULE(objectwraphandle, MyObject::Init)

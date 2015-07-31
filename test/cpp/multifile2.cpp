@@ -8,8 +8,9 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 NAN_METHOD(ReturnString) {
-  NanScope();
-  v8::Local<v8::String> s = NanNew<v8::String>(*NanUtf8String(args[0]));
-  NanReturnValue(s);
+  v8::Local<v8::String> s = New(*Utf8String(info[0])).ToLocalChecked();
+  info.GetReturnValue().Set(s);
 }

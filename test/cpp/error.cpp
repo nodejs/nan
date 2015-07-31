@@ -8,21 +8,23 @@
 
 #include <nan.h>
 
+using namespace Nan;  // NOLINT(build/namespaces)
+
 #define X(NAME)                                                                \
   NAN_METHOD(Throw ## NAME ## 1) {                                             \
-    return NanThrow ## NAME("errmsg");                                         \
+    return Nan::Throw ## NAME("errmsg");                                       \
   }                                                                            \
                                                                                \
   NAN_METHOD(Throw ## NAME ## 2) {                                             \
-    return NanThrow ## NAME(NanNew("errmsg"));                                 \
+    return Nan::Throw ## NAME(Nan::New("errmsg").ToLocalChecked());            \
   }                                                                            \
                                                                                \
   NAN_METHOD(Throw ## NAME ## 3) {                                             \
-    return NanThrowError(Nan ## NAME("errmsg"));                               \
+    return Nan::ThrowError(NAME("errmsg"));                                    \
   }                                                                            \
                                                                                \
   NAN_METHOD(Throw ## NAME ## 4) {                                             \
-    return NanThrowError(Nan ## NAME(NanNew("errmsg")));                       \
+    return Nan::ThrowError(NAME(Nan::New("errmsg").ToLocalChecked()));         \
   }
 
 X(Error)
@@ -40,10 +42,13 @@ X(TypeError)
   X(Throw ## NAME ## 4)
 
 #define X(NAME)                                                                \
-  target->Set(NanNew(#NAME), NanNew<v8::FunctionTemplate>(NAME)->GetFunction());
+  Nan::Set(                                                                    \
+      target                                                                   \
+    , Nan::New(#NAME).ToLocalChecked()                                         \
+    , Nan::New<v8::FunctionTemplate>(NAME)->GetFunction());
 
 
-void Init (v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(Init) {
   EXPORT_ERROR_FUNCTIONS(Error)
   EXPORT_ERROR_FUNCTIONS(RangeError)
   EXPORT_ERROR_FUNCTIONS(ReferenceError)

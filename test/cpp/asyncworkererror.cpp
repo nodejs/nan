@@ -8,9 +8,11 @@
 
 #include <nan.h>
 
-class ErrorWorker : public NanAsyncWorker {
+using namespace Nan;  // NOLINT(build/namespaces)
+
+class ErrorWorker : public AsyncWorker {
  public:
-  explicit ErrorWorker(NanCallback *callback) : NanAsyncWorker(callback) {}
+  explicit ErrorWorker(Callback *callback) : AsyncWorker(callback) {}
   ~ErrorWorker() {}
 
   void Execute () {
@@ -19,14 +21,15 @@ class ErrorWorker : public NanAsyncWorker {
 };
 
 NAN_METHOD(Work) {
-  NanScope();
-  NanCallback *callback = new NanCallback(args[0].As<v8::Function>());
-  NanAsyncQueueWorker(new ErrorWorker(callback));
-  NanReturnUndefined();
+  Callback *callback = new Callback(info[0].As<v8::Function>());
+  AsyncQueueWorker(new ErrorWorker(callback));
+  info.GetReturnValue().SetUndefined();
 }
 
-void Init (v8::Handle<v8::Object> exports) {
-  exports->Set(NanNew("a"), NanNew<v8::FunctionTemplate>(Work)->GetFunction());
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New("a").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Work)->GetFunction());
 }
 
 NODE_MODULE(asyncworkererror, Init)

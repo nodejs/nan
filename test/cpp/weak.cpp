@@ -8,32 +8,37 @@
 
 #include <nan.h>
 
-NAN_WEAK_CALLBACK(weakCallback) {
+using namespace Nan;  // NOLINT(build/namespaces)
+
+static Persistent<v8::Function> cb;
+
+void weakCallback(
+    const WeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
   int *parameter = data.GetParameter();
-  NanMakeCallback(NanGetCurrentContext()->Global(), data.GetValue(), 0, NULL);
-  if ((*parameter)++ == 0) {
-    data.Revive();
-  } else {
-    delete parameter;
-  }
+  v8::Local<v8::Value> val = New(*parameter);
+  MakeCallback(GetCurrentContext()->Global(), New(cb), 1, &val);
+  delete parameter;
 }
 
-v8::Handle<v8::String> wrap(v8::Local<v8::Function> func) {
-  v8::Local<v8::String> lstring = NanNew<v8::String>("result");
-  int *parameter = new int(0);
-  NanMakeWeakPersistent(func, parameter, &weakCallback);
-  return lstring;
+v8::Local<v8::String> wrap(v8::Local<v8::Function> func) {
+  EscapableHandleScope scope;
+  v8::Local<v8::String> lstring = New<v8::String>("result").ToLocalChecked();
+  int *parameter = new int(42);
+  Persistent<v8::Function> persistent(func);
+  persistent.SetWeak(parameter, weakCallback, WeakCallbackType::kParameter);
+  assert(persistent.IsWeak());
+  return scope.Escape(lstring);
 }
 
 NAN_METHOD(Hustle) {
-  NanScope();
-  NanReturnValue(wrap(args[0].As<v8::Function>()));
+  cb.Reset(info[1].As<v8::Function>());
+  info.GetReturnValue().Set(wrap(info[0].As<v8::Function>()));
 }
 
-void Init (v8::Handle<v8::Object> target) {
-  target->Set(
-      NanNew<v8::String>("hustle")
-    , NanNew<v8::FunctionTemplate>(Hustle)->GetFunction()
+NAN_MODULE_INIT(Init) {
+  Set(target
+    , New<v8::String>("hustle").ToLocalChecked()
+    , New<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 
