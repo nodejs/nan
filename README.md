@@ -306,49 +306,6 @@ npm install
 make test
 ```
 
-<a name="tests"></a>
-## Porting
-
-Follows is a guide to porting your C++ node to NAN.
-
-<table><tbody>
-
-<tr><th>Aspect</th><th>Without NAN</th><th>With NAN</th></tr>
-
-<tr><td>Function declaration</td><td><pre>class MyClass : public ObjectWrap {
-    ....
-    static Handle<Value> ToString(const Arguments& args);
-    ....
-}</pre></td></th><td><pre>class MyClass : public ObjectWrap {
-    ....
-    static NAN_METHOD(ToString);
-    ....
-}</pre></td></tr>
-
-<tr><td>Function definition</td><td><pre>Handle<Value>
-MyClass::ToString(const Arguments& args)
-{
-	HandleScope scope;
-	....
-}</pre></td></th><td><pre>
-NAN_METHOD(MyClass::ToString)
-{
-  NanScope();
-  ....
-}</pre></td></tr>
-
-<tr><td>Return a value</td><td><pre>return scope.Close(result);</pre></td></th><td><pre>NanReturnValue(result);</pre></td></tr>
-
-<tr><td>Return undefined</td><td><pre>return Undefined();</pre></td></th><td><pre>NanReturnUndefined();</pre></td></tr>
-
-<tr><td>Throw an error</td><td><pre>return ThrowException(
-  Exception::Error(
-    String::New("Error text...")));</pre></td></th><td><pre>return NanThrowError("Error text...");</pre></td></tr>
-
-<tr><td>New v8 string literal</td><td><pre>String::NewSymbol("my text")</pre></td></th><td><pre>NanNew("my text")</pre></td></tr>
-
-</tbody></table>
-
 <a name="governance"></a>
 ## Governance & Contributing
 
