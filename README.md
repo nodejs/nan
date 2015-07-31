@@ -58,11 +58,19 @@ For another example, see **[nan-example-eol](https://github.com/CodeCharmLtd/nan
 <a name="api"></a>
 ## API
 
+Additional to the NAN documentation below, please consult:
+
+* [The V8 Getting Started Guide](https://developers.google.com/v8/get_started)
+* [The V8 Embedders Guide](https://developers.google.com/v8/embed)
+* [V8 API Documentation](http://v8docs.nodesource.com/)
+
 <!-- START API -->
 
 ### JavaScript-accessible methods
 
-Across the versions of V8 supported by NAN, JavaScript-accessible method signatures vary widely, NAN fully abstracts method declaration and provides you with an interface that is similar to the most recent V8 API but is backward-compatible with older versions that still use the now-deceased `v8::Argument` type.
+A _template_ is a blueprint for JavaScript functions and objects in a context. You can use a template to wrap C++ functions and data structures within JavaScript objects so that they can be manipulated from JavaScript. See the V8 Embedders Guide section on [Templates](https://developers.google.com/v8/embed#templates) for further information.
+
+In order to expose functionality to JavaScript via a template, you must provide it to V8 in a form that it understands. Across the versions of V8 supported by NAN, JavaScript-accessible method signatures vary widely, NAN fully abstracts method declaration and provides you with an interface that is similar to the most recent V8 API but is backward-compatible with older versions that still use the now-deceased `v8::Argument` type.
 
 * **Method argument types**
  - <a href="doc/methods.md#api_nan_function_callback_info"><b><code>Nan::FunctionCallbackInfo</code></b></a>
@@ -93,11 +101,16 @@ Across the versions of V8 supported by NAN, JavaScript-accessible method signatu
 
 ### Scopes
 
+A _local handle_ is a pointer to an object. All V8 objects are accessed using handles, they are necessary because of the way the V8 garbage collector works.
+
+A handle scope can be thought of as a container for any number of handles. When you've finished with your handles, instead of deleting each one individually you can simply delete their scope.
+
 The creation of `HandleScope` objects is different across the supported versions of V8. Therefore, NAN provides its own implementations that can be used safely across these.
 
  - <a href="doc/scopes.md#api_nan_handle_scope"><b><code>Nan::HandleScope</code></b></a>
  - <a href="doc/scopes.md#api_nan_escapable_handle_scope"><b><code>Nan::EscapableHandleScope</code></b></a>
 
+Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://developers.google.com/v8/embed#handles).
 
 ### Persistent references
 
@@ -184,6 +197,8 @@ NAN provides a `v8::Script` helpers as the API has changed over the supported ve
 NAN includes helpers for creating, throwing and catching Errors as much of this functionality varies across the supported versions of V8 and must be abstracted.
 
 Note that an Error object is simply a specialized form of `v8::Value`.
+
+Also consult the V8 Embedders Guide section on [Exceptions](https://developers.google.com/v8/embed#exceptions) for more information.
 
  - <a href="doc/errors.md#api_nan_error"><b><code>Nan::Error()</code></b></a>
  - <a href="doc/errors.md#api_nan_range_error"><b><code>Nan::RangeError()</code></b></a>

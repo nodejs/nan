@@ -1,10 +1,15 @@
 ## Scopes
 
+A _local handle_ is a pointer to an object. All V8 objects are accessed using handles, they are necessary because of the way the V8 garbage collector works.
+
+A handle scope can be thought of as a container for any number of handles. When you've finished with your handles, instead of deleting each one individually you can simply delete their scope.
+
 The creation of `HandleScope` objects is different across the supported versions of V8. Therefore, NAN provides its own implementations that can be used safely across these.
 
  - <a href="#api_nan_handle_scope"><b><code>Nan::HandleScope</code></b></a>
  - <a href="#api_nan_escapable_handle_scope"><b><code>Nan::EscapableHandleScope</code></b></a>
 
+Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://developers.google.com/v8/embed#handles).
 
 <a name="api_nan_handle_scope"></a>
 ### Nan::HandleScope
