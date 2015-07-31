@@ -278,7 +278,10 @@ See the V8 documentation for [`WeakCallbackInfo`](https://v8docs.nodesource.com/
 <a name="api_nan_weak_callback_type"></a>
 ### Nan::WeakCallbackType
 
-_TODO: explain this_
+Represents the type of a weak callback.
+A weak callback of type `kParameter` makes the supplied parameter to `Nan::PersistentBase::SetWeak` available through `WeakCallbackInfo::GetParameter`.
+A weak callback of type `kInternalFields` uses up to two internal fields at indices 0 and 1 on the `Nan::PersistentBase<v8::Object>` being made weak.
+Note that only `v8::Object`s and derivatives can have internal fields.
 
 Definition:
 
