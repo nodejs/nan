@@ -1,6 +1,18 @@
 # NAN ChangeLog
 
-**Version 1.8.4: current Node 12: 0.12.2, Node 10: 0.10.38, io.js: 1.8.1**
+**Version 1.9.0: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 2.5.0**
+
+### 1.9.0 Jul 31 2015
+
+  - Feature: Added `NanFatalException` 81d4a2c
+  - Feature: Added more error types 4265f06
+  - Feature: Added dereference and function call operators to NanCallback c4b2ed0
+  - Feature: Added indexed GetFromPersistent and SaveToPersistent edd510c
+  - Feature: Added more overloads of SaveToPersistent and GetFromPersistent 8b1cef6
+  - Feature: Added NanErrnoException dd87d9e
+  - Correctness: Prevent assign, copy, and move for classes that do not support it 1f55c59, 4b808cb, c96d9b2, fba4a29, 3357130
+  - Deprecation: Deprecate `NanGetPointerSafe` and `NanSetPointerSafe` 81d4a2c
+  - Deprecation: Deprecate `NanBooleanOptionValue` and `NanUInt32OptionValue` 0ad254b
 
 ### 1.8.4 Apr 26 2015
 

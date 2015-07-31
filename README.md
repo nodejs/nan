@@ -3,7 +3,7 @@ Native Abstractions for Node.js
 
 **A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 0.8, 0.10 and 0.12 as well as io.js.**
 
-***Current version: 1.8.4***
+***Current version: 1.9.0***
 
 *(See [CHANGELOG.md](https://github.com/nodejs/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
@@ -26,6 +26,14 @@ This project also contains some helper utilities that make addon development a b
 
 <a name="news"></a>
 ## News & Updates
+
+### Jul-2015: 1.9.0 release
+
+* Deprecated `NanGetPointerSafe` and `NanSetPointerSafe`
+* Deprecated `NanBooleanOptionValue` and `NanUInt32OptionValue`
+* Added some new features, see the [changelog](CHANGELOG.md) for more details
+
+This is the final minor release in the 1.x series.
 
 ### Apr-2015: 1.8.0 release
 
