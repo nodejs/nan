@@ -16,18 +16,18 @@ Use `MakeCallback()` rather than using `v8::Function#Call()` directly in order t
 Signatures:
 
 ```c++
-v8::Local<v8::Value> Nan::MakeCallback(v8::Handle<v8::Object> target,
-                                       v8::Handle<v8::Function> func,
+v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
+                                       v8::Local<v8::Function> func,
                                        int argc,
-                                       v8::Handle<v8::Value>* argv);
-v8::Local<v8::Value> Nan::MakeCallback(v8::Handle<v8::Object> target,
-                                       v8::Handle<v8::String> symbol,
+                                       v8::Local<v8::Value>* argv);
+v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
+                                       v8::Local<v8::String> symbol,
                                        int argc,
-                                       v8::Handle<v8::Value>* argv);
-v8::Local<v8::Value> Nan::MakeCallback(v8::Handle<v8::Object> target,
+                                       v8::Local<v8::Value>* argv);
+v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
                                        const char* method,
                                        int argc,
-                                       v8::Handle<v8::Value>* argv);
+                                       v8::Local<v8::Value>* argv);
 ```
 
 
@@ -62,7 +62,7 @@ A simple helper to register a `v8::FunctionTemplate` from a JavaScript-accessibl
 Signature:
 
 ```c++
-void Export(v8::Handle<v8::Object> target, const char *name, Nan::FunctionCallback f)
+void Export(v8::Local<v8::Object> target, const char *name, Nan::FunctionCallback f)
 ```
 
 Also available as the shortcut `NAN_EXPORT` macro.

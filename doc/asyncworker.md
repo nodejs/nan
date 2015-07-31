@@ -24,7 +24,7 @@ class AsyncWorker {
 
   void SaveToPersistent(const char *key, const v8::Local<v8::Value> &value);
 
-  void SaveToPersistent(const v8::Handle<v8::String> &key,
+  void SaveToPersistent(const v8::Local<v8::String> &key,
                         const v8::Local<v8::Value> &value);
 
   void SaveToPersistent(uint32_t index,

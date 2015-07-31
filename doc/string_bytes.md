@@ -42,7 +42,7 @@ A wrapper around `node::DecodeBytes()` that provides a consistent implementation
 Signature:
 
 ```c++
-ssize_t Nan::DecodeBytes(v8::Handle<v8::Value> val,
+ssize_t Nan::DecodeBytes(v8::Local<v8::Value> val,
                          enum Nan::Encoding encoding = BINARY);
 ```
 
@@ -57,6 +57,6 @@ Signature:
 ```c++
 ssize_t Nan::DecodeWrite(char *buf,
                          size_t len,
-                         v8::Handle<v8::Value> val,
+                         v8::Local<v8::Value> val,
                          enum Nan::Encoding encoding = BINARY);
 ```

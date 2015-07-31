@@ -33,6 +33,6 @@ Note that `Nan::BoundScript` is an alias for `v8::Script` and `Nan::UnboundScrip
 Signature:
 
 ```c++
-Nan::MaybeLocal<v8::Value> Nan::RunScript(v8::Handle<Nan::UnboundScript> script)
-Nan::MaybeLocal<v8::Value> Nan::RunScript(v8::Handle<Nan::BoundScript> script) 
+Nan::MaybeLocal<v8::Value> Nan::RunScript(v8::Local<Nan::UnboundScript> script)
+Nan::MaybeLocal<v8::Value> Nan::RunScript(v8::Local<Nan::BoundScript> script) 
 ```
