@@ -113,6 +113,11 @@ class FunctionCallbackInfo {
         , return_value_(args.GetIsolate(), &retval_)
         , retval_(v8::Persistent<T>::New(v8::Undefined())) {}
 
+  inline ~FunctionCallbackInfo() {
+    retval_.Dispose();
+    retval_.Clear();
+  }
+
   inline ReturnValue<T> GetReturnValue() const {
     return ReturnValue<T>(return_value_);
   }
@@ -177,6 +182,12 @@ class PropertyCallbackInfo : public PropertyCallbackInfoBase<T> {
           PropertyCallbackInfoBase<T>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<T>::New(v8::Undefined())) {}
+
+  inline ~PropertyCallbackInfo() {
+    retval_.Dispose();
+    retval_.Clear();
+  }
+
   inline ReturnValue<T> GetReturnValue() const { return return_value_; }
 };
 
@@ -193,6 +204,12 @@ class PropertyCallbackInfo<v8::Array> :
           PropertyCallbackInfoBase<v8::Array>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Array>::New(v8::Local<v8::Array>())) {}
+
+  inline ~PropertyCallbackInfo() {
+    retval_.Dispose();
+    retval_.Clear();
+  }
+
   inline ReturnValue<v8::Array> GetReturnValue() const {
     return return_value_;
   }
@@ -211,6 +228,12 @@ class PropertyCallbackInfo<v8::Boolean> :
           PropertyCallbackInfoBase<v8::Boolean>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Boolean>::New(v8::Local<v8::Boolean>())) {}
+
+  inline ~PropertyCallbackInfo() {
+    retval_.Dispose();
+    retval_.Clear();
+  }
+
   inline ReturnValue<v8::Boolean> GetReturnValue() const {
     return return_value_;
   }
@@ -229,6 +252,12 @@ class PropertyCallbackInfo<v8::Integer> :
           PropertyCallbackInfoBase<v8::Integer>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Integer>::New(v8::Local<v8::Integer>())) {}
+
+  inline ~PropertyCallbackInfo() {
+    retval_.Dispose();
+    retval_.Clear();
+  }
+
   inline ReturnValue<v8::Integer> GetReturnValue() const {
     return return_value_;
   }
