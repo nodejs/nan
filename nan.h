@@ -2099,29 +2099,13 @@ inline void SetIndexedPropertyHandler(
 #endif
 }
 
-//=== ObjectWrap ===============================================================
-
-class ObjectWrap : public node::ObjectWrap {
- public:
-#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
-  inline v8::Local<v8::Object> handle() { return New(handle_); }
-  inline Persistent<v8::Object> &persistent() {
-    Persistent<v8::Object> temp(handle_);
-    std::memcpy(&persistent_, &temp, sizeof(persistent_));
-    return persistent_;
-  }
- private:
-  Persistent<v8::Object> persistent_;
-#else
-  inline Persistent<v8::Object> &persistent() {
-    return static_cast<Persistent<v8::Object>&>(node::ObjectWrap::persistent());
-  }
-#endif
-};
-
 //=== Weak Persistent Handling =================================================
 
 #include "nan_weak.h"  // NOLINT(build/include)
+
+//=== ObjectWrap ===============================================================
+
+#include "nan_object_wrap.h"  // NOLINT(build/include)
 
 //=== Export ==================================================================
 
