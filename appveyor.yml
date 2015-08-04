@@ -10,6 +10,7 @@ environment:
   # io.js
     - nodejs_version: "1"
     - nodejs_version: "2"
+    - nodejs_version: "3"
 
 # Install scripts. (runs after repo cloning)
 install:
