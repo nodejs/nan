@@ -309,6 +309,16 @@ template<typename P> class WeakCallbackInfo;
 
 namespace imp {
   static const size_t kMaxLength = 0x3fffffff;
+  // v8::String::REPLACE_INVALID_UTF8 was introduced
+  // in node.js v0.10.29 and v0.8.27.
+#if NODE_MAJOR_VERSION > 0 || \
+    NODE_MINOR_VERSION > 10 || \
+    NODE_MINOR_VERSION == 10 && NODE_PATCH_VERSION >= 29 || \
+    NODE_MINOR_VERSION == 8 && NODE_PATCH_VERSION >= 27
+  static const unsigned kReplaceInvalidUtf8 = v8::String::REPLACE_INVALID_UTF8;
+#else
+  static const unsigned kReplaceInvalidUtf8 = 0;
+#endif
 }  // end of namespace imp
 
 //=== HandleScope ==============================================================
@@ -863,8 +873,8 @@ class Utf8String {
           str_ = static_cast<char*>(malloc(len));
           assert(str_ != 0);
         }
-        const int flags = v8::String::NO_NULL_TERMINATION |
-                          v8::String::REPLACE_INVALID_UTF8;
+        const int flags =
+            v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
         length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
         str_[length_] = '\0';
       }
@@ -1174,8 +1184,8 @@ class Utf8String {
           str_ = static_cast<char*>(malloc(len));
           assert(str_ != 0);
         }
-        const int flags = v8::String::NO_NULL_TERMINATION |
-                          v8::String::REPLACE_INVALID_UTF8;
+        const int flags =
+            v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
         length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
         str_[length_] = '\0';
       }
