@@ -3,11 +3,11 @@
 The hooks to access V8 internals—including GC and statistics—are different across the supported versions of V8, therefore NAN provides its own hooks that call the appropriate V8 methods.
 
  - <a href="#api_nan_gc_callback"><b><code>NAN_GC_CALLBACK()</code></b></a>
- - <a href="#api_nan_add_gc_epilogue_callback"><b><code>Nan::AddGCEpilogueCallback()</code></b></a
- - <a href="#api_nan_remove_gc_epilogue_callback"><b><code>Nan::RemoveGCEpilogueCallback()</code></b></a
- - <a href="#api_nan_add_gc_prologue_callback"><b><code>Nan::AddGCPrologueCallback()</code></b></a
- - <a href="#api_nan_remove_gc_prologue_callback"><b><code>Nan::RemoveGCPrologueCallback()</code></b></a
- - <a href="#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a
+ - <a href="#api_nan_add_gc_epilogue_callback"><b><code>Nan::AddGCEpilogueCallback()</code></b></a>
+ - <a href="#api_nan_remove_gc_epilogue_callback"><b><code>Nan::RemoveGCEpilogueCallback()</code></b></a>
+ - <a href="#api_nan_add_gc_prologue_callback"><b><code>Nan::AddGCPrologueCallback()</code></b></a>
+ - <a href="#api_nan_remove_gc_prologue_callback"><b><code>Nan::RemoveGCPrologueCallback()</code></b></a>
+ - <a href="#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a>
  - <a href="#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a>
  - <a href="#api_nan_set_counter_function"><b><code>Nan::SetCounterFunction()</code></b></a>
  - <a href="#api_nan_set_create_histogram_function"><b><code>Nan::SetCreateHistogramFunction()</code></b></a>
