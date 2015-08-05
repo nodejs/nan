@@ -159,6 +159,7 @@ Signature:
 
 ```c++
 Nan::MaybeLocal<v8::Object> Nan::NewInstance(v8::Local<v8::Function> h);
+Nan::MaybeLocal<v8::Object> Nan::NewInstance(v8::Local<v8::Function> h, int argc, v8::Local<v8::Value> argv[]);
 Nan::MaybeLocal<v8::Object> Nan::NewInstance(v8::Local<v8::ObjectTemplate> h);
 ```
 

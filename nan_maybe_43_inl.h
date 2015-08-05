@@ -48,6 +48,15 @@ MaybeLocal<v8::Object> NewInstance(v8::Local<v8::Function> h) {
 }
 
 NAN_INLINE
+MaybeLocal<v8::Object> NewInstance(
+      v8::Local<v8::Function> h
+    , int argc
+    , v8::Local<v8::Value> argv[]) {
+  return MaybeLocal<v8::Object>(h->NewInstance(GetCurrentContext(),
+                                argc, argv));
+}
+
+NAN_INLINE
 MaybeLocal<v8::Object> NewInstance(v8::Local<v8::ObjectTemplate> h) {
   return MaybeLocal<v8::Object>(h->NewInstance(GetCurrentContext()));
 }
