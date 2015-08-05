@@ -8,7 +8,6 @@ The hooks to access V8 internals—including GC and statistics—are different a
  - <a href="#api_nan_add_gc_prologue_callback"><b><code>Nan::AddGCPrologueCallback()</code></b></a>
  - <a href="#api_nan_remove_gc_prologue_callback"><b><code>Nan::RemoveGCPrologueCallback()</code></b></a>
  - <a href="#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a>
- - <a href="#api_nan_get_heap_statistics"><b><code>Nan::GetHeapStatistics()</code></b></a>
  - <a href="#api_nan_set_counter_function"><b><code>Nan::SetCounterFunction()</code></b></a>
  - <a href="#api_nan_set_create_histogram_function"><b><code>Nan::SetCreateHistogramFunction()</code></b></a>
  - <a href="#api_nan_set_add_histogram_sample_function"><b><code>Nan::SetAddHistogramSampleFunction()</code></b></a>

@@ -75,7 +75,7 @@ Note that `Nan::ExternalOneByteStringResource` maps to [`v8::String::ExternalOne
 <a name="api_nan_undefined"></a>
 ### Nan::Undefined()
 
-A helper method to create a new `v8::Undefined` object in a way that is compatible across all supported versions of V8.
+A helper method to reference the `v8::Undefined` object in a way that is compatible across all supported versions of V8.
 
 Signature:
 
@@ -86,7 +86,7 @@ v8::Local<v8::Primitive> Nan::Undefined()
 <a name="api_nan_null"></a>
 ### Nan::Null()
 
-A helper method to create a new `v8::Null` object in a way that is compatible across all supported versions of V8.
+A helper method to reference the `v8::Null` object in a way that is compatible across all supported versions of V8.
 
 Signature:
 
@@ -97,7 +97,7 @@ v8::Local<v8::Primitive> Nan::Null()
 <a name="api_nan_true"></a>
 ### Nan::True()
 
-A helper method to create a new `v8::Boolean` object representing a `true` value in a way that is compatible across all supported versions of V8.
+A helper method to reference the `v8::Boolean` object representing the `true` value in a way that is compatible across all supported versions of V8.
 
 Signature:
 
@@ -108,7 +108,7 @@ v8::Local<v8::Boolean> Nan::True()
 <a name="api_nan_false"></a>
 ### Nan::False()
 
-A helper method to create a new `v8::Boolean` object representing a `false` value in a way that is compatible across all supported versions of V8.
+A helper method to reference the `v8::Boolean` object representing the `false` value in a way that is compatible across all supported versions of V8.
 
 Signature:
 
@@ -119,7 +119,7 @@ v8::Local<v8::Boolean> Nan::False()
 <a name="api_nan_empty_string"></a>
 ### Nan::EmptyString()
 
-Call [`v8::String::Empty`](https://v8docs.nodesource.com/io.js-3.0/d2/db3/classv8_1_1_string.html#a7c1bc8886115d7ee46f1d571dd6ebc6d) to create a zero-length string in a way that is compatible across all supported versions of V8.
+Call [`v8::String::Empty`](https://v8docs.nodesource.com/io.js-3.0/d2/db3/classv8_1_1_string.html#a7c1bc8886115d7ee46f1d571dd6ebc6d) to reference the empty string in a way that is compatible across all supported versions of V8.
 
 Signature:
 
