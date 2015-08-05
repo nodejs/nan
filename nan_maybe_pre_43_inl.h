@@ -118,7 +118,7 @@ NAN_INLINE
 MaybeLocal<v8::Object> NewInstance(
       v8::Local<v8::Function> h
     , int argc
-    , v8::Handle<v8::Value> argv[]) {
+    , v8::Local<v8::Value> argv[]) {
   return MaybeLocal<v8::Object>(h->NewInstance(argc, argv));
 }
 
