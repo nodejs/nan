@@ -254,7 +254,10 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetWeak(wcbd, wcbd->invokeparameter, type);
+    v8::PersistentBase<T>::SetWeak(
+        wcbd
+      , WeakCallbackInfo<P>::invokeparameter
+      , type);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
@@ -272,7 +275,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
     v8::PersistentBase<T>::SetWeak(
         static_cast<WeakCallbackInfo<P>*>(0)
-      , wcbd->invoketwofield
+      , WeakCallbackInfo<P>::invoketwofield
       , type);
   }
 }
@@ -289,7 +292,9 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetPhantom(wcbd, wcbd->invokeparameter);
+    v8::PersistentBase<T>::SetPhantom(
+        wcbd
+      , WeakCallbackInfo<P>::invokeparameter);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
@@ -307,7 +312,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
     v8::PersistentBase<T>::SetPhantom(
         static_cast<WeakCallbackInfo<P>*>(0)
-      , wcbd->invoketwofield
+      , WeakCallbackInfo<P>::invoketwofield
       , 0
       , count > 1 ? 1 : kNoInternalFieldIndex);
   }
@@ -325,7 +330,9 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetPhantom(wcbd, wcbd->invokeparameter);
+    v8::PersistentBase<T>::SetPhantom(
+        wcbd
+      , WeakCallbackInfo<P>::invokeparameter);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
@@ -342,7 +349,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , internal_fields[1]);
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
     v8::PersistentBase<T>::SetPhantom(
-        wcbd->invoketwofield
+        WeakCallbackInfo<P>::invoketwofield
       , 0
       , count > 1 ? 1 : kNoInternalFieldIndex);
   }
@@ -360,7 +367,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetWeak(wcbd, wcbd->invoke);
+    v8::PersistentBase<T>::SetWeak(wcbd, WeakCallbackInfo<P>::invoke);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
@@ -375,7 +382,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , 0
       , internal_fields[0]
       , internal_fields[1]);
-    v8::PersistentBase<T>::SetWeak(wcbd, wcbd->invoke);
+    v8::PersistentBase<T>::SetWeak(wcbd, WeakCallbackInfo<P>::invoke);
   }
 }
 #else
@@ -391,7 +398,7 @@ NAN_INLINE void PersistentBase<T>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    persistent.MakeWeak(wcbd, wcbd->invoke);
+    persistent.MakeWeak(wcbd, WeakCallbackInfo<P>::invoke);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
@@ -406,7 +413,7 @@ NAN_INLINE void PersistentBase<T>::SetWeak(
       , 0
       , internal_fields[0]
       , internal_fields[1]);
-    persistent.MakeWeak(wcbd, wcbd->invoke);
+    persistent.MakeWeak(wcbd, WeakCallbackInfo<P>::invoke);
   }
 }
 #endif
