@@ -1,6 +1,13 @@
 # NAN ChangeLog
 
-**Version 2.0.0: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.0.0**
+**Version 2.0.1: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.0.0**
+
+### 2.0.1 Aug 6 2015
+
+  - Bugfix: Add workaround for missing REPLACE_INVALID_UTF8 60d6687
+  - Bugfix: Reimplement ObjectWrap from scratch to prevent memory leaks 6484601
+  - Bugfix: Fix Persistent leak in FunctionCallbackInfo and PropertyCallbackInfo 641ef5f
+  - Bugfix: Add missing overload for Nan::NewInstance that takes argc/argv 29450ed
 
 ### 2.0.0 Jul 31 2015
 
