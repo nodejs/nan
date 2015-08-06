@@ -34,15 +34,49 @@ v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
 <a name="api_nan_object_wrap"></a>
 ### Nan::ObjectWrap()
 
-A simple extension of `node::ObjectWrap` that adds some API not present in older versions of Node. Should be preferred over `node::ObjectWrap` in all cases for consistency.
+A reimplementation of `node::ObjectWrap` that adds some API not present in older versions of Node. Should be preferred over `node::ObjectWrap` in all cases for consistency.
+
+See the Node documentation on [Wrapping C++ Objects](https://nodejs.org/api/addons.html#addons_wrapping_c_objects) for more details.
 
 Definition:
 
 ```c++
-class ObjectWrap : public node::ObjectWrap {
+class ObjectWrap {
  public:
-  v8::Local<v8::Object> handle(); // for older Node where only handle_ is provided
-  Persistent<v8::Object> &persistent(); // for older Node
+  ObjectWrap();
+
+  virtual ~ObjectWrap();
+
+  template <class T>
+  static inline T* Unwrap(v8::Local<v8::Object> handle);
+
+  inline v8::Local<v8::Object> handle();
+
+  inline Nan::Persistent<v8::Object>& persistent();
+
+ protected:
+  inline void Wrap(v8::Local<v8::Object> handle);
+
+  inline void MakeWeak();
+
+  /* Ref() marks the object as being attached to an event loop.
+   * Refed objects will not be garbage collected, even if
+   * all references are lost.
+   */
+  virtual void Ref();
+
+  /* Unref() marks an object as detached from the event loop.  This is its
+   * default state.  When an object with a "weak" reference changes from
+   * attached to detached state it will be freed. Be careful not to access
+   * the object after making this call as it might be gone!
+   * (A "weak reference" means an object that only has a
+   * persistant handle.)
+   *
+   * DO NOT CALL THIS FROM DESTRUCTOR
+   */
+  virtual void Unref();
+
+  int refs_;  // ro
 };
 ```
 
