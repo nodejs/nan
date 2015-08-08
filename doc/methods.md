@@ -7,7 +7,7 @@ In order to expose functionality to JavaScript via a template, you must provide 
 * **Method argument types**
  - <a href="#api_nan_function_callback_info"><b><code>Nan::FunctionCallbackInfo</code></b></a>
  - <a href="#api_nan_property_callback_info"><b><code>Nan::PropertyCallbackInfo</code></b></a>
- - <a href="#api_nan_property_callback_info"><b><code>Nan::ReturnValue</code></b></a>
+ - <a href="#api_nan_return_value"><b><code>Nan::ReturnValue</code></b></a>
 * **Method declarations**
  - <a href="#api_nan_method"><b>Method declaration</b></a>
  - <a href="#api_nan_getter"><b>Getter declaration</b></a>
