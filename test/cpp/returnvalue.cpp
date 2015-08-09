@@ -10,10 +10,10 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-Global<v8::Boolean> global;
+static Global<v8::Boolean> global;
 
 NAN_METHOD(ReturnAValue) {
-  const FunctionCallbackInfo<v8::Value> cbinfo = info;
+  const FunctionCallbackInfo<v8::Value> &cbinfo = info;
   ReturnValue<v8::Value> ret = cbinfo.GetReturnValue();
   if (cbinfo.Length() == 1) {
     ret.Set(info[0].As<v8::String>());

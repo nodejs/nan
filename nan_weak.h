@@ -71,6 +71,7 @@ class WeakCallbackInfo {
   }
 
  private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(WeakCallbackInfo)
   Callback callback_;
   v8::Isolate *isolate_;
   void *parameter_;
