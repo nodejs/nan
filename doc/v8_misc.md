@@ -30,7 +30,7 @@ class Nan::Utf8String {
 <a name="api_nan_get_current_context"></a>
 ### Nan::GetCurrentContext()
 
-A call to [`v8::Isolate::GetCurrent()->GetCurrentContext()`](https://v8docs.nodesource.com/io.js-3.0/d5/dda/classv8_1_1_isolate.html#a81c7a1ed7001ae2a65e89107f75fd053) that works across all supported versiosn of V8.
+A call to [`v8::Isolate::GetCurrent()->GetCurrentContext()`](https://v8docs.nodesource.com/io.js-3.0/d5/dda/classv8_1_1_isolate.html#a81c7a1ed7001ae2a65e89107f75fd053) that works across all supported versions of V8.
 
 Signature:
 
