@@ -17,6 +17,13 @@ class ObjectWrap {
 
 
   virtual ~ObjectWrap() {
+    if (persistent().IsEmpty()) {
+      return;
+    }
+
+    assert(persistent().IsNearDeath());
+    persistent().ClearWeak();
+    persistent().Reset();
   }
 
 
@@ -51,11 +58,30 @@ class ObjectWrap {
     MakeWeak();
   }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 
   inline void MakeWeak() {
-    persistent().SetWeak(this, WeakCallback, WeakCallbackType::kParameter);
+    persistent().v8::PersistentBase<v8::Object>::SetWeak(
+        this, WeakCallback, v8::WeakCallbackType::kParameter);
     persistent().MarkIndependent();
   }
+
+#elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+
+  inline void MakeWeak() {
+    persistent().v8::PersistentBase<v8::Object>::SetWeak(this, WeakCallback);
+    persistent().MarkIndependent();
+  }
+
+#else
+
+  inline void MakeWeak() {
+    persistent().persistent.MakeWeak(this, WeakCallback);
+    persistent().MarkIndependent();
+  }
+
+#endif
 
   /* Ref() marks the object as being attached to an event loop.
    * Refed objects will not be garbage collected, even if
@@ -87,14 +113,40 @@ class ObjectWrap {
   int refs_;  // ro
 
  private:
-  static void WeakCallback(
-      const WeakCallbackInfo<ObjectWrap>& data) {
-    HandleScope scope;
-    ObjectWrap* wrap = data.GetParameter();
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+
+  static void
+  WeakCallback(v8::WeakCallbackInfo<ObjectWrap> const& info) {
+    ObjectWrap* wrap = info.GetParameter();
     assert(wrap->refs_ == 0);
+    assert(wrap->handle_.IsNearDeath());
+    wrap->handle_.Reset();
     delete wrap;
   }
 
+#elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+
+  static void
+  WeakCallback(v8::WeakCallbackData<v8::Object, ObjectWrap> const& data) {
+    ObjectWrap* wrap = data.GetParameter();
+    assert(wrap->refs_ == 0);
+    assert(wrap->handle_.IsNearDeath());
+    wrap->handle_.Reset();
+    delete wrap;
+  }
+
+#else
+
+  static void WeakCallback(v8::Persistent<v8::Value> value, void *data) {
+    ObjectWrap *wrap = static_cast<ObjectWrap*>(data);
+    assert(wrap->refs_ == 0);
+    assert(wrap->handle_.IsNearDeath());
+    wrap->handle_.Reset();
+    delete wrap;
+  }
+
+#endif
   Persistent<v8::Object> handle_;
 };
 
