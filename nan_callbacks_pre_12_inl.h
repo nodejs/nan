@@ -141,6 +141,9 @@ class FunctionCallbackInfo {
   static const int kCalleeIndex = 5;
   static const int kContextSaveIndex = 6;
   static const int kArgsLength = 7;
+
+ private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(FunctionCallbackInfo)
 };
 
 template<typename T>
@@ -168,6 +171,9 @@ class PropertyCallbackInfoBase {
   static const int kDataIndex = 4;
   static const int kThisIndex = 5;
   static const int kArgsLength = 6;
+
+ private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(PropertyCallbackInfoBase)
 };
 
 template<typename T>

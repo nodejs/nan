@@ -113,6 +113,7 @@ class ObjectWrap {
   int refs_;  // ro
 
  private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(ObjectWrap)
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 
