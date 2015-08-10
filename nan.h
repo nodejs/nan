@@ -846,13 +846,21 @@ class TryCatch {
     node::FatalException(v8::Isolate::GetCurrent(), try_catch.try_catch_);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+  NAN_INLINE v8::Local<v8::Value> ErrnoException(
           int errorno
        ,  const char* syscall = NULL
        ,  const char* message = NULL
        ,  const char* path = NULL) {
     return node::ErrnoException(v8::Isolate::GetCurrent(), errorno, syscall,
             message, path);
+  }
+
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+          int errorno
+       ,  const char* syscall = NULL
+       ,  const char* message = NULL
+       ,  const char* path = NULL) {
+    return ErrnoException(errorno, syscall, message, path);
   }
 
   template<typename T>
@@ -1157,12 +1165,20 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
     node::FatalException(const_cast<v8::TryCatch &>(try_catch.try_catch_));
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+  NAN_INLINE v8::Local<v8::Value> ErrnoException(
           int errorno
        ,  const char* syscall = NULL
        ,  const char* message = NULL
        ,  const char* path = NULL) {
     return node::ErrnoException(errorno, syscall, message, path);
+  }
+
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+          int errorno
+       ,  const char* syscall = NULL
+       ,  const char* message = NULL
+       ,  const char* path = NULL) {
+    return ErrnoException(errorno, syscall, message, path);
   }
 
 
