@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 2.0.4: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.0.0**
+**Version 2.0.5: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.0.0**
+
+### 2.0.5 Aug 10 2015
+
+  - Bugfix: Reimplement weak callback in ObjectWrap 98d38c1
+  - Bugfix: Make sure callback classes are not assignable, copyable or movable 81f9b1d
 
 ### 2.0.4 Aug 6 2015
 
