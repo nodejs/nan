@@ -9,7 +9,6 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="#api_nan_just"><b><code>Nan::Just</code></b></a>
 * **Maybe Helpers**
   - <a href="#api_nan_to_detail_string"><b><code>Nan::ToDetailString()</code></b></a>
-  - <a href="#api_nan_to_detail_string"><b><code>Nan::ToDetailString()</code></b></a>
   - <a href="#api_nan_to_array_index"><b><code>Nan::ToArrayIndex()</code></b></a>
   - <a href="#api_nan_equals"><b><code>Nan::Equals()</code></b></a>
   - <a href="#api_nan_new_instance"><b><code>Nan::NewInstance()</code></b></a>
