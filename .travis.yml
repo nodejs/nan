@@ -1,4 +1,7 @@
+sudo: false
 language: node_js
+env:
+  - CXX=g++-4.8
 addons:
   apt:
     sources:
@@ -19,8 +22,7 @@ before_install:
   - npm install npm
   - mv node_modules npm
   - npm/.bin/npm --version
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - g++ -v
+  - $CXX --version
   - npm/.bin/npm install
   - if [[ $(node -v | sed 's/v\([0-9][0-9]*\.[0-9][0-9]*\)\.[0-9][0-9]*/\1/') == "0.8" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
 install:
