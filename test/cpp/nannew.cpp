@@ -443,6 +443,13 @@ NAN_METHOD(newExternal) {
   info.GetReturnValue().Set(New<External>(&ttt));
 }
 
+NAN_METHOD(invokeMakeMaybe) {
+  Nan::MaybeLocal<v8::Number> number = MakeMaybe(New<v8::Number>(3.141592654));
+  Nan::MaybeLocal<v8::String> string = MakeMaybe(New<v8::String>("probably"));
+  (void)string;
+  info.GetReturnValue().Set(number.ToLocalChecked());
+}
+
 NAN_MODULE_INIT(Init) {
   NAN_EXPORT(target, testArray);
   NAN_EXPORT(target, testBoolean);
@@ -474,6 +481,8 @@ NAN_MODULE_INIT(Init) {
   NAN_EXPORT(target, newStringFromStdString);
 
   NAN_EXPORT(target, newExternal);
+
+  NAN_EXPORT(target, invokeMakeMaybe);
 }
 
 }  // end of anonymous namespace

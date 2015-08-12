@@ -49,3 +49,8 @@ test('strings', function (t) {
   t.end();
 });
 
+test('test MakeMaybe(...)', function (t) {
+  t.plan(1);
+  t.ok(bindings.invokeMakeMaybe() - Math.PI < 10e-8);
+  t.end();
+});
