@@ -36,6 +36,7 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="#api_nan_get_start_column"><b><code>Nan::GetStartColumn()</code></b></a>
   - <a href="#api_nan_get_end_column"><b><code>Nan::GetEndColumn()</code></b></a>
   - <a href="#api_nan_clone_element_at"><b><code>Nan::CloneElementAt()</code></b></a>
+  - <a href="#api_nan_make_maybe"><b><code>Nan::MakeMaybe()</code></b></a>
 
 <a name="api_nan_maybe_local"></a>
 ### Nan::MaybeLocal
@@ -477,4 +478,23 @@ Signature:
 
 ```c++
 Nan::MaybeLocal<v8::Object> Nan::CloneElementAt(v8::Local<v8::Array> array, uint32_t index);
+```
+
+<a name="api_nan_make_maybe"></a>
+### Nan::MakeMaybe()
+
+Wraps a `v8::Local<>` in a `Nan::MaybeLocal<>`. When called with a `Nan::MaybeLocal<>` it just returns its argument. This is useful in generic template code that builds on NAN.
+
+Synopsis:
+
+```c++
+  MaybeLocal<v8::Number> someNumber = MakeMaybe(New<v8::Number>(3.141592654));
+  MaybeLocal<v8::String> someString = MakeMaybe(New<v8::String>("probably"));
+```
+
+Signature:
+
+```c++
+template <typename T, template <typename> class MaybeMaybe>
+Nan::MaybeLocal<T> Nan::MakeMaybe(MaybeMaybe<T> v);
 ```

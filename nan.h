@@ -2186,6 +2186,32 @@ struct Tap {
 
 #undef TYPE_CHECK
 
+//=== Generic Maybefication ===================================================
+
+namespace imp {
+
+template <typename T> struct Maybefier;
+
+template <typename T> struct Maybefier<v8::Local<T> > {
+  static MaybeLocal<T> convert(v8::Local<T> v) {
+    return MaybeLocal<T>(v);
+  }
+};
+
+template <typename T> struct Maybefier<MaybeLocal<T> > {
+  static MaybeLocal<T> convert(MaybeLocal<T> v) {
+    return v;
+  }
+};
+
+}  // end of namespace imp
+
+template <typename T, template <typename> class MaybeMaybe>
+MaybeLocal<T>
+MakeMaybe(MaybeMaybe<T> v) {
+  return imp::Maybefier<MaybeMaybe<T> >::convert(v);
+}
+
 }  // end of namespace Nan
 
 #endif  // NAN_H_
