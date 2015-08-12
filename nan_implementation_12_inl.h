@@ -87,13 +87,7 @@ Factory<v8::Function>::New( FunctionCallback callback
   v8::EscapableHandleScope scope(isolate);
   v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
   tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
-  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
-  v8::Local<v8::Object> obj =
-      tpl->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-#else
-  v8::Local<v8::Object> obj = tpl->NewInstance();
-#endif
+  v8::Local<v8::Object> obj = NewInstance(tpl).ToLocalChecked();
 
   obj->SetAlignedPointerInInternalField(
       imp::kFunctionIndex
@@ -121,13 +115,7 @@ Factory<v8::FunctionTemplate>::New( FunctionCallback callback
     v8::EscapableHandleScope scope(isolate);
     v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
     tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
-  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
-    v8::Local<v8::Object> obj =
-        tpl->NewInstance(isolate->GetCurrentContext()).ToLocalChecked();
-#else
-    v8::Local<v8::Object> obj = tpl->NewInstance();
-#endif
+    v8::Local<v8::Object> obj = NewInstance(tpl).ToLocalChecked();
 
     obj->SetAlignedPointerInInternalField(
         imp::kFunctionIndex
