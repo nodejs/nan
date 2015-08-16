@@ -28,12 +28,12 @@ class ObjectWrap {
 
 
   template <class T>
-  static inline T* Unwrap(v8::Local<v8::Object> handle) {
-    assert(!handle.IsEmpty());
-    assert(handle->InternalFieldCount() > 0);
+  static inline T* Unwrap(v8::Local<v8::Object> object) {
+    assert(!object.IsEmpty());
+    assert(object->InternalFieldCount() > 0);
     // Cast to ObjectWrap before casting to T.  A direct cast from void
     // to T won't work right when T has more than one base class.
-    void* ptr = GetInternalFieldPointer(handle, 0);
+    void* ptr = GetInternalFieldPointer(object, 0);
     ObjectWrap* wrap = static_cast<ObjectWrap*>(ptr);
     return static_cast<T*>(wrap);
   }
@@ -50,11 +50,11 @@ class ObjectWrap {
 
 
  protected:
-  inline void Wrap(v8::Local<v8::Object> handle) {
+  inline void Wrap(v8::Local<v8::Object> object) {
     assert(persistent().IsEmpty());
-    assert(handle->InternalFieldCount() > 0);
-    SetInternalFieldPointer(handle, 0, this);
-    persistent().Reset(handle);
+    assert(object->InternalFieldCount() > 0);
+    SetInternalFieldPointer(object, 0, this);
+    persistent().Reset(object);
     MakeWeak();
   }
 
