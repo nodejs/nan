@@ -1,7 +1,8 @@
+os:
+  - linux
+  - osx
 sudo: false
 language: node_js
-env:
-  - CXX=g++-4.8
 addons:
   apt:
     sources:
@@ -18,12 +19,13 @@ node_js:
 notifications:
   email:
     - rod@vagg.org
-before_install:
+install:
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then git clone https://github.com/creationix/nvm.git ~/.nvm && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; fi
   - npm install npm
   - mv node_modules npm
   - npm/.bin/npm --version
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
   - $CXX --version
   - npm/.bin/npm install
-  - if [[ $(node -v | sed 's/v\([0-9][0-9]*\.[0-9][0-9]*\)\.[0-9][0-9]*/\1/') == "0.8" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
-install:
+  - if [[ $TRAVIS_NODE_VERSION == "0.8" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
 script: tap --gc test/js/*-test.js
