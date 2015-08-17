@@ -2,25 +2,26 @@ os:
   - linux
   - osx
 sudo: false
-language: node_js
+language: cpp
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
-node_js:
-  - "0.8"
-  - "0.10"
-  - "0.12"
-  - "iojs-1"
-  - "iojs-2"
-  - "iojs-3"
+env:
+  matrix:
+  - TRAVIS_NODE_VERSION="0.8"
+  - TRAVIS_NODE_VERSION="0.10"
+  - TRAVIS_NODE_VERSION="0.12"
+  - TRAVIS_NODE_VERSION="iojs-1"
+  - TRAVIS_NODE_VERSION="iojs-2"
+  - TRAVIS_NODE_VERSION="iojs-3"
 notifications:
   email:
     - rod@vagg.org
 install:
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then git clone https://github.com/creationix/nvm.git ~/.nvm && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION; fi
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - npm install npm
   - mv node_modules npm
   - npm/.bin/npm --version
