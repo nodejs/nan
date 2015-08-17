@@ -29,4 +29,4 @@ install:
   - $CXX --version
   - npm/.bin/npm install
   - if [[ $TRAVIS_NODE_VERSION == "0.8" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/pangyp rebuild --directory test; fi
-script: if [[ $TRAVIS_OS_NAME == "linux" ]]; then tap --gc test/js/*-test.js; else node_modules/.bin/tap --gc teset/js/*-test.js; fi
+script: node_modules/.bin/tap --gc test/js/*-test.js
