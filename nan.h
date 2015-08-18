@@ -1827,8 +1827,8 @@ NAN_INLINE void SetMethod(
   , const char *name
   , FunctionCallback callback) {
   HandleScope scope;
-  v8::Local<v8::Function> fn = New<v8::FunctionTemplate>(
-      callback)->GetFunction();
+  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
+      callback)).ToLocalChecked();
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   fn->SetName(fn_name);
   recv->Set(fn_name, fn);
@@ -1838,10 +1838,10 @@ NAN_INLINE void SetPrototypeMethod(
     v8::Local<v8::FunctionTemplate> recv
   , const char* name, FunctionCallback callback) {
   HandleScope scope;
-  v8::Local<v8::Function> fn = New<v8::FunctionTemplate>(
+  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
       callback
     , v8::Local<v8::Value>()
-    , New<v8::Signature>(recv))->GetFunction();
+    , New<v8::Signature>(recv))).ToLocalChecked();
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   recv->PrototypeTemplate()->Set(fn_name, fn);
   fn->SetName(fn_name);
@@ -1867,7 +1867,7 @@ inline void SetAccessor(
 
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
-  v8::Local<v8::Object> obj = otpl->NewInstance();
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
   SetInternalFieldPointer(
       obj
     , imp::kGetterIndex
@@ -1912,7 +1912,7 @@ inline bool SetAccessor(
 
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
-  v8::Local<v8::Object> dataobj = otpl->NewInstance();
+  v8::Local<v8::Object> dataobj = NewInstance(otpl).ToLocalChecked();
   SetInternalFieldPointer(
       dataobj
     , imp::kGetterIndex
@@ -1962,7 +1962,7 @@ inline void SetNamedPropertyHandler(
 
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kPropertyFieldCount);
-  v8::Local<v8::Object> obj = otpl->NewInstance();
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
   SetInternalFieldPointer(
       obj
     , imp::kPropertyGetterIndex
@@ -2042,7 +2042,7 @@ inline void SetIndexedPropertyHandler(
 
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kIndexPropertyFieldCount);
-  v8::Local<v8::Object> obj = otpl->NewInstance();
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
   SetInternalFieldPointer(
       obj
     , imp::kIndexPropertyGetterIndex
@@ -2114,7 +2114,7 @@ void
 Export(ADDON_REGISTER_FUNCTION_ARGS_TYPE target, const char *name,
     FunctionCallback f) {
   Set(target, New<v8::String>(name).ToLocalChecked(),
-      New<v8::FunctionTemplate>(f)->GetFunction());
+      GetFunction(New<v8::FunctionTemplate>(f)).ToLocalChecked());
 }
 
 //=== Tap Reverse Binding =====================================================
