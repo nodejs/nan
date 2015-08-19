@@ -53,12 +53,12 @@ template<typename T> class FunctionCallbackInfo {
 };
 ```
 
-See the [`v8::FunctionCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from methods.
+See the [`v8::FunctionCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from methods.
 
 <a name="api_nan_property_callback_info"></a>
 ### Nan::PropertyCallbackInfo
 
-`Nan::PropertyCallbackInfo` should be used in place of [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html), even with older versions of Node where `v8::PropertyCallbackInfo` does not exist.
+`Nan::PropertyCallbackInfo` should be used in place of [`v8::PropertyCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html), even with older versions of Node where `v8::PropertyCallbackInfo` does not exist.
 
 Definition:
 
@@ -78,7 +78,7 @@ See the [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/d
 <a name="api_nan_return_value"></a>
 ### Nan::ReturnValue
 
-`Nan::ReturnValue` is used in place of [`v8::ReturnValue](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) on both [`Nan::FunctionCallbackInfo`](#api_nan_function_callback_info) and [`Nan::PropertyCallbackInfo`](#api_nan_property_callback_info) as the return type of `GetReturnValue()`.
+`Nan::ReturnValue` is used in place of [`v8::ReturnValue`](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) on both [`Nan::FunctionCallbackInfo`](#api_nan_function_callback_info) and [`Nan::PropertyCallbackInfo`](#api_nan_property_callback_info) as the return type of `GetReturnValue()`.
 
 Example usage:
 
@@ -113,7 +113,7 @@ template<typename T> class ReturnValue {
 };
 ```
 
-See the documentation on [`v8::ReturnValue](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) for further information on this.
+See the documentation on [`v8::ReturnValue`](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) for further information on this.
 
 <a name="api_nan_method"></a>
 ### Method declaration
