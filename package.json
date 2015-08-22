@@ -23,6 +23,8 @@
   ],
   "devDependencies": {
     "bindings": "~1.2.1",
+    "commander": "^2.8.1",
+    "glob": "^5.0.14",
     "node-gyp": "~2.0.2",
     "pangyp": "~2.2.0",
     "tap": "~0.7.1",
