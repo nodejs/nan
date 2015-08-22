@@ -64,6 +64,7 @@ Nan::MaybeLocal<v8::String> Nan::New<T>(std::string const& value);
 Nan::MaybeLocal<v8::String> Nan::New<T>(const char * value, int length);
 Nan::MaybeLocal<v8::String> Nan::New<T>(const char * value);
 Nan::MaybeLocal<v8::String> Nan::New<T>(const uint16_t * value);
+Nan::MaybeLocal<v8::String> Nan::New<T>(const uint16_t * value, int length);
 ```
 
 Specialized types:
