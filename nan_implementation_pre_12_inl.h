@@ -85,30 +85,35 @@ Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( FunctionCallback callback
                                   , v8::Local<v8::Value> data
                                   , v8::Local<v8::Signature> signature) {
-  v8::HandleScope scope;
-
   static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
       imp::FunctionWrapper*> cbmap;
-  v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New();
-  tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
-  v8::Local<v8::Object> obj = tpl->NewInstance();
 
-  obj->SetPointerInInternalField(
-      imp::kFunctionIndex
-    , imp::GetWrapper<FunctionCallback,
-          imp::FunctionWrapper>(callback));
-  v8::Local<v8::Value> val = v8::Local<v8::Value>::New(data);
+  if (callback) {
+    v8::HandleScope scope;
 
-  if (!val.IsEmpty()) {
-    obj->SetInternalField(imp::kDataIndex, val);
+    v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New();
+    tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+    v8::Local<v8::Object> obj = tpl->NewInstance();
+
+    obj->SetPointerInInternalField(
+        imp::kFunctionIndex
+      , imp::GetWrapper<FunctionCallback,
+            imp::FunctionWrapper>(callback));
+    v8::Local<v8::Value> val = v8::Local<v8::Value>::New(data);
+
+    if (!val.IsEmpty()) {
+      obj->SetInternalField(imp::kDataIndex, val);
+    }
+
+    // Note(agnat): Emulate length argument here. Unfortunately, I couldn't find
+    // a way. Have at it though...
+    return scope.Close(
+        v8::FunctionTemplate::New(imp::FunctionCallbackWrapper
+                                 , obj
+                                 , signature));
+  } else {
+    return v8::FunctionTemplate::New(0, data, signature);
   }
-
-  // Note(agnat): Emulate length argument here. Unfortunately, I couldn't find
-  // a way. Have at it though...
-  return scope.Close(
-      v8::FunctionTemplate::New(imp::FunctionCallbackWrapper
-                               , obj
-                               , signature));
 }
 
 //=== Number ===================================================================
