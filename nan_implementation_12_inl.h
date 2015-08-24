@@ -85,7 +85,6 @@ Factory<v8::Function>::New( FunctionCallback callback
                           , v8::Local<v8::Value> data) {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
-  static std::map<FunctionCallback, imp::FunctionWrapper*> cbmap;
   v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
   tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
@@ -120,8 +119,6 @@ Factory<v8::FunctionTemplate>::New( FunctionCallback callback
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   if (callback) {
     v8::EscapableHandleScope scope(isolate);
-    static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
-        imp::FunctionWrapper*> cbmap;
     v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
     tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \

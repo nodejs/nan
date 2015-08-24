@@ -85,9 +85,6 @@ Factory<v8::FunctionTemplate>::return_t
 Factory<v8::FunctionTemplate>::New( FunctionCallback callback
                                   , v8::Local<v8::Value> data
                                   , v8::Local<v8::Signature> signature) {
-  static std::map<FunctionCallback,  // NOLINT(build/include_what_you_use)
-      imp::FunctionWrapper*> cbmap;
-
   if (callback) {
     v8::HandleScope scope;
 
