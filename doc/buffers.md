@@ -11,7 +11,9 @@ NAN's `node::Buffer` helpers exist as the API has changed across supported Node 
 
 Allocate a new `node::Buffer` object with the specified size and optional data. Calls `node::Buffer::New()`.
 
-Note that when creating a `Buffer` using `Nan::NewBuffer()` and an existing `char*`, it is assumed that the ownership of the pointer is being transferred to the new `Buffer` for management. You _must not_ free the memory space manually once you have created a `Buffer` in this way.
+Note that when creating a `Buffer` using `Nan::NewBuffer()` and an existing `char*`, it is assumed that the ownership of the pointer is being transferred to the new `Buffer` for management.
+When a `node::Buffer` instance is garbage collected and a `FreeCallback` has not been specified, `data` will be disposed of via a call to `free()`.
+You _must not_ free the memory space manually once you have created a `Buffer` in this way.
 
 Signature:
 
