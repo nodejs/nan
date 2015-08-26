@@ -1,6 +1,13 @@
 # NAN ChangeLog
 
-**Version 2.0.5: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.0.0**
+**Version 2.0.6: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.2.0**
+
+### 2.0.6 Aug 26 2015
+
+  - Bugfix: Properly handle null callback in FunctionTemplate factory 6e99cb1
+  - Bugfix: Remove unused static std::map instances 525bddc
+  - Bugfix: Make better use of maybe versions of APIs bfba85b
+  - Bugfix: Fix shadowing issues with handle in ObjectWrap 0a9072d
 
 ### 2.0.5 Aug 10 2015
 
