@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.0.6: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.2.0**
+**Version 2.0.7: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.2.0**
+
+### 2.0.7 Aug 26 2015
+
+  - Build: Repackage
 
 ### 2.0.6 Aug 26 2015
 
