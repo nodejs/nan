@@ -102,15 +102,7 @@ static const int kIndexPropertyFieldCount =      6;
 
 template<typename T, typename P>
 P *GetWrapper(T needle) {
-  static std::map<T, P*> haystack;
-  typename std::map<T, P*>::iterator it =  // NOLINT(build/include_what_you_use)
-      haystack.find(needle);
-
-  if (it == haystack.end()) {
-    return haystack.insert(it, std::make_pair(needle, new P(needle)))->second;
-  } else {
-    return it->second;
-  }
+  return new P(needle);
 }
 }  // end of namespace imp
 
