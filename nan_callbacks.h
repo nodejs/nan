@@ -54,29 +54,6 @@ typedef void(*IndexQueryCallback)(
 namespace imp {
 typedef v8::Local<v8::AccessorSignature> Sig;
 
-#define X(NAME)                                                                \
-struct NAME ## Wrapper {                                                       \
-  explicit NAME ## Wrapper(NAME ## Callback callback_) :                       \
-      callback(callback_) {}                                                   \
-  NAME ## Callback callback;                                                   \
-};
-
-X(Function)
-X(Getter)
-X(Setter)
-X(PropertyGetter)
-X(PropertySetter)
-X(PropertyEnumerator)
-X(PropertyDeleter)
-X(PropertyQuery)
-X(IndexGetter)
-X(IndexSetter)
-X(IndexEnumerator)
-X(IndexDeleter)
-X(IndexQuery)
-
-#undef X
-
 static const int kDataIndex =                    0;
 
 static const int kFunctionIndex =                1;
@@ -100,18 +77,6 @@ static const int kIndexPropertyDeleterIndex =    4;
 static const int kIndexPropertyQueryIndex =      5;
 static const int kIndexPropertyFieldCount =      6;
 
-template<typename T, typename P>
-P *GetWrapper(T needle) {
-  static std::map<T, P*> haystack;
-  typename std::map<T, P*>::iterator it =  // NOLINT(build/include_what_you_use)
-      haystack.find(needle);
-
-  if (it == haystack.end()) {
-    return haystack.insert(it, std::make_pair(needle, new P(needle)))->second;
-  } else {
-    return it->second;
-  }
-}
 }  // end of namespace imp
 
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION

@@ -32,12 +32,10 @@
 #if defined(_MSC_VER)
 # pragma warning( push )
 # pragma warning( disable : 4530 )
-# include <map>
 # include <string>
 # include <vector>
 # pragma warning( pop )
 #else
-# include <map>
 # include <string>
 # include <vector>
 #endif
@@ -1868,17 +1866,15 @@ inline void SetAccessor(
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
-  SetInternalFieldPointer(
-      obj
-    , imp::kGetterIndex
-    , imp::GetWrapper<GetterCallback, imp::GetterWrapper>(getter));
+
+  obj->SetInternalField(
+      imp::kGetterIndex
+    , New<v8::External>(reinterpret_cast<void *>(getter)));
 
   if (setter != 0) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kSetterIndex
-      , imp::GetWrapper<SetterCallback,
-            imp::SetterWrapper>(setter));
+    obj->SetInternalField(
+        imp::kSetterIndex
+      , New<v8::External>(reinterpret_cast<void *>(setter)));
   }
 
   if (!data.IsEmpty()) {
@@ -1913,21 +1909,19 @@ inline bool SetAccessor(
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
   v8::Local<v8::Object> dataobj = NewInstance(otpl).ToLocalChecked();
-  SetInternalFieldPointer(
-      dataobj
-    , imp::kGetterIndex
-    , imp::GetWrapper<GetterCallback, imp::GetterWrapper>(getter));
+
+  dataobj->SetInternalField(
+      imp::kGetterIndex
+    , New<v8::External>(reinterpret_cast<void *>(getter)));
 
   if (!data.IsEmpty()) {
     dataobj->SetInternalField(imp::kDataIndex, data);
   }
 
   if (setter) {
-    SetInternalFieldPointer(
-        dataobj
-      , imp::kPropertySetterIndex
-      , imp::GetWrapper<SetterCallback,
-            imp::SetterWrapper>(setter));
+    dataobj->SetInternalField(
+        imp::kSetterIndex
+      , New<v8::External>(reinterpret_cast<void *>(setter)));
   }
 
   return obj->SetAccessor(
@@ -1963,42 +1957,32 @@ inline void SetNamedPropertyHandler(
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kPropertyFieldCount);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
-  SetInternalFieldPointer(
-      obj
-    , imp::kPropertyGetterIndex
-    , imp::GetWrapper<PropertyGetterCallback,
-          imp::PropertyGetterWrapper>(getter));
+  obj->SetInternalField(
+      imp::kPropertyGetterIndex
+    , New<v8::External>(reinterpret_cast<void *>(getter)));
 
   if (setter) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kPropertySetterIndex
-      , imp::GetWrapper<PropertySetterCallback,
-            imp::PropertySetterWrapper>(setter));
+    obj->SetInternalField(
+        imp::kPropertySetterIndex
+      , New<v8::External>(reinterpret_cast<void *>(setter)));
   }
 
   if (query) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kPropertyQueryIndex
-      , imp::GetWrapper<PropertyQueryCallback,
-            imp::PropertyQueryWrapper>(query));
+    obj->SetInternalField(
+        imp::kPropertyQueryIndex
+      , New<v8::External>(reinterpret_cast<void *>(query)));
   }
 
   if (deleter) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kPropertyDeleterIndex
-      , imp::GetWrapper<PropertyDeleterCallback,
-            imp::PropertyDeleterWrapper>(deleter));
+    obj->SetInternalField(
+        imp::kPropertyDeleterIndex
+      , New<v8::External>(reinterpret_cast<void *>(deleter)));
   }
 
   if (enumerator) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kPropertyEnumeratorIndex
-      , imp::GetWrapper<PropertyEnumeratorCallback,
-            imp::PropertyEnumeratorWrapper>(enumerator));
+    obj->SetInternalField(
+        imp::kPropertyEnumeratorIndex
+      , New<v8::External>(reinterpret_cast<void *>(enumerator)));
   }
 
   if (!data.IsEmpty()) {
@@ -2043,42 +2027,32 @@ inline void SetIndexedPropertyHandler(
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(imp::kIndexPropertyFieldCount);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
-  SetInternalFieldPointer(
-      obj
-    , imp::kIndexPropertyGetterIndex
-    , imp::GetWrapper<IndexGetterCallback,
-          imp::IndexGetterWrapper>(getter));
+  obj->SetInternalField(
+      imp::kIndexPropertyGetterIndex
+    , New<v8::External>(reinterpret_cast<void *>(getter)));
 
   if (setter) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kIndexPropertySetterIndex
-      , imp::GetWrapper<IndexSetterCallback,
-            imp::IndexSetterWrapper>(setter));
+    obj->SetInternalField(
+        imp::kIndexPropertySetterIndex
+      , New<v8::External>(reinterpret_cast<void *>(setter)));
   }
 
   if (query) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kIndexPropertyQueryIndex
-      , imp::GetWrapper<IndexQueryCallback,
-            imp::IndexQueryWrapper>(query));
+    obj->SetInternalField(
+        imp::kIndexPropertyQueryIndex
+      , New<v8::External>(reinterpret_cast<void *>(query)));
   }
 
   if (deleter) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kIndexPropertyDeleterIndex
-      , imp::GetWrapper<IndexDeleterCallback,
-            imp::IndexDeleterWrapper>(deleter));
+    obj->SetInternalField(
+        imp::kIndexPropertyDeleterIndex
+      , New<v8::External>(reinterpret_cast<void *>(deleter)));
   }
 
   if (enumerator) {
-    SetInternalFieldPointer(
-        obj
-      , imp::kIndexPropertyEnumeratorIndex
-      , imp::GetWrapper<IndexEnumeratorCallback,
-            imp::IndexEnumeratorWrapper>(enumerator));
+    obj->SetInternalField(
+        imp::kIndexPropertyEnumeratorIndex
+      , New<v8::External>(reinterpret_cast<void *>(enumerator)));
   }
 
   if (!data.IsEmpty()) {

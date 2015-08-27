@@ -92,10 +92,10 @@ Factory<v8::FunctionTemplate>::New( FunctionCallback callback
     tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
     v8::Local<v8::Object> obj = tpl->NewInstance();
 
-    obj->SetPointerInInternalField(
+    obj->SetInternalField(
         imp::kFunctionIndex
-      , imp::GetWrapper<FunctionCallback,
-            imp::FunctionWrapper>(callback));
+      , v8::External::New(reinterpret_cast<void *>(callback)));
+
     v8::Local<v8::Value> val = v8::Local<v8::Value>::New(data);
 
     if (!val.IsEmpty()) {
