@@ -166,11 +166,12 @@ namespace imp {
 static
 void FunctionCallbackWrapper(const v8::FunctionCallbackInfo<v8::Value> &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
-  FunctionWrapper *wrapper = static_cast<FunctionWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kFunctionIndex));
+  FunctionCallback callback = reinterpret_cast<FunctionCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kFunctionIndex).As<v8::External>()->Value()));
   FunctionCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  wrapper->callback(cbinfo);
+  callback(cbinfo);
 }
 
 typedef void (*NativeFunction)(const v8::FunctionCallbackInfo<v8::Value> &);
@@ -183,9 +184,10 @@ void GetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  GetterWrapper *wrapper = static_cast<GetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kGetterIndex));
-  wrapper->callback(property.As<v8::String>(), cbinfo);
+  GetterCallback callback = reinterpret_cast<GetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kGetterIndex).As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
 }
 
 typedef void (*NativeGetter)
@@ -199,9 +201,10 @@ void SetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<void>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  SetterWrapper *wrapper = static_cast<SetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kSetterIndex));
-  wrapper->callback(property.As<v8::String>(), value, cbinfo);
+  SetterCallback callback = reinterpret_cast<SetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kSetterIndex).As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), value, cbinfo);
 }
 
 typedef void (*NativeSetter)(
@@ -216,9 +219,10 @@ void GetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  GetterWrapper *wrapper = static_cast<GetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kGetterIndex));
-  wrapper->callback(property, cbinfo);
+  GetterCallback callback = reinterpret_cast<GetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kGetterIndex).As<v8::External>()->Value()));
+  callback(property, cbinfo);
 }
 
 typedef void (*NativeGetter)
@@ -232,9 +236,10 @@ void SetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<void>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  SetterWrapper *wrapper = static_cast<SetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kSetterIndex));
-  wrapper->callback(property, value, cbinfo);
+  SetterCallback callback = reinterpret_cast<SetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kSetterIndex).As<v8::External>()->Value()));
+  callback(property, value, cbinfo);
 }
 
 typedef void (*NativeSetter)(
@@ -251,9 +256,11 @@ void PropertyGetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyGetterWrapper *wrapper = static_cast<PropertyGetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyGetterIndex));
-  wrapper->callback(property.As<v8::String>(), cbinfo);
+  PropertyGetterCallback callback = reinterpret_cast<PropertyGetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyGetterIndex)
+              .As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
 }
 
 typedef void (*NativePropertyGetter)
@@ -267,9 +274,11 @@ void PropertySetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertySetterWrapper *wrapper = static_cast<PropertySetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertySetterIndex));
-  wrapper->callback(property.As<v8::String>(), value, cbinfo);
+  PropertySetterCallback callback = reinterpret_cast<PropertySetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertySetterIndex)
+              .As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), value, cbinfo);
 }
 
 typedef void (*NativePropertySetter)(
@@ -283,9 +292,11 @@ void PropertyEnumeratorCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Array>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyEnumeratorWrapper *wrapper = static_cast<PropertyEnumeratorWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyEnumeratorIndex));
-  wrapper->callback(cbinfo);
+  PropertyEnumeratorCallback callback =
+      reinterpret_cast<PropertyEnumeratorCallback>(reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyEnumeratorIndex)
+              .As<v8::External>()->Value()));
+  callback(cbinfo);
 }
 
 typedef void (*NativePropertyEnumerator)
@@ -298,9 +309,11 @@ void PropertyDeleterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Boolean>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyDeleterWrapper *wrapper = static_cast<PropertyDeleterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyDeleterIndex));
-  wrapper->callback(property.As<v8::String>(), cbinfo);
+  PropertyDeleterCallback callback = reinterpret_cast<PropertyDeleterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyDeleterIndex)
+              .As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
 }
 
 typedef void (NativePropertyDeleter)
@@ -313,9 +326,11 @@ void PropertyQueryCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Integer>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyQueryWrapper *wrapper = static_cast<PropertyQueryWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyQueryIndex));
-  wrapper->callback(property.As<v8::String>(), cbinfo);
+  PropertyQueryCallback callback = reinterpret_cast<PropertyQueryCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyQueryIndex)
+              .As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
 }
 
 typedef void (*NativePropertyQuery)
@@ -328,9 +343,11 @@ void PropertyGetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyGetterWrapper *wrapper = static_cast<PropertyGetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyGetterIndex));
-  wrapper->callback(property, cbinfo);
+  PropertyGetterCallback callback = reinterpret_cast<PropertyGetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyGetterIndex)
+              .As<v8::External>()->Value()));
+  callback(property, cbinfo);
 }
 
 typedef void (*NativePropertyGetter)
@@ -344,9 +361,11 @@ void PropertySetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertySetterWrapper *wrapper = static_cast<PropertySetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertySetterIndex));
-  wrapper->callback(property, value, cbinfo);
+  PropertySetterCallback callback = reinterpret_cast<PropertySetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertySetterIndex)
+              .As<v8::External>()->Value()));
+  callback(property, value, cbinfo);
 }
 
 typedef void (*NativePropertySetter)(
@@ -360,9 +379,11 @@ void PropertyEnumeratorCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Array>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyEnumeratorWrapper *wrapper = static_cast<PropertyEnumeratorWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyEnumeratorIndex));
-  wrapper->callback(cbinfo);
+  PropertyEnumeratorCallback callback =
+      reinterpret_cast<PropertyEnumeratorCallback>(reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyEnumeratorIndex)
+              .As<v8::External>()->Value()));
+  callback(cbinfo);
 }
 
 typedef void (*NativePropertyEnumerator)
@@ -375,9 +396,11 @@ void PropertyDeleterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Boolean>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyDeleterWrapper *wrapper = static_cast<PropertyDeleterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyDeleterIndex));
-  wrapper->callback(property, cbinfo);
+  PropertyDeleterCallback callback = reinterpret_cast<PropertyDeleterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyDeleterIndex)
+              .As<v8::External>()->Value()));
+  callback(property, cbinfo);
 }
 
 typedef void (NativePropertyDeleter)
@@ -390,9 +413,11 @@ void PropertyQueryCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Integer>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  PropertyQueryWrapper *wrapper = static_cast<PropertyQueryWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kPropertyQueryIndex));
-  wrapper->callback(property, cbinfo);
+  PropertyQueryCallback callback = reinterpret_cast<PropertyQueryCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyQueryIndex)
+              .As<v8::External>()->Value()));
+  callback(property, cbinfo);
 }
 
 typedef void (*NativePropertyQuery)
@@ -405,9 +430,11 @@ void IndexGetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  IndexGetterWrapper *wrapper = static_cast<IndexGetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kIndexPropertyGetterIndex));
-  wrapper->callback(index, cbinfo);
+  IndexGetterCallback callback = reinterpret_cast<IndexGetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertyGetterIndex)
+              .As<v8::External>()->Value()));
+  callback(index, cbinfo);
 }
 
 typedef void (*NativeIndexGetter)
@@ -421,9 +448,11 @@ void IndexSetterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Value>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  IndexSetterWrapper *wrapper = static_cast<IndexSetterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kIndexPropertySetterIndex));
-  wrapper->callback(index, value, cbinfo);
+  IndexSetterCallback callback = reinterpret_cast<IndexSetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertySetterIndex)
+              .As<v8::External>()->Value()));
+  callback(index, value, cbinfo);
 }
 
 typedef void (*NativeIndexSetter)(
@@ -437,9 +466,11 @@ void IndexEnumeratorCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Array>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  IndexEnumeratorWrapper *wrapper = static_cast<IndexEnumeratorWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kIndexPropertyEnumeratorIndex));
-  wrapper->callback(cbinfo);
+  IndexEnumeratorCallback callback = reinterpret_cast<IndexEnumeratorCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(
+              kIndexPropertyEnumeratorIndex).As<v8::External>()->Value()));
+  callback(cbinfo);
 }
 
 typedef void (*NativeIndexEnumerator)
@@ -451,9 +482,11 @@ void IndexDeleterCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Boolean>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  IndexDeleterWrapper *wrapper = static_cast<IndexDeleterWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kIndexPropertyDeleterIndex));
-  wrapper->callback(index, cbinfo);
+  IndexDeleterCallback callback = reinterpret_cast<IndexDeleterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertyDeleterIndex)
+              .As<v8::External>()->Value()));
+  callback(index, cbinfo);
 }
 
 typedef void (*NativeIndexDeleter)
@@ -465,9 +498,11 @@ void IndexQueryCallbackWrapper(
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<v8::Integer>
       cbinfo(info, obj->GetInternalField(kDataIndex));
-  IndexQueryWrapper *wrapper = static_cast<IndexQueryWrapper*>(
-      obj->GetAlignedPointerFromInternalField(kIndexPropertyQueryIndex));
-  wrapper->callback(index, cbinfo);
+  IndexQueryCallback callback = reinterpret_cast<IndexQueryCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertyQueryIndex)
+              .As<v8::External>()->Value()));
+  callback(index, cbinfo);
 }
 
 typedef void (*NativeIndexQuery)
