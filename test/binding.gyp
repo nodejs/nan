@@ -131,4 +131,8 @@
         "target_name" : "trycatch"
       , "sources"     : [ "cpp/trycatch.cpp" ]
     }
+    , {
+        "target_name" : "setcallhandler"
+      , "sources"     : [ "cpp/setcallhandler.cpp" ]
+    }
 ]}
