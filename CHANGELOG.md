@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.0.7: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.2.0**
+**Version 2.0.8: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.2.0**
+
+### 2.0.8 Aug 28 2015
+
+  - Work around duplicate linking bug in clang 11902da
 
 ### 2.0.7 Aug 26 2015
 
