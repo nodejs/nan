@@ -409,7 +409,7 @@ Nan::MaybeLocal<v8::Value> Nan::CallAsFunction(v8::Local<v8::Object> obj,
 <a name="api_nan_call_as_constructor"></a>
 ### Nan::CallAsConstructor()
 
-A helper method for calling [`v8::Object#CallAsConstructor()`](https://v8docs.nodesource.com/io.js-3.0/db/d85/classv8_1_1_object.html#a9ef18be634e79b4f0cdffa1667a29f58) in a way compatible across supported versions of V8.
+A helper method for calling [`v8::Object#CallAsConstructor()`](https://v8docs.nodesource.com/io.js-3.0/db/d85/classv8_1_1_object.html#a50d571de50d0b0dfb28795619d07a01b) in a way compatible across supported versions of V8.
 
 Signature:
 
