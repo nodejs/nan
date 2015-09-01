@@ -4,7 +4,7 @@ NAN's `node::Buffer` helpers exist as the API has changed across supported Node 
 
  - <a href="#api_nan_new_buffer"><b><code>Nan::NewBuffer()</code></b></a>
  - <a href="#api_nan_copy_buffer"><b><code>Nan::CopyBuffer()</code></b></a>
-
+ - <a href="#api_nan_free_callback"><b><code>Nan::FreeCallback()</code></b></a>
 
 <a name="api_nan_new_buffer"></a>
 ### Nan::NewBuffer()
@@ -20,10 +20,9 @@ Signature:
 ```c++
 Nan::MaybeLocal<v8::Object> Nan::NewBuffer(uint32_t size)
 Nan::MaybeLocal<v8::Object> Nan::NewBuffer(char* data, uint32_t size)
-// uses `node::smalloc::FreeCallback` on older versions of Node
 Nan::MaybeLocal<v8::Object> Nan::NewBuffer(char *data,
                                            size_t length,
-                                           node::Buffer::FreeCallback callback,
+                                           Nan::FreeCallback callback,
                                            void *hint)
 ```
 
@@ -39,4 +38,17 @@ Signature:
 
 ```c++
 Nan::MaybeLocal<v8::Object> Nan::CopyBuffer(const char *data, uint32_t size)
+```
+
+
+<a name="api_nan_free_callback"></a>
+### Nan::FreeCallback()
+
+A free callback that can be provided to [`Nan::NewBuffer()`](#api_nan_new_buffer).
+The supplied callback will be invoked when the `Buffer` undergoes garbage collection.
+
+Signature:
+
+```c++
+typedef void (*FreeCallback)(char *data, void *hint);
 ```

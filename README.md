@@ -221,7 +221,7 @@ NAN's `node::Buffer` helpers exist as the API has changed across supported Node 
 
  - <a href="doc/buffers.md#api_nan_new_buffer"><b><code>Nan::NewBuffer()</code></b></a>
  - <a href="doc/buffers.md#api_nan_copy_buffer"><b><code>Nan::CopyBuffer()</code></b></a>
-
+ - <a href="doc/buffers.md#api_nan_free_callback"><b><code>Nan::FreeCallback()</code></b></a>
 
 ### Nan::Callback
 
