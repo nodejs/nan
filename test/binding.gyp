@@ -22,8 +22,9 @@
       , "sources"     : [ "cpp/news.cpp" ]
     }
   , {
-        "target_name" : "morenews"
-      , "sources"     : [ "cpp/morenews.cpp" ]
+        "target_name"         : "morenews"
+      , "win_delay_load_hook" : "false"
+      , "sources"             : [ "cpp/morenews.cpp" ]
     }
   , {
         "target_name" : "returnvalue"
