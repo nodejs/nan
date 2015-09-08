@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "tap --gc test/js/*-test.js",
-    "rebuild-tests": "pangyp rebuild --msvs_version=2013 --directory test",
+    "rebuild-tests": "node-gyp rebuild --msvs_version=2013 --directory test",
     "docs": "doc/.build.sh"
   },
   "contributors": [
@@ -26,7 +26,6 @@
     "commander": "^2.8.1",
     "glob": "^5.0.14",
     "node-gyp": "~3.0.1",
-    "pangyp": "~2.2.0",
     "tap": "~0.7.1",
     "xtend": "~4.0.0"
   },
