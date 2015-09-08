@@ -1,6 +1,6 @@
 {
   "name": "nan",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Native Abstractions for Node.js: C++ header for Node 0.8 -> 4 compatibility",
   "main": "include_dirs.js",
   "repository": {
