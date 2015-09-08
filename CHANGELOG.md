@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.0.8: current Node 12: 0.12.7, Node 10: 0.10.40, io.js: 3.2.0**
+**Version 2.0.9: current Node 4.0.0, Node 12: 0.12.7, Node 10: 0.10.40, iojs: 3.2.0**
+
+### 2.0.9 Sep 8 2015
+
+  - Bugfix: EscapableHandleScope in Nan::NewBuffer for Node 0.8 and 0.10 b1654d7
 
 ### 2.0.8 Aug 28 2015
 
