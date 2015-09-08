@@ -1026,12 +1026,12 @@ class Utf8String {
     , node::Buffer::free_callback callback
     , void *hint
   ) {
-    HandleScope scope;
+    EscapableHandleScope scope;
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(length <= imp::kMaxLength && "too large buffer");
     return MaybeLocal<v8::Object>(
-        New(node::Buffer::New(data, length, callback, hint)->handle_));
+        scope.Escape(New(node::Buffer::New(data, length, callback, hint)->handle_)));
   }
 
   NAN_INLINE MaybeLocal<v8::Object> CopyBuffer(
