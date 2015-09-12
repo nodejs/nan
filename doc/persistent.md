@@ -233,9 +233,6 @@ template<typename T> class Global : public PersistentBase<T> {
 
 See the V8 documentation for [`Global`](https://v8docs.nodesource.com/io.js-3.0/d5/d40/classv8_1_1_global.html) for further information.
 
-<a name="api_nan_weak_callback_type"></a>
-### Nan::WeakCallbackType
-
 <a name="api_nan_weak_callback_info"></a>
 ### Nan::WeakCallbackInfo
 
