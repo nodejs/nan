@@ -20,10 +20,29 @@
 #ifndef NAN_H_
 #define NAN_H_
 
+#include <node_version.h>
+
+#define NODE_0_10_MODULE_VERSION 11
+#define NODE_0_12_MODULE_VERSION 14
+#define ATOM_0_21_MODULE_VERSION 41
+#define IOJS_1_0_MODULE_VERSION  42
+#define IOJS_1_1_MODULE_VERSION  43
+#define IOJS_2_0_MODULE_VERSION  44
+#define IOJS_3_0_MODULE_VERSION  45
+
+#ifdef _MSC_VER
+# define NAN_HAS_CPLUSPLUS_11 (_MSC_VER >= 1800)
+#else
+# define NAN_HAS_CPLUSPLUS_11 (__cplusplus >= 201103L)
+#endif
+
+#if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION && ! NAN_HAS_CPLUSPLUS_11
+# error This version of node/NAN/v8 requires a C++11 compiler
+#endif
+
 #include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
-#include <node_version.h>
 #include <node_object_wrap.h>
 #include <algorithm>
 #include <cstring>
@@ -108,14 +127,6 @@ namespace Nan {
     NAN_DISALLOW_ASSIGN(CLASS)                                                 \
     NAN_DISALLOW_COPY(CLASS)                                                   \
     NAN_DISALLOW_MOVE(CLASS)
-
-#define NODE_0_10_MODULE_VERSION 11
-#define NODE_0_12_MODULE_VERSION 14
-#define ATOM_0_21_MODULE_VERSION 41
-#define IOJS_1_0_MODULE_VERSION  42
-#define IOJS_1_1_MODULE_VERSION  43
-#define IOJS_2_0_MODULE_VERSION  44
-#define IOJS_3_0_MODULE_VERSION  45
 
 #define TYPE_CHECK(T, S)                                                       \
     while (false) {                                                            \
