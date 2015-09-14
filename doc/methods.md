@@ -73,7 +73,7 @@ template<typename T> class PropertyCallbackInfo : public PropertyCallbackInfoBas
 };
 ```
 
-See the [`v8::PropertyCallbackInfo](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from property accessor methods.
+See the [`v8::PropertyCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from property accessor methods.
 
 <a name="api_nan_return_value"></a>
 ### Nan::ReturnValue
@@ -130,6 +130,7 @@ Example:
 void MethodName(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   ...
 }
+```
 
 You do not need to declare a new `HandleScope` within a method as one is implicitly created for you.
 
@@ -471,8 +472,8 @@ Signature:
 
 ```c++
 template<typename T> void Nan::SetMethod(const T &recv,
-                                    const char *name,
-                                    Nan::FunctionCallback callback)
+                                         const char *name,
+                                         Nan::FunctionCallback callback)
 ```
 
 <a name="api_nan_set_prototype_method"></a>
@@ -503,7 +504,7 @@ void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
                  v8::Local<v8::Value> data = v8::Local<v8::Value>(),
                  v8::AccessControl settings = v8::DEFAULT,
                  v8::PropertyAttribute attribute = v8::None,
-                 imp::Sig signature = imp::Sig())
+                 imp::Sig signature = imp::Sig());
 bool SetAccessor(v8::Local<v8::Object> obj,
                  v8::Local<v8::String> name,
                  Nan::GetterCallback getter,
@@ -555,12 +556,12 @@ Signature:
 
 ```c++
 void SetIndexedPropertyHandler(v8::Local<v8::ObjectTemplate> tpl,
-                             Nan::IndexGetterCallback getter,
-                             Nan::IndexSetterCallback setter = 0,
-                             Nan::IndexQueryCallback query = 0,
-                             Nan::IndexDeleterCallback deleter = 0,
-                             Nan::IndexEnumeratorCallback enumerator = 0,
-                             v8::Local<v8::Value> data = v8::Local<v8::Value>())
+                               Nan::IndexGetterCallback getter,
+                               Nan::IndexSetterCallback setter = 0,
+                               Nan::IndexQueryCallback query = 0,
+                               Nan::IndexDeleterCallback deleter = 0,
+                               Nan::IndexEnumeratorCallback enumerator = 0,
+                               v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
 See the V8 [`ObjectTemplate#SetIndexedPropertyHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#ac0234cbede45d51778bb5f6a32a9e125) for further information about how to use `Nan::SetIndexedPropertyHandler()`.
@@ -575,7 +576,7 @@ Signature:
 ```c++
 void Nan::SetTemplate(v8::Local<v8::Template> templ,
                       const char *name,
-                      v8::Local<v8::Data> value)
+                      v8::Local<v8::Data> value);
 void Nan::SetTemplate(v8::Local<v8::Template> templ,
                       v8::Local<v8::String> name,
                       v8::Local<v8::Data> value,
@@ -594,7 +595,7 @@ Signature:
 ```c++
 void Nan::SetPrototypeTemplate(v8::Local<v8::FunctionTemplate> templ,
                                const char *name,
-                               v8::Local<v8::Data> value)
+                               v8::Local<v8::Data> value);
 void Nan::SetPrototypeTemplate(v8::Local<v8::FunctionTemplate> templ,
                                v8::Local<v8::String> name,
                                v8::Local<v8::Data> value,
@@ -613,7 +614,7 @@ Signature:
 ```c++
 void Nan::SetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ,
                               const char *name,
-                              v8::Local<v8::Data> value)
+                              v8::Local<v8::Data> value);
 void Nan::SetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ,
                               v8::Local<v8::String> name,
                               v8::Local<v8::Data> value,
