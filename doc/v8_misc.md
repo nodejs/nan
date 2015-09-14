@@ -4,6 +4,7 @@
  - <a href="#api_nan_get_current_context"><b><code>Nan::GetCurrentContext()</code></b></a>
  - <a href="#api_nan_set_isolate_data"><b><code>Nan::SetIsolateData()</code></b></a>
  - <a href="#api_nan_get_isolate_data"><b><code>Nan::GetIsolateData()</code></b></a>
+ - <a href="#api_nan_typedarray_contents"><b><code>Nan::TypedArrayContents<T></code></b></a>
 
 
 <a name="api_nan_utf8_string"></a>
@@ -61,3 +62,24 @@ Signature:
 T *Nan::GetIsolateData(v8::Isolate *isolate)
 ```
 
+<a name="api_nan_typedarray_contents"></a>
+### Nan::TypedArrayContents<T>
+
+A helper class for accessing the contents of an ArrayBufferView (aka a typedarray) from C++.  If the input array is not a valid typedarray, then the data pointer of TypedArrayContents will default to `NULL` and the length will be 0.  If the data pointer is not compatible with the alignment requirements of type, an assertion error will fail.
+
+Note that you must store a reference to the `array` object while you are accessing its contents.
+
+Definition:
+
+```c++
+template<typename T>
+class Nan::TypedArrayContents {
+ public:
+  TypedArrayContents(v8::Local<Value> array);
+
+  size_t length() const;
+
+  T* const operator*();
+  const T* const operator*() const;
+};
+```

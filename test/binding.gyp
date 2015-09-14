@@ -140,4 +140,8 @@
         "target_name" : "setcallhandler"
       , "sources"     : [ "cpp/setcallhandler.cpp" ]
     }
+    , {
+        "target_name" : "typedarrays"
+      , "sources"     : [ "cpp/typedarrays.cpp" ]
+    }
 ]}
