@@ -282,6 +282,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
  - <a href="doc/node_misc.md#api_nan_object_wrap"><b><code>Nan::ObjectWrap</code></b></a>
  - <a href="doc/node_misc.md#api_nan_module_init"><b><code>NAN_MODULE_INIT()</code></b></a>
  - <a href="doc/node_misc.md#api_nan_export"><b><code>Nan::Export()</code></b></a>
+ - <a href="doc/node_misc.md#api_nan_typedarray_contents"><b><code>Nan::TypedArrayContents</code></b></a>
 
 <!-- END API -->
 

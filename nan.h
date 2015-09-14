@@ -2131,6 +2131,11 @@ struct Tap {
 
 #undef TYPE_CHECK
 
+
+//=== TypedArrayContents =======================================================
+
+#include "nan_typedarray_contents.h"  // NOLINT(build/include)
+
 }  // end of namespace Nan
 
 #endif  // NAN_H_

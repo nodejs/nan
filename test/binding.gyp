@@ -132,4 +132,8 @@
         "target_name" : "trycatch"
       , "sources"     : [ "cpp/trycatch.cpp" ]
     }
+    , {
+        "target_name" : "typedarrays"
+      , "sources"     : [ "cpp/typedarrays.cpp" ]
+    }
 ]}
