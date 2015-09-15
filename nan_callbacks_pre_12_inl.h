@@ -149,7 +149,7 @@ class FunctionCallbackInfo {
 template<typename T>
 class PropertyCallbackInfoBase {
   const v8::AccessorInfo &info_;
-  const v8::Local<v8::Value> &data_;
+  const v8::Local<v8::Value> data_;
 
  public:
   explicit inline PropertyCallbackInfoBase(
