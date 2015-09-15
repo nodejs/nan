@@ -15,6 +15,9 @@ class TypedArrayContents {
   NAN_INLINE explicit TypedArrayContents(v8::Local<v8::Value> from) :
       length_(0), data_(NULL) {
 
+    size_t length = 0;
+    void*  data = NULL;
+
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 
@@ -26,16 +29,13 @@ class TypedArrayContents {
       const ptrdiff_t byte_offset = array->ByteOffset();
       v8::Local<v8::ArrayBuffer> buffer = array->Buffer();
 
-      char* data = static_cast<char*>(buffer->GetContents().Data());
-
-      length_ = byte_length / sizeof(T);
-      data_   = reinterpret_cast<T*>(data + byte_offset);
+      length = byte_length / sizeof(T);
+      data   = static_cast<char*>(buffer->GetContents().Data()) + byte_offset;
     }
 
 #else
 
     if (from->IsObject() && !from->IsNull()) {
-
       v8::Local<v8::Object> array = v8::Local<v8::Object>::Cast(from);
 
       MaybeLocal<v8::Value> byte_length = Get(array,
@@ -45,30 +45,25 @@ class TypedArrayContents {
 
       if (!byte_length.IsEmpty() && byte_length.ToLocalChecked()->IsUint32() &&
           !byte_offset.IsEmpty() && byte_offset.ToLocalChecked()->IsUint32()) {
-
-        const size_t length = byte_length.ToLocalChecked()->Uint32Value();
-        void* data = array->GetIndexedPropertiesExternalArrayData();
-
-        if (data) {
-          length_ = length / sizeof(T);
-          data_   = static_cast<T*>(data);
+        data = array->GetIndexedPropertiesExternalArrayData();
+        if(data) {
+          length = byte_length.ToLocalChecked()->Uint32Value() / sizeof(T);
         }
       }
     }
 
 #endif
 
-
-#if defined(_MSC_VER)
-    assert(reinterpret_cast<uintptr_t>(data_) % __alignof(T) == 0);
-#elif defined(__GNUC__)
-    assert(reinterpret_cast<uintptr_t>(data_) % __alignof__(T) == 0);
-#elif NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(reinterpret_cast<uintptr_t>(data_) % alignof(T) == 0);
+#if defined(_MSC_VER) || defined(__GNUC__)
+    assert(reinterpret_cast<uintptr_t>(data) % __alignof(T) == 0);
+#elif __cplusplus >= 201103L
+    assert(reinterpret_cast<uintptr_t>(data) % alignof(T) == 0);
 #else
-    assert(reinterpret_cast<uintptr_t>(data_) % sizeof(T) == 0);
+    assert(reinterpret_cast<uintptr_t>(data) % sizeof(T) == 0);
 #endif
 
+    length_ = length;
+    data_   = static_cast<T*>(data);
   }
 
   NAN_INLINE size_t length() const            { return length_; }
