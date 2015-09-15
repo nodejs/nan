@@ -3,7 +3,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'typedarrays' });
 
 test('typedarrays - simple cases', function (t) {
-  if(typeof Uint8Array === 'object') {
+  if (typeof Uint8Array === 'object') {
     t.pass('typedarrays not supported');
     t.end();
   } else {
@@ -36,7 +36,7 @@ test('typedarrays - simple cases', function (t) {
 });
 
 test('typedarrays - bad arguments', function (t) {
-  if(typeof Uint8Array === 'object') {
+  if (typeof Uint8Array === 'object') {
     t.same(bindings.ReadU8(new Buffer(10)), []);
 
     t.end();
