@@ -22,14 +22,14 @@ class TypedArrayContents {
       v8::Local<v8::ArrayBufferView> array =
         v8::Local<v8::ArrayBufferView>::Cast(from);
 
-      const size_t    byteLength = array->ByteLength();
-      const ptrdiff_t byteOffset = array->ByteOffset();
+      const size_t    byte_length = array->ByteLength();
+      const ptrdiff_t byte_offset = array->ByteOffset();
       v8::Local<v8::ArrayBuffer> buffer = array->Buffer();
 
-      char* data = reinterpret_cast<char*>(buffer->GetContents().Data());
+      char* data = static_cast<char*>(buffer->GetContents().Data());
 
-      length_ = byteLength / sizeof(T);
-      data_   = reinterpret_cast<T*>(data + byteOffset);
+      length_ = byte_length / sizeof(T);
+      data_   = reinterpret_cast<T*>(data + byte_offset);
     }
 
 #elif NODE_MODULE_VERSION >= NODE_0_8_MODULE_VERSION
@@ -38,24 +38,30 @@ class TypedArrayContents {
 
       v8::Local<v8::Object> array = v8::Local<v8::Object>::Cast(from);
 
-      MaybeLocal<v8::Value> byteLength = Get(array,
-        Nan::New<v8::String>("byteLength").ToLocalChecked());
-      MaybeLocal<v8::Value> byteOffset = Get(array,
-        Nan::New<v8::String>("byteOffset").ToLocalChecked());
+      MaybeLocal<v8::Value> byte_length = Get(array,
+        New<v8::String>("byteLength").ToLocalChecked());
+      MaybeLocal<v8::Value> byte_offset = Get(array,
+        New<v8::String>("byteOffset").ToLocalChecked());
 
-      if (!byteLength.IsEmpty() && byteLength.ToLocalChecked()->IsUint32() &&
-          !byteOffset.IsEmpty() && byteOffset.ToLocalChecked()->IsUint32()) {
+      if (!byte_length.IsEmpty() && byte_length.ToLocalChecked()->IsUint32() &&
+          !byte_offset.IsEmpty() && byte_offset.ToLocalChecked()->IsUint32()) {
 
-        const size_t length = byteLength.ToLocalChecked()->Uint32Value();
+        const size_t length = byte_length.ToLocalChecked()->Uint32Value();
         void* data = array->GetIndexedPropertiesExternalArrayData();
 
         if (data) {
           length_ = length / sizeof(T);
-          data_   = reinterpret_cast<T*>(data);
+          data_   = static_cast<T*>(data);
         }
       }
     }
 
+#endif
+
+#if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
+    assert(reinterpret_cast<uintptr_t>(data_) % alignof(T) == 0);
+#else
+    assert(reinterpret_cast<uintptr_t>(data_) % sizeof(T) == 0);
 #endif
   }
 
