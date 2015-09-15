@@ -58,7 +58,17 @@ class TypedArrayContents {
 
 #endif
 
+
+#if defined(_MSC_VER)
+    assert(reinterpret_cast<uintptr_t>(data_) % __alignof(T) == 0);
+#elif defined(__GNUC__)
+    assert(reinterpret_cast<uintptr_t>(data_) % __alignof__(T) == 0);
+#elif NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
+    assert(reinterpret_cast<uintptr_t>(data_) % alignof(T) == 0);
+#else
     assert(reinterpret_cast<uintptr_t>(data_) % sizeof(T) == 0);
+#endif
+
   }
 
   NAN_INLINE size_t length() const            { return length_; }
