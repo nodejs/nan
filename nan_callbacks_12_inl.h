@@ -137,7 +137,7 @@ class PropertyCallbackInfo {
  public:
   explicit inline PropertyCallbackInfo(
       const v8::PropertyCallbackInfo<T> &info
-    , const v8::Local<v8::Value> &data) :
+    , const v8::Local<v8::Value> data) :
           info_(info)
         , data_(data) {}
 

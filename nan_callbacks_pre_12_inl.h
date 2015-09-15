@@ -154,7 +154,7 @@ class PropertyCallbackInfoBase {
  public:
   explicit inline PropertyCallbackInfoBase(
       const v8::AccessorInfo &info
-    , const v8::Local<v8::Value> &data) :
+    , const v8::Local<v8::Value> data) :
           info_(info)
         , data_(data) {}
 
@@ -184,7 +184,7 @@ class PropertyCallbackInfo : public PropertyCallbackInfoBase<T> {
  public:
   explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
-    , const v8::Local<v8::Value> &data) :
+    , const v8::Local<v8::Value> data) :
           PropertyCallbackInfoBase<T>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<T>::New(v8::Undefined())) {}
@@ -206,7 +206,7 @@ class PropertyCallbackInfo<v8::Array> :
  public:
   explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
-    , const v8::Local<v8::Value> &data) :
+    , const v8::Local<v8::Value> data) :
           PropertyCallbackInfoBase<v8::Array>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Array>::New(v8::Local<v8::Array>())) {}
@@ -230,7 +230,7 @@ class PropertyCallbackInfo<v8::Boolean> :
  public:
   explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
-    , const v8::Local<v8::Value> &data) :
+    , const v8::Local<v8::Value> data) :
           PropertyCallbackInfoBase<v8::Boolean>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Boolean>::New(v8::Local<v8::Boolean>())) {}
@@ -254,7 +254,7 @@ class PropertyCallbackInfo<v8::Integer> :
  public:
   explicit inline PropertyCallbackInfo(
       const v8::AccessorInfo &info
-    , const v8::Local<v8::Value> &data) :
+    , const v8::Local<v8::Value> data) :
           PropertyCallbackInfoBase<v8::Integer>(info, data)
         , return_value_(info.GetIsolate(), &retval_)
         , retval_(v8::Persistent<v8::Integer>::New(v8::Local<v8::Integer>())) {}
