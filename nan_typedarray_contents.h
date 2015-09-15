@@ -32,7 +32,7 @@ class TypedArrayContents {
       data_   = reinterpret_cast<T*>(data + byte_offset);
     }
 
-#elif NODE_MODULE_VERSION >= NODE_0_8_MODULE_VERSION
+#else
 
     if (from->IsObject() && !from->IsNull()) {
 
@@ -56,18 +56,9 @@ class TypedArrayContents {
       }
     }
 
-#else
-
-    //TypedArrays not supported on node < 0.8
-    assert(false);
-
 #endif
 
-#if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
-    assert(reinterpret_cast<uintptr_t>(data_) % alignof(T) == 0);
-#else
     assert(reinterpret_cast<uintptr_t>(data_) % sizeof(T) == 0);
-#endif
   }
 
   NAN_INLINE size_t length() const            { return length_; }
