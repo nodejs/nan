@@ -56,6 +56,11 @@ class TypedArrayContents {
       }
     }
 
+#else
+
+    //TypedArrays not supported on node < 0.8
+    assert(false);
+
 #endif
 
 #if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION

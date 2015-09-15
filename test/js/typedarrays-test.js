@@ -3,9 +3,11 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'typedarrays' });
 
 test('typedarrays - simple cases', function (t) {
-  if (typeof Uint8Array === 'object') {
+  if (typeof Uint8Array !== 'function') {
+
     t.pass('typedarrays not supported');
     t.end();
+
   } else {
 
     var u8array = new Uint8Array([1, 255, 3]);
@@ -36,10 +38,11 @@ test('typedarrays - simple cases', function (t) {
 });
 
 test('typedarrays - bad arguments', function (t) {
-  if (typeof Uint8Array === 'object') {
-    t.same(bindings.ReadU8(new Buffer(10)), []);
+  if (typeof Uint8Array !== 'function') {
 
+    t.pass('typedarrays not supported');
     t.end();
+
   } else {
 
     t.same(bindings.ReadU8(0), []);
