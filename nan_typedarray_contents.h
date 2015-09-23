@@ -38,12 +38,15 @@ class TypedArrayContents {
     if (from->IsObject() && !from->IsNull()) {
       v8::Local<v8::Object> array = v8::Local<v8::Object>::Cast(from);
 
+      MaybeLocal<v8::Value> buffer = Get(array,
+        New<v8::String>("buffer").ToLocalChecked());
       MaybeLocal<v8::Value> byte_length = Get(array,
         New<v8::String>("byteLength").ToLocalChecked());
       MaybeLocal<v8::Value> byte_offset = Get(array,
         New<v8::String>("byteOffset").ToLocalChecked());
 
-      if (!byte_length.IsEmpty() && byte_length.ToLocalChecked()->IsUint32() &&
+      if (!buffer.IsEmpty() &&
+          !byte_length.IsEmpty() && byte_length.ToLocalChecked()->IsUint32() &&
           !byte_offset.IsEmpty() && byte_offset.ToLocalChecked()->IsUint32()) {
         data = array->GetIndexedPropertiesExternalArrayData();
         if(data) {
