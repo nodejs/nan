@@ -67,7 +67,7 @@ T *Nan::GetIsolateData(v8::Isolate *isolate)
 
 A helper class for accessing the contents of an ArrayBufferView (aka a typedarray) from C++.  If the input array is not a valid typedarray, then the data pointer of TypedArrayContents will default to `NULL` and the length will be 0.  If the data pointer is not compatible with the alignment requirements of type, an assertion error will fail.
 
-Note that you must store a pointer to the `array` object while you are accessing the contents of the typedarray object using this interface.
+Note that you must store a reference to the `array` object while you are accessing its contents.
 
 Definition:
 
@@ -77,7 +77,7 @@ class Nan::TypedArrayContents {
  public:
   TypedArrayContents(v8::Local<Value> array);
 
-  int length() const;
+  size_t length() const;
 
   T* const operator*();
   const T* const operator*() const;
