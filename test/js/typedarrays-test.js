@@ -10,6 +10,13 @@ test('typedarrays - simple cases', function (t) {
 
   } else {
 
+    var zeros = new Uint8Array(5)
+    t.same(bindings.ReadU8(zeros), [0,0,0,0,0])
+
+    var y = zeros[0]
+    t.equals(y, 0)
+    t.same(bindings.ReadU8(zeros), [0,0,0,0,0])
+
     var u8array = new Uint8Array([1, 255, 3]);
     t.same(bindings.ReadU8(u8array), [1, 255, 3]);
     t.same(bindings.ReadU8(u8array.subarray(1)), [255, 3]);
