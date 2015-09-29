@@ -70,8 +70,8 @@ class TypedArrayContents {
   }
 
   NAN_INLINE size_t length() const            { return length_; }
-  NAN_INLINE T* const operator*()             { return data_;   }
-  NAN_INLINE const T* const operator*() const { return data_;   }
+  NAN_INLINE T* operator*()             { return data_;   }
+  NAN_INLINE const T* operator*() const { return data_;   }
 
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(TypedArrayContents)
