@@ -48,5 +48,5 @@ Example usage:
 ```c++
 v8::Local<v8::Function> function;
 Nan::Callback callback(function);
-callback->Call(0, 0);
+callback.Call(0, 0);
 ```
