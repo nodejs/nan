@@ -116,6 +116,7 @@ namespace Nan {
 #define IOJS_1_1_MODULE_VERSION  43
 #define IOJS_2_0_MODULE_VERSION  44
 #define IOJS_3_0_MODULE_VERSION  45
+#define NODE_4_00_MODULE_VERSION 46
 
 #define TYPE_CHECK(T, S)                                                       \
     while (false) {                                                            \
