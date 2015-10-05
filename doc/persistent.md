@@ -95,6 +95,12 @@ template<typename T> class PersistentBase {
 
 See the V8 documentation for [`PersistentBase`](https://v8docs.nodesource.com/io.js-3.0/d4/dca/classv8_1_1_persistent_base.html) for further information.
 
+**Tip:** To get a `v8::Local` reference to the original object back from a `PersistentBase` or `Persistent` object:
+
+```c++
+v8::Local<v8::Object> object = Nan::New(persistent);
+```
+
 <a name="api_nan_non_copyable_persistent_traits"></a>
 ### Nan::NonCopyablePersistentTraits & v8::NonCopyablePersistentTraits
 
@@ -108,10 +114,10 @@ _(note: this is implemented as `Nan::NonCopyablePersistentTraits` for older vers
 template<typename T> class NonCopyablePersistentTraits {
  public:
   typedef Persistent<T, NonCopyablePersistentTraits<T> > NonCopyablePersistent;
-  
+
   static const bool kResetInDestructor = false;
-  
-  template<typename S, typename M> 
+
+  template<typename S, typename M>
   static void Copy(const Persistent<S, M> &source,
                    NonCopyablePersistent *dest);
 
