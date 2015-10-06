@@ -20,7 +20,7 @@ class MyObject : public ObjectWrap {
     SetPrototypeMethod(tpl, "getHandle", GetHandle);
     SetPrototypeMethod(tpl, "getValue", GetValue);
 
-    constructor.Reset(tpl->GetFunction());
+    constructor().Reset(tpl->GetFunction());
     Set(target, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
   }
 
@@ -37,7 +37,7 @@ class MyObject : public ObjectWrap {
     } else {
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {info[0]};
-      v8::Local<v8::Function> cons = Nan::New(constructor);
+      v8::Local<v8::Function> cons = Nan::New(constructor());
       info.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
   }
@@ -52,10 +52,12 @@ class MyObject : public ObjectWrap {
     info.GetReturnValue().Set(obj->value_);
   }
 
-  static Persistent<v8::Function> constructor;
+  static inline Persistent<v8::Function> & constructor() {
+    static Persistent<v8::Function> my_constructor;
+    return my_constructor;
+  }
+
   double value_;
 };
-
-Persistent<v8::Function> MyObject::constructor;
 
 NODE_MODULE(objectwraphandle, MyObject::Init)
