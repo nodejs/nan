@@ -132,4 +132,8 @@
         "target_name" : "trycatch"
       , "sources"     : [ "cpp/trycatch.cpp" ]
     }
+    , {
+        "target_name" : "wrappedobjectfactory"
+      , "sources"     : [ "cpp/wrappedobjectfactory.cpp" ]
+    }
 ]}
