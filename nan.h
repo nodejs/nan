@@ -2073,6 +2073,49 @@ inline void SetIndexedPropertyHandler(
 #endif
 }
 
+inline void SetCallHandler(
+    v8::Local<v8::FunctionTemplate> tpl
+  , FunctionCallback callback
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
+  HandleScope scope;
+
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
+
+  obj->SetInternalField(
+      imp::kFunctionIndex
+    , New<v8::External>(reinterpret_cast<void *>(callback)));
+
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
+  }
+
+  tpl->SetCallHandler(imp::FunctionCallbackWrapper, obj);
+}
+
+
+inline void SetCallAsFunctionHandler(
+    v8::Local<v8::ObjectTemplate> tpl,
+    FunctionCallback callback,
+    v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
+  HandleScope scope;
+
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
+
+  obj->SetInternalField(
+      imp::kFunctionIndex
+    , New<v8::External>(reinterpret_cast<void *>(callback)));
+
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
+  }
+
+  tpl->SetCallAsFunctionHandler(imp::FunctionCallbackWrapper, obj);
+}
+
 //=== Weak Persistent Handling =================================================
 
 #include "nan_weak.h"  // NOLINT(build/include)
