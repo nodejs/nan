@@ -57,6 +57,7 @@ v8::Local<v8::Uint32> Nan::New<T>(uint32_t value);
 v8::Local<v8::Number> Nan::New<T>(double value);
 v8::Local<v8::String> Nan::New<T>(std::string const& value);
 v8::Local<v8::String> Nan::New<T>(const char * value, int length);
+v8::Local<v8::String> Nan::New<T>(const uint16_t * value, int length);
 v8::Local<v8::String> Nan::New<T>(const char * value);
 v8::Local<v8::String> Nan::New<T>(const uint16_t * value);
 ```
@@ -124,7 +125,7 @@ Call [`v8::String::Empty`](https://v8docs.nodesource.com/io.js-3.0/d2/db3/classv
 Signature:
 
 ```c++
-v8::Local<v8::String> Nan::EmptyString() 
+v8::Local<v8::String> Nan::EmptyString()
 ```
 
 
@@ -137,5 +138,5 @@ Signature:
 
 ```c++
 Nan::MaybeLocal<v8::String> Nan::NewOneByteString(const uint8_t * value,
-                                                  int length = -1) 
+                                                  int length = -1)
 ```

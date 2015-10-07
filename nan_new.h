@@ -301,6 +301,12 @@ New(const char * value, int length) {
 
 inline
 imp::Factory<v8::String>::return_t
+New(const uint16_t * value, int length) {
+  return New<v8::String>(value, length);
+}
+
+inline
+imp::Factory<v8::String>::return_t
 New(const char * value) {
   return New<v8::String>(value);
 }
