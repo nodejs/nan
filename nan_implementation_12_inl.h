@@ -396,4 +396,9 @@ inline v8::Local<T> New(Persistent<T, M> const& p) {
   return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
 }
 
+template <typename T>
+inline v8::Local<T> New(Global<T> const& p) {
+  return v8::Local<T>::New(v8::Isolate::GetCurrent(), p);
+}
+
 #endif  // NAN_IMPLEMENTATION_12_INL_H_

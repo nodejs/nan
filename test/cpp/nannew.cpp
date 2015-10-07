@@ -362,6 +362,19 @@ NAN_METHOD(testPersistents) {
   info.GetReturnValue().SetUndefined();
 }
 
+NAN_METHOD(testGlobals) {
+  Tap t(info[0]);
+
+  t.plan(1);
+
+  Nan::Global<String> p;
+  p.Reset(New("foo").ToLocalChecked());
+  t.ok(_( assertType<String>( New(p))));
+  p.Reset();
+
+  info.GetReturnValue().SetUndefined();
+}
+
 //==============================================================================
 // Regression Tests
 //==============================================================================
@@ -473,6 +486,7 @@ NAN_MODULE_INIT(Init) {
   NAN_EXPORT(target, testStringObject);
 
   NAN_EXPORT(target, testPersistents);
+  NAN_EXPORT(target, testGlobals);
 
   NAN_EXPORT(target, testRegression212);
   NAN_EXPORT(target, testRegression242);

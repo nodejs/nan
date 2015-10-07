@@ -262,6 +262,8 @@ template <typename T> inline v8::Local<T> New(v8::Persistent<T> const& p);
 #endif
 template <typename T, typename M>
 inline v8::Local<T> New(Persistent<T, M> const& p);
+template <typename T>
+inline v8::Local<T> New(Global<T> const& p);
 
 inline
 imp::Factory<v8::Boolean>::return_t

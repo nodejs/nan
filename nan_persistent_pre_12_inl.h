@@ -12,8 +12,12 @@
 template<typename T>
 class PersistentBase {
   v8::Persistent<T> persistent;
+  template<typename U>
+  friend v8::Local<U> New(const PersistentBase<U> &p);
   template<typename U, typename M>
   friend v8::Local<U> New(const Persistent<U, M> &p);
+  template<typename U>
+  friend v8::Local<U> New(const Global<U> &p);
   template<typename S> friend class ReturnValue;
 
  public:
