@@ -225,7 +225,7 @@ Example:
 ```c++
 void SetterName(v8::Local<v8::String> property,
                 v8::Local<v8::Value> value,
-                const Nan::PropertyCallbackInfo<v8::Value>& info) {
+                const Nan::PropertyCallbackInfo<void>& info) {
   ...
 }
 ```
