@@ -256,4 +256,9 @@ inline v8::Local<T> New(Persistent<T, M> const& p) {
   return v8::Local<T>::New(p.persistent);
 }
 
+template <typename T>
+inline v8::Local<T> New(Global<T> const& p) {
+  return v8::Local<T>::New(p.persistent);
+}
+
 #endif  // NAN_IMPLEMENTATION_PRE_12_INL_H_
