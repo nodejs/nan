@@ -195,5 +195,5 @@ Signature:
 int Nan::AdjustExternalMemory(int bytesChange)
 ```
 
-Calls V8's [`AdjustAmountOfExternalAllocatedMemory()` or `AdjustAmountOfExternalAllocatedMemory()`](https://v8docs.nodesource.com/io.js-3.0/d5/dda/classv8_1_1_isolate.html#ae1a59cac60409d3922582c4af675473e) depending on the version of V8.
+Calls V8's [`AdjustAmountOfExternalAllocatedMemory()`](https://v8docs.nodesource.com/io.js-3.0/d5/dda/classv8_1_1_isolate.html#ae1a59cac60409d3922582c4af675473e).
 

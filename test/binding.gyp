@@ -136,4 +136,12 @@
         "target_name" : "typedarrays"
       , "sources"     : [ "cpp/typedarrays.cpp" ]
     }
+    , {
+        "target_name" : "wrappedobjectfactory"
+      , "sources"     : [ "cpp/wrappedobjectfactory.cpp" ]
+    }
+    , {
+        "target_name" : "setcallhandler"
+      , "sources"     : [ "cpp/setcallhandler.cpp" ]
+    }
 ]}

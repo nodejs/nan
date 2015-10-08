@@ -20,10 +20,30 @@
 #ifndef NAN_H_
 #define NAN_H_
 
+#include <node_version.h>
+
+#define NODE_0_10_MODULE_VERSION 11
+#define NODE_0_12_MODULE_VERSION 14
+#define ATOM_0_21_MODULE_VERSION 41
+#define IOJS_1_0_MODULE_VERSION  42
+#define IOJS_1_1_MODULE_VERSION  43
+#define IOJS_2_0_MODULE_VERSION  44
+#define IOJS_3_0_MODULE_VERSION  45
+#define NODE_4_0_MODULE_VERSION  46
+
+#ifdef _MSC_VER
+# define NAN_HAS_CPLUSPLUS_11 (_MSC_VER >= 1800)
+#else
+# define NAN_HAS_CPLUSPLUS_11 (__cplusplus >= 201103L)
+#endif
+
+#if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION && ! NAN_HAS_CPLUSPLUS_11
+# error This version of node/NAN/v8 requires a C++11 compiler
+#endif
+
 #include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
-#include <node_version.h>
 #include <node_object_wrap.h>
 #include <algorithm>
 #include <cstring>
@@ -108,14 +128,6 @@ namespace Nan {
     NAN_DISALLOW_ASSIGN(CLASS)                                                 \
     NAN_DISALLOW_COPY(CLASS)                                                   \
     NAN_DISALLOW_MOVE(CLASS)
-
-#define NODE_0_10_MODULE_VERSION 11
-#define NODE_0_12_MODULE_VERSION 14
-#define ATOM_0_21_MODULE_VERSION 41
-#define IOJS_1_0_MODULE_VERSION  42
-#define IOJS_1_1_MODULE_VERSION  43
-#define IOJS_2_0_MODULE_VERSION  44
-#define IOJS_3_0_MODULE_VERSION  45
 
 #define TYPE_CHECK(T, S)                                                       \
     while (false) {                                                            \
@@ -834,13 +846,21 @@ class TryCatch {
     node::FatalException(v8::Isolate::GetCurrent(), try_catch.try_catch_);
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+  NAN_INLINE v8::Local<v8::Value> ErrnoException(
           int errorno
        ,  const char* syscall = NULL
        ,  const char* message = NULL
        ,  const char* path = NULL) {
     return node::ErrnoException(v8::Isolate::GetCurrent(), errorno, syscall,
             message, path);
+  }
+
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+          int errorno
+       ,  const char* syscall = NULL
+       ,  const char* message = NULL
+       ,  const char* path = NULL) {
+    return ErrnoException(errorno, syscall, message, path);
   }
 
   template<typename T>
@@ -1145,12 +1165,20 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
     node::FatalException(const_cast<v8::TryCatch &>(try_catch.try_catch_));
   }
 
-  NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+  NAN_INLINE v8::Local<v8::Value> ErrnoException(
           int errorno
        ,  const char* syscall = NULL
        ,  const char* message = NULL
        ,  const char* path = NULL) {
     return node::ErrnoException(errorno, syscall, message, path);
+  }
+
+  NAN_DEPRECATED NAN_INLINE v8::Local<v8::Value> NanErrnoException(
+          int errorno
+       ,  const char* syscall = NULL
+       ,  const char* message = NULL
+       ,  const char* path = NULL) {
+    return ErrnoException(errorno, syscall, message, path);
   }
 
 
@@ -2073,6 +2101,49 @@ inline void SetIndexedPropertyHandler(
 #endif
 }
 
+inline void SetCallHandler(
+    v8::Local<v8::FunctionTemplate> tpl
+  , FunctionCallback callback
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
+  HandleScope scope;
+
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
+
+  obj->SetInternalField(
+      imp::kFunctionIndex
+    , New<v8::External>(reinterpret_cast<void *>(callback)));
+
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
+  }
+
+  tpl->SetCallHandler(imp::FunctionCallbackWrapper, obj);
+}
+
+
+inline void SetCallAsFunctionHandler(
+    v8::Local<v8::ObjectTemplate> tpl,
+    FunctionCallback callback,
+    v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
+  HandleScope scope;
+
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
+
+  obj->SetInternalField(
+      imp::kFunctionIndex
+    , New<v8::External>(reinterpret_cast<void *>(callback)));
+
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
+  }
+
+  tpl->SetCallAsFunctionHandler(imp::FunctionCallbackWrapper, obj);
+}
+
 //=== Weak Persistent Handling =================================================
 
 #include "nan_weak.h"  // NOLINT(build/include)
@@ -2135,6 +2206,33 @@ struct Tap {
 //=== TypedArrayContents =======================================================
 
 #include "nan_typedarray_contents.h"  // NOLINT(build/include)
+
+
+//=== Generic Maybefication ===================================================
+
+namespace imp {
+
+template <typename T> struct Maybefier;
+
+template <typename T> struct Maybefier<v8::Local<T> > {
+  static MaybeLocal<T> convert(v8::Local<T> v) {
+    return MaybeLocal<T>(v);
+  }
+};
+
+template <typename T> struct Maybefier<MaybeLocal<T> > {
+  static MaybeLocal<T> convert(MaybeLocal<T> v) {
+    return v;
+  }
+};
+
+}  // end of namespace imp
+
+template <typename T, template <typename> class MaybeMaybe>
+MaybeLocal<T>
+MakeMaybe(MaybeMaybe<T> v) {
+  return imp::Maybefier<MaybeMaybe<T> >::convert(v);
+}
 
 }  // end of namespace Nan
 

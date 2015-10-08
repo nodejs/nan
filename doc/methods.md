@@ -30,6 +30,8 @@ In order to expose functionality to JavaScript via a template, you must provide 
  - <a href="#api_nan_set_template"><b><code>Nan::SetTemplate()</code></b></a>
  - <a href="#api_nan_set_prototype_template"><b><code>Nan::SetPrototypeTemplate()</code></b></a>
  - <a href="#api_nan_set_instance_template"><b><code>Nan::SetInstanceTemplate()</code></b></a>
+ - <a href="#api_nan_set_call_handler"><b><code>Nan::SetCallHandler()</code></b></a>
+ - <a href="#api_nan_set_call_as_function_handler"><b><code>Nan::SetCallAsFunctionHandler()</code></b></a>
 
 <a name="api_nan_function_callback_info"></a>
 ### Nan::FunctionCallbackInfo
@@ -223,7 +225,7 @@ Example:
 ```c++
 void SetterName(v8::Local<v8::String> property,
                 v8::Local<v8::Value> value,
-                const Nan::PropertyCallbackInfo<v8::Value>& info) {
+                const Nan::PropertyCallbackInfo<void>& info) {
   ...
 }
 ```
@@ -622,4 +624,32 @@ void Nan::SetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ,
 ```
 
 Calls the `FunctionTemplate`'s _InstanceTemplate's_ [`Set()`](https://v8docs.nodesource.com/io.js-3.0/db/df7/classv8_1_1_template.html#a2db6a56597bf23c59659c0659e564ddf).
+
+<a name="api_nan_set_call_handler"></a>
+### Nan::SetCallHandler()
+
+Set the call-handler callback for a `v8::FunctionTemplate`.
+This callback is called whenever the function created from this FunctionTemplate is called.
+
+Signature:
+
+```c++
+void Nan::SetCallHandler(v8::Local<v8::FunctionTemplate> templ, Nan::FunctionCallback callback, v8::Local<v8::Value> data = v8::Local<v8::Value>())
+```
+
+Calls the `FunctionTemplate`'s [`SetCallHandler()`](https://v8docs.nodesource.com/io.js-3.0/d8/d83/classv8_1_1_function_template.html#a26cf14e36aa1a47091b98536d08ea821).
+
+<a name="api_nan_set_call_as_function_handler"></a>
+### Nan::SetCallAsFunctionHandler()
+
+Sets the callback to be used when calling instances created from the `v8::ObjectTemplate` as a function.
+If no callback is set, instances behave like normal JavaScript objects that cannot be called as a function.
+
+Signature:
+
+```c++
+void Nan::SetCallAsFunctionHandler(v8::Local<v8::ObjectTemplate> templ, Nan::FunctionCallback callback, v8::Local<v8::Value> data = v8::Local<v8::Value>())
+```
+
+Calls the `ObjectTemplate`'s [`SetCallAsFunctionHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#ae0a0e72fb0c5e5f32e255fe5bcc7316a).
 

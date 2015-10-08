@@ -289,7 +289,7 @@ NAN_METHOD(testSignature) {
 NAN_METHOD(testString) {
   Tap t(info[0]);
 
-  t.plan(14);
+  t.plan(16);
 
   t.ok(_( stringMatches(
       New<String>("Hello World").ToLocalChecked(), "Hello World")));
@@ -318,6 +318,10 @@ NAN_METHOD(testString) {
 
   t.ok(_( stringMatches( New("Hello World", 4).ToLocalChecked(), "Hell")));
   t.ok(_( assertType<String>( New("plonk.", 4).ToLocalChecked())));
+
+  const uint16_t *widestring = reinterpret_cast<const uint16_t *>("H\0e\0l\0l\0o\0");
+  t.ok(_( stringMatches( New(widestring, 4).ToLocalChecked(), "Hell")));
+  t.ok(_( assertType<String>( New(widestring, 4).ToLocalChecked())));
 
   t.ok(_( stringMatches( New(std::string("bar")).ToLocalChecked(), "bar")));
   t.ok(_( assertType<String>( New(std::string("plonk.")).ToLocalChecked())));
@@ -443,6 +447,13 @@ NAN_METHOD(newExternal) {
   info.GetReturnValue().Set(New<External>(&ttt));
 }
 
+NAN_METHOD(invokeMakeMaybe) {
+  Nan::MaybeLocal<v8::Number> number = MakeMaybe(New<v8::Number>(3.141592654));
+  Nan::MaybeLocal<v8::String> string = MakeMaybe(New<v8::String>("probably"));
+  (void)string;
+  info.GetReturnValue().Set(number.ToLocalChecked());
+}
+
 NAN_MODULE_INIT(Init) {
   NAN_EXPORT(target, testArray);
   NAN_EXPORT(target, testBoolean);
@@ -474,6 +485,8 @@ NAN_MODULE_INIT(Init) {
   NAN_EXPORT(target, newStringFromStdString);
 
   NAN_EXPORT(target, newExternal);
+
+  NAN_EXPORT(target, invokeMakeMaybe);
 }
 
 }  // end of anonymous namespace

@@ -61,6 +61,7 @@ LINT_SOURCES = \
 	test/cpp/returnnull.cpp \
 	test/cpp/returnundefined.cpp \
 	test/cpp/returnvalue.cpp \
+	test/cpp/setcallhandler.cpp \
 	test/cpp/settemplate.cpp \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
@@ -68,6 +69,7 @@ LINT_SOURCES = \
 	test/cpp/trycatch.cpp \
 	test/cpp/weak.cpp \
 	test/cpp/weak2.cpp \
+	test/cpp/wrappedobjectfactory.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
 FILTER = -whitespace/parens

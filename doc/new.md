@@ -48,17 +48,23 @@ Nan::New<T>(Nan::FunctionCallback callback,
             A2 a2 = A2());
 ```
 
-Native types:
+Native number types:
 
 ```c++
 v8::Local<v8::Boolean> Nan::New<T>(bool value);
 v8::Local<v8::Int32> Nan::New<T>(int32_t value);
 v8::Local<v8::Uint32> Nan::New<T>(uint32_t value);
 v8::Local<v8::Number> Nan::New<T>(double value);
-v8::Local<v8::String> Nan::New<T>(std::string const& value);
-v8::Local<v8::String> Nan::New<T>(const char * value, int length);
-v8::Local<v8::String> Nan::New<T>(const char * value);
-v8::Local<v8::String> Nan::New<T>(const uint16_t * value);
+```
+
+String types:
+
+```c++
+Nan::MaybeLocal<v8::String> Nan::New<T>(std::string const& value);
+Nan::MaybeLocal<v8::String> Nan::New<T>(const char * value, int length);
+Nan::MaybeLocal<v8::String> Nan::New<T>(const char * value);
+Nan::MaybeLocal<v8::String> Nan::New<T>(const uint16_t * value);
+Nan::MaybeLocal<v8::String> Nan::New<T>(const uint16_t * value, int length);
 ```
 
 Specialized types:
@@ -124,7 +130,7 @@ Call [`v8::String::Empty`](https://v8docs.nodesource.com/io.js-3.0/d2/db3/classv
 Signature:
 
 ```c++
-v8::Local<v8::String> Nan::EmptyString() 
+v8::Local<v8::String> Nan::EmptyString()
 ```
 
 
@@ -137,5 +143,5 @@ Signature:
 
 ```c++
 Nan::MaybeLocal<v8::String> Nan::NewOneByteString(const uint8_t * value,
-                                                  int length = -1) 
+                                                  int length = -1)
 ```
