@@ -2202,6 +2202,12 @@ struct Tap {
 
 #undef TYPE_CHECK
 
+
+//=== TypedArrayContents =======================================================
+
+#include "nan_typedarray_contents.h"  // NOLINT(build/include)
+
+
 //=== Generic Maybefication ===================================================
 
 namespace imp {

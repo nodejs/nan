@@ -133,6 +133,10 @@
       , "sources"     : [ "cpp/trycatch.cpp" ]
     }
     , {
+        "target_name" : "typedarrays"
+      , "sources"     : [ "cpp/typedarrays.cpp" ]
+    }
+    , {
         "target_name" : "wrappedobjectfactory"
       , "sources"     : [ "cpp/wrappedobjectfactory.cpp" ]
     }
