@@ -1,6 +1,16 @@
 # NAN ChangeLog
 
-**Version 2.0.9: current Node 4.0.0, Node 12: 0.12.7, Node 10: 0.10.40, iojs: 3.2.0**
+**Version 2.1.0: current Node 4.1.2, Node 12: 0.12.7, Node 10: 0.10.40, iojs: 3.3.1**
+
+### 2.1.0 Oct 8 2015
+
+  - Deprecation: Deprecate NanErrnoException in favor of ErrnoException 0af1ca4cf8b3f0f65ed31bc63a663ab3319da55c
+  - Feature: added helper class for accessing contents of typedarrays 17b51294c801e534479d5463697a73462d0ca555
+  - Feature: [Maybe types] Add MakeMaybe(...) 48d7b53d9702b0c7a060e69ea10fea8fb48d814d
+  - Feature: new: allow utf16 string with length 66ac6e65c8ab9394ef588adfc59131b3b9d8347b
+  - Feature: Introduce SetCallHandler and SetCallAsFunctionHandler 7764a9a115d60ba10dc24d86feb0fbc9b4f75537
+  - Bugfix: Enable creating Locals from Globals under Node 0.10. 9bf9b8b190821af889790fdc18ace57257e4f9ff
+  - Bugfix: Fix issue #462 where PropertyCallbackInfo data is not stored safely. 55f50adedd543098526c7b9f4fffd607d3f9861f
 
 ### 2.0.9 Sep 8 2015
 
