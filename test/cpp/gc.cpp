@@ -22,8 +22,8 @@ NAN_GC_CALLBACK(gcEpilogueCallback) {
 }
 
 NAN_METHOD(Hook) {
-  AddGCPrologueCallback(gcPrologueCallback);
-  AddGCEpilogueCallback(gcEpilogueCallback);
+  AddGCPrologueCallback<gcPrologueCallback>();
+  AddGCEpilogueCallback<gcEpilogueCallback>();
   info.GetReturnValue().SetUndefined();
 }
 
@@ -31,16 +31,18 @@ NAN_METHOD(Check) {
   HandleScope scope;
   info.GetReturnValue().Set(
       New(prologue_called && epilogue_called));
+  RemoveGCPrologueCallback<gcPrologueCallback>();
+  RemoveGCEpilogueCallback<gcEpilogueCallback>();
 }
 
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hook").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Hook)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Hook)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("check").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Check)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Check)).ToLocalChecked()
   );
 }
 
