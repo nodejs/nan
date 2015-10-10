@@ -40,11 +40,11 @@ NAN_METHOD(Hustle) {
   info.GetReturnValue().Set(wrap());
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("hustle").ToLocalChecked()
     , New<v8::FunctionTemplate>(Hustle)->GetFunction()
   );
 }
 
-NODE_MODULE(weak2, Init)
+NAN_MODULE(weak2, Init)

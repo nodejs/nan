@@ -21,11 +21,11 @@ NAN_METHOD(TryCatchTest) {
   }
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("r").ToLocalChecked()
     , New<v8::FunctionTemplate>(TryCatchTest)->GetFunction()
   );
 }
 
-NODE_MODULE(trycatch, Init)
+NAN_MODULE(trycatch, Init)

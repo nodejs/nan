@@ -11,11 +11,11 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("r").ToLocalChecked()
     , New<v8::FunctionTemplate>(ReturnString)->GetFunction()
   );
 }
 
-NODE_MODULE(multifile, Init)
+NAN_MODULE(multifile, Init)

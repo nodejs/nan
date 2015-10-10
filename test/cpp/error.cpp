@@ -48,7 +48,7 @@ X(TypeError)
     , Nan::New<v8::FunctionTemplate>(NAME)->GetFunction());
 
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   EXPORT_ERROR_FUNCTIONS(Error)
   EXPORT_ERROR_FUNCTIONS(RangeError)
   EXPORT_ERROR_FUNCTIONS(ReferenceError)
@@ -59,4 +59,4 @@ NAN_MODULE_INIT(Init) {
 #undef EXPORT_ERROR_FUNCTIONS
 #undef X
 
-NODE_MODULE(error, Init)
+NAN_MODULE(error, Init)

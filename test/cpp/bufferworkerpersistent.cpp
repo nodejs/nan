@@ -60,10 +60,10 @@ NAN_METHOD(DoSleep) {
     , bufferHandle));
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
-NODE_MODULE(bufferworkerpersistent, Init)
+NAN_MODULE(bufferworkerpersistent, Init)

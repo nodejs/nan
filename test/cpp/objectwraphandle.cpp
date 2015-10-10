@@ -12,7 +12,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 class MyObject : public ObjectWrap {
  public:
-  static NAN_MODULE_INIT(Init) {
+  static void Init(v8::Local<v8::Object> target) {
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
     tpl->SetClassName(Nan::New("MyObject").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -60,4 +60,4 @@ class MyObject : public ObjectWrap {
   double value_;
 };
 
-NODE_MODULE(objectwraphandle, MyObject::Init)
+NAN_MODULE(objectwraphandle, MyObject::Init)

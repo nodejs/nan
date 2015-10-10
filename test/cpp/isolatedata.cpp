@@ -28,11 +28,11 @@ NAN_METHOD(SetAndGet) {
   info.GetReturnValue().Set(New<v8::Boolean>(d0 == d1));
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("setAndGet").ToLocalChecked()
     , New<v8::FunctionTemplate>(SetAndGet)->GetFunction()
   );
 }
 
-NODE_MODULE(isolatedata, Init)
+NAN_MODULE(isolatedata, Init)

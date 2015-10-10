@@ -14,12 +14,12 @@ NAN_METHOD(ReturnUndefined) {
   info.GetReturnValue().SetUndefined();
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("r").ToLocalChecked()
     , New<v8::FunctionTemplate>(ReturnUndefined)->GetFunction()
   );
 }
 
-NODE_MODULE(returnundefined, Init)
+NAN_MODULE(returnundefined, Init)
 

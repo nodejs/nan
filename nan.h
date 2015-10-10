@@ -136,14 +136,33 @@ namespace Nan {
 
 //=== RegistrationFunction =====================================================
 
-#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-  typedef v8::Handle<v8::Object> ADDON_REGISTER_FUNCTION_ARGS_TYPE;
-#else
-  typedef v8::Local<v8::Object> ADDON_REGISTER_FUNCTION_ARGS_TYPE;
+typedef void (*addon_reg_func_t)(v8::Local<v8::Object> target);
+
+#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
+namespace imp {
+  template<addon_reg_func_t F>
+  static inline void addon_reg_func(v8::Handle<v8::Object> target) {
+    v8::HandleScope scope;
+    F(v8::Local<v8::Object>::New(target));
+  }
+}
+#elif NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+namespace imp {
+  template<addon_reg_func_t F>
+  static inline void addon_reg_func(v8::Handle<v8::Object> target) {
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope scope(isolate);
+    F(v8::Local<v8::Object>::New(isolate, target));
+  }
+}
 #endif
 
-#define NAN_MODULE_INIT(name)                                                  \
-    void name(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target)
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+# define NAN_MODULE(modname, regfunc)                                          \
+  NODE_MODULE(modname, Nan::imp::addon_reg_func<regfunc>)
+#else
+# define NAN_MODULE(modname, regfunc) NODE_MODULE(modname, regfunc)
+#endif
 
 //=== CallbackInfo =============================================================
 
@@ -2171,7 +2190,7 @@ inline void SetCallAsFunctionHandler(
 
 inline
 void
-Export(ADDON_REGISTER_FUNCTION_ARGS_TYPE target, const char *name,
+Export(v8::Local<v8::Object> target, const char *name,
     FunctionCallback f) {
   Set(target, New<v8::String>(name).ToLocalChecked(),
       GetFunction(New<v8::FunctionTemplate>(f)).ToLocalChecked());
