@@ -72,10 +72,10 @@ Factory<v8::External>::New(void * value) {
 Factory<v8::Function>::return_t
 Factory<v8::Function>::New( FunctionCallback callback
                           , v8::Local<v8::Value> data) {
-  return Factory<v8::FunctionTemplate>::New( callback
+  return Factory<v8::Function>::return_t(Factory<v8::FunctionTemplate>::New( callback
                                            , data
                                            , v8::Local<v8::Signature>()
-                                           )->GetFunction();
+                                           )->GetFunction());
 }
 
 
