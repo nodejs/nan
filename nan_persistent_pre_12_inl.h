@@ -99,6 +99,10 @@ class PersistentBase {
 
   NAN_INLINE bool IsWeak() const { return persistent.IsWeak(); }
 
+  NAN_INLINE v8::Local<T> Get() const {
+    return v8::Local<T>::New(persistent);
+  }
+
  private:
   NAN_INLINE explicit PersistentBase(v8::Persistent<T> that) :
       persistent(that) { }

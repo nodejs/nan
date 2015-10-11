@@ -62,7 +62,7 @@ class ObjectWrap {
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 
   inline void MakeWeak() {
-    persistent().v8::PersistentBase<v8::Object>::SetWeak(
+    persistent().persistent.v8::PersistentBase<v8::Object>::SetWeak(
         this, WeakCallback, v8::WeakCallbackType::kParameter);
     persistent().MarkIndependent();
   }
@@ -70,7 +70,7 @@ class ObjectWrap {
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
 
   inline void MakeWeak() {
-    persistent().v8::PersistentBase<v8::Object>::SetWeak(this, WeakCallback);
+    persistent().persistent.v8::PersistentBase<v8::Object>::SetWeak(this, WeakCallback);
     persistent().MarkIndependent();
   }
 
