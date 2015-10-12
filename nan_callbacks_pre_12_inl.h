@@ -40,7 +40,6 @@ class ReturnValue {
     TYPE_CHECK(T, S);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(handle.persistent);
-    const_cast<Global<S> &>(handle).Reset();
   }
 
   // Fast primitive setters
