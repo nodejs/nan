@@ -207,7 +207,7 @@ class Global : public PersistentBase<T> {
 
   template <typename S>
   NAN_INLINE Global(const PersistentBase<S> &that)
-    : PersistentBase<T>(that) {
+    : PersistentBase<T>(v8::Persistent<T>::New(that.persistent)) {
     TYPE_CHECK(T, S);
   }
   /**
@@ -215,7 +215,7 @@ class Global : public PersistentBase<T> {
    */
   NAN_INLINE Global(RValue rvalue)
     : PersistentBase<T>(rvalue.object.persistent) {
-    rvalue.object->Reset();
+    rvalue.object->Clear();
   }
   NAN_INLINE ~Global() { this->Reset(); }
   /**
@@ -224,8 +224,8 @@ class Global : public PersistentBase<T> {
   template<typename S>
   NAN_INLINE Global &operator=(Global<S> rhs) {
     TYPE_CHECK(T, S);
-    this->Reset(rhs.persistent);
-    rhs.Reset();
+    this->persistent = rhs.persistent;
+    rhs.Clear();
     return *this;
   }
   /**

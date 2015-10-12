@@ -84,8 +84,9 @@ template<typename T> class PersistentBase {
  private:
   NAN_INLINE PersistentBase() :
       persistent() {}
-  NAN_INLINE explicit PersistentBase(v8::Persistent<T> that) :
-      persistent(v8::Isolate::GetCurrent(), that) { }
+  NAN_INLINE explicit PersistentBase(v8::Persistent<T> that) {
+    std::memcpy(&that, &persistent, sizeof (v8::Persistent<T>));
+  }
   NAN_INLINE explicit PersistentBase(v8::Local<T> that) :
       persistent(v8::Isolate::GetCurrent(), that) { }
   template<typename S, typename M> friend class Persistent;
@@ -181,12 +182,12 @@ class Global : public PersistentBase<T> {
 
   template <class S>
   NAN_INLINE Global(const PersistentBase<S>& that)
-      : PersistentBase<T>(that) {
+      : PersistentBase<T>(v8::Persistent<T>(v8::Isolate::GetCurrent(), that.persistent)) {
     TYPE_CHECK(T, S);
   }
 
   NAN_INLINE Global(Global&& other) : PersistentBase<T>(other.persistent) {
-    other.Reset();
+    other.Empty();
   }
 
   NAN_INLINE ~Global() { this->Reset(); }
@@ -195,8 +196,8 @@ class Global : public PersistentBase<T> {
   NAN_INLINE Global& operator=(Global<S>&& rhs) {
     TYPE_CHECK(T, S);
      if (this != &rhs) {
-      this->Reset(rhs.persistent);
-      rhs.Reset();
+      std::memcpy(&rhs.persistent, &this->persistent, sizeof (v8::PersistentBase<S>));
+      rhs.Empty();
     }
     return *this;
   }
@@ -226,7 +227,7 @@ class Global : public PersistentBase<T> {
 
   template <typename S>
   NAN_INLINE Global(const PersistentBase<S> &that)
-    : PersistentBase<T>(that) {
+    : PersistentBase<T>(v8::Persistent<T>(v8::Isolate::GetCurrent(), that.persistent)) {
     TYPE_CHECK(T, S);
   }
 
@@ -234,8 +235,8 @@ class Global : public PersistentBase<T> {
    * Move constructor.
    */
   NAN_INLINE Global(RValue rvalue)
-    : PersistentBase<T>(rvalue.object.persistent) {
-    rvalue.object->Reset();
+    : PersistentBase<T>(rvalue.object->persistent) {
+    rvalue.object->Empty();
   }
 
   NAN_INLINE ~Global() { this->Reset(); }
@@ -246,8 +247,8 @@ class Global : public PersistentBase<T> {
   template<typename S>
   NAN_INLINE Global &operator=(Global<S> rhs) {
     TYPE_CHECK(T, S);
-    this->Reset(rhs.persistent);
-    rhs.Reset();
+    std::memcpy(&rhs.persistent, &this->persistent, sizeof (v8::Persistent<T>));
+    rhs.Empty();
     return *this;
   }
 
