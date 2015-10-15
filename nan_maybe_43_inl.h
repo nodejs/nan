@@ -220,4 +220,12 @@ NAN_INLINE MaybeLocal<v8::Object> CloneElementAt(
   return array->CloneElementAt(GetCurrentContext(), index);
 }
 
+NAN_INLINE MaybeLocal<v8::Value> Call(
+    v8::Local<v8::Function> fun
+  , v8::Local<v8::Object> recv
+  , int argc
+  , v8::Local<v8::Value> argv[]) {
+  return fun->Call(GetCurrentContext(), recv, argc, argv);
+}
+
 #endif  // NAN_MAYBE_43_INL_H_

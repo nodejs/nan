@@ -163,6 +163,7 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="doc/maybe_types.md#api_nan_nothing"><b><code>Nan::Nothing</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_just"><b><code>Nan::Just</code></b></a>
 * **Maybe Helpers**
+  - <a href="doc/maybe_types.md#api_nan_call"><b><code>Nan::Call()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_to_detail_string"><b><code>Nan::ToDetailString()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_to_array_index"><b><code>Nan::ToArrayIndex()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_equals"><b><code>Nan::Equals()</code></b></a>
@@ -290,7 +291,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
  - <a href="doc/v8_misc.md#api_nan_get_current_context"><b><code>Nan::GetCurrentContext()</code></b></a>
  - <a href="doc/v8_misc.md#api_nan_set_isolate_data"><b><code>Nan::SetIsolateData()</code></b></a>
  - <a href="doc/v8_misc.md#api_nan_get_isolate_data"><b><code>Nan::GetIsolateData()</code></b></a>
- - <a href="doc/v8_misc.md#api_nan_typedarray_contents"><b><code>Nan::TypedArrayContents</code></b></a>
+ - <a href="doc/v8_misc.md#api_nan_typedarray_contents"><b><code>Nan::TypedArrayContents<T></code></b></a>
 
 
 ### Miscellaneous Node Helpers
