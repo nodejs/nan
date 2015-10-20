@@ -20,8 +20,9 @@ class MyObject : public ObjectWrap {
     SetPrototypeMethod(tpl, "getHandle", GetHandle);
     SetPrototypeMethod(tpl, "getValue", GetValue);
 
-    constructor().Reset(tpl->GetFunction());
-    Set(target, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
+    constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
+    Set(target, Nan::New("MyObject").ToLocalChecked(),
+      Nan::GetFunction(tpl).ToLocalChecked());
   }
 
  private:
@@ -30,7 +31,7 @@ class MyObject : public ObjectWrap {
 
   static NAN_METHOD(New) {
     if (info.IsConstructCall()) {
-      double value = info[0]->IsUndefined() ? 0 : info[0]->NumberValue();
+      double value = info[0]->IsUndefined() ? 0 : Nan::To<double>(info[0]).FromJust();
       MyObject *obj = new MyObject(value);
       obj->Wrap(info.This());
       info.GetReturnValue().Set(info.This());
