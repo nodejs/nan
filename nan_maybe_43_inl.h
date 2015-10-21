@@ -186,7 +186,7 @@ NAN_INLINE MaybeLocal<v8::Value> GetRealNamedProperty(
 
 NAN_INLINE MaybeLocal<v8::Value> CallAsFunction(
     v8::Local<v8::Object> obj
-  , v8::Local<v8::Object> recv
+  , v8::Local<v8::Value> recv
   , int argc
   , v8::Local<v8::Value> argv[]) {
   return obj->CallAsFunction(GetCurrentContext(), recv, argc, argv);

@@ -256,10 +256,16 @@ NAN_INLINE MaybeLocal<v8::Value> GetRealNamedProperty(
 
 NAN_INLINE MaybeLocal<v8::Value> CallAsFunction(
     v8::Handle<v8::Object> obj
-  , v8::Handle<v8::Object> recv
+  , v8::Handle<v8::Value> recv
   , int argc
   , v8::Handle<v8::Value> argv[]) {
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
   return MaybeLocal<v8::Value>(obj->CallAsFunction(recv, argc, argv));
+#else
+  v8::Local<v8::Object> recv_ = recv->IsUndefined() || recv->IsNull() ?
+      v8::Context::GetCurrent()->Global() : recv->ToObject();
+  return MaybeLocal<v8::Value>(obj->CallAsFunction(recv_, argc, argv));
+#endif
 }
 
 NAN_INLINE MaybeLocal<v8::Value> CallAsConstructor(
