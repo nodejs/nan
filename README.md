@@ -249,6 +249,12 @@ Miscellaneous string & byte encoding and decoding functionality provided for com
  - <a href="doc/string_bytes.md#api_nan_decode_bytes"><b><code>Nan::DecodeBytes()</code></b></a>
  - <a href="doc/string_bytes.md#api_nan_decode_write"><b><code>Nan::DecodeWrite()</code></b></a>
 
+### Object wrappers
+
+The `ObjectWrap` class can be used to make wrapped C++ objects and a factory of wrapped objects.
+
+- <a href="doc/object_wrappers.md#api_nan_object_wrap"><b><code>Nan::ObjectWrap</code></b></a>
+
 
 ### V8 internals
 
@@ -283,7 +289,6 @@ The hooks to access V8 internals—including GC and statistics—are different a
 ### Miscellaneous Node Helpers
 
  - <a href="doc/node_misc.md#api_nan_make_callback"><b><code>Nan::MakeCallback()</code></b></a>
- - <a href="doc/node_misc.md#api_nan_object_wrap"><b><code>Nan::ObjectWrap</code></b></a>
  - <a href="doc/node_misc.md#api_nan_module_init"><b><code>NAN_MODULE_INIT()</code></b></a>
  - <a href="doc/node_misc.md#api_nan_export"><b><code>Nan::Export()</code></b></a>
 
