@@ -262,9 +262,13 @@ NAN_INLINE MaybeLocal<v8::Value> CallAsFunction(
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
   return MaybeLocal<v8::Value>(obj->CallAsFunction(recv, argc, argv));
 #else
-  v8::Local<v8::Object> recv_ = recv->IsUndefined() || recv->IsNull() ?
-      v8::Context::GetCurrent()->Global() : recv->ToObject();
-  return MaybeLocal<v8::Value>(obj->CallAsFunction(recv_, argc, argv));
+  v8::Local<v8::Object> recv_obj;
+  if (recv->IsUndefined() || recv->IsNull()) {
+    recv_obj = v8::Context::GetCurrent()->Global();
+  } else {
+    recv_obj = recv->ToObject();
+  }
+  return MaybeLocal<v8::Value>(obj->CallAsFunction(recv_obj, argc, argv));
 #endif
 }
 

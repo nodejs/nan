@@ -806,17 +806,23 @@ class TryCatch {
     , int argc
     , v8::Local<v8::Value>* argv) {
 #if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            target->ToObject();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
     return New(node::MakeCallback(
-        v8::Isolate::GetCurrent(), target_, func, argc, argv));
+        v8::Isolate::GetCurrent(), target_obj, func, argc, argv));
 #else
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            Nan::To<v8::Object>(target).ToLocalChecked();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = Nan::To<v8::Object>(target).ToLocalChecked();
+    }
     return node::MakeCallback(
-        v8::Isolate::GetCurrent(), target_, func, argc, argv);
+        v8::Isolate::GetCurrent(), target_obj, func, argc, argv);
 #endif
   }
 
@@ -826,17 +832,23 @@ class TryCatch {
     , int argc
     , v8::Local<v8::Value>* argv) {
 #if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            target->ToObject();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
     return New(node::MakeCallback(
-        v8::Isolate::GetCurrent(), target_, symbol, argc, argv));
+        v8::Isolate::GetCurrent(), target_obj, symbol, argc, argv));
 #else
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            Nan::To<v8::Object>(target).ToLocalChecked();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = Nan::To<v8::Object>(target).ToLocalChecked();
+    }
     return node::MakeCallback(
-        v8::Isolate::GetCurrent(), target_, symbol, argc, argv);
+        v8::Isolate::GetCurrent(), target_obj, symbol, argc, argv);
 #endif
   }
 
@@ -846,17 +858,23 @@ class TryCatch {
     , int argc
     , v8::Local<v8::Value>* argv) {
 #if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            target->ToObject();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
     return New(node::MakeCallback(
-        v8::Isolate::GetCurrent(), target_, method, argc, argv));
+        v8::Isolate::GetCurrent(), target_obj, method, argc, argv));
 #else
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            Nan::To<v8::Object>(target).ToLocalChecked();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = Nan::To<v8::Object>(target).ToLocalChecked();
+    }
     return node::MakeCallback(
-        v8::Isolate::GetCurrent(), target_, method, argc, argv);
+        v8::Isolate::GetCurrent(), target_obj, method, argc, argv);
 #endif
   }
 
@@ -1160,10 +1178,13 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
     , v8::Local<v8::Function> func
     , int argc
     , v8::Local<v8::Value>* argv) {
-    v8::Local<v8::Object> target_ =
-        target->IsUndefined() || target->IsNull() ?
-            v8::Context::GetCurrent()->Global() : target->ToObject();
-    return New(node::MakeCallback(target_, func, argc, argv));
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Context::GetCurrent()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
+    return New(node::MakeCallback(target_obj, func, argc, argv));
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
@@ -1171,10 +1192,13 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
     , v8::Local<v8::String> symbol
     , int argc
     , v8::Local<v8::Value>* argv) {
-    v8::Local<v8::Object> target_ =
-        target->IsUndefined() || target->IsNull() ?
-            v8::Context::GetCurrent()->Global() : target->ToObject();
-    return New(node::MakeCallback(target_, symbol, argc, argv));
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Context::GetCurrent()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
+    return New(node::MakeCallback(target_obj, symbol, argc, argv));
   }
 
   NAN_INLINE v8::Local<v8::Value> MakeCallback(
@@ -1182,10 +1206,13 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
     , const char* method
     , int argc
     , v8::Local<v8::Value>* argv) {
-    v8::Local<v8::Object> target_ =
-        target->IsUndefined() || target->IsNull() ?
-            v8::Context::GetCurrent()->Global() : target->ToObject();
-    return New(node::MakeCallback(target_, method, argc, argv));
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Context::GetCurrent()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
+    return New(node::MakeCallback(target_obj, method, argc, argv));
   }
 
   NAN_INLINE void FatalException(const TryCatch& try_catch) {
@@ -1469,23 +1496,29 @@ class Callback {
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
 # if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            target->ToObject();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
     return scope.Escape(New(node::MakeCallback(
         isolate
-      , target_
+      , target_obj
       , callback
       , argc
       , argv
     )));
 # else
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Isolate::GetCurrent()->GetCurrentContext()->Global() :
-            Nan::To<v8::Object>(target).ToLocalChecked();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+    } else {
+      target_obj = Nan::To<v8::Object>(target).ToLocalChecked();
+    }
     return scope.Escape(node::MakeCallback(
         isolate
-      , target_
+      , target_obj
       , callback
       , argc
       , argv
@@ -1498,12 +1531,16 @@ class Callback {
                            , v8::Local<v8::Value> argv[]) const {
     EscapableHandleScope scope;
 
-    v8::Local<v8::Object> target_ = target->IsUndefined() || target->IsNull() ?
-        v8::Context::GetCurrent()->Global() : target->ToObject();
+    v8::Local<v8::Object> target_obj;
+    if (target->IsUndefined() || target->IsNull()) {
+      target_obj = v8::Context::GetCurrent()->Global();
+    } else {
+      target_obj = target->ToObject();
+    }
     v8::Local<v8::Function> callback = New(handle)->
         Get(kCallbackIndex).As<v8::Function>();
     return scope.Escape(New(node::MakeCallback(
-        target_
+        target_obj
       , callback
       , argc
       , argv
