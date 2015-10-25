@@ -44,7 +44,7 @@ Maybe<bool> Equals(v8::Local<v8::Value> a, v8::Local<v8::Value>(b)) {
 
 NAN_INLINE
 MaybeLocal<v8::Object> NewInstance(v8::Local<v8::Function> h) {
-  return MaybeLocal<v8::Object>(h->NewInstance(GetCurrentContext()));
+  return h->NewInstance(GetCurrentContext());
 }
 
 NAN_INLINE
@@ -52,13 +52,12 @@ MaybeLocal<v8::Object> NewInstance(
       v8::Local<v8::Function> h
     , int argc
     , v8::Local<v8::Value> argv[]) {
-  return MaybeLocal<v8::Object>(h->NewInstance(GetCurrentContext(),
-                                argc, argv));
+  return h->NewInstance(GetCurrentContext(), argc, argv);
 }
 
 NAN_INLINE
 MaybeLocal<v8::Object> NewInstance(v8::Local<v8::ObjectTemplate> h) {
-  return MaybeLocal<v8::Object>(h->NewInstance(GetCurrentContext()));
+  return h->NewInstance(GetCurrentContext());
 }
 
 
