@@ -24,9 +24,10 @@ In order to expose functionality to JavaScript via a template, you must provide 
  - <a href="#api_nan_index_query"><b>Index query declaration</b></a>
 * Method and template helpers
  - <a href="#api_nan_set_method"><b><code>Nan::SetMethod()</code></b></a>
+ - <a href="#api_nan_set_prototype_method"><b><code>Nan::SetPrototypeMethod()</code></b></a>
+ - <a href="#api_nan_set_accessor"><b><code>Nan::SetAccessor()</code></b></a>
  - <a href="#api_nan_set_named_property_handler"><b><code>Nan::SetNamedPropertyHandler()</code></b></a>
  - <a href="#api_nan_set_indexed_property_handler"><b><code>Nan::SetIndexedPropertyHandler()</code></b></a>
- - <a href="#api_nan_set_prototype_method"><b><code>Nan::SetPrototypeMethod()</code></b></a>
  - <a href="#api_nan_set_template"><b><code>Nan::SetTemplate()</code></b></a>
  - <a href="#api_nan_set_prototype_template"><b><code>Nan::SetPrototypeTemplate()</code></b></a>
  - <a href="#api_nan_set_instance_template"><b><code>Nan::SetInstanceTemplate()</code></b></a>

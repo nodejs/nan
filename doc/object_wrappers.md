@@ -1,5 +1,7 @@
 ## Object Wrappers
 
+The `ObjectWrap` class can be used to make wrapped C++ objects and a factory of wrapped objects.
+
  - <a href="#api_nan_object_wrap"><b><code>Nan::ObjectWrap</code></b></a>
 
 
