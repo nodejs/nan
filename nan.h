@@ -100,7 +100,7 @@ namespace Nan {
 # define NAN_DEPRECATED
 #endif
 
-#if __cplusplus >= 201103L
+#if NAN_HAS_CPLUSPLUS_11
 # define NAN_DISALLOW_ASSIGN(CLASS) void operator=(const CLASS&) = delete;
 # define NAN_DISALLOW_COPY(CLASS) CLASS(const CLASS&) = delete;
 # define NAN_DISALLOW_MOVE(CLASS)                                              \
