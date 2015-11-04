@@ -17,7 +17,7 @@ var commander = require('commander'),
     length,
     i;
 
-fs.readFile('package.json', 'utf8', function (err, data) {
+fs.readFile(__dirname + '/package.json', 'utf8', function (err, data) {
   if (err) {
     throw err;
   }
