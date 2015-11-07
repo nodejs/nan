@@ -23,7 +23,8 @@ class InnerObject : public ObjectWrap {
     constructor().Reset(GetFunction(tpl).ToLocalChecked());
   }
 
-  static v8::Local<v8::Object> NewInstance(int argc, v8::Local<v8::Value> argv[]) {
+  static
+  v8::Local<v8::Object> NewInstance(int argc, v8::Local<v8::Value> argv[]) {
     v8::Local<v8::Function> cons = Nan::New(constructor());
     return Nan::NewInstance(cons, argc, argv).ToLocalChecked();
   }
@@ -42,7 +43,8 @@ class InnerObject : public ObjectWrap {
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {info[0]};
       v8::Local<v8::Function> cons = Nan::New(constructor());
-      info.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
+      info.GetReturnValue().Set(
+          Nan::NewInstance(cons, argc, argv).ToLocalChecked());
     }
   }
 
@@ -76,7 +78,8 @@ class MyObject : public ObjectWrap {
     double value = info[0]->IsNumber() ? To<double>(info[0]).FromJust() : 0;
     const int argc = 1;
     v8::Local<v8::Value> argv[1] = {Nan::New(value)};
-    info.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
+    info.GetReturnValue().Set(
+        Nan::NewInstance(cons, argc, argv).ToLocalChecked());
   }
 
  private:
@@ -93,7 +96,8 @@ class MyObject : public ObjectWrap {
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = {info[0]};
       v8::Local<v8::Function> cons = Nan::New(constructor());
-      info.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
+      info.GetReturnValue().Set(
+          Nan::NewInstance(cons, argc, argv).ToLocalChecked());
     }
   }
 
@@ -117,11 +121,16 @@ class MyObject : public ObjectWrap {
 };
 
 NAN_MODULE_INIT(Init) {
+  Nan::HandleScope scope;
+
   InnerObject::Init(target);
   MyObject::Init(target);
+  v8::Local<v8::FunctionTemplate> tpl =
+      New<v8::FunctionTemplate>(MyObject::NewInstance);
+
   Set(target
     , New<v8::String>("newFactoryObjectInstance").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(MyObject::NewInstance)).ToLocalChecked()
+    , GetFunction(tpl).ToLocalChecked()
   );
 }
 

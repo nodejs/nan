@@ -31,7 +31,8 @@ class MyObject : public ObjectWrap {
 
   static NAN_METHOD(New) {
     if (info.IsConstructCall()) {
-      double value = info[0]->IsUndefined() ? 0 : Nan::To<double>(info[0]).FromJust();
+      double value =
+          info[0]->IsUndefined() ? 0 : Nan::To<double>(info[0]).FromJust();
       MyObject *obj = new MyObject(value);
       obj->Wrap(info.This());
       info.GetReturnValue().Set(info.This());
