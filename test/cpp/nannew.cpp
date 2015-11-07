@@ -319,7 +319,7 @@ NAN_METHOD(testString) {
   t.ok(_( stringMatches( New("Hello World", 4).ToLocalChecked(), "Hell")));
   t.ok(_( assertType<String>( New("plonk.", 4).ToLocalChecked())));
 
-  const uint16_t *widestring = reinterpret_cast<const uint16_t *>("H\0e\0l\0l\0o\0");
+  const uint16_t widestring[] = {'H', 'e', 'l', 'l', 'o', '\0'};
   t.ok(_( stringMatches( New(widestring, 4).ToLocalChecked(), "Hell")));
   t.ok(_( assertType<String>( New(widestring, 4).ToLocalChecked())));
 
