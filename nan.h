@@ -37,7 +37,7 @@
 # define NAN_HAS_CPLUSPLUS_11 (__cplusplus >= 201103L)
 #endif
 
-#if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION && ! NAN_HAS_CPLUSPLUS_11
+#if NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION && !NAN_HAS_CPLUSPLUS_11
 # error This version of node/NAN/v8 requires a C++11 compiler
 #endif
 
@@ -1050,8 +1050,8 @@ class Utf8String {
     // arbitrary buffer lengths requires
     // NODE_MODULE_VERSION >= IOJS_3_0_MODULE_VERSION
     assert(length <= imp::kMaxLength && "too large buffer");
-    return MaybeLocal<v8::Object>(
-        scope.Escape(New(node::Buffer::New(data, length, callback, hint)->handle_)));
+    return MaybeLocal<v8::Object>(scope.Escape(
+        New(node::Buffer::New(data, length, callback, hint)->handle_)));
   }
 
   NAN_INLINE MaybeLocal<v8::Object> CopyBuffer(
@@ -1704,7 +1704,7 @@ NAN_INLINE void AsyncQueueWorker (AsyncWorker* worker) {
       uv_default_loop()
     , &worker->request
     , AsyncExecute
-    , (uv_after_work_cb)AsyncExecuteComplete
+    , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
   );
 }
 
