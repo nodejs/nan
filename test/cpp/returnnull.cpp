@@ -12,12 +12,12 @@ NAN_METHOD(ReturnNull) {
   info.GetReturnValue().SetNull();
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Nan::Set(target
     , Nan::New<v8::String>("r").ToLocalChecked()
     , Nan::New<v8::FunctionTemplate>(ReturnNull)->GetFunction()
   );
 }
 
-NODE_MODULE(returnnull, Init)
+NAN_MODULE(returnnull, Init)
 

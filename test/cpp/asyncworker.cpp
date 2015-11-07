@@ -34,10 +34,10 @@ NAN_METHOD(DoSleep) {
       new SleepWorker(callback, To<uint32_t>(info[0]).FromJust()));
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
-NODE_MODULE(asyncworker, Init)
+NAN_MODULE(asyncworker, Init)

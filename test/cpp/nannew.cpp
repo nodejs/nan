@@ -467,7 +467,7 @@ NAN_METHOD(invokeMakeMaybe) {
   info.GetReturnValue().Set(number.ToLocalChecked());
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   NAN_EXPORT(target, testArray);
   NAN_EXPORT(target, testBoolean);
   NAN_EXPORT(target, testBooleanObject);
@@ -505,4 +505,4 @@ NAN_MODULE_INIT(Init) {
 
 }  // end of anonymous namespace
 
-NODE_MODULE(nannew, Init)
+NAN_MODULE(nannew, Init)

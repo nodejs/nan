@@ -13,7 +13,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 class SetterGetter : public ObjectWrap {
  public:
-  static NAN_MODULE_INIT(Init);
+  static void Init(v8::Local<v8::Object> target);
   static v8::Local<v8::Value> NewInstance ();
   static NAN_METHOD(New);
   static NAN_METHOD(Log);
@@ -41,7 +41,7 @@ SetterGetter::SetterGetter() {
   prop2[0] = '\0';
 }
 
-NAN_MODULE_INIT(SetterGetter::Init) {
+void SetterGetter::Init(v8::Local<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> tpl =
     Nan::New<v8::FunctionTemplate>(SetterGetter::New);
   settergetter_constructor.Reset(tpl);
@@ -160,4 +160,4 @@ NAN_METHOD(SetterGetter::Log) {
   info.GetReturnValue().Set(Nan::New(settergetter->log).ToLocalChecked());
 }
 
-NODE_MODULE(accessors2, SetterGetter::Init)
+NAN_MODULE(accessors2, SetterGetter::Init)

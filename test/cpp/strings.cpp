@@ -34,7 +34,7 @@ Persistent<v8::FunctionTemplate> heapString_persistent;
 Persistent<v8::FunctionTemplate> encodeHex_persistent;
 Persistent<v8::FunctionTemplate> encodeUCS2_persistent;
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   v8::Local<v8::FunctionTemplate> returnUtf8String =
     New<v8::FunctionTemplate>(ReturnUtf8String);
 
@@ -76,4 +76,4 @@ NAN_MODULE_INIT(Init) {
   );
 }
 
-NODE_MODULE(strings, Init)
+NAN_MODULE(strings, Init)

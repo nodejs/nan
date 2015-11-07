@@ -30,7 +30,7 @@ NAN_METHOD(CallAsFunctionHandlerSetter) {
   info.GetReturnValue().Set(NewInstance(tpl).ToLocalChecked());
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(CallHandlerSetter)->GetFunction()
@@ -41,5 +41,5 @@ NAN_MODULE_INIT(Init) {
   );
 }
 
-NODE_MODULE(setcallhandler, Init)
+NAN_MODULE(setcallhandler, Init)
 

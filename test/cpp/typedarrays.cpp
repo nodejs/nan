@@ -56,11 +56,11 @@ NAN_METHOD(ReadDouble) {
   info.GetReturnValue().Set(result);
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   NAN_EXPORT(target, ReadU8);
   NAN_EXPORT(target, ReadI32);
   NAN_EXPORT(target, ReadFloat);
   NAN_EXPORT(target, ReadDouble);
 }
 
-NODE_MODULE(typedarrays, Init)
+NAN_MODULE(typedarrays, Init)

@@ -14,7 +14,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 
 class InnerObject : public ObjectWrap {
  public:
-  static NAN_MODULE_INIT(Init) {
+  static void Init(v8::Local<v8::Object> target) {
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -61,7 +61,7 @@ class InnerObject : public ObjectWrap {
 
 class MyObject : public ObjectWrap {
  public:
-  static NAN_MODULE_INIT(Init) {
+  static void Init(v8::Local<v8::Object> target) {
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -116,7 +116,7 @@ class MyObject : public ObjectWrap {
   double value_;
 };
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   InnerObject::Init(target);
   MyObject::Init(target);
   Set(target
@@ -125,4 +125,4 @@ NAN_MODULE_INIT(Init) {
   );
 }
 
-NODE_MODULE(wrappedobjectfactory, Init)
+NAN_MODULE(wrappedobjectfactory, Init)

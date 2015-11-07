@@ -136,14 +136,33 @@ namespace Nan {
 
 //=== RegistrationFunction =====================================================
 
-#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-  typedef v8::Handle<v8::Object> ADDON_REGISTER_FUNCTION_ARGS_TYPE;
-#else
-  typedef v8::Local<v8::Object> ADDON_REGISTER_FUNCTION_ARGS_TYPE;
+typedef void (*addon_reg_func_t)(v8::Local<v8::Object> target);
+
+#if NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION
+namespace imp {
+  template<addon_reg_func_t F>
+  static inline void addon_reg_func(v8::Handle<v8::Object> target) {
+    v8::HandleScope scope;
+    F(v8::Local<v8::Object>::New(target));
+  }
+}
+#elif NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+namespace imp {
+  template<addon_reg_func_t F>
+  static inline void addon_reg_func(v8::Handle<v8::Object> target) {
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope scope(isolate);
+    F(v8::Local<v8::Object>::New(isolate, target));
+  }
+}
 #endif
 
-#define NAN_MODULE_INIT(name)                                                  \
-    void name(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target)
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+# define NAN_MODULE(modname, regfunc)                                          \
+  NODE_MODULE(modname, Nan::imp::addon_reg_func<regfunc>)
+#else
+# define NAN_MODULE(modname, regfunc) NODE_MODULE(modname, regfunc)
+#endif
 
 //=== CallbackInfo =============================================================
 
@@ -595,29 +614,43 @@ class TryCatch {
     object->SetAlignedPointerInInternalField(index, value);
   }
 
-# define NAN_GC_CALLBACK(name)                                                 \
-    void name(v8::Isolate *isolate, v8::GCType type, v8::GCCallbackFlags flags)
+  typedef void (*GCCallback)(v8::GCType type, v8::GCCallbackFlags flags);
 
+namespace imp {
+  template<GCCallback F>
+  class GCCallback {
+   public:
+    static void call(
+        v8::Isolate *isolate, v8::GCType type, v8::GCCallbackFlags flags) {
+      F(type, flags);
+    }
+  };
+}
+
+  template<GCCallback F>
   NAN_INLINE void AddGCEpilogueCallback(
-      v8::Isolate::GCEpilogueCallback callback
-    , v8::GCType gc_type_filter = v8::kGCTypeAll) {
-    v8::Isolate::GetCurrent()->AddGCEpilogueCallback(callback, gc_type_filter);
+    v8::GCType gc_type_filter = v8::kGCTypeAll) {
+    v8::Isolate::GetCurrent()->AddGCEpilogueCallback(
+        imp::GCCallback<F>::call, gc_type_filter);
   }
 
-  NAN_INLINE void RemoveGCEpilogueCallback(
-      v8::Isolate::GCEpilogueCallback callback) {
-    v8::Isolate::GetCurrent()->RemoveGCEpilogueCallback(callback);
+  template<GCCallback F>
+  NAN_INLINE void RemoveGCEpilogueCallback() {
+    v8::Isolate::GetCurrent()->RemoveGCEpilogueCallback(
+        imp::GCCallback<F>::call);
   }
 
+  template<GCCallback F>
   NAN_INLINE void AddGCPrologueCallback(
-      v8::Isolate::GCPrologueCallback callback
-    , v8::GCType gc_type_filter = v8::kGCTypeAll) {
-    v8::Isolate::GetCurrent()->AddGCPrologueCallback(callback, gc_type_filter);
+    v8::GCType gc_type_filter = v8::kGCTypeAll) {
+    v8::Isolate::GetCurrent()->AddGCPrologueCallback(
+        imp::GCCallback<F>::call, gc_type_filter);
   }
 
-  NAN_INLINE void RemoveGCPrologueCallback(
-      v8::Isolate::GCPrologueCallback callback) {
-    v8::Isolate::GetCurrent()->RemoveGCPrologueCallback(callback);
+  template<GCCallback F>
+  NAN_INLINE void RemoveGCPrologueCallback() {
+    v8::Isolate::GetCurrent()->RemoveGCPrologueCallback(
+        imp::GCCallback<F>::call);
   }
 
   NAN_INLINE void GetHeapStatistics(
@@ -981,26 +1014,25 @@ class Utf8String {
     object->SetPointerInInternalField(index, value);
   }
 
-# define NAN_GC_CALLBACK(name)                                                 \
-    void name(v8::GCType type, v8::GCCallbackFlags flags)
+  typedef void (*GCCallback)(v8::GCType type, v8::GCCallbackFlags flags);
 
+  template<GCCallback F>
   NAN_INLINE void AddGCEpilogueCallback(
-    v8::GCEpilogueCallback callback
-  , v8::GCType gc_type_filter = v8::kGCTypeAll) {
-    v8::V8::AddGCEpilogueCallback(callback, gc_type_filter);
+    v8::GCType gc_type_filter = v8::kGCTypeAll) {
+    v8::V8::AddGCEpilogueCallback(F, gc_type_filter);
   }
-  NAN_INLINE void RemoveGCEpilogueCallback(
-    v8::GCEpilogueCallback callback) {
-    v8::V8::RemoveGCEpilogueCallback(callback);
+  template<GCCallback F>
+  NAN_INLINE void RemoveGCEpilogueCallback() {
+    v8::V8::RemoveGCEpilogueCallback(F);
   }
+  template<GCCallback F>
   NAN_INLINE void AddGCPrologueCallback(
-    v8::GCPrologueCallback callback
-  , v8::GCType gc_type_filter = v8::kGCTypeAll) {
-    v8::V8::AddGCPrologueCallback(callback, gc_type_filter);
+    v8::GCType gc_type_filter = v8::kGCTypeAll) {
+    v8::V8::AddGCPrologueCallback(F, gc_type_filter);
   }
-  NAN_INLINE void RemoveGCPrologueCallback(
-    v8::GCPrologueCallback callback) {
-    v8::V8::RemoveGCPrologueCallback(callback);
+  template<GCCallback F>
+  NAN_INLINE void RemoveGCPrologueCallback() {
+    v8::V8::RemoveGCPrologueCallback(F);
   }
   NAN_INLINE void GetHeapStatistics(
     v8::HeapStatistics *heap_statistics) {
@@ -1341,6 +1373,8 @@ typedef void NAN_INDEX_QUERY_RETURN_TYPE;
     Nan::NAN_INDEX_QUERY_RETURN_TYPE name(                                     \
         uint32_t index                                                         \
       , Nan::NAN_INDEX_QUERY_ARGS_TYPE info)
+# define NAN_GC_CALLBACK(name)                                                 \
+    void name(v8::GCType type, v8::GCCallbackFlags flags)
 
 class Callback {
  public:
@@ -2156,7 +2190,7 @@ inline void SetCallAsFunctionHandler(
 
 inline
 void
-Export(ADDON_REGISTER_FUNCTION_ARGS_TYPE target, const char *name,
+Export(v8::Local<v8::Object> target, const char *name,
     FunctionCallback f) {
   Set(target, New<v8::String>(name).ToLocalChecked(),
       GetFunction(New<v8::FunctionTemplate>(f)).ToLocalChecked());

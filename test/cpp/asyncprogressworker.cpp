@@ -57,10 +57,10 @@ NAN_METHOD(DoProgress) {
     , To<uint32_t>(info[1]).FromJust()));
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(DoProgress)->GetFunction());
 }
 
-NODE_MODULE(asyncprogressworker, Init)
+NAN_MODULE(asyncprogressworker, Init)

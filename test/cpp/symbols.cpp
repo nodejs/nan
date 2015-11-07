@@ -10,11 +10,11 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("key").ToLocalChecked()
     , New<v8::String>("a property").ToLocalChecked()
   );
 }
 
-NODE_MODULE(symbols, Init)
+NAN_MODULE(symbols, Init)

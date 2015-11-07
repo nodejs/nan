@@ -30,7 +30,7 @@ NAN_METHOD(ReturnGlobal) {
   info.GetReturnValue().Set(global);
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   global.Reset(New(true));
 
   Set(target
@@ -47,4 +47,4 @@ NAN_MODULE_INIT(Init) {
   );
 }
 
-NODE_MODULE(returnvalue, Init)
+NAN_MODULE(returnvalue, Init)

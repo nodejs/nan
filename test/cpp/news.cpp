@@ -162,7 +162,7 @@ NAN_METHOD(NewBoolean2) {
 #endif
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New<v8::String>("newNumber").ToLocalChecked()
     , New<v8::FunctionTemplate>(NewNumber)->GetFunction()
@@ -269,4 +269,4 @@ NAN_MODULE_INIT(Init) {
   );
 }
 
-NODE_MODULE(news, Init)
+NAN_MODULE(news, Init)

@@ -26,10 +26,10 @@ NAN_METHOD(Work) {
   info.GetReturnValue().SetUndefined();
 }
 
-NAN_MODULE_INIT(Init) {
+void Init(v8::Local<v8::Object> target) {
   Set(target
     , New("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(Work)->GetFunction());
 }
 
-NODE_MODULE(asyncworkererror, Init)
+NAN_MODULE(asyncworkererror, Init)
