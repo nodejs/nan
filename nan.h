@@ -1616,7 +1616,7 @@ class Callback {
     friend class AsyncProgressWorker;
    public:
     // You could do fancy generics with templates here.
-    void Send(const char* data, size_t size) {
+    void Send(const char* data, size_t size) const {
       asyncdata_t* asyncdata = new asyncdata_t;
       asyncdata->data = new char[size];
       memcpy(asyncdata->data, data, size);
@@ -1653,7 +1653,7 @@ class Callback {
     AsyncProgressWorker* const that_;
   };
 
-  virtual void Execute(ExecutionProgress& progress) = 0;
+  virtual void Execute(const ExecutionProgress& progress) = 0;
   virtual void HandleProgressCallback(const char *data, size_t size) = 0;
 
   virtual void Destroy() {
