@@ -1603,6 +1603,7 @@ class Callback {
 
   explicit AsyncProgressWorker(Callback *callback_)
       : AsyncWorker(callback_) {
+<<<<<<< HEAD
     uv_async_init(
         uv_default_loop()
       , &async
@@ -1631,12 +1632,31 @@ class Callback {
     }
   }
 
+  typedef struct asyncdata_t {
+      uv_async_t* handle;
+      char* data;
+      size_t size;
+      AsyncProgressWorker* worker;
+  } asyncdata_t;
+
   class ExecutionProgress {
     friend class AsyncProgressWorker;
    public:
     // You could do fancy generics with templates here.
-    void Send(const char* data, size_t size) const {
-        that_->SendProgress_(data, size);
+    void Send(const char* data, size_t size) {
+        asyncdata_t* asyncdata = new asyncdata_t;
+        asyncdata->data = new char[size];
+        memcpy(asyncdata->data, data, size);
+        asyncdata->size = size;
+        asyncdata->handle = new uv_async_t;
+        asyncdata->worker = that_;
+        uv_async_init(
+            uv_default_loop()
+            , asyncdata->handle
+            , AsyncProgress_
+        );
+        asyncdata->handle->data = asyncdata;
+        uv_async_send(asyncdata->handle);
     }
 
    private:
@@ -1648,7 +1668,7 @@ class Callback {
     AsyncProgressWorker* const that_;
   };
 
-  virtual void Execute(const ExecutionProgress& progress) = 0;
+  virtual void Execute(ExecutionProgress& progress) = 0;
   virtual void HandleProgressCallback(const char *data, size_t size) = 0;
 
   virtual void Destroy() {
