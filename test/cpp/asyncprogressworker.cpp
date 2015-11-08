@@ -25,7 +25,7 @@ class ProgressWorker : public AsyncProgressWorker {
     , milliseconds(milliseconds), iters(iters) {}
   ~ProgressWorker() {}
 
-  void Execute (const AsyncProgressWorker::ExecutionProgress& progress) {
+  void Execute (AsyncProgressWorker::ExecutionProgress& progress) {
     for (int i = 0; i < iters; ++i) {
       progress.Send(reinterpret_cast<const char*>(&i), sizeof(int));
       Sleep(milliseconds);
