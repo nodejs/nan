@@ -11,7 +11,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'converters' });
 
 test('converters', function (t) {
-  t.plan(28);
+  t.plan(30);
 
   var converters = bindings;
   t.type(converters.toBoolean, 'function');
@@ -33,6 +33,8 @@ test('converters', function (t) {
   t.equal(converters.toString('sol'), 'sol');
   t.equal(converters.toDetailString('sol'), 'sol');
   t.strictDeepEqual(converters.toObject({prop : 'x'}), {prop : 'x'});
+  t.strictDeepEqual(converters.toObject(5), new Number(5));
+  t.type(converters.toObject(5), 'object');
   t.equal(converters.toInteger(12), 12);
   t.equal(converters.toUint32(12), 12);
   t.equal(converters.toInt32(-12), -12);
