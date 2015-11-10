@@ -1640,9 +1640,7 @@ class Callback {
     }
 
    private:
-    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {
-
-    }
+    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {}
     NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
 
     AsyncProgressWorker* const that_;
