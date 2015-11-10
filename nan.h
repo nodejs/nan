@@ -1603,7 +1603,6 @@ class Callback {
 
   explicit AsyncProgressWorker(Callback *callback_)
       : AsyncWorker(callback_) {
-<<<<<<< HEAD
     uv_async_init(
         uv_default_loop()
       , &async
@@ -1632,50 +1631,19 @@ class Callback {
     }
   }
 
-  typedef struct asyncdata_t {
-      uv_async_t* handle;
-      char* data;
-      size_t size;
-      AsyncProgressWorker* worker;
-  } asyncdata_t;
-
   class ExecutionProgress {
     friend class AsyncProgressWorker;
    public:
     // You could do fancy generics with templates here.
     void Send(const char* data, size_t size) const {
-      asyncdata_t* asyncdata = new asyncdata_t;
-      asyncdata->data = new char[size];
-      memcpy(asyncdata->data, data, size);
-      asyncdata->size = size;
-      asyncdata->handle = new uv_async_t;
-      asyncdata->worker = that_;
-      uv_async_init(
-          uv_default_loop()
-        , asyncdata->handle
-        , AsyncProgress_
-      );
-      asyncdata->handle->data = asyncdata;
-      uv_async_send(asyncdata->handle);
+        that_->SendProgress_(data, size);
     }
 
    private:
-    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {}
+    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {
+
+    }
     NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
-
-    NAN_INLINE static NAUV_WORK_CB(AsyncProgress_) {
-      asyncdata_t *asyncdata =
-        static_cast<asyncdata_t*>(async->data);
-      asyncdata->worker->WorkProgress(asyncdata->data, asyncdata->size);
-      uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
-    }
-
-    NAN_INLINE static void AsyncClose_(uv_handle_t* handle) {
-      asyncdata_t *asyncdata =
-        static_cast<asyncdata_t *>(handle->data);
-      delete asyncdata->data;
-      delete reinterpret_cast<uv_async_t*>(handle);
-    }
 
     AsyncProgressWorker* const that_;
   };
