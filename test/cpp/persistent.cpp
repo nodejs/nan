@@ -29,7 +29,7 @@ NAN_METHOD(Dispose1) {
 
 NAN_METHOD(ToPersistentAndBackAgain) {
   Persistent<v8::Object> persistent(info[0].As<v8::Object>());
-  v8::Local<v8::Object> object = New(persistent);
+  v8::Local<v8::Object> object = persistent.Get();
   persistent.Reset();
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
   info.GetReturnValue().Set(object);

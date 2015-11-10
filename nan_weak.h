@@ -243,9 +243,9 @@ WeakCallbackInfo<T> *WeakCallbackInfo<T>::unwrap(
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
-template<typename T, typename M>
+template<typename T>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+NAN_INLINE void PersistentBase<T>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -255,7 +255,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetWeak(
+    persistent.SetWeak(
         wcbd
       , WeakCallbackInfo<P>::invokeparameter
       , type);
@@ -274,16 +274,16 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , internal_fields[0]
       , internal_fields[1]);
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
-    v8::PersistentBase<T>::SetWeak(
+    persistent.SetWeak(
         static_cast<WeakCallbackInfo<P>*>(0)
       , WeakCallbackInfo<P>::invoketwofield
       , type);
   }
 }
 #elif NODE_MODULE_VERSION > IOJS_1_1_MODULE_VERSION
-template<typename T, typename M>
+template<typename T>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+NAN_INLINE void PersistentBase<T>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -293,7 +293,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetPhantom(
+    persistent.SetPhantom(
         wcbd
       , WeakCallbackInfo<P>::invokeparameter);
   } else {
@@ -311,7 +311,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , internal_fields[0]
       , internal_fields[1]);
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
-    v8::PersistentBase<T>::SetPhantom(
+    persistent.SetPhantom(
         static_cast<WeakCallbackInfo<P>*>(0)
       , WeakCallbackInfo<P>::invoketwofield
       , 0
@@ -319,9 +319,9 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
   }
 }
 #elif NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
-template<typename T, typename M>
+template<typename T>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+NAN_INLINE void PersistentBase<T>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -331,7 +331,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetPhantom(
+    persistent.SetPhantom(
         wcbd
       , WeakCallbackInfo<P>::invokeparameter);
   } else {
@@ -349,16 +349,16 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , internal_fields[0]
       , internal_fields[1]);
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
-    v8::PersistentBase<T>::SetPhantom(
+    persistent.SetPhantom(
         WeakCallbackInfo<P>::invoketwofield
       , 0
       , count > 1 ? 1 : kNoInternalFieldIndex);
   }
 }
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
-template<typename T, typename M>
+template<typename T>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+NAN_INLINE void PersistentBase<T>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -368,7 +368,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
         reinterpret_cast<Persistent<v8::Value>*>(this)
       , callback
       , parameter);
-    v8::PersistentBase<T>::SetWeak(wcbd, WeakCallbackInfo<P>::invoke);
+    persistent.SetWeak(wcbd, WeakCallbackInfo<P>::invoke);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
     assert((*self)->IsObject());
@@ -383,7 +383,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , 0
       , internal_fields[0]
       , internal_fields[1]);
-    v8::PersistentBase<T>::SetWeak(wcbd, WeakCallbackInfo<P>::invoke);
+    persistent.SetWeak(wcbd, WeakCallbackInfo<P>::invoke);
   }
 }
 #else

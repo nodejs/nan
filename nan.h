@@ -169,15 +169,12 @@ typedef v8::String::ExternalOneByteStringResource
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
 template<typename T>
-class NonCopyablePersistentTraits :
-    public v8::NonCopyablePersistentTraits<T> {};
+class NonCopyablePersistentTraits;
 template<typename T>
-class CopyablePersistentTraits :
-    public v8::CopyablePersistentTraits<T> {};
+class CopyablePersistentTraits;
 
 template<typename T>
-class PersistentBase :
-    public v8::PersistentBase<T> {};
+class PersistentBase;
 
 template<typename T, typename M = v8::NonCopyablePersistentTraits<T> >
 class Persistent;

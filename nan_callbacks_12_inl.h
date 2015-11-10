@@ -35,7 +35,7 @@ class ReturnValue {
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) &&                       \
   (V8_MINOR_VERSION > 5 || (V8_MINOR_VERSION == 5 &&                           \
   defined(V8_BUILD_NUMBER) && V8_BUILD_NUMBER >= 8))))
-    value_.Set(handle);
+    value_.Set(handle.persistent);
 #else
     value_.Set(*reinterpret_cast<const v8::Persistent<S>*>(&handle));
     const_cast<Global<S> &>(handle).Reset();
