@@ -1623,7 +1623,7 @@ class Callback {
         while(!queue.empty()) {
             uv_mutex_lock(&async_lock);
             asyncdata_t *asyncdata = queue.front();
-            queue.pop_front()git ;
+            queue.pop_front();
             uv_mutex_unlock(&async_lock);
             HandleProgressCallback(asyncdata->data, asyncdata->size);
             delete asyncdata;
