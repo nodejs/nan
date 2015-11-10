@@ -20,6 +20,7 @@
 #ifndef NAN_H_
 #define NAN_H_
 
+#include <deque>
 #include <node_version.h>
 
 #define NODE_0_10_MODULE_VERSION 11
@@ -1591,64 +1592,58 @@ class Callback {
 
 /* abstract */ class AsyncProgressWorker : public AsyncWorker {
  public:
+
+  typedef struct asyncdata_t {
+    char* data;
+    size_t size;
+    AsyncProgressWorker* worker;
+  } asyncdata_t;
+
+  typedef std::deque<asyncdata_t *> asyncqueue_t;
+
   explicit AsyncProgressWorker(Callback *callback_)
       : AsyncWorker(callback_) {
+    uv_async_init(
+        uv_default_loop()
+      , &async
+      , AsyncProgress_
+    );
+    async.data = this;
+
+    uv_mutex_init(&async_lock);
   }
 
   virtual ~AsyncProgressWorker() {
+    uv_mutex_destroy(&async_lock);
   }
 
-  void WorkProgress(char* data, size_t size) {
+  void WorkProgress() {
     // Dont send progress events after we've already completed.
     if (callback) {
-        HandleProgressCallback(data, size);
+        while(!queue.empty()) {
+            uv_mutex_lock(&async_lock);
+            asyncdata_t *asyncdata = queue.front();
+            queue.pop_front()git ;
+            uv_mutex_unlock(&async_lock);
+            HandleProgressCallback(asyncdata->data, asyncdata->size);
+            delete asyncdata;
+        }
     }
   }
-
-  typedef struct asyncdata_t {
-      uv_async_t* handle;
-      char* data;
-      size_t size;
-      AsyncProgressWorker* worker;
-  } asyncdata_t;
 
   class ExecutionProgress {
     friend class AsyncProgressWorker;
    public:
     // You could do fancy generics with templates here.
     void Send(const char* data, size_t size) const {
-      asyncdata_t* asyncdata = new asyncdata_t;
-      asyncdata->data = new char[size];
-      memcpy(asyncdata->data, data, size);
-      asyncdata->size = size;
-      asyncdata->handle = new uv_async_t;
-      asyncdata->worker = that_;
-      uv_async_init(
-          uv_default_loop()
-        , asyncdata->handle
-        , AsyncProgress_
-      );
-      asyncdata->handle->data = asyncdata;
-      uv_async_send(asyncdata->handle);
+        that_->SendProgress_(data, size);
     }
 
    private:
-    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {}
+    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {
+
+    }
     NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
-
-    NAN_INLINE static NAUV_WORK_CB(AsyncProgress_) {
-      asyncdata_t *asyncdata =
-        static_cast<asyncdata_t*>(async->data);
-      asyncdata->worker->WorkProgress(asyncdata->data, asyncdata->size);
-      uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
-    }
-
-    NAN_INLINE static void AsyncClose_(uv_handle_t* handle) {
-      asyncdata_t *asyncdata =
-        static_cast<asyncdata_t *>(handle->data);
-      delete asyncdata->data;
-      delete reinterpret_cast<uv_async_t*>(handle);
-    }
 
     AsyncProgressWorker* const that_;
   };
@@ -1657,6 +1652,7 @@ class Callback {
   virtual void HandleProgressCallback(const char *data, size_t size) = 0;
 
   virtual void Destroy() {
+      uv_close(reinterpret_cast<uv_handle_t*>(&async), AsyncClose_);
   }
 
  private:
@@ -1665,6 +1661,36 @@ class Callback {
       Execute(progress);
   }
 
+  void SendProgress_(const char *data, size_t size) {
+    asyncdata_t* asyncdata = new asyncdata_t;
+    asyncdata->data = new char[size];
+    memcpy(asyncdata->data, data, size);
+    asyncdata->size = size;
+    asyncdata->worker = this;
+    uv_mutex_lock(&async_lock);
+    queue.push_back(asyncdata);
+    uv_mutex_unlock(&async_lock);
+    uv_async_send(&async);
+  }
+
+  NAN_INLINE static NAUV_WORK_CB(AsyncProgress_) {
+    AsyncProgressWorker *worker =
+            static_cast<AsyncProgressWorker*>(async->data);
+    worker->WorkProgress();
+  }
+
+  NAN_INLINE static void AsyncClose_(uv_handle_t* handle) {
+    AsyncProgressWorker *worker =
+            static_cast<AsyncProgressWorker*>(handle->data);
+    while(!worker->queue.empty()) {
+      delete worker->queue.front();
+      worker->queue.pop_front();
+    }
+  }
+
+  uv_async_t async;
+  asyncqueue_t queue;
+  uv_mutex_t async_lock;
 };
 
 NAN_INLINE void AsyncExecute (uv_work_t* req) {
