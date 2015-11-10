@@ -20,6 +20,7 @@
 #ifndef NAN_H_
 #define NAN_H_
 
+#include <deque>
 #include <node_version.h>
 
 #define NODE_0_10_MODULE_VERSION 11
@@ -1591,39 +1592,43 @@ class Callback {
 
 /* abstract */ class AsyncProgressWorker : public AsyncWorker {
  public:
+
+  typedef struct asyncdata_t {
+    char* data;
+    size_t size;
+    AsyncProgressWorker* worker;
+  } asyncdata_t;
+
+  typedef std::deque<asyncdata_t *> asyncqueue_t;
+
   explicit AsyncProgressWorker(Callback *callback_)
-      : AsyncWorker(callback_), asyncdata_(NULL), asyncsize_(0) {
-    async = new uv_async_t;
+      : AsyncWorker(callback_) {
     uv_async_init(
         uv_default_loop()
-      , async
+      , &async
       , AsyncProgress_
     );
-    async->data = this;
+    async.data = this;
 
     uv_mutex_init(&async_lock);
   }
 
   virtual ~AsyncProgressWorker() {
     uv_mutex_destroy(&async_lock);
-
-    if (asyncdata_) {
-      delete[] asyncdata_;
-    }
   }
 
   void WorkProgress() {
-    uv_mutex_lock(&async_lock);
-    char *data = asyncdata_;
-    size_t size = asyncsize_;
-    asyncdata_ = NULL;
-    uv_mutex_unlock(&async_lock);
-
     // Dont send progress events after we've already completed.
     if (callback) {
-        HandleProgressCallback(data, size);
+        while(!queue.empty()) {
+            uv_mutex_lock(&async_lock);
+            asyncdata_t *asyncdata = queue.front();
+            queue.pop_front();
+            uv_mutex_unlock(&async_lock);
+            HandleProgressCallback(asyncdata->data, asyncdata->size);
+            delete asyncdata;
+        }
     }
-    delete[] data;
   }
 
   class ExecutionProgress {
@@ -1637,6 +1642,7 @@ class Callback {
    private:
     explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {}
     NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
+
     AsyncProgressWorker* const that_;
   };
 
@@ -1644,7 +1650,7 @@ class Callback {
   virtual void HandleProgressCallback(const char *data, size_t size) = 0;
 
   virtual void Destroy() {
-      uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
+      uv_close(reinterpret_cast<uv_handle_t*>(&async), AsyncClose_);
   }
 
  private:
@@ -1654,19 +1660,15 @@ class Callback {
   }
 
   void SendProgress_(const char *data, size_t size) {
-    char *new_data = new char[size];
-    memcpy(new_data, data, size);
-
+    asyncdata_t* asyncdata = new asyncdata_t;
+    asyncdata->data = new char[size];
+    memcpy(asyncdata->data, data, size);
+    asyncdata->size = size;
+    asyncdata->worker = this;
     uv_mutex_lock(&async_lock);
-    char *old_data = asyncdata_;
-    asyncdata_ = new_data;
-    asyncsize_ = size;
+    queue.push_back(asyncdata);
     uv_mutex_unlock(&async_lock);
-
-    if (old_data) {
-      delete[] old_data;
-    }
-    uv_async_send(async);
+    uv_async_send(&async);
   }
 
   NAN_INLINE static NAUV_WORK_CB(AsyncProgress_) {
@@ -1678,14 +1680,15 @@ class Callback {
   NAN_INLINE static void AsyncClose_(uv_handle_t* handle) {
     AsyncProgressWorker *worker =
             static_cast<AsyncProgressWorker*>(handle->data);
-    delete reinterpret_cast<uv_async_t*>(handle);
-    delete worker;
+    while(!worker->queue.empty()) {
+      delete worker->queue.front();
+      worker->queue.pop_front();
+    }
   }
 
-  uv_async_t *async;
+  uv_async_t async;
+  asyncqueue_t queue;
   uv_mutex_t async_lock;
-  char *asyncdata_;
-  size_t asyncsize_;
 };
 
 NAN_INLINE void AsyncExecute (uv_work_t* req) {
