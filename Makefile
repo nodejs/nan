@@ -83,7 +83,7 @@ test: $(ADDONS)
 	npm test
 
 forcetest:
-	cd test/ && node-gyp rebuild && cd ..
+	cd test && ../node_modules/.bin/node-gyp rebuild && cd ..
 	npm test
 
 docs: README.md doc/.build.sh doc/asyncworker.md doc/buffers.md doc/callback.md \
