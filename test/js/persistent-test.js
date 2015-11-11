@@ -11,7 +11,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'persistent' });
 
 test('persistent', function (t) {
-  t.plan(14);
+  t.plan(15);
 
   var persistent = bindings;
   t.type(persistent.save1, 'function');
@@ -20,26 +20,22 @@ test('persistent', function (t) {
   t.type(persistent.toPersistentAndBackAgain, 'function');
   t.type(persistent.persistentToPersistent, 'function');
   t.type(persistent.copyablePersistent, 'function');
+  t.type(persistent.passGlobal, 'function');
+
   t.deepEqual(persistent.toPersistentAndBackAgain({ x: 42 }), { x: 42 });
 
-  t.ok(persistent.persistentToPersistent('any string') || true);
+  t.equal(persistent.persistentToPersistent('any string'), 'any string');
 
   persistent.save1('a string to save');
   t.equal(persistent.get1(), 'a string to save');
+  t.equal(persistent.copyablePersistent(), 'a string to save');
+
+  t.equal(persistent.passGlobal(), 42, 'pass global');
+
   setTimeout(function () {
     t.equal(persistent.get1(), 'a string to save');
-  }, 25);
-  setTimeout(function () {
-    t.equal(persistent.get1(), 'a string to save');
-  }, 50);
-  setTimeout(function () {
-    t.equal(persistent.copyablePersistent(), 'a string to save');
-  }, 75);
-  setTimeout(function () {
     persistent.dispose1();
-  }, 75);
-  setTimeout(function () {
     t.ok(persistent.get1() === undefined, 'no more persistent');
     t.ok(persistent.copyablePersistent() === undefined, 'no more persistent');
-  }, 100);
+  }, 25);
 });

@@ -210,7 +210,7 @@ class Global : public PersistentBase<T> {
    * Move constructor.
    */
   NAN_INLINE Global(RValue rvalue)
-    : PersistentBase<T>(rvalue.object.persistent) {
+    : PersistentBase<T>(rvalue.object->persistent) {
     rvalue.object->Reset();
   }
   NAN_INLINE ~Global() { this->Reset(); }

@@ -15,7 +15,6 @@ static Persistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {
   persistentTest1.Reset(info[0].As<v8::String>());
-  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(Get1) {
@@ -24,7 +23,6 @@ NAN_METHOD(Get1) {
 
 NAN_METHOD(Dispose1) {
   persistentTest1.Reset();
-  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(ToPersistentAndBackAgain) {
@@ -39,8 +37,8 @@ NAN_METHOD(PersistentToPersistent) {
   Persistent<v8::String> persistent(info[0].As<v8::String>());
   persistentTest1.Reset(persistent);
   persistent.Reset();
+  info.GetReturnValue().Set(New(persistentTest1));
   persistentTest1.Reset();
-  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(CopyablePersistent) {
@@ -49,30 +47,46 @@ NAN_METHOD(CopyablePersistent) {
   info.GetReturnValue().Set(New(p));
 }
 
+template<typename T> Global<T> passer(v8::Local<T> handle) {
+  return Global<T>(handle).Pass();
+}
+
+NAN_METHOD(PassGlobal) {
+  info.GetReturnValue().Set(passer(New(42)));
+}
+
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("save1").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Save1)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Save1)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("get1").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Get1)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Get1)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("dispose1").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Dispose1)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Dispose1)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toPersistentAndBackAgain").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToPersistentAndBackAgain)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToPersistentAndBackAgain))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("persistentToPersistent").ToLocalChecked()
-    , New<v8::FunctionTemplate>(PersistentToPersistent)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(PersistentToPersistent))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("copyablePersistent").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CopyablePersistent)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CopyablePersistent))
+        .ToLocalChecked()
+  );
+  Set(target
+    , New<v8::String>("passGlobal").ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(PassGlobal))
+        .ToLocalChecked()
   );
 }
 
