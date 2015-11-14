@@ -52,7 +52,6 @@ test('asyncprogressnowait100x', function (t) {
     , self = this;
   self.progressed = 0;
   worker(100, function(i) {
-    console.log(i);
     self.progressed++;
   }, function () {
     t.ok(self.progressed === 100, '100 messages - got ' + self.progressed);
