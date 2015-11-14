@@ -1592,7 +1592,6 @@ class Callback {
 
 /* abstract */ class AsyncProgressWorker : public AsyncWorker {
  public:
-
   typedef std::deque<std::string> async_queue_t;
 
   explicit AsyncProgressWorker(Callback *callback_)
