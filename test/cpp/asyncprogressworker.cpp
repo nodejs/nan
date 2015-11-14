@@ -47,6 +47,36 @@ class ProgressWorker : public AsyncProgressWorker {
   int iters;
 };
 
+class ProgressWorkerNoWait : public AsyncProgressWorker {
+    public:
+    ProgressWorkerNoWait(
+        Callback *callback
+        , Callback *progress
+        , int iters)
+        : AsyncProgressWorker(callback), progress(progress)
+        , iters(iters) {}
+    ~ProgressWorkerNoWait() {}
+
+    void Execute (const AsyncProgressWorker::ExecutionProgress& progress) {
+        for (int i = 0; i < iters; ++i) {
+            progress.Send(reinterpret_cast<const char*>(&i), sizeof(int));
+        }
+    }
+
+    void HandleProgressCallback(const char *data, size_t size) {
+        HandleScope scope;
+
+        v8::Local<v8::Value> argv[] = {
+            New<v8::Integer>(*reinterpret_cast<int*>(const_cast<char*>(data)))
+        };
+        progress->Call(1, argv);
+    }
+
+    private:
+    Callback *progress;
+    int iters;
+};
+
 NAN_METHOD(DoProgress) {
   Callback *progress = new Callback(info[2].As<v8::Function>());
   Callback *callback = new Callback(info[3].As<v8::Function>());
@@ -57,10 +87,22 @@ NAN_METHOD(DoProgress) {
     , To<uint32_t>(info[1]).FromJust()));
 }
 
+NAN_METHOD(DoProgressNoWait) {
+    Callback *progress = new Callback(info[1].As<v8::Function>());
+    Callback *callback = new Callback(info[2].As<v8::Function>());
+    AsyncQueueWorker(new ProgressWorkerNoWait(
+      callback
+    , progress
+    , To<uint32_t>(info[0]).FromJust()));
+}
+
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("a").ToLocalChecked()
     , New<v8::FunctionTemplate>(DoProgress)->GetFunction());
+  Set(target
+    , New<v8::String>("b").ToLocalChecked()
+    , New<v8::FunctionTemplate>(DoProgressNoWait)->GetFunction());
 }
 
 NODE_MODULE(asyncprogressworker, Init)
