@@ -11,7 +11,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'accessors' });
 
 test('accessors', function (t) {
-  t.plan(4)
+  t.plan(7)
   var settergetter = bindings.create()
   t.equal(settergetter.prop1, 'this is property 1')
   t.ok(settergetter.prop2 === '')
@@ -24,4 +24,9 @@ test('accessors', function (t) {
     'Prop2:SETTER(setting a value)\n' +
     'Prop2:GETTER(setting a value)\n'
   )
+  var derived = Object.create(settergetter)
+  t.equal(derived.prop1, 'this is property 1')
+  derived.prop2 = 'setting a new value'
+  t.equal(derived.prop2, 'setting a new value')
+  t.equal(settergetter.prop2, 'setting a new value')
 })

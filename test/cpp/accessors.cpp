@@ -48,13 +48,13 @@ NAN_MODULE_INIT(SetterGetter::Init) {
   tpl->SetClassName(Nan::New<v8::String>("SetterGetter").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   SetPrototypeMethod(tpl, "log", SetterGetter::Log);
-  v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
+  v8::Local<v8::ObjectTemplate> itpl = tpl->InstanceTemplate();
   SetAccessor(
-      proto
+      itpl
     , Nan::New("prop1").ToLocalChecked()
     , SetterGetter::GetProp1);
   SetAccessor(
-      proto
+      itpl
     , Nan::New<v8::String>("prop2").ToLocalChecked()
     , SetterGetter::GetProp2
     , SetterGetter::SetProp2
