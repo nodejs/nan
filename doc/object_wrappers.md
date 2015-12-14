@@ -54,6 +54,18 @@ class ObjectWrap {
 
 See the Node documentation on [Wrapping C++ Objects](https://nodejs.org/api/addons.html#addons_wrapping_c_objects) for more details.
 
+### This vs. Holder
+
+When calling `Unwrap`, it is important that the argument is indeed some JavaScript object which got wrapped by a `Wrap` call for this class or any derived class.
+The `Signature` installed by [`Nan::SetPrototypeMethod()`](methods.md#api_nan_set_prototype_method) does ensure that `info.Holder()` is just such an instance.
+In Node 0.12 and later, `info.This()` will also be of such a type, since otherwise the invocation will get rejected.
+However, in Node 0.10 and before it was possible to invoke a method on a JavaScript object which just had the extension type in its prototype chain.
+In such a situation, calling `Unwrap` on `info.This()` will likely lead to a failed assertion causing a crash, but could lead to even more serious corruption.
+
+On the other hand, calling `Unwrap` in an [accessor](methods.md#api_nan_set_accessor) should not use `Holder()` if the accessor is defined on the prototype.
+So either define your accessors on the instance template,
+or use `This()` after verifying that it is indeed a valid object.
+
 ### Examples
 
 #### Basic
