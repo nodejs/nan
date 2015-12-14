@@ -72,7 +72,7 @@ NAN_METHOD(IndexedInterceptor::New) {
 
 NAN_INDEX_GETTER(IndexedInterceptor::PropertyGetter) {
   IndexedInterceptor* interceptor =
-    ObjectWrap::Unwrap<IndexedInterceptor>(info.This());
+    ObjectWrap::Unwrap<IndexedInterceptor>(info.Holder());
   if (index == 0) {
     info.GetReturnValue().Set(Nan::New(interceptor->buf).ToLocalChecked());
   } else {
@@ -82,7 +82,7 @@ NAN_INDEX_GETTER(IndexedInterceptor::PropertyGetter) {
 
 NAN_INDEX_SETTER(IndexedInterceptor::PropertySetter) {
   IndexedInterceptor* interceptor =
-    ObjectWrap::Unwrap<IndexedInterceptor>(info.This());
+    ObjectWrap::Unwrap<IndexedInterceptor>(info.Holder());
   if (index == 0) {
     std::strncpy(
         interceptor->buf
@@ -102,7 +102,7 @@ NAN_INDEX_ENUMERATOR(IndexedInterceptor::PropertyEnumerator) {
 
 NAN_INDEX_DELETER(IndexedInterceptor::PropertyDeleter) {
   IndexedInterceptor* interceptor =
-    ObjectWrap::Unwrap<IndexedInterceptor>(info.This());
+    ObjectWrap::Unwrap<IndexedInterceptor>(info.Holder());
   std::strncpy(interceptor->buf, "goober", sizeof (interceptor->buf));
   info.GetReturnValue().Set(True());
 }

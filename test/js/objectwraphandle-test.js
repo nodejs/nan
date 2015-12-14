@@ -11,7 +11,7 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'objectwraphandle' });
 
 test('objectwraphandle', function (t) {
-  t.plan(5);
+  t.plan(7);
 
   t.type(bindings.MyObject, 'function');
 
@@ -21,4 +21,14 @@ test('objectwraphandle', function (t) {
   t.type(obj.getValue, 'function');
   t.type(obj.getHandle(), 'object');
   t.type(obj.getValue(), 'number');
+
+  var derived = Object.create(obj);
+  t.type(derived, bindings.MyObject);
+  try {
+    // In Node 0.10 this call is valid:
+    t.equal(derived.getValue(), 10);
+  } catch (err) {
+    // In Node >= 0.12 it throws instead:
+    t.type(err, TypeError);
+  }
 });
