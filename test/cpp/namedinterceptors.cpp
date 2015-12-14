@@ -72,7 +72,7 @@ NAN_METHOD(NamedInterceptor::New) {
 
 NAN_PROPERTY_GETTER(NamedInterceptor::PropertyGetter) {
   NamedInterceptor* interceptor =
-    ObjectWrap::Unwrap<NamedInterceptor>(info.This());
+    ObjectWrap::Unwrap<NamedInterceptor>(info.Holder());
   if (!std::strcmp(*v8::String::Utf8Value(property), "prop")) {
     info.GetReturnValue().Set(Nan::New(interceptor->buf).ToLocalChecked());
   } else {
@@ -82,7 +82,7 @@ NAN_PROPERTY_GETTER(NamedInterceptor::PropertyGetter) {
 
 NAN_PROPERTY_SETTER(NamedInterceptor::PropertySetter) {
   NamedInterceptor* interceptor =
-    ObjectWrap::Unwrap<NamedInterceptor>(info.This());
+    ObjectWrap::Unwrap<NamedInterceptor>(info.Holder());
   if (!std::strcmp(*v8::String::Utf8Value(property), "prop")) {
     std::strncpy(
         interceptor->buf
@@ -102,7 +102,7 @@ NAN_PROPERTY_ENUMERATOR(NamedInterceptor::PropertyEnumerator) {
 
 NAN_PROPERTY_DELETER(NamedInterceptor::PropertyDeleter) {
   NamedInterceptor* interceptor =
-    ObjectWrap::Unwrap<NamedInterceptor>(info.This());
+    ObjectWrap::Unwrap<NamedInterceptor>(info.Holder());
   std::strncpy(interceptor->buf, "goober", sizeof (interceptor->buf));
   info.GetReturnValue().Set(True());
 }

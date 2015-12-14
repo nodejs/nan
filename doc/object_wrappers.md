@@ -93,12 +93,12 @@ class MyObject : public Nan::ObjectWrap {
   }
 
   static NAN_METHOD(GetHandle) {
-    MyObject* obj = Nan::ObjectWrap::Unwrap<MyObject>(info.This());
+    MyObject* obj = Nan::ObjectWrap::Unwrap<MyObject>(info.Holder());
     info.GetReturnValue().Set(obj->handle());
   }
 
   static NAN_METHOD(GetValue) {
-    MyObject* obj = Nan::ObjectWrap::Unwrap<MyObject>(info.This());
+    MyObject* obj = Nan::ObjectWrap::Unwrap<MyObject>(info.Holder());
     info.GetReturnValue().Set(obj->value_);
   }
 
@@ -168,7 +168,7 @@ class MyFactoryObject : public Nan::ObjectWrap {
   }
 
   static NAN_METHOD(GetValue) {
-    MyFactoryObject* obj = ObjectWrap::Unwrap<MyFactoryObject>(info.This());
+    MyFactoryObject* obj = ObjectWrap::Unwrap<MyFactoryObject>(info.Holder());
     info.GetReturnValue().Set(obj->value_);
   }
 

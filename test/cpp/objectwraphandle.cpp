@@ -45,12 +45,12 @@ class MyObject : public ObjectWrap {
   }
 
   static NAN_METHOD(GetHandle) {
-    MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.This());
+    MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.Holder());
     info.GetReturnValue().Set(obj->handle());
   }
 
   static NAN_METHOD(GetValue) {
-    MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.This());
+    MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.Holder());
     info.GetReturnValue().Set(obj->value_);
   }
 
