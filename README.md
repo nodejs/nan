@@ -48,13 +48,15 @@ This works like a `-I<path-to-NAN>` when compiling your addon.
 <a name="example"></a>
 ## Example
 
-Just getting started with Nan? Refer to a [quick-start **Nan** Boilerplate](https://github.com/fcanas/node-native-boilerplate) for a ready-to-go project that utilizes basic Nan functionality.
+Just getting started with Nan? Take a look at the **[Node Add-on Examples](https://github.com/nodejs/node-addon-examples)**.
+
+Refer to a [quick-start **Nan** Boilerplate](https://github.com/fcanas/node-native-boilerplate) for a ready-to-go project that utilizes basic Nan functionality.
 
 For a simpler example, see the **[async pi estimation example](https://github.com/nodejs/nan/tree/master/examples/async_pi_estimate)** in the examples directory for full code and an explanation of what this Monte Carlo Pi estimation example does. Below are just some parts of the full example that illustrate the use of **NAN**.
 
-For another example, see **[nan-example-eol](https://github.com/CodeCharmLtd/nan-example-eol)**. It shows newline detection implemented as a native addon.
+Yet another example is **[nan-example-eol](https://github.com/CodeCharmLtd/nan-example-eol)**. It shows newline detection implemented as a native addon.
 
-Also take a look at our comprehensive [C++ tests](https://github.com/nodejs/nan/tree/master/test/cpp) which has a plehora of code snippets for your pasting pleasure.
+Also take a look at our comprehensive **[C++ test suite](https://github.com/nodejs/nan/tree/master/test/cpp)** which has a plehora of code snippets for your pasting pleasure.
 
 <a name="api"></a>
 ## API
