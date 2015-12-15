@@ -54,6 +54,8 @@ For a simpler example, see the **[async pi estimation example](https://github.co
 
 For another example, see **[nan-example-eol](https://github.com/CodeCharmLtd/nan-example-eol)**. It shows newline detection implemented as a native addon.
 
+Also take a look at our comprehensive [C++ tests](https://github.com/nodejs/nan/tree/master/test/cpp) which has a plehora of code snippets for your pasting pleasure.
+
 <a name="api"></a>
 ## API
 
@@ -62,6 +64,7 @@ Additional to the NAN documentation below, please consult:
 * [The V8 Getting Started Guide](https://developers.google.com/v8/get_started)
 * [The V8 Embedders Guide](https://developers.google.com/v8/embed)
 * [V8 API Documentation](http://v8docs.nodesource.com/)
+* [Node Add-on Documentation](https://nodejs.org/api/addons.html)
 
 <!-- START API -->
 
