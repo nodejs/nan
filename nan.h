@@ -1610,6 +1610,11 @@ class Callback {
     uv_mutex_destroy(&async_lock);
   }
 
+  virtual void WorkComplete() {
+    WorkProgress();
+    AsyncWorker::WorkComplete();
+  }
+
   void WorkProgress() {
     // Dont send progress events after we've already completed.
     if (callback) {
