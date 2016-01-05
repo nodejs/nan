@@ -598,25 +598,33 @@ class TryCatch {
 # define NAN_GC_CALLBACK(name)                                                 \
     void name(v8::Isolate *isolate, v8::GCType type, v8::GCCallbackFlags flags)
 
+#if NODE_MODULE_VERSION <= NODE_4_0_MODULE_VERSION
+  typedef v8::Isolate::GCEpilogueCallback GCEpilogueCallback;
+  typedef v8::Isolate::GCPrologueCallback GCPrologueCallback;
+#else
+  typedef v8::Isolate::GCCallback GCEpilogueCallback;
+  typedef v8::Isolate::GCCallback GCPrologueCallback;
+#endif
+
   NAN_INLINE void AddGCEpilogueCallback(
-      v8::Isolate::GCEpilogueCallback callback
+      GCEpilogueCallback callback
     , v8::GCType gc_type_filter = v8::kGCTypeAll) {
     v8::Isolate::GetCurrent()->AddGCEpilogueCallback(callback, gc_type_filter);
   }
 
   NAN_INLINE void RemoveGCEpilogueCallback(
-      v8::Isolate::GCEpilogueCallback callback) {
+      GCEpilogueCallback callback) {
     v8::Isolate::GetCurrent()->RemoveGCEpilogueCallback(callback);
   }
 
   NAN_INLINE void AddGCPrologueCallback(
-      v8::Isolate::GCPrologueCallback callback
+      GCPrologueCallback callback
     , v8::GCType gc_type_filter = v8::kGCTypeAll) {
     v8::Isolate::GetCurrent()->AddGCPrologueCallback(callback, gc_type_filter);
   }
 
   NAN_INLINE void RemoveGCPrologueCallback(
-      v8::Isolate::GCPrologueCallback callback) {
+      GCPrologueCallback callback) {
     v8::Isolate::GetCurrent()->RemoveGCPrologueCallback(callback);
   }
 
