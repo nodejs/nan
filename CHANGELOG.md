@@ -1,6 +1,13 @@
 # NAN ChangeLog
 
-**Version 2.1.0: current Node 4.1.2, Node 12: 0.12.7, Node 10: 0.10.40, iojs: 3.3.1**
+**Version 2.2.0: current Node 5.4.0, Node 12: 0.12.9, Node 10: 0.10.41, iojs: 3.3.1**
+
+### 2.2.0 Jan 9 2016
+
+  - Feature: Add Function::Call wrapper 4c157474dacf284d125c324177b45aa5dabc08c6
+  - Feature: Rename GC*logueCallback to GCCallback for > 4.0 3603435109f981606d300eb88004ca101283acec
+  - Bugfix: Fix Global::Pass for old versions 367e82a60fbaa52716232cc89db1cc3f685d77d9
+  - Bugfix: Remove weird MaybeLocal wrapping of what already is a MaybeLocal 23b4590db10c2ba66aee2338aebe9751c4cb190b
 
 ### 2.1.0 Oct 8 2015
 
