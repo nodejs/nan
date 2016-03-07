@@ -1501,10 +1501,8 @@ class Callback {
 
     if (!persistentHandle.IsEmpty())
       persistentHandle.Reset();
-    if (callback)
-      delete callback;
-    if (errmsg_)
-      delete[] errmsg_;
+    delete callback;
+    delete[] errmsg_;
   }
 
   virtual void WorkComplete() {
@@ -1579,9 +1577,7 @@ class Callback {
   }
 
   void SetErrorMessage(const char *msg) {
-    if (errmsg_) {
-      delete[] errmsg_;
-    }
+    delete[] errmsg_;
 
     size_t size = strlen(msg) + 1;
     errmsg_ = new char[size];
@@ -1615,9 +1611,7 @@ class Callback {
   virtual ~AsyncProgressWorker() {
     uv_mutex_destroy(&async_lock);
 
-    if (asyncdata_) {
-      delete[] asyncdata_;
-    }
+    delete[] asyncdata_;
   }
 
   void WorkProgress() {
@@ -1671,9 +1665,7 @@ class Callback {
     asyncsize_ = size;
     uv_mutex_unlock(&async_lock);
 
-    if (old_data) {
-      delete[] old_data;
-    }
+    delete[] old_data;
     uv_async_send(async);
   }
 
