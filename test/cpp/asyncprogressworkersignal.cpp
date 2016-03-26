@@ -35,10 +35,8 @@ class ProgressWorker : public AsyncProgressWorker {
   void HandleProgressCallback(const char *data, size_t size) {
     HandleScope scope;
 
-    v8::Local<v8::Value> argv[] = {
-        New<v8::Boolean>(data == NULL && size == 0)
-    };
-    progress->Call(1, argv);
+    v8::Local<v8::Value> arg = New<v8::Boolean>(data == NULL && size == 0);
+    progress->Call(1, &arg);
   }
 
  private:
