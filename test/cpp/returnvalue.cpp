@@ -30,6 +30,10 @@ NAN_METHOD(ReturnGlobal) {
   info.GetReturnValue().Set(global);
 }
 
+NAN_METHOD(ReturnUnsigned) {
+  info.GetReturnValue().Set(0x80000000u);
+}
+
 NAN_MODULE_INIT(Init) {
   global.Reset(New(true));
 
@@ -44,6 +48,10 @@ NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("q").ToLocalChecked()
     , New<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
+  );
+  Set(target
+    , New<v8::String>("u").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ReturnUnsigned)->GetFunction()
   );
 }
 

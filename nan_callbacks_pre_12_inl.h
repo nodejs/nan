@@ -65,7 +65,7 @@ class ReturnValue {
   inline void Set(uint32_t i) {
     TYPE_CHECK(T, v8::Integer);
     value_->Dispose();
-    *value_ = v8::Persistent<T>::New(v8::Uint32::New(i));
+    *value_ = v8::Persistent<T>::New(v8::Uint32::NewFromUnsigned(i));
   }
 
   // Fast JS primitive setters
