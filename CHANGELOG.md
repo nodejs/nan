@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 2.2.0: current Node 5.4.0, Node 12: 0.12.9, Node 10: 0.10.41, iojs: 3.3.1**
+**Version 2.2.1: current Node 5.9.1, Node 12: 0.12.12, Node 10: 0.10.43, iojs: 3.3.1**
+
+### 2.2.1 Mar 29 2016
+
+  - Bugfix: Use NewFromUnsigned in ReturnValue<T>::Set(uint32_t i) for pre_12 3a18f9bdce29826e0e4c217854bc476918241a58
+  - Performance: Remove unneeeded nullptr checks b715ef44887931c94f0d1605b3b1a4156eebece9
 
 ### 2.2.0 Jan 9 2016
 
