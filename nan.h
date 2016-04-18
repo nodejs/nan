@@ -1631,6 +1631,9 @@ class Callback {
   class ExecutionProgress {
     friend class AsyncProgressWorker;
    public:
+    void Signal() const {
+        uv_async_send(that_->async);
+    }
     // You could do fancy generics with templates here.
     void Send(const char* data, size_t size) const {
         that_->SendProgress_(data, size);
