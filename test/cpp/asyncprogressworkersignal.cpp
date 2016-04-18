@@ -61,4 +61,4 @@ NAN_MODULE_INIT(Init) {
     , New<v8::FunctionTemplate>(DoProgress)->GetFunction());
 }
 
-NODE_MODULE(asyncprogressworker, Init)
+NODE_MODULE(asyncprogressworkersignal, Init)
