@@ -1867,13 +1867,13 @@ NAN_INLINE void SetPrototypeMethod(
     v8::Local<v8::FunctionTemplate> recv
   , const char* name, FunctionCallback callback) {
   HandleScope scope;
-  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
+  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(
       callback
     , v8::Local<v8::Value>()
-    , New<v8::Signature>(recv))).ToLocalChecked();
+    , New<v8::Signature>(recv));
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  recv->PrototypeTemplate()->Set(fn_name, fn);
-  fn->SetName(fn_name);
+  recv->PrototypeTemplate()->Set(fn_name, t);
+  t->SetClassName(fn_name);
 }
 
 //=== Accessors and Such =======================================================
