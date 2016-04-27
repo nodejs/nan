@@ -1850,6 +1850,41 @@ NAN_INLINE void SetInstanceTemplate(
   SetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
 
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+NAN_INLINE void SetMethod(
+    v8::Handle<v8::Object> recv
+  , const char *name
+  , FunctionCallback callback) {
+  HandleScope scope;
+  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
+      callback)).ToLocalChecked();
+  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
+  fn->SetName(fn_name);
+  recv->Set(fn_name, fn);
+}
+
+NAN_INLINE void SetMethod(
+    v8::Handle<v8::FunctionTemplate> templ
+  , const char *name
+  , FunctionCallback callback) {
+  HandleScope scope;
+  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
+  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
+  t->SetClassName(fn_name);
+  templ->Set(fn_name, t);
+}
+
+NAN_INLINE void SetMethod(
+    v8::Handle<v8::ObjectTemplate> templ
+  , const char *name
+  , FunctionCallback callback) {
+  HandleScope scope;
+  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
+  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
+  t->SetClassName(fn_name);
+  templ->Set(fn_name, t);
+}
+#else
 NAN_INLINE void SetMethod(
     v8::Local<v8::Object> recv
   , const char *name
@@ -1883,6 +1918,7 @@ NAN_INLINE void SetMethod(
   t->SetClassName(fn_name);
   templ->Set(fn_name, t);
 }
+#endif
 
 NAN_INLINE void SetPrototypeMethod(
     v8::Local<v8::FunctionTemplate> recv
