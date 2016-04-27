@@ -474,9 +474,12 @@ Sets a method with a given name directly on a JavaScript object where the method
 Signature:
 
 ```c++
-template<typename T> void Nan::SetMethod(const T &recv,
-                                         const char *name,
-                                         Nan::FunctionCallback callback)
+void Nan::SetMethod(v8::Local<v8::Object> recv,
+                    const char *name,
+                    Nan::FunctionCallback callback)
+void Nan::SetMethod(v8::Local<v8::Template> templ,
+                    const char *name,
+                    Nan::FunctionCallback callback)
 ```
 
 <a name="api_nan_set_prototype_method"></a>

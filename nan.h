@@ -1850,9 +1850,8 @@ NAN_INLINE void SetInstanceTemplate(
   SetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
 
-template<typename T>
 NAN_INLINE void SetMethod(
-    const T &recv
+    v8::Local<v8::Object> recv
   , const char *name
   , FunctionCallback callback) {
   HandleScope scope;
@@ -1861,6 +1860,17 @@ NAN_INLINE void SetMethod(
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   fn->SetName(fn_name);
   recv->Set(fn_name, fn);
+}
+
+NAN_INLINE void SetMethod(
+    v8::Local<v8::Template> templ
+  , const char *name
+  , FunctionCallback callback) {
+  HandleScope scope;
+  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
+  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
+  t->SetClassName(fn_name);
+  templ->Set(fn_name, t);
 }
 
 NAN_INLINE void SetPrototypeMethod(
