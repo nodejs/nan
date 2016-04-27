@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.3.1: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+**Version 2.3.2: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+
+### 2.3.2 Apr 27 2016
+
+  - Bugfix: Fix compilation on outdated versions due to Handle removal f8b7c875d04d425a41dfd4f3f8345bc3a11e6c52
 
 ### 2.3.1 Apr 27 2016
 
