@@ -1856,10 +1856,10 @@ NAN_INLINE void SetMethod(
   , const char *name
   , FunctionCallback callback) {
   HandleScope scope;
-  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
-      callback)).ToLocalChecked();
+  v8::Local<v8::FunctionTemplate> fn = New<v8::FunctionTemplate>(
+      callback);
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  fn->SetName(fn_name);
+  fn->SetClassName(fn_name);
   recv->Set(fn_name, fn);
 }
 
