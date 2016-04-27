@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 2.2.1: current Node 5.9.1, Node 12: 0.12.12, Node 10: 0.10.43, iojs: 3.3.1**
+**Version 2.3.0: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+
+### 2.3.0 Apr 27 2016
+
+  - Feature: added Signal() for invoking async callbacks without sending data from AsyncProgressWorker d8adba45f20e077d00561b20199133620c990b38
+  - Bugfix: Don't use deprecated v8::Template::Set() 00dacf0a4b86027415867fa7f1059acc499dcece
 
 ### 2.2.1 Mar 29 2016
 
