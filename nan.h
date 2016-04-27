@@ -1863,7 +1863,18 @@ NAN_INLINE void SetMethod(
 }
 
 NAN_INLINE void SetMethod(
-    v8::Local<v8::Template> templ
+    v8::Local<v8::FunctionTemplate> templ
+  , const char *name
+  , FunctionCallback callback) {
+  HandleScope scope;
+  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
+  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
+  t->SetClassName(fn_name);
+  templ->Set(fn_name, t);
+}
+
+NAN_INLINE void SetMethod(
+    v8::Local<v8::ObjectTemplate> templ
   , const char *name
   , FunctionCallback callback) {
   HandleScope scope;
