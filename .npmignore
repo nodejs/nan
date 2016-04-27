@@ -1,6 +1,9 @@
 test/
 examples/
+.dntrc
 .travis.yml
 .npmignore
+appveyor.yml
 Makefile
 cpplint.py
+doc/.build.sh
