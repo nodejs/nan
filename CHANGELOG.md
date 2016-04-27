@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.3.0: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+**Version 2.3.1: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+
+### 2.3.1 Apr 27 2016
+
+  - Bugfix: Don't use deprecated v8::Template::Set() in SetMethod a90951e9ea70fa1b3836af4b925322919159100e
 
 ### 2.3.0 Apr 27 2016
 
