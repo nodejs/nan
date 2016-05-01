@@ -8,7 +8,7 @@
     "url": "git://github.com/nodejs/nan.git"
   },
   "scripts": {
-    "test": "tap --gc test/js/*-test.js",
+    "test": "tap --gc --stderr test/js/*-test.js",
     "rebuild-tests": "node-gyp rebuild --msvs_version=2013 --directory test",
     "docs": "doc/.build.sh"
   },
