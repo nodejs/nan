@@ -1852,75 +1852,47 @@ NAN_INLINE void SetInstanceTemplate(
   SetTemplate(templ->InstanceTemplate(), name, value, attributes);
 }
 
-#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-NAN_INLINE void SetMethod(
-    v8::Handle<v8::Object> recv
-  , const char *name
-  , FunctionCallback callback) {
-  HandleScope scope;
-  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
-      callback)).ToLocalChecked();
-  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  fn->SetName(fn_name);
-  recv->Set(fn_name, fn);
+namespace imp {
+
+// Note(@agnat): Helper to distinguish different receiver types. The first
+// version deals with receivers derived from v8::Template. The second version
+// handles everything else. The final argument only serves as discriminator and
+// is unused.
+template <typename T>
+NAN_INLINE
+void
+SetMethodAux(T recv,
+             v8::Local<v8::String> name,
+             v8::Local<v8::FunctionTemplate> tpl,
+             v8::Template *) {
+  recv->Set(name, tpl);
 }
 
+template <typename T>
+NAN_INLINE
+void
+SetMethodAux(T recv,
+             v8::Local<v8::String> name,
+             v8::Local<v8::FunctionTemplate> tpl,
+             ...) {
+  recv->Set(name, GetFunction(tpl).ToLocalChecked());
+}
+
+}  // end of namespace imp
+
+template <typename T, template <typename> class HandleType>
 NAN_INLINE void SetMethod(
-    v8::Handle<v8::FunctionTemplate> templ
+    HandleType<T> recv
   , const char *name
   , FunctionCallback callback) {
   HandleScope scope;
   v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   t->SetClassName(fn_name);
-  templ->Set(fn_name, t);
+  // Note(@agnat): Pass an empty T* as discriminator. See note on
+  // SetMethodAux(...) above
+  imp::SetMethodAux(recv, fn_name, t, static_cast<T*>(0));
 }
-
-NAN_INLINE void SetMethod(
-    v8::Handle<v8::ObjectTemplate> templ
-  , const char *name
-  , FunctionCallback callback) {
-  HandleScope scope;
-  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
-  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  t->SetClassName(fn_name);
-  templ->Set(fn_name, t);
-}
-#else
-NAN_INLINE void SetMethod(
-    v8::Local<v8::Object> recv
-  , const char *name
-  , FunctionCallback callback) {
-  HandleScope scope;
-  v8::Local<v8::Function> fn = GetFunction(New<v8::FunctionTemplate>(
-      callback)).ToLocalChecked();
-  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  fn->SetName(fn_name);
-  recv->Set(fn_name, fn);
-}
-
-NAN_INLINE void SetMethod(
-    v8::Local<v8::FunctionTemplate> templ
-  , const char *name
-  , FunctionCallback callback) {
-  HandleScope scope;
-  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
-  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  t->SetClassName(fn_name);
-  templ->Set(fn_name, t);
-}
-
-NAN_INLINE void SetMethod(
-    v8::Local<v8::ObjectTemplate> templ
-  , const char *name
-  , FunctionCallback callback) {
-  HandleScope scope;
-  v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(callback);
-  v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
-  t->SetClassName(fn_name);
-  templ->Set(fn_name, t);
-}
-#endif
 
 NAN_INLINE void SetPrototypeMethod(
     v8::Local<v8::FunctionTemplate> recv
