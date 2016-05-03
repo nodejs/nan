@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.3.2: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+**Version 2.3.3: current Node 6.0.0, Node 12: 0.12.13, Node 10: 0.10.44, iojs: 3.3.1**
+
+### 2.3.3 May 4 2016
+
+  - Bugfix: Refactor SetMethod() to deal with v8::Templates (#566) b9083cf6d5de6ebe6bcb49c7502fbb7c0d9ddda8
 
 ### 2.3.2 Apr 27 2016
 
