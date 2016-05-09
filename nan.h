@@ -1986,6 +1986,16 @@ inline bool SetAccessor(
       , New<v8::External>(reinterpret_cast<void *>(setter)));
   }
 
+#if (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
+  return obj->SetAccessor(
+      GetCurrentContext()
+    , name
+    , getter_
+    , setter_
+    , dataobj
+    , settings
+    , attribute).FromMaybe(false);
+#else
   return obj->SetAccessor(
       name
     , getter_
@@ -1993,6 +2003,7 @@ inline bool SetAccessor(
     , dataobj
     , settings
     , attribute);
+#endif
 }
 
 inline void SetNamedPropertyHandler(
