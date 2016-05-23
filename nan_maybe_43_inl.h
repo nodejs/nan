@@ -230,7 +230,7 @@ NAN_INLINE MaybeLocal<v8::Object> CloneElementAt(
   }
   return handle_scope.Escape(obj->Clone());
 #else
-  return array->CloneElementAt(context, index);
+  return handle_scope.Escape(array->CloneElementAt(context, index));
 #endif
 }
 
