@@ -90,8 +90,16 @@ class WeakCallbackInfo {
   static WeakCallbackInfo *unwrap(NAN_WEAK_CALLBACK_DATA_TYPE_ data);
 # endif
 #else
+# if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                     \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  template<bool isFirstPass>
+  static void invokeparameter(NAN_WEAK_PARAMETER_CALLBACK_SIG_ data);
+  template<bool isFirstPass>
+  static void invoketwofield(NAN_WEAK_TWOFIELD_CALLBACK_SIG_ data);
+# else
   static void invokeparameter(NAN_WEAK_PARAMETER_CALLBACK_SIG_ data);
   static void invoketwofield(NAN_WEAK_TWOFIELD_CALLBACK_SIG_ data);
+# endif
   static WeakCallbackInfo *unwrapparameter(
       NAN_WEAK_PARAMETER_CALLBACK_DATA_TYPE_ data);
   static WeakCallbackInfo *unwraptwofield(
@@ -104,12 +112,13 @@ class WeakCallbackInfo {
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 
 template<typename T>
+template<bool isFirstPass>
 void
 WeakCallbackInfo<T>::invokeparameter(NAN_WEAK_PARAMETER_CALLBACK_SIG_ data) {
   WeakCallbackInfo<T> *cbinfo = unwrapparameter(data);
-  if (data.IsFirstPass()) {
+  if (isFirstPass) {
     cbinfo->persistent_.Reset();
-    data.SetSecondPassCallback(invokeparameter);
+    data.SetSecondPassCallback(invokeparameter<false>);
   } else {
     cbinfo->callback_(*cbinfo);
     delete cbinfo;
@@ -117,12 +126,13 @@ WeakCallbackInfo<T>::invokeparameter(NAN_WEAK_PARAMETER_CALLBACK_SIG_ data) {
 }
 
 template<typename T>
+template<bool isFirstPass>
 void
 WeakCallbackInfo<T>::invoketwofield(NAN_WEAK_TWOFIELD_CALLBACK_SIG_ data) {
   WeakCallbackInfo<T> *cbinfo = unwraptwofield(data);
-  if (data.IsFirstPass()) {
+  if (isFirstPass) {
     cbinfo->persistent_.Reset();
-    data.SetSecondPassCallback(invoketwofield);
+    data.SetSecondPassCallback(invoketwofield<false>);
   } else {
     cbinfo->callback_(*cbinfo);
     delete cbinfo;
@@ -257,7 +267,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
       , parameter);
     v8::PersistentBase<T>::SetWeak(
         wcbd
-      , WeakCallbackInfo<P>::invokeparameter
+      , WeakCallbackInfo<P>::template invokeparameter<true>
       , type);
   } else {
     v8::Local<T>* self = reinterpret_cast<v8::Local<T>*>(this);
@@ -276,7 +286,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
     (*self)->SetAlignedPointerInInternalField(0, wcbd);
     v8::PersistentBase<T>::SetWeak(
         static_cast<WeakCallbackInfo<P>*>(0)
-      , WeakCallbackInfo<P>::invoketwofield
+      , WeakCallbackInfo<P>::template invoketwofield<true>
       , type);
   }
 }
