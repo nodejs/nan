@@ -18,6 +18,7 @@ class MyObject : public ObjectWrap {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     SetPrototypeMethod(tpl, "getHandle", GetHandle);
+    SetPrototypeMethod(tpl, "getHandleConst", GetHandleConst);
     SetPrototypeMethod(tpl, "getValue", GetValue);
 
     constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
@@ -46,6 +47,11 @@ class MyObject : public ObjectWrap {
 
   static NAN_METHOD(GetHandle) {
     MyObject* obj = ObjectWrap::Unwrap<MyObject>(info.Holder());
+    info.GetReturnValue().Set(obj->handle());
+  }
+
+  static NAN_METHOD(GetHandleConst) {
+    MyObject const *obj = ObjectWrap::Unwrap<MyObject>(info.Holder());
     info.GetReturnValue().Set(obj->handle());
   }
 
