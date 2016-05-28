@@ -217,7 +217,21 @@ NAN_INLINE Maybe<int> GetEndColumn(v8::Local<v8::Message> msg) {
 NAN_INLINE MaybeLocal<v8::Object> CloneElementAt(
     v8::Local<v8::Array> array
   , uint32_t index) {
-  return array->CloneElementAt(GetCurrentContext(), index);
+  v8::EscapableHandleScope handle_scope(v8::Isolate::GetCurrent());
+  v8::Local<v8::Context> context = GetCurrentContext();
+#if (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
+  v8::Local<v8::Value> elem;
+  if (!array->Get(context, index).ToLocal(&elem)) {
+    return MaybeLocal<v8::Object>();
+  }
+  v8::Local<v8::Object> obj;
+  if (!elem->ToObject(context).ToLocal(&obj)) {
+    return MaybeLocal<v8::Object>();
+  }
+  return handle_scope.Escape(obj->Clone());
+#else
+  return handle_scope.Escape(array->CloneElementAt(context, index));
+#endif
 }
 
 NAN_INLINE MaybeLocal<v8::Value> Call(
