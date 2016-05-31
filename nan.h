@@ -84,6 +84,8 @@
 
 namespace Nan {
 
+#define NAN_INLINE inline  // TODO(bnoordhuis) Remove in v3.0.0.
+
 #if defined(__GNUC__) && \
     !(defined(V8_DISABLE_DEPRECATIONS) && V8_DISABLE_DEPRECATIONS)
 # define NAN_DEPRECATED __attribute__((deprecated))
