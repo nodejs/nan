@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.3.4: current Node 6.2.0, Node 12: 0.12.14, Node 10: 0.10.45, iojs: 3.3.1**
+**Version 2.3.5: current Node 6.2.0, Node 12: 0.12.14, Node 10: 0.10.45, iojs: 3.3.1**
+
+### 2.3.5 May 31 2016
+
+  - Bugfix: Replace NAN_INLINE with 'inline' keyword. 71819d8725f822990f439479c9aba3b240804909
 
 ### 2.3.4 May 31 2016
 
