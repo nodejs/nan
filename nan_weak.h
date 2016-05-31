@@ -59,9 +59,9 @@ class WeakCallbackInfo {
     internal_fields_[0] = field1;
     internal_fields_[1] = field2;
   }
-  NAN_INLINE v8::Isolate *GetIsolate() const { return isolate_; }
-  NAN_INLINE T *GetParameter() const { return static_cast<T*>(parameter_); }
-  NAN_INLINE void *GetInternalField(int index) const {
+  inline v8::Isolate *GetIsolate() const { return isolate_; }
+  inline T *GetParameter() const { return static_cast<T*>(parameter_); }
+  inline void *GetInternalField(int index) const {
     assert((index == 0 || index == 1) && "internal field index out of bounds");
     if (index == 0) {
       return internal_fields_[0];
@@ -255,7 +255,7 @@ WeakCallbackInfo<T> *WeakCallbackInfo<T>::unwrap(
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 template<typename T, typename M>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+inline void Persistent<T, M>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -293,7 +293,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
 #elif NODE_MODULE_VERSION > IOJS_1_1_MODULE_VERSION
 template<typename T, typename M>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+inline void Persistent<T, M>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -331,7 +331,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
 #elif NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
 template<typename T, typename M>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+inline void Persistent<T, M>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -368,7 +368,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
 template<typename T, typename M>
 template<typename P>
-NAN_INLINE void Persistent<T, M>::SetWeak(
+inline void Persistent<T, M>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
@@ -399,7 +399,7 @@ NAN_INLINE void Persistent<T, M>::SetWeak(
 #else
 template<typename T>
 template<typename P>
-NAN_INLINE void PersistentBase<T>::SetWeak(
+inline void PersistentBase<T>::SetWeak(
     P *parameter
   , typename WeakCallbackInfo<P>::Callback callback
   , WeakCallbackType type) {
