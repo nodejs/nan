@@ -1348,37 +1348,24 @@ typedef void NAN_INDEX_QUERY_RETURN_TYPE;
 
 class Callback {
  public:
-  Callback() {
-    HandleScope scope;
-    v8::Local<v8::Object> obj = New<v8::Object>();
-    handle.Reset(obj);
-  }
+  Callback() {}
 
-  explicit Callback(const v8::Local<v8::Function> &fn) {
-    HandleScope scope;
-    v8::Local<v8::Object> obj = New<v8::Object>();
-    handle.Reset(obj);
-    SetFunction(fn);
-  }
+  explicit Callback(const v8::Local<v8::Function> &fn) : handle_(fn) {}
 
   ~Callback() {
-    if (handle.IsEmpty()) return;
-    handle.Reset();
+    handle_.Reset();
   }
 
   bool operator==(const Callback &other) const {
-    HandleScope scope;
-    v8::Local<v8::Value> a = New(handle)->Get(kCallbackIndex);
-    v8::Local<v8::Value> b = New(other.handle)->Get(kCallbackIndex);
-    return a->StrictEquals(b);
+    return handle_ == other.handle_;
   }
 
   bool operator!=(const Callback &other) const {
-    return !this->operator==(other);
+    return !operator==(other);
   }
 
   inline
-  v8::Local<v8::Function> operator*() const { return this->GetFunction(); }
+  v8::Local<v8::Function> operator*() const { return GetFunction(); }
 
   inline v8::Local<v8::Value> operator()(
       v8::Local<v8::Object> target
@@ -1393,20 +1380,25 @@ class Callback {
     return this->Call(argc, argv);
   }
 
+  // TODO(kkoopa): remove
   inline void SetFunction(const v8::Local<v8::Function> &fn) {
-    HandleScope scope;
-    Set(New(handle), kCallbackIndex, fn);
+    Reset(fn);
+  }
+
+  inline void Reset(const v8::Local<v8::Function> &fn) {
+    handle_.Reset(fn);
+  }
+
+  inline void Reset() {
+    handle_.Reset();
   }
 
   inline v8::Local<v8::Function> GetFunction() const {
-    EscapableHandleScope scope;
-    return scope.Escape(New(handle)->Get(kCallbackIndex)
-        .As<v8::Function>());
+    return New(handle_);
   }
 
   inline bool IsEmpty() const {
-    HandleScope scope;
-    return New(handle)->Get(kCallbackIndex)->IsUndefined();
+    return handle_.IsEmpty();
   }
 
   inline v8::Local<v8::Value>
@@ -1433,8 +1425,7 @@ class Callback {
 
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(Callback)
-  Persistent<v8::Object> handle;
-  static const uint32_t kCallbackIndex = 0;
+  Persistent<v8::Function> handle_;
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
   v8::Local<v8::Value> Call_(v8::Isolate *isolate
@@ -1443,8 +1434,7 @@ class Callback {
                            , v8::Local<v8::Value> argv[]) const {
     EscapableHandleScope scope;
 
-    v8::Local<v8::Function> callback = New(handle)->
-        Get(kCallbackIndex).As<v8::Function>();
+    v8::Local<v8::Function> callback = New(handle_);
 # if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
     return scope.Escape(New(node::MakeCallback(
         isolate
@@ -1469,8 +1459,7 @@ class Callback {
                            , v8::Local<v8::Value> argv[]) const {
     EscapableHandleScope scope;
 
-    v8::Local<v8::Function> callback = New(handle)->
-        Get(kCallbackIndex).As<v8::Function>();
+    v8::Local<v8::Function> callback = New(handle_);
     return scope.Escape(New(node::MakeCallback(
         target
       , callback

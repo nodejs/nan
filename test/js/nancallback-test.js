@@ -12,7 +12,7 @@ const test     = require('tap').test
     , round = Math.round;
 
 test('nancallback', function (t) {
-  t.plan(13)
+  t.plan(17)
 
   var persistent = bindings;
   t.type(persistent.globalContext, 'function');
@@ -21,11 +21,15 @@ test('nancallback', function (t) {
   t.type(persistent.compareCallbacks, 'function');
   t.type(persistent.callDirect, 'function');
   t.type(persistent.callAsFunction, 'function');
+  t.type(persistent.resetUnset, 'function');
+  t.type(persistent.resetSet, 'function');
   persistent.globalContext(function () { t.ok(true); });
   persistent.specificContext(function () { t.ok(true); });
   persistent.customReceiver(function () { t.equal(this, process); }, process);
   persistent.callDirect(function () { t.ok(true); });
   persistent.callAsFunction(function () { t.ok(true); });
+  t.ok(persistent.resetUnset());
+  t.ok(persistent.resetSet(function () {}));
 
   var round2 = Math.round
     , x = function(param) { return param + 1; }

@@ -41,6 +41,18 @@ NAN_METHOD(CallAsFunction) {
   Callback(info[0].As<v8::Function>())();
 }
 
+NAN_METHOD(ResetUnset) {
+  Callback callback;
+  callback.Reset();
+  info.GetReturnValue().Set(callback.IsEmpty());
+}
+
+NAN_METHOD(ResetSet) {
+  Callback callback(info[0].As<v8::Function>());
+  callback.Reset();
+  info.GetReturnValue().Set(callback.IsEmpty());
+}
+
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("globalContext").ToLocalChecked()
@@ -65,6 +77,14 @@ NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("callAsFunction").ToLocalChecked()
     , New<v8::FunctionTemplate>(CallAsFunction)->GetFunction()
+  );
+  Set(target
+    , New<v8::String>("resetUnset").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ResetUnset)->GetFunction()
+  );
+  Set(target
+    , New<v8::String>("resetSet").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ResetSet)->GetFunction()
   );
 }
 
