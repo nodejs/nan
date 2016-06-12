@@ -35,6 +35,8 @@ class Callback {
 
   bool IsEmpty() const;
 
+  void Clear();
+
   v8::Local<v8::Value> Call(v8::Local<v8::Object> target,
                             int argc,
                             v8::Local<v8::Value> argv[]) const;

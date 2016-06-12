@@ -1398,6 +1398,12 @@ class Callback {
     Set(New(handle), kCallbackIndex, fn);
   }
 
+  inline void Clear() {
+    HandleScope scope;
+    Maybe<bool> res = Delete(New(handle), kCallbackIndex);
+    (void) res;
+  }
+
   inline v8::Local<v8::Function> GetFunction() const {
     EscapableHandleScope scope;
     return scope.Escape(New(handle)->Get(kCallbackIndex)
