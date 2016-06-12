@@ -14,11 +14,12 @@ template<typename T, typename M> class Persistent :
  public:
   inline Persistent() : v8::Persistent<T, M>() {}
 
-  template<typename S> inline Persistent(v8::Local<S> that) :
+  template<typename S> explicit inline Persistent(v8::Local<S> that) :
       v8::Persistent<T, M>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S, typename M2>
-  inline Persistent(const v8::Persistent<S, M2> &that) :
+  inline
+  Persistent(const v8::Persistent<S, M2> &that) :  // NOLINT(runtime/explicit)
       v8::Persistent<T, M2>(v8::Isolate::GetCurrent(), that) {}
 
   inline void Reset() { v8::PersistentBase<T>::Reset(); }
@@ -62,11 +63,12 @@ class Global : public v8::Global<T> {
  public:
   inline Global() : v8::Global<T>() {}
 
-  template<typename S> inline Global(v8::Local<S> that) :
+  template<typename S> inline explicit Global(v8::Local<S> that) :
     v8::Global<T>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S>
-  inline Global(const v8::PersistentBase<S> &that) :
+  inline
+  Global(const v8::PersistentBase<S> &that) :  // NOLINT(runtime/explicit)
       v8::Global<S>(v8::Isolate::GetCurrent(), that) {}
 
   inline void Reset() { v8::PersistentBase<T>::Reset(); }
@@ -96,11 +98,12 @@ class Global : public v8::UniquePersistent<T> {
  public:
   inline Global() : v8::UniquePersistent<T>() {}
 
-  template<typename S> inline Global(v8::Local<S> that) :
+  template<typename S> inline explicit Global(v8::Local<S> that) :
     v8::UniquePersistent<T>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S>
-  inline Global(const v8::PersistentBase<S> &that) :
+  inline
+  Global(const v8::PersistentBase<S> &that) :  // NOLINT(runtime/explicit)
       v8::UniquePersistent<S>(v8::Isolate::GetCurrent(), that) {}
 
   inline void Reset() { v8::PersistentBase<T>::Reset(); }
