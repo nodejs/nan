@@ -64,22 +64,22 @@ class PersistentBase {
   inline void Empty() { persistent.Clear(); }
 
   template<typename S>
-  inline bool operator==(const PersistentBase<S> &that) {
+  inline bool operator==(const PersistentBase<S> &that) const {
     return this->persistent == that.persistent;
   }
 
   template<typename S>
-  inline bool operator==(const v8::Local<S> &that) {
+  inline bool operator==(const v8::Local<S> &that) const {
     return this->persistent == that;
   }
 
   template<typename S>
-  inline bool operator!=(const PersistentBase<S> &that) {
+  inline bool operator!=(const PersistentBase<S> &that) const {
     return !operator==(that);
   }
 
   template<typename S>
-  inline bool operator!=(const v8::Local<S> &that) {
+  inline bool operator!=(const v8::Local<S> &that) const {
     return !operator==(that);
   }
 
