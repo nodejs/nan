@@ -202,8 +202,8 @@ class Global : public PersistentBase<T> {
   }
 
   template <typename S>
-  inline Global(const PersistentBase<S> &that)  // NOLINT(runtime/explicit)
-    : PersistentBase<T>(that) {
+  inline explicit Global(const PersistentBase<S> &that) :
+      PersistentBase<T>(that) {
     TYPE_CHECK(T, S);
   }
   /**
@@ -211,17 +211,20 @@ class Global : public PersistentBase<T> {
    */
   inline Global(RValue rvalue)  // NOLINT(runtime/explicit)
     : PersistentBase<T>(rvalue.object->persistent) {
-    rvalue.object->Reset();
+    rvalue.object->Empty();
   }
   inline ~Global() { this->Reset(); }
   /**
    * Move via assignment.
    */
   template<typename S>
-  inline Global &operator=(Global<S> rhs) {
+  inline Global &operator=(Global<S> other) {
     TYPE_CHECK(T, S);
-    this->Reset(rhs.persistent);
-    rhs.Reset();
+    if (!this->persistent.IsEmpty()) {
+      this->persistent.Dispose();
+    }
+    this->persistent = other.persistent;
+    other.Empty();
     return *this;
   }
   /**
