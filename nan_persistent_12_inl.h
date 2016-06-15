@@ -46,8 +46,6 @@ template<typename T, typename M> class Persistent :
     , WeakCallbackType type);
 
  private:
-  inline T *operator*() const { return *PersistentBase<T>::persistent; }
-
   template<typename S, typename M2>
   inline void Copy(const Persistent<S, M2> &that) {
     TYPE_CHECK(T, S);
@@ -94,8 +92,8 @@ class Global : public v8::Global<T> {
     P *parameter
     , typename WeakCallbackInfo<P>::Callback callback
     , WeakCallbackType type) {
-    reinterpret_cast<Persistent<T>*>(this)->SetWeak(
-        parameter, callback, type);
+    static_cast<Persistent<T>*>(static_cast<v8::PersistentBase<T>*>(this))->
+        SetWeak(parameter, callback, type);
   }
 };
 #else
@@ -130,7 +128,8 @@ class Global : public v8::UniquePersistent<T> {
 
 #if NODE_MODULE_VERSION == NODE_0_12_MODULE_VERSION
   inline void Empty() {
-    reinterpret_cast<v8::Persistent<T>*>(this)->ClearAndLeak();
+    static_cast<v8::Persistent<T>*>(static_cast<v8::PersistentBase<T>*>(this))->
+        ClearAndLeak();
   }
 #endif
 
@@ -139,13 +138,14 @@ class Global : public v8::UniquePersistent<T> {
 # if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
     rvalue.object_->Empty();
 # else
-    reinterpret_cast<v8::Persistent<T>*>(rvalue.object_)->ClearAndLeak();
+    static_cast<v8::Persistent<T>*>(static_cast<v8::PersistentBase<T>*>(
+        rvalue.object_))->ClearAndLeak();
 # endif
   }
 
   template<typename S>
   inline Global &operator=(v8::UniquePersistent<S> other) {
-    return reinterpret_cast<Global>(v8::UniquePersistent<S>::operator=(other));
+    return static_cast<Global&>(v8::UniquePersistent<S>::operator=(other));
   }
 
   inline operator RValue() { return RValue(this); }
@@ -157,8 +157,8 @@ class Global : public v8::UniquePersistent<T> {
     P *parameter
     , typename WeakCallbackInfo<P>::Callback callback
     , WeakCallbackType type) {
-    reinterpret_cast<Persistent<T>*>(this)->SetWeak(
-        parameter, callback, type);
+    static_cast<Persistent<T>*>(static_cast<v8::PersistentBase<T>*>(this))
+        ->SetWeak(parameter, callback, type);
   }
 };
 #endif
