@@ -14,7 +14,7 @@ template<typename T, typename M> class Persistent :
  public:
   inline Persistent() : v8::Persistent<T, M>() {}
 
-  template<typename S> inline explicit  Persistent(v8::Local<S> that) :
+  template<typename S> inline explicit Persistent(v8::Local<S> that) :
       v8::Persistent<T, M>(v8::Isolate::GetCurrent(), that) {}
 
   template<typename S, typename M2>
