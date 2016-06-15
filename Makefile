@@ -47,6 +47,7 @@ LINT_SOURCES = \
 	test/cpp/morenews.cpp \
 	test/cpp/converters.cpp \
 	test/cpp/isolatedata.cpp \
+	test/cpp/global.cpp \
 	test/cpp/makecallback.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \

@@ -20,7 +20,9 @@ test('persistent', function (t) {
   t.type(persistent.toPersistentAndBackAgain, 'function');
   t.type(persistent.persistentToPersistent, 'function');
   t.type(persistent.copyablePersistent, 'function');
-  t.type(persistent.passGlobal, 'function');
+  t.type(persistent.emptyPersistent, 'function');
+
+  t.ok(persistent.emptyPersistent());
 
   t.deepEqual(persistent.toPersistentAndBackAgain({ x: 42 }), { x: 42 });
 
@@ -29,8 +31,6 @@ test('persistent', function (t) {
   persistent.save1('a string to save');
   t.equal(persistent.get1(), 'a string to save');
   t.equal(persistent.copyablePersistent(), 'a string to save');
-
-  t.equal(persistent.passGlobal(), 42, 'pass global');
 
   setTimeout(function () {
     t.equal(persistent.get1(), 'a string to save');

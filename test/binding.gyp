@@ -148,4 +148,8 @@
         "target_name" : "typedarrays"
       , "sources"     : [ "cpp/typedarrays.cpp" ]
     }
+    , {
+        "target_name" : "global"
+      , "sources"     : [ "cpp/global.cpp" ]
+    }
 ]}
