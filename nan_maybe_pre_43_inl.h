@@ -20,7 +20,7 @@ class MaybeLocal {
       val_(that) {}
 # else
   inline MaybeLocal(v8::Local<S> that) :  // NOLINT(runtime/explicit)
-      val_(*reinterpret_cast<v8::Local<T>*>(&that)) {}
+      val_(*reinterpret_cast<v8::Local<T>*>(&that)) { TYPE_CHECK(T, S); }
 # endif
 
   inline bool IsEmpty() const { return val_.IsEmpty(); }
