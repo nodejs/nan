@@ -31,12 +31,11 @@ NAN_METHOD(MoveConstructGlobal) {
 }
 
 NAN_METHOD(CopyConstructGlobal) {
-  Persistent<v8::String> p(New("value").ToLocalChecked());
-  bool b1 = !p.IsEmpty();
-  Global<v8::String> g(p);
-  bool b2 = !p.IsEmpty();
-  p.Reset();
-  info.GetReturnValue().Set(b1 && b2 && !g.IsEmpty());
+  Global<v8::String> g1(New("value").ToLocalChecked());
+  bool b1 = !g1.IsEmpty();
+  Global<v8::String> g2(static_cast<PersistentBase<v8::String> >(g1));
+  bool b2 = !g1.IsEmpty();
+  info.GetReturnValue().Set(b1 && b2 && !g2.IsEmpty());
 }
 
 NAN_METHOD(MoveAssignGlobal) {
