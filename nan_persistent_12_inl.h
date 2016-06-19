@@ -256,19 +256,58 @@ PersistentBase<T>(static_cast<v8::Local<T>*>(&that)) {}
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
-  inline Global(Global &&other) : PersistentBase<T>() {
-    fprintf(stderr, "move\n");
+  template<typename S>
+  inline explicit Global(const Global<S> &other) :
+      Global<T>(static_cast<const PersistentBase<S> &>(other)) {}
+
+  template<typename S>
+  inline explicit Global(const PersistentBase<S> &other) : PersistentBase<T>() {
+    fprintf(stderr, "copy\n");
     static_cast<v8::Global<T>&>(this->persistent) =
-static_cast<v8::Global<T>&&>(other.persistent);
+        v8::Global<T>(v8::Isolate::GetCurrent(), other.persistent);
+  }
+
+  template<typename S>
+  inline Global(PersistentBase<S> &&other) :
+    Global<T>(static_cast<Global<S>&&>(other)) {}
+
+  template<typename S>
+  inline Global(Global<S> &other) : Global<T>(static_cast<Global<S>&&>(other)) {
+  }
+
+  template<typename S>
+  inline Global(Global<S> &&other) : PersistentBase<T>() {
+    fprintf(stderr, "move\n");
+    TYPE_CHECK(T, S);
+    static_cast<v8::Global<T>&>(this->persistent) =
+        reinterpret_cast<v8::Global<T>&&>(other.persistent);
+  }
+
+  template<typename S>
+  inline Global(const Global<S> &&other) :
+      Global<T>(static_cast<const PersistentBase<S>&>(other)) {}
+
+
+  inline Global(const Global&) = delete;
+  inline Global &operator=(const Global &) = delete;
+
+  template<typename S>
+  inline Global &operator=(Global<S> &other) {
+    return operator=(static_cast<Global<S>&&>(other));
   }
 
   template<typename S>
   inline Global &operator=(Global<S> &&other) {
-    static_cast<v8::Global<T>&>(this->persistent) = static_cast<v8::Global<S>&&>(other.persistent);
+    fprintf(stderr, "move=\n");
+    TYPE_CHECK(T, S);
+    static_cast<v8::Global<T>&>(this->persistent) =
+        // work around V8 bug comparing different pointer types
+        reinterpret_cast<v8::Global<T>&&>(other.persistent);
     return *this;
   }
 
   inline Global Pass() { return static_cast<Global&&>(*this); }
+
 #else
  private:
   template<typename S> class ConstantGlobal : private
@@ -280,32 +319,11 @@ PersistentBase<S>::ConstantPersistentBase {
       return PersistentBase<S>::ConstantPersistentBase::get();
     }
   };
-/*
-  template<typename S> struct TemporaryGlobal : public ConstantGlobal<S> {
-    explicit TemporaryGlobal(const Global<S> *obj) : ConstantGlobal<S>(obj) {}
-  };
-*/
 
  public:
   inline operator ConstantGlobal<T>() const {
     return ConstantGlobal<T>(static_cast<const Global<T> &>(*this));
   }
-  //inline operator TemporaryGlobal<T>() { return TemporaryGlobal<T>(this); }
-/*
-  inline Global(TemporaryGlobal<T> other) : PersistentBase<T>() {
-    fprintf(stderr, "move\n");
-    static_cast<v8::UniquePersistent<T>&>(this->persistent) =
-static_cast<v8::UniquePersistent<T>&>(other.obj_->persistent).Pass();
-  }
-*/
-
-/*
-  inline Global(ConstantGlobal<T> other) : PersistentBase<T>() {
-    fprintf(stderr, "copy same\n");
-    static_cast<v8::UniquePersistent<T>&>(this->persistent) =
-v8::UniquePersistent<T>(v8::Isolate::GetCurrent(), other.persistent);
-  }
-*/
  
 #define X(TYPE)                                                                \
     inline explicit Global(PersistentBase<v8::TYPE>::ConstantPersistentBase other) :    \
@@ -431,25 +449,12 @@ static_cast<v8::UniquePersistent<v8::TYPE>&>(other.get().persistent).Pass(); \
 operator=(typename PersistentBase<S>::TemporaryPersistentBase(static_cast<PersistentBase<S>
 &>(other)));
   }
-    
+
   inline Global Pass() {
     return Global(typename
 PersistentBase<T>::TemporaryPersistentBase(static_cast<PersistentBase<T>
 &>(*this))); 
   }
-#endif
- private:
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
-  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
-  Global(const Global &) = delete;
-  void operator=(const Global &) = delete;
-#else
-  //Global(ConstantGlobal<T>);
-  /*void operator=(ConstantGlobal<T>);
-  void operator=(const Global &);
-  void operator=(typename PersistentBase<T>::ConstantPersistentBase);
-  void operator=(typename PersistentBase<T>::TemporaryPersistentBase);
-  void operator=(const PersistentBase<T> &);*/
 #endif
 };
 

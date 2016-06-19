@@ -27,7 +27,8 @@ NAN_METHOD(EmptyGlobal) {
   info.GetReturnValue().Set(b1 && g.IsEmpty());
 }
 
-// should only work for non-const Global (ref) of same type 
+// should only work for non-const Global (ref)
+// without C++11, types cannot differ (without an explicit cast)
 // should move
 NAN_METHOD(AssignInitGlobalFromTemporary) {
   fprintf(stderr, "AssignInitGlobalFromTemporary\n");
@@ -38,6 +39,7 @@ NAN_METHOD(AssignInitGlobalFromTemporary) {
 }
 
 // should only work for non-const Global (ref) of same type 
+// without C++11, types cannot differ (without an explicit cast)
 // shoudl move
 NAN_METHOD(AssignInitGlobalFromLVal) {
   fprintf(stderr, "AssignInitGlobalFromLVal\n");
