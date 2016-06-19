@@ -163,27 +163,14 @@ typedef v8::String::ExternalOneByteStringResource
     ExternalOneByteStringResource;
 #endif
 
-#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
-template<typename T>
-class NonCopyablePersistentTraits :
-    public v8::NonCopyablePersistentTraits<T> {};
-template<typename T>
-class CopyablePersistentTraits :
-    public v8::CopyablePersistentTraits<T> {};
-
-template<typename T>
-class PersistentBase :
-    public v8::PersistentBase<T> {};
-
-template<typename T, typename M = v8::NonCopyablePersistentTraits<T> >
-class Persistent;
-#else
 template<typename T> class NonCopyablePersistentTraits;
 template<typename T> class PersistentBase;
-template<typename T, typename P> class WeakCallbackData;
 template<typename T, typename M = NonCopyablePersistentTraits<T> >
 class Persistent;
-#endif  // NODE_MODULE_VERSION
+
+//#if (NODE_MODULE_VERSION < NODE_0_12_MODULE_VERSION)
+//template<typename T, typename P> class WeakCallbackData;
+//#endif  // NODE_MODULE_VERSION
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))

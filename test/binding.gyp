@@ -1,7 +1,8 @@
 {
   "target_defaults":
     {
-        "cflags" : ["-Wall", "-Wextra", "-Wno-unused-parameter"],
+        "cflags" : ["-Wall", "-Wextra", "-Wno-unused-parameter",
+"-fno-elide-constructors"],
         "include_dirs": ["<!(node -e \"require('..')\")"]
     },
   "targets": [

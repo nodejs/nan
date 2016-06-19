@@ -30,14 +30,13 @@ class ReturnValue {
   }
 
   template <typename S> inline void Set(const Global<S> &handle) {
-    TYPE_CHECK(T, S);
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) &&                       \
   (V8_MINOR_VERSION > 5 || (V8_MINOR_VERSION == 5 &&                           \
   defined(V8_BUILD_NUMBER) && V8_BUILD_NUMBER >= 8))))
-    value_.Set(handle);
+    value_.Set(static_cast<const v8::Global<S>&>(handle.persistent));
 #else
-    value_.Set(*reinterpret_cast<const v8::Persistent<S>*>(&handle));
+    value_.Set(static_cast<const v8::Persistent<S>&>(handle.persistent));
 #endif
   }
 
