@@ -9,8 +9,6 @@
 #ifndef NAN_PERSISTENT_12_INL_H_
 #define NAN_PERSISTENT_12_INL_H_
 
-template<typename T> class ConstantPersistentBase;
-
 template<typename T>
 class PersistentBase {
  public:
@@ -179,8 +177,8 @@ class Persistent : public PersistentBase<T> {
   inline explicit Persistent(v8::Local<S> that) :
       PersistentBase<T>(&that) { TYPE_CHECK(T, S); } 
 
-  template<typename S, typename M2>
-  inline explicit Persistent(const v8::Persistent<S, M2> &that) :
+  template<typename S>
+  inline explicit Persistent(const PersistentBase<S> &that) :
       PersistentBase<T>(that) {
     TYPE_CHECK(T, S);
   }
@@ -216,7 +214,7 @@ class Persistent : public PersistentBase<T> {
   inline static Persistent<T> &Cast(Persistent<S> &that) {
 #ifdef V8_ENABLE_CHECKS
     if (!that.IsEmpty()) {
-      T::Cast(*reinterpret_cast<v8::Local<S>&>(that));
+      T::Cast(*reinterpret_cast<v8::Local<S>&>(that.persistent));
     }
 #endif
     return reinterpret_cast<Persistent<T>&>(that);
@@ -250,9 +248,7 @@ class Global : public PersistentBase<T> {
   inline explicit Global(v8::Local<S> that) :
 PersistentBase<T>(static_cast<v8::Local<T>*>(&that)) {}
 
-  inline ~Global() {
-    this->Reset();
-  }
+  inline ~Global() { this->Reset(); }
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
@@ -307,7 +303,6 @@ PersistentBase<T>(static_cast<v8::Local<T>*>(&that)) {}
   }
 
   inline Global Pass() { return static_cast<Global&&>(*this); }
-
 #else
  private:
   template<typename S> class ConstantGlobal : private

@@ -106,6 +106,34 @@ class PersistentBase {
   template<typename S, typename M> friend class Persistent;
   template<typename S> friend class Global;
   friend class ObjectWrap;
+
+  class ConstantPersistentBase {
+   public:
+    inline explicit ConstantPersistentBase(const PersistentBase &obj) :
+        obj_(&obj) {}
+    inline const PersistentBase &get() const { return *obj_; }
+
+   private:
+    const PersistentBase *obj_;
+  };
+  class TemporaryPersistentBase : private ConstantPersistentBase {
+   public:
+    inline explicit TemporaryPersistentBase(PersistentBase &obj) :
+        ConstantPersistentBase(obj) {}
+    inline PersistentBase &get() const {
+      return const_cast<PersistentBase &>(ConstantPersistentBase::get());
+    }
+  };
+ public:
+  inline operator ConstantPersistentBase() const { return
+ConstantPersistentBase(static_cast<const
+PersistentBase &>(*this)); }
+  inline operator TemporaryPersistentBase() { return
+TemporaryPersistentBase(static_cast<PersistentBase &>(*this)); }
+
+ private:
+  PersistentBase(PersistentBase &);
+  void operator=(PersistentBase &);
 };
 
 template<typename T>
@@ -139,8 +167,14 @@ template<typename T, typename M> class Persistent :
  public:
   inline Persistent() {}
 
-  template<typename S> inline Persistent(v8::Handle<S> that)
+  template<typename S> inline explicit Persistent(v8::Local<S> that)
       : PersistentBase<T>(v8::Persistent<T>::New(that)) {
+    TYPE_CHECK(T, S);
+  }
+
+  template<typename S>
+  inline explicit Persistent(const PersistentBase<S> &that) :
+    PersistentBase<T>(v8::Persistent<T>::New(*that)) {
     TYPE_CHECK(T, S);
   }
 
@@ -150,9 +184,9 @@ template<typename T, typename M> class Persistent :
 
   template<typename S, typename M2>
   inline Persistent(const Persistent<S, M2> &that) :
-      PersistentBase<T>() {
+    PersistentBase<T>() {
     Copy(that);
-  }
+  } 
 
   inline Persistent &operator=(const Persistent &that) {
     Copy(that);
@@ -166,7 +200,19 @@ template<typename T, typename M> class Persistent :
   }
 
   inline ~Persistent() {
-    if (M::kResetInDestructor) this->Reset();
+    if (M::kResetInDestructor) {
+      this->Reset();
+    }
+  }
+
+  template<typename S>
+  inline static Persistent<T> &Cast(Persistent<S> &that) {
+#ifdef V8_ENABLE_CHECKS
+    if (!that.IsEmpty()) {
+      T::Cast(*that);
+    }
+#endif
+    return reinterpret_cast<Persistent<T>&>(that);
   }
 
  private:
@@ -187,13 +233,8 @@ template<typename T, typename M> class Persistent :
 
 template<typename T>
 class Global : public PersistentBase<T> {
-  struct RValue {
-    inline explicit RValue(Global* obj) : object(obj) {}
-    Global* object;
-  };
-
  public:
-  inline Global() : PersistentBase<T>(0) { }
+  inline Global() : PersistentBase<T>() { }
 
   template <typename S>
   inline explicit Global(v8::Local<S> that)
@@ -203,43 +244,151 @@ class Global : public PersistentBase<T> {
 
   template <typename S>
   inline explicit Global(const PersistentBase<S> &that) :
-      PersistentBase<T>(that) {
+      PersistentBase<T>(v8::Persistent<T>::New(that.persistent)) {
     TYPE_CHECK(T, S);
   }
-  /**
-   * Move constructor.
-   */
-  inline Global(RValue rvalue)  // NOLINT(runtime/explicit)
-    : PersistentBase<T>(rvalue.object->persistent) {
-    rvalue.object->Empty();
-  }
+
   inline ~Global() { this->Reset(); }
-  /**
-   * Move via assignment.
-   */
-  template<typename S>
-  inline Global &operator=(Global<S> other) {
-    TYPE_CHECK(T, S);
-    if (!this->persistent.IsEmpty()) {
-      this->persistent.Dispose();
-    }
-    this->persistent = other.persistent;
-    other.Empty();
-    return *this;
-  }
-  /**
-   * Cast operator for moves.
-   */
-  inline operator RValue() { return RValue(this); }
-  /**
-   * Pass allows returning uniques from functions, etc.
-   */
-  Global Pass() { return Global(RValue(this)); }
 
  private:
-  Global(Global &);
-  void operator=(Global &);
-  template<typename S> friend class ReturnValue;
+  template<typename S> class ConstantGlobal : private
+PersistentBase<S>::ConstantPersistentBase {
+   public:
+    explicit ConstantGlobal(const Global<S> &obj) :
+        PersistentBase<S>::ConstantPersistentBase(obj) {}
+    inline const Global<S> &get() {
+      return PersistentBase<S>::ConstantPersistentBase::get();
+    }
+  };
+
+ public:
+  inline operator ConstantGlobal<T>() const {
+    return ConstantGlobal<T>(static_cast<const Global<T> &>(*this));
+  }
+ 
+#define X(TYPE)                                                                \
+    inline explicit Global(PersistentBase<v8::TYPE>::ConstantPersistentBase other) :    \
+        PersistentBase<T>(v8::Persistent<T>::New(other.get().persistent)) {    \
+      fprintf(stderr, "copy\n");                                               \
+    }
+
+  X(Array)
+  X(Boolean)
+  X(BooleanObject)
+  X(Context)
+  X(Date)
+  X(External)
+  X(Function)
+  X(FunctionTemplate)
+  X(Int32)
+  X(Integer)
+  X(Number)
+  X(NumberObject)
+  X(Object)
+  X(ObjectTemplate)
+  X(RegExp)
+  X(Script)
+  X(Signature)
+  X(String)
+  X(StringObject)
+  X(Uint32)
+
+#undef X
+
+#define X(TYPE)                                                                \
+    inline Global(PersistentBase<v8::TYPE>::TemporaryPersistentBase other) :   \
+        PersistentBase<T>(reinterpret_cast<T*>(*other.get().persistent)) {     \
+      TYPE_CHECK(T, v8::TYPE);                                                 \
+      fprintf(stderr, "move\n");                                               \
+      other.get().Empty();                                                     \
+    }
+
+  X(Array)
+  X(Boolean)
+  X(BooleanObject)
+  X(Context)
+  X(Date)
+  X(External)
+  X(Function)
+  X(FunctionTemplate)
+  X(Int32)
+  X(Integer)
+  X(Number)
+  X(NumberObject)
+  X(Object)
+  X(ObjectTemplate)
+  X(RegExp)
+  X(Script)
+  X(Signature)
+  X(String)
+  X(StringObject)
+  X(Uint32)
+
+#undef X
+
+  template<typename S>
+  inline explicit Global(PersistentBase<S> &other) :
+      PersistentBase<T>(v8::Persistent<T>::New(other.persistent)) {
+    fprintf(stderr, "copy\n");
+  }
+
+  template<typename S>
+  inline Global(Global<S> &other) :
+      PersistentBase<T>(reinterpret_cast<T*>(*other.persistent)) {
+    TYPE_CHECK(T, S);
+    fprintf(stderr, "move\n");
+    other.Empty();
+  }
+
+  inline Global(Global &other) : PersistentBase<T>(other.persistent) {
+    fprintf(stderr, "move\n");
+    other.Empty();
+  } 
+
+#define X(TYPE) \
+  inline Global &operator=(typename PersistentBase<v8::TYPE>::TemporaryPersistentBase other) { \
+    fprintf(stderr, "move=\n"); \
+    this->Reset(); \
+    this->persistent = other.get().persistent; \
+    other.get().Empty(); \
+    return *this; \
+  }
+
+  X(Array)
+  X(Boolean)
+  X(BooleanObject)
+  X(Context)
+  X(Date)
+  X(External)
+  X(Function)
+  X(FunctionTemplate)
+  X(Int32)
+  X(Integer)
+  X(Number)
+  X(NumberObject)
+  X(Object)
+  X(ObjectTemplate)
+  X(RegExp)
+  X(Script)
+  X(Signature)
+  X(String)
+  X(StringObject)
+  X(Uint32)
+
+#undef X
+
+  template<typename S>
+  inline Global &operator=(Global<S> &other) {
+    return
+operator=(typename PersistentBase<S>::TemporaryPersistentBase(static_cast<PersistentBase<S>
+&>(other)));
+  }
+
+  inline Global Pass() {
+    return Global(typename
+PersistentBase<T>::TemporaryPersistentBase(static_cast<PersistentBase<T>
+&>(*this))); 
+  }
 };
 
 #endif  // NAN_PERSISTENT_PRE_12_INL_H_
