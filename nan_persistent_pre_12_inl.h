@@ -63,6 +63,10 @@ class PersistentBase {
 
   inline void Empty() { persistent.Clear(); }
 
+  inline v8::Local<T> Get() const {
+    return v8::Local<T>::New(*this);
+  }
+
   template<typename S>
   inline bool operator==(const PersistentBase<S> &that) {
     return this->persistent == that.persistent;

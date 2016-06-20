@@ -36,6 +36,10 @@ class PersistentBase {
 #endif
   }
 
+  inline v8::Local<T> Get() const {
+    return v8::Local<T>::New(v8::Isolate::GetCurrent(), *this);
+  }
+
   template<typename S>
   inline bool operator==(const PersistentBase<S> &that) const {
     return persistent == that.persistent;
