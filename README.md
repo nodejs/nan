@@ -244,7 +244,7 @@ NAN's `node::Buffer` helpers exist as the API has changed across supported Node 
 `Nan::AsyncWorker` and `Nan::AsyncProgressWorker` are helper classes that make working with asynchronous code easier.
 
  - <a href="doc/asyncworker.md#api_nan_async_worker"><b><code>Nan::AsyncWorker</code></b></a>
- - <a href="doc/asyncworker.md#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorker</code></b></a>
+ - <a href="doc/asyncworker.md#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorkerBase & Nan::AsyncProgressWorker</code></b></a>
  - <a href="doc/asyncworker.md#api_nan_async_queue_worker"><b><code>Nan::AsyncQueueWorker</code></b></a>
 
 ### Strings & Bytes
