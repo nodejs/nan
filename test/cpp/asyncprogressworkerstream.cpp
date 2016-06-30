@@ -34,7 +34,8 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
     , milliseconds(milliseconds), iters(iters) {}
   ~ProgressWorker() {}
 
-  void Execute (const typename AsyncProgressWorkerBase<T>::ExecutionProgress& progress) {
+  void Execute (
+    const typename AsyncProgressWorkerBase<T>::ExecutionProgress& progress) {
     data_t data;
     for (int i = 0; i < iters; ++i) {
       data.index = i;
@@ -52,7 +53,7 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
       Nan::New("index").ToLocalChecked(),
       New<v8::Integer>(data->index));
     Nan::Set(
-      obj, 
+      obj,
       Nan::New("data").ToLocalChecked(),
       New<v8::Integer>(data->data));
 
