@@ -23,18 +23,18 @@ struct data_t {
 
 // unlike test ayyncprogressworker.cpp this test is explictely templated
 template<typename T>
-class ProgressWorker : public AsyncProgressWorker<T> {
+class ProgressWorker : public AsyncProgressWorkerBase<T> {
  public:
   ProgressWorker(
       Callback *callback
     , Callback *progress
     , int milliseconds
     , int iters)
-    : AsyncProgressWorker<T>(callback), progress(progress)
+    : AsyncProgressWorkerBase<T>(callback), progress(progress)
     , milliseconds(milliseconds), iters(iters) {}
   ~ProgressWorker() {}
 
-  void Execute (const typename AsyncProgressWorker<T>::ExecutionProgress& progress) {
+  void Execute (const typename AsyncProgressWorkerBase<T>::ExecutionProgress& progress) {
     data_t data;
     for (int i = 0; i < iters; ++i) {
       data.index = i;
@@ -44,7 +44,7 @@ class ProgressWorker : public AsyncProgressWorker<T> {
     }
   }
 
-  void HandleProgressCallback(T *data, size_t size) {
+  void HandleProgressCallback(const T *data, size_t size) {
     HandleScope scope;
     v8::Local<v8::Object> obj = Nan::New<v8::Object>();
     obj->Set(

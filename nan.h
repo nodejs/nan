@@ -1590,15 +1590,15 @@ class Callback {
 };
 
 // temaplate default is mainly set to have as little friction to prior
-// implementation of AsyncProgressWorker. The problem arises when the user needs
+// implementation of AsyncProgressWorkerBase. The problem arises when the user needs
 // to send non-uniform types like the previous cons declaration in
 // HandleProgressCallback. Though this attempts backwards compatibility, cpp
 // does not allow for overfloaded pure virtual methods and conditional const or
 // de-const-ing.
 template<class T = char>
-/* abstract */ class AsyncProgressWorker : public AsyncWorker {
+/* abstract */ class AsyncProgressWorkerBase : public AsyncWorker {
  public:
-  explicit AsyncProgressWorker(Callback *callback_)
+  explicit AsyncProgressWorkerBase(Callback *callback_)
       : AsyncWorker(callback_), asyncdata_(NULL), asyncsize_(0) {
     async = new uv_async_t;
     uv_async_init(
@@ -1611,7 +1611,7 @@ template<class T = char>
     uv_mutex_init(&async_lock);
   }
 
-  virtual ~AsyncProgressWorker() {
+  virtual ~AsyncProgressWorkerBase() {
     uv_mutex_destroy(&async_lock);
 
     delete[] asyncdata_;
@@ -1632,24 +1632,24 @@ template<class T = char>
   }
 
   class ExecutionProgress {
-    friend class AsyncProgressWorker;
+    friend class AsyncProgressWorkerBase;
    public:
     void Signal() const {
         uv_async_send(that_->async);
     }
 
-    void Send(T* data, size_t size) const {
+    void Send(const T* data, size_t size) const {
         that_->SendProgress_(data, size);
     }
 
    private:
-    explicit ExecutionProgress(AsyncProgressWorker* that) : that_(that) {}
+    explicit ExecutionProgress(AsyncProgressWorkerBase* that) : that_(that) {}
     NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
-    AsyncProgressWorker* const that_;
+    AsyncProgressWorkerBase* const that_;
   };
 
   virtual void Execute(const ExecutionProgress& progress) = 0;
-  virtual void HandleProgressCallback(T *data, size_t size) = 0;
+  virtual void HandleProgressCallback(const T *data, size_t size) = 0;
 
   virtual void Destroy() {
       uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
@@ -1661,7 +1661,7 @@ template<class T = char>
       Execute(progress);
   }
 
-  void SendProgress_(T *data, size_t size) {
+  void SendProgress_(const T *data, size_t size) {
     T *new_data = new T[size];
     memcpy(new_data, data, size);
 
@@ -1676,14 +1676,14 @@ template<class T = char>
   }
 
   inline static NAUV_WORK_CB(AsyncProgress_) {
-    AsyncProgressWorker *worker =
-            static_cast<AsyncProgressWorker*>(async->data);
+    AsyncProgressWorkerBase *worker =
+            static_cast<AsyncProgressWorkerBase*>(async->data);
     worker->WorkProgress();
   }
 
   inline static void AsyncClose_(uv_handle_t* handle) {
-    AsyncProgressWorker *worker =
-            static_cast<AsyncProgressWorker*>(handle->data);
+    AsyncProgressWorkerBase *worker =
+            static_cast<AsyncProgressWorkerBase*>(handle->data);
     delete reinterpret_cast<uv_async_t*>(handle);
     delete worker;
   }
@@ -1693,6 +1693,8 @@ template<class T = char>
   T *asyncdata_;
   size_t asyncsize_;
 };
+
+typedef AsyncProgressWorkerBase<> AsyncProgressWorker;
 
 inline void AsyncExecute (uv_work_t* req) {
   AsyncWorker *worker = static_cast<AsyncWorker*>(req->data);

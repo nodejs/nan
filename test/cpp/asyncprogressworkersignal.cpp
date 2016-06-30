@@ -14,26 +14,25 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-template <class T>
-class ProgressWorker : public AsyncProgressWorker<T> {
+class ProgressWorker : public AsyncProgressWorker {
  public:
   ProgressWorker(
       Callback *callback
     , Callback *progress
     , int milliseconds
     , int iters)
-    : AsyncProgressWorker<T>(callback), progress(progress)
+    : AsyncProgressWorker(callback), progress(progress)
     , milliseconds(milliseconds), iters(iters) {}
   ~ProgressWorker() {}
 
-  void Execute (const typename AsyncProgressWorker<T>::ExecutionProgress& progress) {
+  void Execute (const AsyncProgressWorker::ExecutionProgress& progress) {
     for (int i = 0; i < iters; ++i) {
       progress.Signal();
       Sleep(milliseconds);
     }
   }
 
-  void HandleProgressCallback(T *data, size_t size) {
+  void HandleProgressCallback(const char *data, size_t size) {
     HandleScope scope;
 
     v8::Local<v8::Value> arg = New<v8::Boolean>(data == NULL && size == 0);
@@ -49,7 +48,7 @@ class ProgressWorker : public AsyncProgressWorker<T> {
 NAN_METHOD(DoProgress) {
   Callback *progress = new Callback(info[2].As<v8::Function>());
   Callback *callback = new Callback(info[3].As<v8::Function>());
-  AsyncQueueWorker(new ProgressWorker<char>(
+  AsyncQueueWorker(new ProgressWorker(
       callback
     , progress
     , To<uint32_t>(info[0]).FromJust()
