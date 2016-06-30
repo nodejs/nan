@@ -1589,6 +1589,13 @@ class Callback {
   char *errmsg_;
 };
 
+// temaplate default is mainly set to have as little friction to prior
+// implementation of AsyncProgressWorker. The problem arises when the user needs
+// to send non-uniform types like the previous cons declaration in
+// HandleProgressCallback. Though this attempts backwards compatibility, cpp
+// does not allow for overfloaded pure virtual methods and conditional const or
+// de-const-ing.
+template<class T = char>
 /* abstract */ class AsyncProgressWorker : public AsyncWorker {
  public:
   explicit AsyncProgressWorker(Callback *callback_)
@@ -1612,7 +1619,7 @@ class Callback {
 
   void WorkProgress() {
     uv_mutex_lock(&async_lock);
-    char *data = asyncdata_;
+    T *data = asyncdata_;
     size_t size = asyncsize_;
     asyncdata_ = NULL;
     uv_mutex_unlock(&async_lock);
@@ -1630,8 +1637,8 @@ class Callback {
     void Signal() const {
         uv_async_send(that_->async);
     }
-    // You could do fancy generics with templates here.
-    void Send(const char* data, size_t size) const {
+
+    void Send(T* data, size_t size) const {
         that_->SendProgress_(data, size);
     }
 
@@ -1642,7 +1649,7 @@ class Callback {
   };
 
   virtual void Execute(const ExecutionProgress& progress) = 0;
-  virtual void HandleProgressCallback(const char *data, size_t size) = 0;
+  virtual void HandleProgressCallback(T *data, size_t size) = 0;
 
   virtual void Destroy() {
       uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
@@ -1654,12 +1661,12 @@ class Callback {
       Execute(progress);
   }
 
-  void SendProgress_(const char *data, size_t size) {
-    char *new_data = new char[size];
+  void SendProgress_(T *data, size_t size) {
+    T *new_data = new T[size];
     memcpy(new_data, data, size);
 
     uv_mutex_lock(&async_lock);
-    char *old_data = asyncdata_;
+    T *old_data = asyncdata_;
     asyncdata_ = new_data;
     asyncsize_ = size;
     uv_mutex_unlock(&async_lock);
@@ -1683,7 +1690,7 @@ class Callback {
 
   uv_async_t *async;
   uv_mutex_t async_lock;
-  char *asyncdata_;
+  T *asyncdata_;
   size_t asyncsize_;
 };
 
