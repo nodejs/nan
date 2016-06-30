@@ -14,14 +14,14 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-// custom data type. This servers as an example of how external
-// libraries could be hooked in, populate their objects and send them to JS
+// Custom data type: This serves as an example of how external
+// libraries could be hooked in, populate their objects and send them to JS.
 struct data_t {
   int index;
   int data;
 };
 
-// unlike test ayyncprogressworker.cpp this test is explictely templated
+// Unlike test/cpp/ayncprogressworker.cpp this test is explicitly templated.
 template<typename T>
 class ProgressWorker : public AsyncProgressWorkerBase<T> {
  public:
@@ -39,7 +39,7 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
     for (int i = 0; i < iters; ++i) {
       data.index = i;
       data.data = i * 2;
-      progress.Send(&data, sizeof(data_t));
+      progress.Send(&data, sizeof( data ));
       Sleep(milliseconds);
     }
   }

@@ -1589,12 +1589,9 @@ class Callback {
   char *errmsg_;
 };
 
-// temaplate default is mainly set to have as little friction to prior
-// implementation of AsyncProgressWorkerBase. The problem arises when the user needs
-// to send non-uniform types like the previous cons declaration in
-// HandleProgressCallback. Though this attempts backwards compatibility, cpp
-// does not allow for overfloaded pure virtual methods and conditional const or
-// de-const-ing.
+// The template default is mainly set to have as little friction to the prior
+// implementations of AsyncProgressWorker. In conjunction with the respective
+// typedef below, it allows for backwards compatibility.
 template<class T = char>
 /* abstract */ class AsyncProgressWorkerBase : public AsyncWorker {
  public:
@@ -1624,7 +1621,7 @@ template<class T = char>
     asyncdata_ = NULL;
     uv_mutex_unlock(&async_lock);
 
-    // Dont send progress events after we've already completed.
+    // Don't send progress events after we've already completed.
     if (callback) {
         HandleProgressCallback(data, size);
     }
