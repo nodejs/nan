@@ -98,6 +98,10 @@
       , "sources"     : [ "cpp/asyncprogressworker.cpp" ]
     }
     , {
+        "target_name" : "asyncprogressworkerstream"
+      , "sources"     : [ "cpp/asyncprogressworkerstream.cpp" ]
+    }
+    , {
         "target_name" : "asyncprogressworkersignal"
       , "sources"     : ["cpp/asyncprogressworkersignal.cpp"]
     }
