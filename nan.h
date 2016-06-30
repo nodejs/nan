@@ -1640,7 +1640,7 @@ template<class T = char>
     }
 
    private:
-    explicit ExecutionProgress(AsyncProgressWorkerBase* that) : that_(that) {}
+    explicit ExecutionProgress(AsyncProgressWorkerBase *that) : that_(that) {}
     NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
     AsyncProgressWorkerBase* const that_;
   };
@@ -1694,6 +1694,8 @@ template<class T = char>
   size_t asyncsize_;
 };
 
+// This ensures compatibility to the previous un-templated AsyncProgressWorker
+// class definition.
 typedef AsyncProgressWorkerBase<> AsyncProgressWorker;
 
 inline void AsyncExecute (uv_work_t* req) {
