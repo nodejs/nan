@@ -9,8 +9,14 @@
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncprogressworkerstream' })
-    , Readable = require('stream').Readable
     , util = require('util');
+
+const nodeVersion = process.versions.node.split('.')
+var Readable
+if (nodeVersion[0] == 0 && nodeVersion[1] <= 8)
+  Readable = require('readable-stream')
+else
+  Readable = require('stream').Readable
 
 function StreamProgressWorker(t) {
   Readable.call(this, {objectMode: true})
