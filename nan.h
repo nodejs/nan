@@ -1660,7 +1660,10 @@ template<class T = char>
 
   void SendProgress_(const T *data, size_t size) {
     T *new_data = new T[size];
-    memcpy(new_data, data, size);
+    {
+      T *it = new_data;
+      std::copy(data, data + size, it);
+    }
 
     uv_mutex_lock(&async_lock);
     T *old_data = asyncdata_;
