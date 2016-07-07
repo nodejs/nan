@@ -1592,7 +1592,7 @@ class Callback {
 // The template default is mainly set to have as little friction to the prior
 // implementations of AsyncProgressWorker. In conjunction with the respective
 // typedef below, it allows for backwards compatibility.
-template<class T = char>
+template<class T>
 /* abstract */ class AsyncProgressWorkerBase : public AsyncWorker {
  public:
   explicit AsyncProgressWorkerBase(Callback *callback_)
@@ -1696,7 +1696,7 @@ template<class T = char>
 
 // This ensures compatibility to the previous un-templated AsyncProgressWorker
 // class definition.
-typedef AsyncProgressWorkerBase<> AsyncProgressWorker;
+typedef AsyncProgressWorkerBase<char> AsyncProgressWorker;
 
 inline void AsyncExecute (uv_work_t* req) {
   AsyncWorker *worker = static_cast<AsyncWorker*>(req->data);
