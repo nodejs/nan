@@ -1589,9 +1589,7 @@ class Callback {
   char *errmsg_;
 };
 
-// The template default is mainly set to have as little friction to the prior
-// implementations of AsyncProgressWorker. In conjunction with the respective
-// typedef below, it allows for backwards compatibility.
+
 template<class T>
 /* abstract */ class AsyncProgressWorkerBase : public AsyncWorker {
  public:
