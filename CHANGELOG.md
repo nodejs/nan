@@ -1,6 +1,12 @@
 # NAN ChangeLog
 
-**Version 2.3.5: current Node 6.2.0, Node 12: 0.12.14, Node 10: 0.10.45, iojs: 3.3.1**
+**Version 2.4.0: current Node 6.3.0, Node 12: 0.12.15, Node 10: 0.10.46, iojs: 3.3.1**
+
+### 2.4.0 Jul 10 2016
+
+  - Feature: Rewrite Callback to add Callback::Reset c4cf44d61f8275cd5f7b0c911d7a806d4004f649
+  - Feature: AsyncProgressWorker: add template types for .send 1242c9a11a7ed481c8f08ec06316385cacc513d0
+  - Bugfix: Add constness to old Persistent comparison operators bd43cb9982c7639605d60fd073efe8cae165d9b2
 
 ### 2.3.5 May 31 2016
 
