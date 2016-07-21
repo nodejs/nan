@@ -56,7 +56,7 @@ For a simpler example, see the **[async pi estimation example](https://github.co
 
 Yet another example is **[nan-example-eol](https://github.com/CodeCharmLtd/nan-example-eol)**. It shows newline detection implemented as a native addon.
 
-Also take a look at our comprehensive **[C++ test suite](https://github.com/nodejs/nan/tree/master/test/cpp)** which has a plehora of code snippets for your pasting pleasure.
+Also take a look at our comprehensive **[C++ test suite](https://github.com/nodejs/nan/tree/master/test/cpp)** which has a plethora of code snippets for your pasting pleasure.
 
 <a name="api"></a>
 ## API
