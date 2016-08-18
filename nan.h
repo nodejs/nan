@@ -2189,6 +2189,42 @@ inline void SetCallAsFunctionHandler(
 
 #include "nan_object_wrap.h"  // NOLINT(build/include)
 
+//=== HiddenValue/Private ======================================================
+
+v8::Local<v8::Value> GetPrivate(
+    v8::Local<v8::Object> object,
+    v8::Local<v8::String> key) {
+#if (NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION)
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Private> privateKey = v8::Private::ForApi(isolate, key);
+  v8::Local<v8::Value> value;
+  v8::Maybe<bool> result = object->HasPrivate(context, privateKey);
+  if (!(result.IsJust() && result.FromJust()))
+    return v8::Local<v8::Value>();
+  if (object->GetPrivate(context, privateKey).ToLocal(&value))
+    return value;
+  return v8::Local<v8::Value>();
+#else
+  return object->GetHiddenValue(key);
+#endif
+}
+
+void SetPrivate(
+    v8::Local<v8::Object> object,
+    v8::Local<v8::String> key,
+    v8::Local<v8::Value> value) {
+#if (NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION)
+  if (value.IsEmpty()) return;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Private> privateKey = v8::Private::ForApi(isolate, key);
+  object->SetPrivate(context, privateKey, value);
+#else
+  object->SetHiddenValue(key, value);
+#endif
+}
+
 //=== Export ==================================================================
 
 inline
