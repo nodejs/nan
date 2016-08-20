@@ -2191,7 +2191,7 @@ inline void SetCallAsFunctionHandler(
 
 //=== HiddenValue/Private ======================================================
 
-v8::Local<v8::Value> GetPrivate(
+inline v8::Local<v8::Value> GetPrivate(
     v8::Local<v8::Object> object,
     v8::Local<v8::String> key) {
 #if (NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION)
@@ -2210,7 +2210,7 @@ v8::Local<v8::Value> GetPrivate(
 #endif
 }
 
-void SetPrivate(
+inline void SetPrivate(
     v8::Local<v8::Object> object,
     v8::Local<v8::String> key,
     v8::Local<v8::Value> value) {
