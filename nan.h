@@ -2197,12 +2197,12 @@ inline v8::Local<v8::Value> GetPrivate(
 #if (NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Private> privateKey = v8::Private::ForApi(isolate, key);
+  v8::Local<v8::Private> private_key = v8::Private::ForApi(isolate, key);
   v8::Local<v8::Value> value;
-  v8::Maybe<bool> result = object->HasPrivate(context, privateKey);
-  if (!(result.IsJust() && result.FromJust()))
+  v8::Maybe<bool> result = object->HasPrivate(context, private_key);
+  if (!result.FromMaybe(false))
     return v8::Local<v8::Value>();
-  if (object->GetPrivate(context, privateKey).ToLocal(&value))
+  if (object->GetPrivate(context, private_key).ToLocal(&value))
     return value;
   return v8::Local<v8::Value>();
 #else
@@ -2218,8 +2218,8 @@ inline void SetPrivate(
   if (value.IsEmpty()) return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  v8::Local<v8::Private> privateKey = v8::Private::ForApi(isolate, key);
-  object->SetPrivate(context, privateKey, value);
+  v8::Local<v8::Private> private_key = v8::Private::ForApi(isolate, key);
+  object->SetPrivate(context, private_key, value);
 #else
   object->SetHiddenValue(key, value);
 #endif
