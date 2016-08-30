@@ -1888,11 +1888,12 @@ inline void SetMethod(
 
 inline void SetPrototypeMethod(
     v8::Local<v8::FunctionTemplate> recv
-  , const char* name, FunctionCallback callback) {
+  , const char* name, FunctionCallback callback
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
   HandleScope scope;
   v8::Local<v8::FunctionTemplate> t = New<v8::FunctionTemplate>(
       callback
-    , v8::Local<v8::Value>()
+    , data
     , New<v8::Signature>(recv));
   v8::Local<v8::String> fn_name = New(name).ToLocalChecked();
   recv->PrototypeTemplate()->Set(fn_name, t);
