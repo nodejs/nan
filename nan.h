@@ -2194,7 +2194,7 @@ inline void SetCallAsFunctionHandler(
 inline v8::Local<v8::Value> GetPrivate(
     v8::Local<v8::Object> object,
     v8::Local<v8::String> key) {
-#if (NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION)
+#if (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Private> private_key = v8::Private::ForApi(isolate, key);
@@ -2214,7 +2214,7 @@ inline void SetPrivate(
     v8::Local<v8::Object> object,
     v8::Local<v8::String> key,
     v8::Local<v8::Value> value) {
-#if (NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION)
+#if (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
   if (value.IsEmpty()) return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
