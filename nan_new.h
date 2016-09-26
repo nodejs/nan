@@ -51,6 +51,38 @@ struct Factory<v8::Array> : FactoryBase<v8::Array> {
   static inline return_t New(int length);
 };
 
+template <typename T> struct TypedArrayFactory;
+template<> struct TypedArrayFactory<v8::Float32Array> { typedef float value_type; };
+template<> struct TypedArrayFactory<v8::Float64Array> { typedef double value_type; };
+template<> struct TypedArrayFactory<v8::Int8Array> { typedef int8_t value_type; };
+template<> struct TypedArrayFactory<v8::Uint8Array> { typedef uint8_t value_type; };
+template<> struct TypedArrayFactory<v8::Uint8ClampedArray> { typedef uint8_t value_type; };
+template<> struct TypedArrayFactory<v8::Int16Array> { typedef int16_t value_type; };
+template<> struct TypedArrayFactory<v8::Uint16Array> { typedef uint16_t value_type; };
+template<> struct TypedArrayFactory<v8::Int32Array> { typedef int32_t value_type; };
+template<> struct TypedArrayFactory<v8::Uint32Array> { typedef uint32_t value_type; };
+
+#define TYPED_ARRAY_DECL(T)                                                   \
+  template <>                                                                 \
+  struct Factory<T> : TypedArrayFactory<T>, FactoryBase<T> {                  \
+    static inline return_t New(size_t length);                                \
+    static inline return_t New(v8::Local<v8::ArrayBuffer> buffer,             \
+                               size_t offset,                                 \
+                               size_t len);                                   \
+  };
+
+TYPED_ARRAY_DECL(v8::Float32Array)
+TYPED_ARRAY_DECL(v8::Float64Array)
+TYPED_ARRAY_DECL(v8::Int8Array)
+TYPED_ARRAY_DECL(v8::Uint8Array)
+TYPED_ARRAY_DECL(v8::Uint8ClampedArray)
+TYPED_ARRAY_DECL(v8::Int16Array)
+TYPED_ARRAY_DECL(v8::Uint16Array)
+TYPED_ARRAY_DECL(v8::Int32Array)
+TYPED_ARRAY_DECL(v8::Uint32Array)
+
+#undef TYPED_ARRAY_DECL
+
 template <>
 struct Factory<v8::Boolean> : FactoryBase<v8::Boolean> {
   static inline return_t New(bool value);

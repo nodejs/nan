@@ -26,6 +26,36 @@ Factory<v8::Array>::New(int length) {
   return v8::Array::New(v8::Isolate::GetCurrent(), length);
 }
 
+//=== TypedArrays ==============================================================
+
+#define TYPED_ARRAY_DECL(T)                                                   \
+  Factory<T>::return_t                                                        \
+  Factory<T>::New(size_t len) {                                               \
+    size_t byteLength = len * sizeof(TypedArrayFactory<T>::value_type);       \
+    v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(                 \
+      v8::Isolate::GetCurrent(), byteLength);                                 \
+    return T::New(buffer, 0, len);                                            \
+  }                                                                           \
+                                                                              \
+  Factory<T>::return_t                                                        \
+  Factory<T>::New(v8::Local<v8::ArrayBuffer> buffer,                          \
+                  size_t offset,                                              \
+                  size_t len) {                                               \
+    return T::New(buffer, offset, len);                                       \
+  }
+
+TYPED_ARRAY_DECL(v8::Float32Array)
+TYPED_ARRAY_DECL(v8::Float64Array)
+TYPED_ARRAY_DECL(v8::Int8Array)
+TYPED_ARRAY_DECL(v8::Uint8Array)
+TYPED_ARRAY_DECL(v8::Uint8ClampedArray)
+TYPED_ARRAY_DECL(v8::Int16Array)
+TYPED_ARRAY_DECL(v8::Uint16Array)
+TYPED_ARRAY_DECL(v8::Int32Array)
+TYPED_ARRAY_DECL(v8::Uint32Array)
+
+#undef TYPED_ARRAY_DECL
+
 //=== Boolean ==================================================================
 
 Factory<v8::Boolean>::return_t

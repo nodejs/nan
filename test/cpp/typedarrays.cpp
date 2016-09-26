@@ -56,11 +56,50 @@ NAN_METHOD(ReadDouble) {
   info.GetReturnValue().Set(result);
 }
 
+#define NEW_TA(ENAME, T)                                                      \
+  NAN_METHOD(ENAME) {                                                         \
+    v8::Local<T> ta = New<T>(4);                                              \
+    info.GetReturnValue().Set(ta);                                            \
+  }                                                                           \
+  NAN_METHOD(ENAME##FromArrayBuffer) {                                        \
+    /* TODO dummy, because this needs BYTES_PER_ELEMENT, again. */            \
+    v8::Local<T> ta = New<T>(4);                                              \
+    info.GetReturnValue().Set(ta);                                            \
+  }
+
+NEW_TA(NewFloat32Array, v8::Float32Array)
+NEW_TA(NewFloat64Array, v8::Float64Array)
+NEW_TA(NewInt8Array, v8::Int8Array)
+NEW_TA(NewUint8Array, v8::Uint8Array)
+NEW_TA(NewUint8ClampedArray, v8::Uint8ClampedArray)
+NEW_TA(NewInt16Array, v8::Int16Array)
+NEW_TA(NewUint16Array, v8::Uint16Array)
+NEW_TA(NewInt32Array, v8::Int32Array)
+NEW_TA(NewUint32Array, v8::Uint32Array)
+
+#undef NEW_TA
+
 NAN_MODULE_INIT(Init) {
   NAN_EXPORT(target, ReadU8);
   NAN_EXPORT(target, ReadI32);
   NAN_EXPORT(target, ReadFloat);
   NAN_EXPORT(target, ReadDouble);
+
+#define TA_EXPORT(x) \
+  NAN_EXPORT(target, x); \
+  NAN_EXPORT(target, x##FromArrayBuffer);
+
+  TA_EXPORT(NewFloat32Array)
+  TA_EXPORT(NewFloat64Array)
+  TA_EXPORT(NewInt8Array)
+  TA_EXPORT(NewUint8Array)
+  TA_EXPORT(NewUint8ClampedArray)
+  TA_EXPORT(NewInt16Array)
+  TA_EXPORT(NewUint16Array)
+  TA_EXPORT(NewInt32Array)
+  TA_EXPORT(NewUint32Array)
+
+#undef TA_EXPORT
 }
 
 NODE_MODULE(typedarrays, Init)
