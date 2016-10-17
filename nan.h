@@ -185,6 +185,17 @@ template<typename T, typename M = NonCopyablePersistentTraits<T> >
 class Persistent;
 #endif  // NODE_MODULE_VERSION
 
+template <typename T> struct TypedArrayCType;
+template<> struct TypedArrayCType<v8::Float32Array> { typedef float type; };
+template<> struct TypedArrayCType<v8::Float64Array> { typedef double type; };
+template<> struct TypedArrayCType<v8::Int8Array> { typedef int8_t type; };
+template<> struct TypedArrayCType<v8::Uint8Array> { typedef uint8_t type; };
+template<> struct TypedArrayCType<v8::Uint8ClampedArray> { typedef uint8_t type; };
+template<> struct TypedArrayCType<v8::Int16Array> { typedef int16_t type; };
+template<> struct TypedArrayCType<v8::Uint16Array> { typedef uint16_t type; };
+template<> struct TypedArrayCType<v8::Int32Array> { typedef int32_t type; };
+template<> struct TypedArrayCType<v8::Uint32Array> { typedef uint32_t type; };
+
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 # include "nan_maybe_43_inl.h"  // NOLINT(build/include)

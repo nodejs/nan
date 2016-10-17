@@ -62,8 +62,10 @@ NAN_METHOD(ReadDouble) {
     info.GetReturnValue().Set(ta);                                            \
   }                                                                           \
   NAN_METHOD(ENAME##FromArrayBuffer) {                                        \
-    /* TODO dummy, because this needs BYTES_PER_ELEMENT, again. */            \
-    v8::Local<T> ta = New<T>(4);                                              \
+    size_t byteLength = 4 * sizeof(TypedArrayCType<T>::type);                 \
+    v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(                 \
+      v8::Isolate::GetCurrent(), byteLength);                                 \
+    v8::Local<T> ta = New<T>(buffer, 0, 4);                                   \
     info.GetReturnValue().Set(ta);                                            \
   }
 

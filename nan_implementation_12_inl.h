@@ -31,7 +31,7 @@ Factory<v8::Array>::New(int length) {
 #define TYPED_ARRAY_DECL(T)                                                   \
   Factory<T>::return_t                                                        \
   Factory<T>::New(size_t len) {                                               \
-    size_t byteLength = len * sizeof(TypedArrayFactory<T>::value_type);       \
+    size_t byteLength = len * sizeof(TypedArrayCType<T>::type);       \
     v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(                 \
       v8::Isolate::GetCurrent(), byteLength);                                 \
     return T::New(buffer, 0, len);                                            \
