@@ -28,33 +28,22 @@ Factory<v8::Array>::New(int length) {
 
 //=== TypedArrays ==============================================================
 
-#define TYPED_ARRAY_DECL(T)                                                   \
-  Factory<T>::return_t                                                        \
-  Factory<T>::New(size_t len) {                                               \
-    size_t byteLength = len * sizeof(TypedArrayCType<T>::type);       \
-    v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(                 \
-      v8::Isolate::GetCurrent(), byteLength);                                 \
-    return T::New(buffer, 0, len);                                            \
-  }                                                                           \
-                                                                              \
-  Factory<T>::return_t                                                        \
-  Factory<T>::New(v8::Local<v8::ArrayBuffer> buffer,                          \
-                  size_t offset,                                              \
-                  size_t len) {                                               \
-    return T::New(buffer, offset, len);                                       \
-  }
+template <typename T>
+typename TypedArrayFactory<T>::return_t
+TypedArrayFactory<T>::New(size_t len) {
+  size_t byteLength = len * sizeof(TypedArrayCType<T>::type);
+  v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(
+    v8::Isolate::GetCurrent(), byteLength);
+  return T::New(buffer, 0, len);
+}
 
-TYPED_ARRAY_DECL(v8::Float32Array)
-TYPED_ARRAY_DECL(v8::Float64Array)
-TYPED_ARRAY_DECL(v8::Int8Array)
-TYPED_ARRAY_DECL(v8::Uint8Array)
-TYPED_ARRAY_DECL(v8::Uint8ClampedArray)
-TYPED_ARRAY_DECL(v8::Int16Array)
-TYPED_ARRAY_DECL(v8::Uint16Array)
-TYPED_ARRAY_DECL(v8::Int32Array)
-TYPED_ARRAY_DECL(v8::Uint32Array)
-
-#undef TYPED_ARRAY_DECL
+template <typename T>
+typename TypedArrayFactory<T>::return_t
+TypedArrayFactory<T>::New(v8::Local<v8::ArrayBuffer> buffer,
+                size_t offset,
+                size_t len) {
+  return T::New(buffer, offset, len);
+}
 
 //=== Boolean ==================================================================
 
