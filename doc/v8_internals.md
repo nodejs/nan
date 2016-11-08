@@ -147,7 +147,7 @@ Signature:
 void Nan::LowMemoryNotification() 
 ```
 
-Calls V8's [`IdleNotification()`](https://v8docs.nodesource.com/io.js-3.0/d5/dda/classv8_1_1_isolate.html#a24647f61d6b41f69668094bdcd6ea91f).
+Calls V8's [`LowMemoryNotification()`](https://v8docs.nodesource.com/io.js-3.0/d5/dda/classv8_1_1_isolate.html#a24647f61d6b41f69668094bdcd6ea91f).
 
 <a name="api_nan_context_disposed_notification"></a>
 ### Nan::ContextDisposedNotification()
