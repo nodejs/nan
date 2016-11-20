@@ -196,32 +196,35 @@ class Global : public PersistentBase<T> {
   inline Global() : PersistentBase<T>(0) { }
 
   template <typename S>
-  inline Global(v8::Local<S> that)
+  inline explicit Global(v8::Local<S> that)
       : PersistentBase<T>(v8::Persistent<T>::New(that)) {
     TYPE_CHECK(T, S);
   }
 
   template <typename S>
-  inline Global(const PersistentBase<S> &that)
-    : PersistentBase<T>(that) {
+  inline explicit Global(const PersistentBase<S> &that) :
+      PersistentBase<T>(that) {
     TYPE_CHECK(T, S);
   }
   /**
    * Move constructor.
    */
-  inline Global(RValue rvalue)
+  inline Global(RValue rvalue)  // NOLINT(runtime/explicit)
     : PersistentBase<T>(rvalue.object->persistent) {
-    rvalue.object->Reset();
+    rvalue.object->Empty();
   }
   inline ~Global() { this->Reset(); }
   /**
    * Move via assignment.
    */
   template<typename S>
-  inline Global &operator=(Global<S> rhs) {
+  inline Global &operator=(Global<S> other) {
     TYPE_CHECK(T, S);
-    this->Reset(rhs.persistent);
-    rhs.Reset();
+    if (!this->persistent.IsEmpty()) {
+      this->persistent.Dispose();
+    }
+    this->persistent = other.persistent;
+    other.Empty();
     return *this;
   }
   /**
