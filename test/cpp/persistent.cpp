@@ -12,6 +12,7 @@
 using namespace Nan;  // NOLINT(build/namespaces)
 
 static Persistent<v8::String> persistentTest1;
+static Persistent<v8::String> persistentTest2;
 
 NAN_METHOD(Save1) {
   persistentTest1.Reset(info[0].As<v8::String>());
@@ -47,12 +48,11 @@ NAN_METHOD(CopyablePersistent) {
   info.GetReturnValue().Set(New(p));
 }
 
-template<typename T> Global<T> passer(v8::Local<T> handle) {
-  return Global<T>(handle).Pass();
-}
-
-NAN_METHOD(PassGlobal) {
-  info.GetReturnValue().Set(passer(New(42)));
+NAN_METHOD(EmptyPersistent) {
+  persistentTest2.Reset(New("value").ToLocalChecked());
+  bool b1 = !persistentTest2.IsEmpty();
+  persistentTest2.Empty();  // this will leak, never do it
+  info.GetReturnValue().Set(b1 && persistentTest2.IsEmpty());
 }
 
 NAN_MODULE_INIT(Init) {
@@ -84,8 +84,8 @@ NAN_MODULE_INIT(Init) {
         .ToLocalChecked()
   );
   Set(target
-    , New<v8::String>("passGlobal").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(PassGlobal))
+    , New<v8::String>("emptyPersistent").ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(EmptyPersistent))
         .ToLocalChecked()
   );
 }

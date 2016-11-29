@@ -11,12 +11,28 @@ const test     = require('tap').test
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak' });
 
 test('weak', function (t) {
-  t.plan(3);
+  t.plan(6);
 
   var weak = bindings, count = 0;
   t.type(weak.hustle, 'function');
+  t.type(weak.hustleGlobal, 'function');
 
   weak.hustle(function () {}, function (val) {
+    t.equal(val, 42);
+    count++;
+  });
+
+  // run weak callback, should dispose
+  gc();
+
+  // do not run weak callback
+  gc();
+
+  t.equal(count, 1);
+
+	count = 0;
+
+  weak.hustleGlobal(function () {}, function (val) {
     t.equal(val, 42);
     count++;
   });
