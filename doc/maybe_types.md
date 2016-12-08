@@ -37,6 +37,10 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="#api_nan_get_start_column"><b><code>Nan::GetStartColumn()</code></b></a>
   - <a href="#api_nan_get_end_column"><b><code>Nan::GetEndColumn()</code></b></a>
   - <a href="#api_nan_clone_element_at"><b><code>Nan::CloneElementAt()</code></b></a>
+  - <a href="#api_nan_has_private"><b><code>Nan::HasPrivate()</code></b></a>
+  - <a href="#api_nan_get_private"><b><code>Nan::GetPrivate()</code></b></a>
+  - <a href="#api_nan_set_private"><b><code>Nan::SetPrivate()</code></b></a>
+  - <a href="#api_nan_delete_private"><b><code>Nan::DeletePrivate()</code></b></a>
   - <a href="#api_nan_make_maybe"><b><code>Nan::MakeMaybe()</code></b></a>
 
 <a name="api_nan_maybe_local"></a>
@@ -490,6 +494,50 @@ Signature:
 
 ```c++
 Nan::MaybeLocal<v8::Object> Nan::CloneElementAt(v8::Local<v8::Array> array, uint32_t index);
+```
+
+<a name="api_nan_has_private"></a>
+### Nan::HasPrivate()
+
+A helper method for calling [`v8::Object#HasPrivate()`](https://v8docs.nodesource.com/node-7.2/db/d85/classv8_1_1_object.html#af68a0b98066cfdeb8f943e98a40ba08d) in a way compatible across supported versions of V8.
+
+Signature:
+
+```c++
+Nan::Maybe<bool> Nan::HasPrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key);
+```
+
+<a name="api_nan_get_private"></a>
+### Nan::GetPrivate()
+
+A helper method for calling [`v8::Object#GetPrivate()`](https://v8docs.nodesource.com/node-7.2/db/d85/classv8_1_1_object.html#a169f2da506acbec34deadd9149a1925a) in a way compatible across supported versions of V8.
+
+Signature:
+
+```c++
+Nan::MaybeLocal<v8::Value> Nan::GetPrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key);
+```
+
+<a name="api_nan_set_private"></a>
+### Nan::SetPrivate()
+
+A helper method for calling [`v8::Object#SetPrivate()`](https://v8docs.nodesource.com/node-7.2/db/d85/classv8_1_1_object.html#ace1769b0f3b86bfe9fda1010916360ee) in a way compatible across supported versions of V8.
+
+Signature:
+
+```c++
+Nan::Maybe<bool> Nan::SetPrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key, v8::Local<v8::Value> value);
+```
+
+<a name="api_nan_delete_private"></a>
+### Nan::DeletePrivate()
+
+A helper method for calling [`v8::Object#DeletePrivate()`](https://v8docs.nodesource.com/node-7.2/db/d85/classv8_1_1_object.html#a138bb32a304f3982be02ad499693b8fd) in a way compatible across supported versions of V8.
+
+Signature:
+
+```c++
+Nan::Maybe<bool> Nan::DeletePrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key);
 ```
 
 <a name="api_nan_make_maybe"></a>

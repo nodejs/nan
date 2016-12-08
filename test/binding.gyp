@@ -152,4 +152,8 @@
         "target_name" : "typedarrays"
       , "sources"     : [ "cpp/typedarrays.cpp" ]
     }
+    , {
+        "target_name" : "private"
+      , "sources"     : [ "cpp/private.cpp" ]
+    }
 ]}
