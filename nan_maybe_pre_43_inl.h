@@ -16,9 +16,11 @@ class MaybeLocal {
 
   template<typename S>
 # if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
-  inline MaybeLocal(v8::Local<S> that) : val_(that) {}
+  inline
+  MaybeLocal(v8::Local<S> that) : val_(that) {}  // NOLINT(runtime/explicit)
 # else
-  inline MaybeLocal(v8::Local<S> that) :
+  inline
+  MaybeLocal(v8::Local<S> that) :  // NOLINT(runtime/explicit)
       val_(*reinterpret_cast<v8::Local<T>*>(&that)) {}
 # endif
 

@@ -196,20 +196,20 @@ class Global : public PersistentBase<T> {
   inline Global() : PersistentBase<T>(0) { }
 
   template <typename S>
-  inline Global(v8::Local<S> that)
+  inline Global(v8::Local<S> that)  // NOLINT(runtime/explicit)
       : PersistentBase<T>(v8::Persistent<T>::New(that)) {
     TYPE_CHECK(T, S);
   }
 
   template <typename S>
-  inline Global(const PersistentBase<S> &that)
+  inline Global(const PersistentBase<S> &that)  // NOLINT(runtime/explicit)
     : PersistentBase<T>(that) {
     TYPE_CHECK(T, S);
   }
   /**
    * Move constructor.
    */
-  inline Global(RValue rvalue)
+  inline Global(RValue rvalue)  // NOLINT(runtime/explicit)
     : PersistentBase<T>(rvalue.object->persistent) {
     rvalue.object->Reset();
   }
