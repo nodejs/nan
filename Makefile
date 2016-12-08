@@ -29,6 +29,7 @@ LINT_SOURCES = \
 	nan_object_wrap.h \
 	nan_persistent_12_inl.h \
 	nan_persistent_pre_12_inl.h \
+	nan_private.h \
 	nan_string_bytes.h \
 	nan_weak.h \
 	test/cpp/accessors.cpp \
@@ -59,6 +60,7 @@ LINT_SOURCES = \
 	test/cpp/news.cpp \
 	test/cpp/objectwraphandle.cpp \
 	test/cpp/persistent.cpp \
+	test/cpp/private.cpp \
 	test/cpp/returnemptystring.cpp \
 	test/cpp/returnnull.cpp \
 	test/cpp/returnundefined.cpp \
@@ -99,6 +101,6 @@ $(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12
 		nan_callbacks.h nan_callbacks_12_inl.h nan_callbacks_pre_12_inl.h \
 		nan_converters.h nan_converters_43_inl.h nan_converters_pre_43_inl.h \
 		nan_maybe_43_inl.h nan_maybe_pre_43_inl.h \
-		nan_persistent_12_inl.h nan_persistent_pre_12_inl.h nan_weak.h \
-		nan_string_bytes.h test/binding.gyp $(SOURCES)
+		nan_persistent_12_inl.h nan_persistent_pre_12_inl.h nan_private.h \
+		nan_weak.h nan_string_bytes.h test/binding.gyp $(SOURCES)
 	cd test/ && ../node_modules/.bin/node-gyp rebuild
