@@ -78,8 +78,8 @@ class MyObject : public Nan::ObjectWrap {
     tpl->SetClassName(Nan::New("MyObject").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-    SetPrototypeMethod(tpl, "getHandle", GetHandle);
-    SetPrototypeMethod(tpl, "getValue", GetValue);
+    Nan::SetPrototypeMethod(tpl, "getHandle", GetHandle);
+    Nan::SetPrototypeMethod(tpl, "getValue", GetValue);
 
     constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
     Nan::Set(target, Nan::New("MyObject").ToLocalChecked(),
