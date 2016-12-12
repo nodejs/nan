@@ -78,7 +78,9 @@ class TypedArrayContents {
 
   //Disable heap allocation
   void *operator new(size_t size);
-  void operator delete(void *, size_t);
+  void operator delete(void *, size_t) {
+    abort();
+  }
 
   size_t  length_;
   T*      data_;
