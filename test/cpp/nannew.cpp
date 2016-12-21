@@ -146,9 +146,9 @@ NAN_METHOD(testFunction) {
   Tap t(info[0]);
   t.plan(2);
 
-  t.ok(_( assertType<Function>(New<Function>(testFunction))));
+  t.ok(_( assertType<Function>(New<Function>(testFunction).ToLocalChecked())));
   v8::Local<String> data = New("plonk").ToLocalChecked();
-  t.ok(_( assertType<Function>(New<Function>(testFunction, data))));
+  t.ok(_( assertType<Function>(New<Function>(testFunction, data).ToLocalChecked())));
 
   info.GetReturnValue().SetUndefined();
 }
@@ -416,7 +416,7 @@ NAN_METHOD(testRegression242) {
   // These lines must *compile*. Not much to test at runtime.
   Local<FunctionTemplate> ft = New<FunctionTemplate>(overloaded);
   (void)ft;  // not unused
-  Local<Function> f = New<Function>(overloaded);
+  Local<Function> f = New<Function>(overloaded).ToLocalChecked();
   (void)f;  // not unused
 
   t.plan(1);

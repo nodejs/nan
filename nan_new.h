@@ -81,7 +81,7 @@ struct Factory<v8::External> : FactoryBase<v8::External> {
 };
 
 template <>
-struct Factory<v8::Function> : FactoryBase<v8::Function> {
+struct Factory<v8::Function> : MaybeFactoryBase<v8::Function> {
   static inline
   return_t
   New( FunctionCallback callback

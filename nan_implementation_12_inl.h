@@ -104,9 +104,16 @@ Factory<v8::Function>::New( FunctionCallback callback
     obj->SetInternalField(imp::kDataIndex, val);
   }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
   return scope.Escape(v8::Function::New( isolate
                           , imp::FunctionCallbackWrapper
                           , obj));
+#else
+  return Factory<v8::Function>::return_t(scope.Escape(v8::Function::New( isolate
+                          , imp::FunctionCallbackWrapper
+                          , obj)));
+#endif
 }
 
 //=== Function Template ========================================================
