@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 2.4.0: current Node 6.3.0, Node 12: 0.12.15, Node 10: 0.10.46, iojs: 3.3.1**
+**Version 2.5.0: current Node 7.3.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.5.0 Dec 21 2016
+
+  - Feature: Support Private accessors a86255cb357e8ad8ccbf1f6a4a901c921e39a178
+  - Bugfix: Abort in delete operators that shouldn't be called 0fe38215ff8581703967dfd26c12793feb960018
 
 ### 2.4.0 Jul 10 2016
 
