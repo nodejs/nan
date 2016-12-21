@@ -3,7 +3,7 @@
 `Nan::AsyncWorker` and `Nan::AsyncProgressWorker` are helper classes that make working with asynchronous code easier.
 
  - <a href="#api_nan_async_worker"><b><code>Nan::AsyncWorker</code></b></a>
- - <a href="#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorker</code></b></a>
+ - <a href="#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorkerBase &amp; Nan::AsyncProgressWorker</code></b></a>
  - <a href="#api_nan_async_queue_worker"><b><code>Nan::AsyncQueueWorker</code></b></a>
 
 <a name="api_nan_async_worker"></a>
@@ -58,7 +58,7 @@ class AsyncWorker {
 ```
 
 <a name="api_nan_async_progress_worker"></a>
-### Nan::AsyncProgressWorkerBase & Nan::AsyncProgressWorker
+### Nan::AsyncProgressWorkerBase &amp; Nan::AsyncProgressWorker
 
 `Nan::AsyncProgressWorkerBase` is an _abstract_ class template that extends `Nan::AsyncWorker` and adds additional progress reporting callbacks that can be used during the asynchronous work execution to provide progress data back to JavaScript.
 

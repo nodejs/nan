@@ -63,8 +63,8 @@ Also take a look at our comprehensive **[C++ test suite](https://github.com/node
 
 Additional to the NAN documentation below, please consult:
 
-* [The V8 Getting Started Guide](https://developers.google.com/v8/get_started)
-* [The V8 Embedders Guide](https://developers.google.com/v8/embed)
+* [The V8 Getting Started * Guide](https://github.com/v8/v8/wiki/Getting%20Started%20with%20Embedding)
+* [The V8 Embedders * Guide](https://github.com/v8/v8/wiki/Embedder%27s%20Guide)
 * [V8 API Documentation](http://v8docs.nodesource.com/)
 * [Node Add-on Documentation](https://nodejs.org/api/addons.html)
 
@@ -117,7 +117,7 @@ The creation of `HandleScope` objects is different across the supported versions
  - <a href="doc/scopes.md#api_nan_handle_scope"><b><code>Nan::HandleScope</code></b></a>
  - <a href="doc/scopes.md#api_nan_escapable_handle_scope"><b><code>Nan::EscapableHandleScope</code></b></a>
 
-Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://github.com/v8/v8/wiki/Embedder's%20Guide#handles-and-garbage-collection).
+Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://github.com/v8/v8/wiki/Embedder%27s%20Guide#handles-and-garbage-collection).
 
 ### Persistent references
 
@@ -192,6 +192,10 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="doc/maybe_types.md#api_nan_get_start_column"><b><code>Nan::GetStartColumn()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_get_end_column"><b><code>Nan::GetEndColumn()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_clone_element_at"><b><code>Nan::CloneElementAt()</code></b></a>
+  - <a href="doc/maybe_types.md#api_nan_has_private"><b><code>Nan::HasPrivate()</code></b></a>
+  - <a href="doc/maybe_types.md#api_nan_get_private"><b><code>Nan::GetPrivate()</code></b></a>
+  - <a href="doc/maybe_types.md#api_nan_set_private"><b><code>Nan::SetPrivate()</code></b></a>
+  - <a href="doc/maybe_types.md#api_nan_delete_private"><b><code>Nan::DeletePrivate()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_make_maybe"><b><code>Nan::MakeMaybe()</code></b></a>
 
 ### Script
@@ -244,7 +248,7 @@ NAN's `node::Buffer` helpers exist as the API has changed across supported Node 
 `Nan::AsyncWorker` and `Nan::AsyncProgressWorker` are helper classes that make working with asynchronous code easier.
 
  - <a href="doc/asyncworker.md#api_nan_async_worker"><b><code>Nan::AsyncWorker</code></b></a>
- - <a href="doc/asyncworker.md#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorkerBase & Nan::AsyncProgressWorker</code></b></a>
+ - <a href="doc/asyncworker.md#api_nan_async_progress_worker"><b><code>Nan::AsyncProgressWorkerBase &amp; Nan::AsyncProgressWorker</code></b></a>
  - <a href="doc/asyncworker.md#api_nan_async_queue_worker"><b><code>Nan::AsyncQueueWorker</code></b></a>
 
 ### Strings & Bytes

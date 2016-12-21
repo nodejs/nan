@@ -9,7 +9,7 @@ The creation of `HandleScope` objects is different across the supported versions
  - <a href="#api_nan_handle_scope"><b><code>Nan::HandleScope</code></b></a>
  - <a href="#api_nan_escapable_handle_scope"><b><code>Nan::EscapableHandleScope</code></b></a>
 
-Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://developers.google.com/v8/embed#handles).
+Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://github.com/v8/v8/wiki/Embedder%27s%20Guide#handles-and-garbage-collection).
 
 <a name="api_nan_handle_scope"></a>
 ### Nan::HandleScope
