@@ -30,5 +30,8 @@
     "tap": "~0.7.1",
     "xtend": "~4.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10.29"
+  }
 }
