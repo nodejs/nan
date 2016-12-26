@@ -23,15 +23,16 @@ HasPrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key) {
 
 inline MaybeLocal<v8::Value>
 GetPrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key) {
+  EscapableHandleScope scope;
 #if NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Private> private_key = v8::Private::ForApi(isolate, key);
-  return object->GetPrivate(context, private_key);
+  return scope.Escape(object->GetPrivate(context, private_key).ToLocalChecked());
 #else
   v8::Local<v8::Value> v = object->GetHiddenValue(key);
   v8::Local<v8::Value> def = Undefined();
-  return MaybeLocal<v8::Value>(v.IsEmpty() ? def : v);
+  return scope.Escape(v.IsEmpty() ? def : v);
 #endif
 }
 
