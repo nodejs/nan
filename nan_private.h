@@ -11,6 +11,7 @@
 
 inline Maybe<bool>
 HasPrivate(v8::Local<v8::Object> object, v8::Local<v8::String> key) {
+  HandleScope scope;
 #if NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
@@ -41,6 +42,7 @@ inline Maybe<bool> SetPrivate(
     v8::Local<v8::String> key,
     v8::Local<v8::Value> value) {
 #if NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION
+  HandleScope scope;
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   v8::Local<v8::Private> private_key = v8::Private::ForApi(isolate, key);
