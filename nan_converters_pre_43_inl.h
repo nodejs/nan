@@ -12,7 +12,7 @@
 #define X(TYPE)                                                                \
 imp::ToFactory<v8::TYPE>::return_t                                             \
 imp::ToFactory<v8::TYPE>::convert(v8::Local<v8::Value> val) {                  \
-  return MaybeLocal<v8::TYPE>(val->To ## TYPE());                              \
+  return val->To ## TYPE();                                                    \
 }
 
 X(Boolean)
@@ -28,7 +28,7 @@ X(Int32)
 #define X(TYPE, NAME)                                                          \
 imp::ToFactory<TYPE>::return_t                                                 \
 imp::ToFactory<TYPE>::convert(v8::Local<v8::Value> val) {                      \
-  return Just<TYPE>(val->NAME ##Value());                                      \
+  return Just(val->NAME ## Value());                                           \
 }
 
 X(bool, Boolean)

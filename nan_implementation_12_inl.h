@@ -60,19 +60,15 @@ Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
-  v8::Local<v8::Date> ret;
-  if (v8::Date::New(GetCurrentContext(), value).
-      ToLocal(reinterpret_cast<v8::Local<v8::Value>*>(&ret))) {
-    return v8::MaybeLocal<v8::Date>(ret);
-  } else {
-    return v8::MaybeLocal<v8::Date>(ret);
-  }
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
+  return scope.Escape(v8::Date::New(isolate->GetCurrentContext(), value)
+      .FromMaybe(v8::Local<v8::Value>()).As<v8::Date>());
 }
 #else
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
-  return Factory<v8::Date>::return_t(
-      v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>());
+  return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
 }
 #endif
 
@@ -203,14 +199,18 @@ Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return v8::RegExp::New(GetCurrentContext(), pattern, flags);
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
+  return scope.Escape(
+      v8::RegExp::New(isolate->GetCurrentContext(), pattern, flags)
+          .FromMaybe(v8::Local<v8::RegExp>()));
 }
 #else
 Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return Factory<v8::RegExp>::return_t(v8::RegExp::New(pattern, flags));
+  return v8::RegExp::New(pattern, flags);
 }
 #endif
 
@@ -220,30 +220,36 @@ Factory<v8::RegExp>::New(
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
   v8::ScriptCompiler::Source src(source);
-  return v8::ScriptCompiler::Compile(GetCurrentContext(), &src);
+  return scope.Escape(
+      v8::ScriptCompiler::Compile(isolate->GetCurrentContext(), &src)
+          .FromMaybe(v8::Local<v8::Script>()));
 }
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
   v8::ScriptCompiler::Source src(source, origin);
-  return v8::ScriptCompiler::Compile(GetCurrentContext(), &src);
+  return scope.Escape(
+      v8::ScriptCompiler::Compile(isolate->GetCurrentContext(), &src)
+          .FromMaybe(v8::Local<v8::Script>()));
 }
 #else
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
-  return Factory<v8::Script>::return_t(
-      v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src));
+  return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin) {
   v8::ScriptCompiler::Source src(source, origin);
-  return Factory<v8::Script>::return_t(
-      v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src));
+  return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
 #endif
 
