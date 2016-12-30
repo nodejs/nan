@@ -60,19 +60,15 @@ Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
-  v8::Local<v8::Date> ret;
-  if (v8::Date::New(GetCurrentContext(), value).
-      ToLocal(reinterpret_cast<v8::Local<v8::Value>*>(&ret))) {
-    return v8::MaybeLocal<v8::Date>(ret);
-  } else {
-    return v8::MaybeLocal<v8::Date>(ret);
-  }
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
+  return scope.Escape(v8::Date::New(isolate->GetCurrentContext(), value)
+      .FromMaybe(v8::Local<v8::Value>()).As<v8::Date>());
 }
 #else
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
-  return Factory<v8::Date>::return_t(
-      v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>());
+  return v8::Date::New(v8::Isolate::GetCurrent(), value).As<v8::Date>();
 }
 #endif
 
@@ -203,14 +199,18 @@ Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return v8::RegExp::New(GetCurrentContext(), pattern, flags);
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
+  return scope.Escape(
+      v8::RegExp::New(isolate->GetCurrentContext(), pattern, flags)
+          .FromMaybe(v8::Local<v8::RegExp>()));
 }
 #else
 Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return Factory<v8::RegExp>::return_t(v8::RegExp::New(pattern, flags));
+  return v8::RegExp::New(pattern, flags);
 }
 #endif
 
@@ -220,30 +220,36 @@ Factory<v8::RegExp>::New(
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
   v8::ScriptCompiler::Source src(source);
-  return v8::ScriptCompiler::Compile(GetCurrentContext(), &src);
+  return scope.Escape(
+      v8::ScriptCompiler::Compile(isolate->GetCurrentContext(), &src)
+          .FromMaybe(v8::Local<v8::Script>()));
 }
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin) {
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
   v8::ScriptCompiler::Source src(source, origin);
-  return v8::ScriptCompiler::Compile(GetCurrentContext(), &src);
+  return scope.Escape(
+      v8::ScriptCompiler::Compile(isolate->GetCurrentContext(), &src)
+          .FromMaybe(v8::Local<v8::Script>()));
 }
 #else
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
-  return Factory<v8::Script>::return_t(
-      v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src));
+  return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin) {
   v8::ScriptCompiler::Source src(source, origin);
-  return Factory<v8::Script>::return_t(
-      v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src));
+  return v8::ScriptCompiler::Compile(v8::Isolate::GetCurrent(), &src);
 }
 #endif
 
@@ -258,8 +264,7 @@ Factory<v8::Signature>::New(Factory<v8::Signature>::FTH receiver) {
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New() {
-  return Factory<v8::String>::return_t(
-      v8::String::Empty(v8::Isolate::GetCurrent()));
+  return v8::String::Empty(v8::Isolate::GetCurrent());
 }
 
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
@@ -295,46 +300,33 @@ Factory<v8::String>::New(ExternalOneByteStringResource * value) {
 #else
 Factory<v8::String>::return_t
 Factory<v8::String>::New(const char * value, int length) {
-  return Factory<v8::String>::return_t(
-      v8::String::NewFromUtf8(
-          v8::Isolate::GetCurrent()
-        , value
-        , v8::String::kNormalString
-        , length));
+  return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value,
+                                 v8::String::kNormalString, length);
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(
     std::string const& value) /* NOLINT(build/include_what_you_use) */ {
   assert(value.size() <= INT_MAX && "string too long");
-  return Factory<v8::String>::return_t(
-      v8::String::NewFromUtf8(
-          v8::Isolate::GetCurrent()
-        , value.data()
-        , v8::String::kNormalString
-        , static_cast<int>(value.size())));
+  return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), value.data(),
+                                 v8::String::kNormalString,
+                                 static_cast<int>(value.size()));
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(const uint16_t * value, int length) {
-  return Factory<v8::String>::return_t(
-      v8::String::NewFromTwoByte(
-          v8::Isolate::GetCurrent()
-        , value
-        , v8::String::kNormalString
-        , length));
+  return v8::String::NewFromTwoByte(v8::Isolate::GetCurrent(), value,
+                                    v8::String::kNormalString, length);
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
-  return Factory<v8::String>::return_t(
-      v8::String::NewExternal(v8::Isolate::GetCurrent(), value));
+  return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(ExternalOneByteStringResource * value) {
-  return Factory<v8::String>::return_t(
-      v8::String::NewExternal(v8::Isolate::GetCurrent(), value));
+  return v8::String::NewExternal(v8::Isolate::GetCurrent(), value);
 }
 #endif
 
@@ -367,16 +359,14 @@ Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
 Factory<v8::UnboundScript>::return_t
 Factory<v8::UnboundScript>::New(v8::Local<v8::String> source) {
   v8::ScriptCompiler::Source src(source);
-  return Factory<v8::UnboundScript>::return_t(
-      v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src));
+  return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
 }
 
 Factory<v8::UnboundScript>::return_t
 Factory<v8::UnboundScript>::New( v8::Local<v8::String> source
                                , v8::ScriptOrigin const& origin) {
   v8::ScriptCompiler::Source src(source, origin);
-  return Factory<v8::UnboundScript>::return_t(
-      v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src));
+  return v8::ScriptCompiler::CompileUnbound(v8::Isolate::GetCurrent(), &src);
 }
 #endif
 

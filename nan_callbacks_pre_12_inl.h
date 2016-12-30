@@ -45,24 +45,32 @@ class ReturnValue {
 
   // Fast primitive setters
   inline void Set(bool value) {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::Boolean);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::Boolean::New(value));
   }
 
   inline void Set(double i) {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::Number);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::Number::New(i));
   }
 
   inline void Set(int32_t i) {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::Integer);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::Int32::New(i));
   }
 
   inline void Set(uint32_t i) {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::Integer);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::Uint32::NewFromUnsigned(i));
@@ -70,18 +78,24 @@ class ReturnValue {
 
   // Fast JS primitive setters
   inline void SetNull() {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::Primitive);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::Null());
   }
 
   inline void SetUndefined() {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::Primitive);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::Undefined());
   }
 
   inline void SetEmptyString() {
+    v8::HandleScope scope;
+
     TYPE_CHECK(T, v8::String);
     value_->Dispose();
     *value_ = v8::Persistent<T>::New(v8::String::Empty());
