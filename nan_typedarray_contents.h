@@ -14,6 +14,7 @@ class TypedArrayContents {
  public:
   inline explicit TypedArrayContents(v8::Local<v8::Value> from) :
       length_(0), data_(NULL) {
+    HandleScope scope;
 
     size_t length = 0;
     void*  data = NULL;
