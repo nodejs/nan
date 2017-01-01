@@ -57,7 +57,7 @@ Factory<v8::Context>::New( v8::ExtensionConfiguration* extensions
 
 Factory<v8::Date>::return_t
 Factory<v8::Date>::New(double value) {
-  return Factory<v8::Date>::return_t(v8::Date::New(value).As<v8::Date>());
+  return v8::Date::New(value).As<v8::Date>();
 }
 
 //=== External =================================================================
@@ -72,10 +72,11 @@ Factory<v8::External>::New(void * value) {
 Factory<v8::Function>::return_t
 Factory<v8::Function>::New( FunctionCallback callback
                           , v8::Local<v8::Value> data) {
-  return Factory<v8::FunctionTemplate>::New( callback
-                                           , data
-                                           , v8::Local<v8::Signature>()
-                                           )->GetFunction();
+  v8::HandleScope scope;
+
+  return scope.Close(Factory<v8::FunctionTemplate>::New(
+                         callback, data, v8::Local<v8::Signature>())
+                         ->GetFunction());
 }
 
 
@@ -172,20 +173,19 @@ Factory<v8::RegExp>::return_t
 Factory<v8::RegExp>::New(
     v8::Local<v8::String> pattern
   , v8::RegExp::Flags flags) {
-  return Factory<v8::RegExp>::return_t(v8::RegExp::New(pattern, flags));
+  return v8::RegExp::New(pattern, flags);
 }
 
 //=== Script ===================================================================
 
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source) {
-  return Factory<v8::Script>::return_t(v8::Script::New(source));
+  return v8::Script::New(source);
 }
 Factory<v8::Script>::return_t
 Factory<v8::Script>::New( v8::Local<v8::String> source
                         , v8::ScriptOrigin const& origin) {
-  return Factory<v8::Script>::return_t(
-      v8::Script::New(source, const_cast<v8::ScriptOrigin*>(&origin)));
+  return v8::Script::New(source, const_cast<v8::ScriptOrigin*>(&origin));
 }
 
 //=== Signature ================================================================
@@ -199,35 +199,34 @@ Factory<v8::Signature>::New(Factory<v8::Signature>::FTH receiver) {
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New() {
-  return Factory<v8::String>::return_t(v8::String::Empty());
+  return v8::String::Empty();
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(const char * value, int length) {
-  return Factory<v8::String>::return_t(v8::String::New(value, length));
+  return v8::String::New(value, length);
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(
     std::string const& value) /* NOLINT(build/include_what_you_use) */ {
   assert(value.size() <= INT_MAX && "string too long");
-  return Factory<v8::String>::return_t(
-      v8::String::New( value.data(), static_cast<int>(value.size())));
+  return v8::String::New(value.data(), static_cast<int>(value.size()));
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(const uint16_t * value, int length) {
-  return Factory<v8::String>::return_t(v8::String::New(value, length));
+  return v8::String::New(value, length);
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(v8::String::ExternalStringResource * value) {
-  return Factory<v8::String>::return_t(v8::String::NewExternal(value));
+  return v8::String::NewExternal(value);
 }
 
 Factory<v8::String>::return_t
 Factory<v8::String>::New(v8::String::ExternalAsciiStringResource * value) {
-  return Factory<v8::String>::return_t(v8::String::NewExternal(value));
+  return v8::String::NewExternal(value);
 }
 
 //=== String Object ============================================================
