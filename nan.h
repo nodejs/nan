@@ -1136,7 +1136,7 @@ widenString(std::vector<uint16_t> *ws, const uint8_t *s, int l) {
   NewOneByteString(const uint8_t * value, int length = -1) {
     std::vector<uint16_t> wideString;  // NOLINT(build/include_what_you_use)
     imp::widenString(&wideString, value, length);
-    return v8::String::New(&wideString.front(),
+    return v8::String::New(wideString.data(),
                            static_cast<int>(wideString.size()));
   }
 
