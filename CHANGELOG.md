@@ -1,6 +1,12 @@
 # NAN ChangeLog
 
-**Version 2.5.0: current Node 7.3.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.5.1: current Node 7.4.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.5.1 Jan 23 2017
+
+  - Bugfix: Fix disappearing handle for private value 6a80995694f162ef63dbc9948fbefd45d4485aa0
+  - Bugfix: Add missing scopes a93b8bae6bc7d32a170db6e89228b7f60ee57112
+  - Bugfix: Use string::data instead of string::front in NewOneByteString d5f920371e67e1f3b268295daee6e83af86b6e50
 
 ### 2.5.0 Dec 21 2016
 
