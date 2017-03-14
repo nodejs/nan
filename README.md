@@ -206,6 +206,15 @@ NAN provides a `v8::Script` helpers as the API has changed over the supported ve
  - <a href="doc/script.md#api_nan_run_script"><b><code>Nan::RunScript()</code></b></a>
 
 
+### JSON
+
+The _JSON_ object provides the c++ versions of the methods offered by the `JSON` object in javascript. V8 exposes these methods via the `v8::JSON` object.
+
+ - <a href="doc/json.md#api_nan_json_parse"><b><code>Nan::JSON::Parse</code></b></a>
+ - <a href="doc/json.md#api_nan_json_stringify"><b><code>Nan::JSON::Stringify</code></b></a>
+
+Refer to the V8 JSON object in the [V8 documentation](https://v8docs.nodesource.com/node-7.4/da/d6f/classv8_1_1_j_s_o_n.html) for more information about these methods and their arguments.
+
 ### Errors
 
 NAN includes helpers for creating, throwing and catching Errors as much of this functionality varies across the supported versions of V8 and must be abstracted.

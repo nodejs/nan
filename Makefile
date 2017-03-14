@@ -23,6 +23,7 @@ LINT_SOURCES = \
 	nan_converters_pre_43_inl.h \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
+	nan_json.h \
 	nan_maybe_43_inl.h \
 	nan_maybe_pre_43_inl.h \
 	nan_new.h \
@@ -49,6 +50,8 @@ LINT_SOURCES = \
 	test/cpp/morenews.cpp \
 	test/cpp/converters.cpp \
 	test/cpp/isolatedata.cpp \
+	test/cpp/json-parse.cpp \
+	test/cpp/json-stringify.cpp \
 	test/cpp/makecallback.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
@@ -93,14 +96,14 @@ forcetest:
 docs: README.md doc/.build.sh doc/asyncworker.md doc/buffers.md doc/callback.md \
 		doc/converters.md doc/errors.md doc/maybe_types.md doc/methods.md doc/new.md \
 		doc/node_misc.md doc/persistent.md doc/scopes.md doc/script.md doc/string_bytes.md \
-		doc/v8_internals.md doc/v8_misc.md
+		doc/v8_internals.md doc/json.md doc/v8_misc.md
 	doc/.build.sh
 
 
 $(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h \
 		nan_callbacks.h nan_callbacks_12_inl.h nan_callbacks_pre_12_inl.h \
 		nan_converters.h nan_converters_43_inl.h nan_converters_pre_43_inl.h \
-		nan_maybe_43_inl.h nan_maybe_pre_43_inl.h \
+		nan_json.h nan_maybe_43_inl.h nan_maybe_pre_43_inl.h \
 		nan_persistent_12_inl.h nan_persistent_pre_12_inl.h nan_private.h \
 		nan_weak.h nan_string_bytes.h test/binding.gyp $(SOURCES)
 	cd test/ && ../node_modules/.bin/node-gyp rebuild

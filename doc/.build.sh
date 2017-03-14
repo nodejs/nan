@@ -8,6 +8,7 @@ files="              \
   converters.md      \
   maybe_types.md     \
   script.md          \
+  json.md            \
   errors.md          \
   buffers.md         \
   callback.md        \

@@ -156,4 +156,12 @@
         "target_name" : "private"
       , "sources"     : [ "cpp/private.cpp" ]
     }
+    , {
+        "target_name" : "parse"
+      , "sources"     : [ "cpp/json-parse.cpp" ]
+    }
+    , {
+        "target_name" : "stringify"
+      , "sources"     : [ "cpp/json-stringify.cpp" ]
+    }
 ]}

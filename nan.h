@@ -2310,6 +2310,10 @@ MakeMaybe(MaybeMaybe<T> v) {
 
 #include "nan_typedarray_contents.h"  // NOLINT(build/include)
 
+//=== JSON =====================================================================
+
+#include "nan_json.h"  // NOLINT(build/include)
+
 }  // end of namespace Nan
 
 #endif  // NAN_H_
