@@ -10,7 +10,9 @@
 
 NAN_METHOD(Parse) {
   info.GetReturnValue().Set(
-    Nan::JSON::Parse(info[0]->ToString()).ToLocalChecked()
+    Nan::JSON::Parse(
+      Nan::To<v8::String>(info[0]).ToLocalChecked()
+    ).ToLocalChecked()
   );
 }
 
