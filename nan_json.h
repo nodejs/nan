@@ -27,7 +27,7 @@ class JSON {
   Nan::MaybeLocal<v8::Value> Parse(v8::Local<v8::String> jsonString) {
 #if NAN_JSON_H_NEED_PARSE
     Nan::HandleScope scope;
-    return instance().parse(jsonString);
+    return parse(jsonString);
 #else
 #if (NODE_MAJOR_VERSION >= 7)
     return v8::JSON::Parse(Nan::GetCurrentContext(), jsonString);
@@ -41,7 +41,7 @@ class JSON {
   Nan::MaybeLocal<v8::String> Stringify(v8::Local<v8::Object> jsonObject) {
 #if NAN_JSON_H_NEED_STRINGIFY
     Nan::HandleScope scope;
-    return instance().stringify(jsonObject)->ToString();
+    return stringify(jsonObject)->ToString();
 #else
     return v8::JSON::Stringify(Nan::GetCurrentContext(), jsonObject);
 #endif
@@ -52,7 +52,7 @@ class JSON {
     v8::Local<v8::String> gap) {
 #if NAN_JSON_H_NEED_STRINGIFY
     Nan::HandleScope scope;
-    return instance().stringify(jsonObject, gap)->ToString();
+    return stringify(jsonObject, gap)->ToString();
 #else
     return v8::JSON::Stringify(Nan::GetCurrentContext(), jsonObject, gap);
 #endif
@@ -60,77 +60,54 @@ class JSON {
 
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(JSON)
-#if NAN_JSON_H_NEED_PARSE
-  Nan::Callback m_cb_parse;
-#endif
-#if NAN_JSON_H_NEED_STRINGIFY
-  Nan::Callback m_cb_stringify;
-#endif
+  JSON();
+  ~JSON();
 
-#if (NAN_JSON_H_NEED_PARSE + NAN_JSON_H_NEED_STRINGIFY)
-  static JSON& instance() {
-    static JSON i;
-    return i;
-  }
-#endif
-
-  JSON() {
-#if (NAN_JSON_H_NEED_PARSE + NAN_JSON_H_NEED_STRINGIFY)
+  static v8::Local<v8::Value> Call(const char *method,
+    int argc, v8::Local<v8::Value> *argv) {
     v8::Local<v8::Value> globalJSON =
       Nan::GetCurrentContext()->Global()->Get(
         Nan::New("JSON").ToLocalChecked()
       );
 
-    if (globalJSON->IsObject()) {
-#if NAN_JSON_H_NEED_PARSE
-      v8::Local<v8::Value> parseMethod =
-        globalJSON->ToObject()->Get(Nan::New("parse").ToLocalChecked());
-
-      if (!parseMethod.IsEmpty() && parseMethod->IsFunction()) {
-        m_cb_parse.Reset(v8::Local<v8::Function>::Cast(parseMethod));
-      }
-#endif
-
-#if NAN_JSON_H_NEED_STRINGIFY
-      v8::Local<v8::Value> stringifyMethod =
-        globalJSON->ToObject()->Get(Nan::New("stringify").ToLocalChecked());
-
-      if (!stringifyMethod.IsEmpty() && stringifyMethod->IsFunction()) {
-        m_cb_stringify.Reset(v8::Local<v8::Function>::Cast(stringifyMethod));
-      }
-#endif
+    if (!globalJSON->IsObject()) {
+      return Nan::Undefined();
     }
-#endif
+
+    v8::Local<v8::Object> json = globalJSON->ToObject();
+
+    v8::Local<v8::Value> thisMethod =
+      json->Get(Nan::New(method).ToLocalChecked());
+
+    if (thisMethod.IsEmpty() || !thisMethod->IsFunction()) {
+      return Nan::Undefined();
+    }
+
+    v8::Local<v8::Function> methodFunction =
+      v8::Local<v8::Function>::Cast(thisMethod);
+
+    return methodFunction->Call(json, argc, argv);
   }
 
-  ~JSON() {
 #if NAN_JSON_H_NEED_PARSE
-    m_cb_parse.Reset();
-#endif
-#if NAN_JSON_H_NEED_STRINGIFY
-    m_cb_stringify.Reset();
-#endif
-  }
-
-#if NAN_JSON_H_NEED_PARSE
-  inline v8::Local<v8::Value> parse(v8::Local<v8::Value> arg) {
-    return m_cb_parse.Call(1, &arg);
+  static inline v8::Local<v8::Value> parse(v8::Local<v8::Value> arg) {
+    return Call("parse", 1, &arg);
   }
 #endif
 
 #if NAN_JSON_H_NEED_STRINGIFY
-  inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg) {
-    return m_cb_stringify.Call(1, &arg);
+  static inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg) {
+    return Call("stringify", 1, &arg);
   }
 
-  inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg,
+  static inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg,
     v8::Local<v8::String> gap) {
     v8::Local<v8::Value> argv[] = {
       arg,
       Nan::Null(),
       gap
     };
-    return m_cb_stringify.Call(3, argv);
+    return Call("stringify", 3, argv);
   }
 #endif
 };
