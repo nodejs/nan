@@ -75,7 +75,8 @@ class JSON {
       return Nan::Undefined();
     }
 
-    v8::Local<v8::Object> json = globalJSON->ToObject();
+    v8::Local<v8::Object> json =
+      Nan::To<v8::Object>(globalJSON).ToLocalChecked();
 
     v8::Local<v8::Value> thisMethod =
       Nan::Get(json, Nan::New(method).ToLocalChecked()).ToLocalChecked();
