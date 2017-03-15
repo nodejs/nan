@@ -25,11 +25,12 @@ class JSON {
  public:
   static inline
   Nan::MaybeLocal<v8::Value> Parse(v8::Local<v8::String> jsonString) {
-    Nan::HandleScope scope;
 #if NAN_JSON_H_NEED_PARSE
+    Nan::HandleScope scope;
     return parse(jsonString);
 #else
 #if (NODE_MAJOR_VERSION >= 7)
+    Nan::HandleScope scope;
     return v8::JSON::Parse(Nan::GetCurrentContext(), jsonString);
 #else
     return v8::JSON::Parse(jsonString);
