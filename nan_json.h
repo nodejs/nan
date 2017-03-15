@@ -66,9 +66,10 @@ class JSON {
   static v8::Local<v8::Value> Call(const char *method,
     int argc, v8::Local<v8::Value> *argv) {
     v8::Local<v8::Value> globalJSON =
-      Nan::GetCurrentContext()->Global()->Get(
+      Nan::Get(
+        Nan::GetCurrentContext()->Global(),
         Nan::New("JSON").ToLocalChecked()
-      );
+      ).ToLocalChecked();
 
     if (!globalJSON->IsObject()) {
       return Nan::Undefined();
@@ -77,7 +78,7 @@ class JSON {
     v8::Local<v8::Object> json = globalJSON->ToObject();
 
     v8::Local<v8::Value> thisMethod =
-      json->Get(Nan::New(method).ToLocalChecked());
+      Nan::Get(json, Nan::New(method).ToLocalChecked()).ToLocalChecked();
 
     if (thisMethod.IsEmpty() || !thisMethod->IsFunction()) {
       return Nan::Undefined();
