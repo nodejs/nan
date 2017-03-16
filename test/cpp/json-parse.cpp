@@ -9,8 +9,9 @@
 #include <nan.h>
 
 NAN_METHOD(Parse) {
+  Nan::JSON NanJSON;
   info.GetReturnValue().Set(
-    (new Nan::JSON)->Parse(
+    NanJSON.Parse(
       Nan::To<v8::String>(info[0]).ToLocalChecked()
     ).ToLocalChecked()
   );
