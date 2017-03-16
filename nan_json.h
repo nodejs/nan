@@ -54,7 +54,7 @@ class JSON {
               parse_cb_.Reset(v8::Local<v8::Function>::Cast(parseMethod));
             }
           }
-#endif
+#endif  // NAN_JSON_H_NEED_PARSE
 
 #if NAN_JSON_H_NEED_STRINGIFY
           Nan::MaybeLocal<v8::Value> maybeStringifyMethod = Nan::Get(
@@ -71,11 +71,11 @@ class JSON {
               );
             }
           }
-#endif
+#endif  // NAN_JSON_H_NEED_STRINGIFY
         }
       }
     }
-#endif
+#endif  // NAN_JSON_H_NEED_PARSE + NAN_JSON_H_NEED_STRINGIFY
   }
 
   inline
@@ -92,8 +92,8 @@ class JSON {
     return scope.Escape(result.ToLocalChecked());
 #else
     return scope.Escape(v8::JSON::Parse(json_string));
-#endif
-#endif
+#endif  // NODE_MAJOR_VERSION >= 7
+#endif  // NAN_JSON_H_NEED_PARSE
   }
 
   inline
@@ -104,7 +104,7 @@ class JSON {
       Nan::To<v8::String>(stringify(json_object));
 #else
       v8::JSON::Stringify(Nan::GetCurrentContext(), json_object);
-#endif
+#endif  // NAN_JSON_H_NEED_STRINGIFY
     if (result.IsEmpty()) return v8::Local<v8::String>();
     return scope.Escape(result.ToLocalChecked());
   }
@@ -118,7 +118,7 @@ class JSON {
       Nan::To<v8::String>(stringify(json_object, gap));
 #else
       v8::JSON::Stringify(Nan::GetCurrentContext(), json_object, gap);
-#endif
+#endif  // NAN_JSON_H_NEED_STRINGIFY
     if (result.IsEmpty()) return v8::Local<v8::String>();
     return scope.Escape(result.ToLocalChecked());
   }
@@ -127,17 +127,17 @@ class JSON {
   NAN_DISALLOW_ASSIGN_COPY_MOVE(JSON)
 #if NAN_JSON_H_NEED_PARSE
   Nan::Callback parse_cb_;
-#endif
+#endif  // NAN_JSON_H_NEED_PARSE
 #if NAN_JSON_H_NEED_STRINGIFY
   Nan::Callback stringify_cb_;
-#endif
+#endif  // NAN_JSON_H_NEED_STRINGIFY
 
 #if NAN_JSON_H_NEED_PARSE
   inline v8::Local<v8::Value> parse(v8::Local<v8::Value> arg) {
     if (parse_cb_.IsEmpty()) return Nan::Undefined();
     return parse_cb_.Call(1, &arg);
   }
-#endif
+#endif  // NAN_JSON_H_NEED_PARSE
 
 #if NAN_JSON_H_NEED_STRINGIFY
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg) {
@@ -156,7 +156,7 @@ class JSON {
     };
     return stringify_cb_.Call(3, argv);
   }
-#endif
+#endif  // NAN_JSON_H_NEED_STRINGIFY
 };
 
-#endif /* NAN_JSON_H_ */
+#endif  // NAN_JSON_H_
