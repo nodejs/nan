@@ -66,7 +66,7 @@ class JSON {
 
   static v8::Local<v8::Value> Call(const char *method,
     int argc, v8::Local<v8::Value> *argv) {
-    v8::MaybeLocal<v8::Value> maybeGlobalJSON =
+    Nan::MaybeLocal<v8::Value> maybeGlobalJSON =
       Nan::Get(
         Nan::GetCurrentContext()->Global(),
         Nan::New("JSON").ToLocalChecked()
@@ -85,7 +85,7 @@ class JSON {
     v8::Local<v8::Object> json =
       Nan::To<v8::Object>(globalJSON).ToLocalChecked();
 
-    v8::MaybeLocal<v8::Value> maybeThisMethod =
+    Nan::MaybeLocal<v8::Value> maybeThisMethod =
       Nan::Get(json, Nan::New(method).ToLocalChecked());
 
     if (maybeThisMethod.IsEmpty()) {
