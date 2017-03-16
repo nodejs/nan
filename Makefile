@@ -44,9 +44,6 @@ LINT_SOURCES = \
 	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
 	test/cpp/indexedinterceptors.cpp \
-	test/cpp/isolatedata.cpp \
-	test/cpp/makecallback.cpp \
-	test/cpp/morenews.cpp \
 	test/cpp/converters.cpp \
 	test/cpp/isolatedata.cpp \
 	test/cpp/makecallback.cpp \
