@@ -78,15 +78,6 @@ class JSON {
 #endif
   }
 
-  ~JSON() {
-#if NAN_JSON_H_NEED_PARSE
-    parse_cb_.Reset();
-#endif
-#if NAN_JSON_H_NEED_STRINGIFY
-    stringify_cb_.Reset();
-#endif
-  }
-
   inline
   Nan::MaybeLocal<v8::Value> Parse(v8::Local<v8::String> json_string) {
     Nan::EscapableHandleScope scope;
