@@ -88,45 +88,45 @@ class JSON {
   }
 
   inline
-  Nan::MaybeLocal<v8::Value> Parse(v8::Local<v8::String> jsonString) {
+  Nan::MaybeLocal<v8::Value> Parse(v8::Local<v8::String> json_string) {
     Nan::EscapableHandleScope scope;
 #if NAN_JSON_H_NEED_PARSE
-    return scope.Escape(parse(jsonString));
+    return scope.Escape(parse(json_string));
 #else
 #if (NODE_MAJOR_VERSION >= 7)
     Nan::MaybeLocal<v8::Value> result =
-      v8::JSON::Parse(Nan::GetCurrentContext(), jsonString);
+      v8::JSON::Parse(Nan::GetCurrentContext(), json_string);
 
     if (result.IsEmpty()) return v8::Local<v8::Value>();
     return scope.Escape(result.ToLocalChecked());
 #else
-    return scope.Escape(v8::JSON::Parse(jsonString));
+    return scope.Escape(v8::JSON::Parse(json_string));
 #endif
 #endif
   }
 
   inline
-  Nan::MaybeLocal<v8::String> Stringify(v8::Local<v8::Object> jsonObject) {
+  Nan::MaybeLocal<v8::String> Stringify(v8::Local<v8::Object> json_object) {
     Nan::EscapableHandleScope scope;
     Nan::MaybeLocal<v8::String> result =
 #if NAN_JSON_H_NEED_STRINGIFY
-      Nan::To<v8::String>(stringify(jsonObject));
+      Nan::To<v8::String>(stringify(json_object));
 #else
-      v8::JSON::Stringify(Nan::GetCurrentContext(), jsonObject);
+      v8::JSON::Stringify(Nan::GetCurrentContext(), json_object);
 #endif
     if (result.IsEmpty()) return v8::Local<v8::String>();
     return scope.Escape(result.ToLocalChecked());
   }
 
   inline
-  Nan::MaybeLocal<v8::String> Stringify(v8::Local<v8::Object> jsonObject,
+  Nan::MaybeLocal<v8::String> Stringify(v8::Local<v8::Object> json_object,
     v8::Local<v8::String> gap) {
     Nan::EscapableHandleScope scope;
     Nan::MaybeLocal<v8::String> result =
 #if NAN_JSON_H_NEED_STRINGIFY
-      Nan::To<v8::String>(stringify(jsonObject, gap));
+      Nan::To<v8::String>(stringify(json_object, gap));
 #else
-      v8::JSON::Stringify(Nan::GetCurrentContext(), jsonObject, gap);
+      v8::JSON::Stringify(Nan::GetCurrentContext(), json_object, gap);
 #endif
     if (result.IsEmpty()) return v8::Local<v8::String>();
     return scope.Escape(result.ToLocalChecked());
