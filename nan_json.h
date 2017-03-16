@@ -143,17 +143,21 @@ class JSON {
 
 #if NAN_JSON_H_NEED_PARSE
   inline v8::Local<v8::Value> parse(v8::Local<v8::Value> arg) {
+    if (m_cb_parse.IsEmpty()) return Nan::Undefined();
     return m_cb_parse.Call(1, &arg);
   }
 #endif
 
 #if NAN_JSON_H_NEED_STRINGIFY
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg) {
+    if (m_cb_stringify.IsEmpty()) return Nan::Undefined();
     return m_cb_stringify.Call(1, &arg);
   }
 
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg,
     v8::Local<v8::String> gap) {
+    if (m_cb_stringify.IsEmpty()) return Nan::Undefined();
+
     v8::Local<v8::Value> argv[] = {
       arg,
       Nan::Null(),
