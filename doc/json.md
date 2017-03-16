@@ -19,14 +19,15 @@ Definition:
 Nan::MaybeLocal<v8::Value> Nan::JSON::Parse(v8::Local<v8::String> jsonString);
 ```
 
-Use `JSON::Parse(json_string)` to parse a `v8::String` into a `v8::Value`.
+Use `JSON.Parse(json_string)` to parse a `v8::String` into a `v8::Value`.
 
 Example:
 
 ```c++
 v8::Local<v8::String> json_string = Nan::New("{ \"JSON\": \"object\" }").ToLocalChecked();
 
-v8::Local<v8::Value> val = Nan::JSON::Parse(json_string).ToLocalChecked();
+Nan::JSON NanJSON;
+v8::Local<v8::Value> val = NanJSON.Parse(json_string).ToLocalChecked();
 ```
 
 <a name="api_nan_json_stringify"></a>
@@ -41,7 +42,7 @@ Definition:
 Nan::MaybeLocal<v8::String> Nan::JSON::Stringify(v8::Local<v8::Object> jsonObject, v8::Local<v8::String> gap = v8::Local<v8::String>());
 ```
 
-Use `JSON::Stringify(value)` to convert a `v8::Object` into a `v8::String`.
+Use `JSON.Stringify(value)` to convert a `v8::Object` into a `v8::String`.
 
 Example:
 
@@ -49,6 +50,7 @@ Example:
 // using `v8::Local<v8::Value> val` from the `JSON::Parse` example
 v8::Local<v8::Object> obj = Nan::To<v8::Object>(val).ToLocalChecked();
 
-v8::Local<v8::String> stringified = Nan::JSON::Stringify(obj).ToLocalChecked();
+Nan::JSON NanJSON;
+v8::Local<v8::String> stringified = NanJSON.Stringify(obj).ToLocalChecked();
 ```
 
