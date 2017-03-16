@@ -51,7 +51,7 @@ class JSON {
               maybeParseMethod.ToLocalChecked();
 
             if (parseMethod->IsFunction()) {
-              m_cb_parse.Reset(v8::Local<v8::Function>::Cast(parseMethod));
+              parse_cb_.Reset(v8::Local<v8::Function>::Cast(parseMethod));
             }
           }
 #endif
@@ -66,7 +66,7 @@ class JSON {
               maybeStringifyMethod.ToLocalChecked();
 
             if (stringifyMethod->IsFunction()) {
-              m_cb_stringify.Reset(
+              stringify_cb_.Reset(
                 v8::Local<v8::Function>::Cast(stringifyMethod)
               );
             }
@@ -80,10 +80,10 @@ class JSON {
 
   ~JSON() {
 #if NAN_JSON_H_NEED_PARSE
-    m_cb_parse.Reset();
+    parse_cb_.Reset();
 #endif
 #if NAN_JSON_H_NEED_STRINGIFY
-    m_cb_stringify.Reset();
+    stringify_cb_.Reset();
 #endif
   }
 
@@ -135,35 +135,35 @@ class JSON {
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(JSON)
 #if NAN_JSON_H_NEED_PARSE
-  Nan::Callback m_cb_parse;
+  Nan::Callback parse_cb_;
 #endif
 #if NAN_JSON_H_NEED_STRINGIFY
-  Nan::Callback m_cb_stringify;
+  Nan::Callback stringify_cb_;
 #endif
 
 #if NAN_JSON_H_NEED_PARSE
   inline v8::Local<v8::Value> parse(v8::Local<v8::Value> arg) {
-    if (m_cb_parse.IsEmpty()) return Nan::Undefined();
-    return m_cb_parse.Call(1, &arg);
+    if (parse_cb_.IsEmpty()) return Nan::Undefined();
+    return parse_cb_.Call(1, &arg);
   }
 #endif
 
 #if NAN_JSON_H_NEED_STRINGIFY
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg) {
-    if (m_cb_stringify.IsEmpty()) return Nan::Undefined();
-    return m_cb_stringify.Call(1, &arg);
+    if (stringify_cb_.IsEmpty()) return Nan::Undefined();
+    return stringify_cb_.Call(1, &arg);
   }
 
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg,
     v8::Local<v8::String> gap) {
-    if (m_cb_stringify.IsEmpty()) return Nan::Undefined();
+    if (stringify_cb_.IsEmpty()) return Nan::Undefined();
 
     v8::Local<v8::Value> argv[] = {
       arg,
       Nan::Null(),
       gap
     };
-    return m_cb_stringify.Call(3, argv);
+    return stringify_cb_.Call(3, argv);
   }
 #endif
 };
