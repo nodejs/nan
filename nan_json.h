@@ -51,7 +51,7 @@ class JSON {
               maybeparse_method.ToLocalChecked();
 
             if (parse_method->IsFunction()) {
-              parse_cb_.Reset(v8::Local<v8::Function>::Cast(parse_method));
+              parse_cb_.Reset(parse_method.As<v8::Function>());
             }
           }
 #endif  // NAN_JSON_H_NEED_PARSE
@@ -66,9 +66,7 @@ class JSON {
               maybestringify_method.ToLocalChecked();
 
             if (stringify_method->IsFunction()) {
-              stringify_cb_.Reset(
-                v8::Local<v8::Function>::Cast(stringify_method)
-              );
+              stringify_cb_.Reset(stringify_method.As<v8::Function>());
             }
           }
 #endif  // NAN_JSON_H_NEED_STRINGIFY
