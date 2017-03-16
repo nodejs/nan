@@ -82,7 +82,7 @@ class JSON {
       return Nan::Undefined();
     }
 
-    v8::MaybeLocal<v8::Object> maybeJson =
+    Nan::MaybeLocal<v8::Object> maybeJson =
       Nan::To<v8::Object>(globalJSON);
 
     if (maybeJson.IsEmpty()) {
