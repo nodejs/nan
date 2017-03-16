@@ -9,13 +9,13 @@
 #ifndef NAN_JSON_H_
 #define NAN_JSON_H_
 
-#if ((NODE_MAJOR_VERSION == 0) && (NODE_MINOR_VERSION < 12))
+#if NODE_MAJOR_VERSION == 0 && NODE_MINOR_VERSION < 12
 #define NAN_JSON_H_NEED_PARSE 1
 #else
 #define NAN_JSON_H_NEED_PARSE 0
 #endif
 
-#if (NODE_MAJOR_VERSION >= 7)
+#if NODE_MAJOR_VERSION >= 7
 #define NAN_JSON_H_NEED_STRINGIFY 0
 #else
 #define NAN_JSON_H_NEED_STRINGIFY 1
@@ -24,7 +24,7 @@
 class JSON {
  public:
   JSON() {
-#if (NAN_JSON_H_NEED_PARSE + NAN_JSON_H_NEED_STRINGIFY)
+#if NAN_JSON_H_NEED_PARSE + NAN_JSON_H_NEED_STRINGIFY
     Nan::MaybeLocal<v8::Value> maybe_global_json = Nan::Get(
       Nan::GetCurrentContext()->Global(),
       Nan::New("JSON").ToLocalChecked()
@@ -82,7 +82,7 @@ class JSON {
 #if NAN_JSON_H_NEED_PARSE
     return scope.Escape(parse(json_string));
 #else
-#if (NODE_MAJOR_VERSION >= 7)
+#if NODE_MAJOR_VERSION >= 7
     Nan::MaybeLocal<v8::Value> result =
       v8::JSON::Parse(Nan::GetCurrentContext(), json_string);
 
