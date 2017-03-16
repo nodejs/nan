@@ -27,7 +27,10 @@ Example:
 v8::Local<v8::String> json_string = Nan::New("{ \"JSON\": \"object\" }").ToLocalChecked();
 
 Nan::JSON NanJSON;
-v8::Local<v8::Value> val = NanJSON.Parse(json_string).ToLocalChecked();
+Nan::MaybeLocal<v8::Value> result = NanJSON.Parse(json_string);
+if (!result.IsEmpty()) {
+  v8::Local<v8::Value> val = result.ToLocalChecked();
+}
 ```
 
 <a name="api_nan_json_stringify"></a>
@@ -51,6 +54,9 @@ Example:
 v8::Local<v8::Object> obj = Nan::To<v8::Object>(val).ToLocalChecked();
 
 Nan::JSON NanJSON;
-v8::Local<v8::String> stringified = NanJSON.Stringify(obj).ToLocalChecked();
+Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
+if (!result.IsEmpty()) {
+  v8::Local<v8::String> stringified = result.ToLocalChecked();
+}
 ```
 
