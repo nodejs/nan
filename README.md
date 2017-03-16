@@ -24,9 +24,11 @@ This project also contains some helper utilities that make addon development a b
  * **[Governance & Contributing](#governance)**
 
 <a name="news"></a>
+
 ## News & Updates
 
 <a name="usage"></a>
+
 ## Usage
 
 Simply add **NAN** as a dependency in the *package.json* of your Node addon:
@@ -46,6 +48,7 @@ Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include 
 This works like a `-I<path-to-NAN>` when compiling your addon.
 
 <a name="example"></a>
+
 ## Example
 
 Just getting started with Nan? Take a look at the **[Node Add-on Examples](https://github.com/nodejs/node-addon-examples)**.
@@ -59,6 +62,7 @@ Yet another example is **[nan-example-eol](https://github.com/CodeCharmLtd/nan-e
 Also take a look at our comprehensive **[C++ test suite](https://github.com/nodejs/nan/tree/master/test/cpp)** which has a plethora of code snippets for your pasting pleasure.
 
 <a name="api"></a>
+
 ## API
 
 Additional to the NAN documentation below, please consult:
@@ -308,6 +312,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
 
 
 <a name="tests"></a>
+
 ### Tests
 
 To run the NAN tests do:
@@ -326,6 +331,7 @@ make test
 ```
 
 <a name="governance"></a>
+
 ## Governance & Contributing
 
 NAN is governed by the [io.js](https://iojs.org/) Addon API Working Group
@@ -361,6 +367,7 @@ Modifications of the contents of the NAN repository are made on a collaborative 
 If a change proposal cannot reach a consensus, a WG member can call for a vote amongst the members of the WG. Simple majority wins.
 
 <a id="developers-certificate-of-origin"></a>
+
 ## Developer's Certificate of Origin 1.1
 
 By making a contribution to this project, I certify that:
@@ -388,6 +395,7 @@ By making a contribution to this project, I certify that:
   this project or the open source license(s) involved.
 
 <a name="collaborators"></a>
+
 ### WG Members / Collaborators
 
 <table><tbody>
