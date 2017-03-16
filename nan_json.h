@@ -42,32 +42,32 @@ class JSON {
             maybeObjGlobalJSON.ToLocalChecked();
 
 #if NAN_JSON_H_NEED_PARSE
-          Nan::MaybeLocal<v8::Value> maybeParseMethod = Nan::Get(
+          Nan::MaybeLocal<v8::Value> maybeparse_method = Nan::Get(
             globalJSON, Nan::New("parse").ToLocalChecked()
           );
 
-          if (!maybeParseMethod.IsEmpty()) {
-            v8::Local<v8::Value> parseMethod =
-              maybeParseMethod.ToLocalChecked();
+          if (!maybeparse_method.IsEmpty()) {
+            v8::Local<v8::Value> parse_method =
+              maybeparse_method.ToLocalChecked();
 
-            if (parseMethod->IsFunction()) {
-              parse_cb_.Reset(v8::Local<v8::Function>::Cast(parseMethod));
+            if (parse_method->IsFunction()) {
+              parse_cb_.Reset(v8::Local<v8::Function>::Cast(parse_method));
             }
           }
 #endif  // NAN_JSON_H_NEED_PARSE
 
 #if NAN_JSON_H_NEED_STRINGIFY
-          Nan::MaybeLocal<v8::Value> maybeStringifyMethod = Nan::Get(
+          Nan::MaybeLocal<v8::Value> maybestringify_method = Nan::Get(
             globalJSON, Nan::New("stringify").ToLocalChecked()
           );
 
-          if (!maybeStringifyMethod.IsEmpty()) {
-            v8::Local<v8::Value> stringifyMethod =
-              maybeStringifyMethod.ToLocalChecked();
+          if (!maybestringify_method.IsEmpty()) {
+            v8::Local<v8::Value> stringify_method =
+              maybestringify_method.ToLocalChecked();
 
-            if (stringifyMethod->IsFunction()) {
+            if (stringify_method->IsFunction()) {
               stringify_cb_.Reset(
-                v8::Local<v8::Function>::Cast(stringifyMethod)
+                v8::Local<v8::Function>::Cast(stringify_method)
               );
             }
           }
