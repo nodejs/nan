@@ -19,7 +19,7 @@ Definition:
 Nan::MaybeLocal<v8::Value> Nan::JSON::Parse(v8::Local<v8::String> json_string);
 ```
 
-Use `JSON.Parse(json_string)` to parse a `v8::String` into a `v8::Value`.
+Use `JSON.Parse(json_string)` to parse a string into a `v8::Value`.
 
 Example:
 
@@ -45,7 +45,7 @@ Definition:
 Nan::MaybeLocal<v8::String> Nan::JSON::Stringify(v8::Local<v8::Object> json_object, v8::Local<v8::String> gap = v8::Local<v8::String>());
 ```
 
-Use `JSON.Stringify(value)` to convert a `v8::Object` into a `v8::String`.
+Use `JSON.Stringify(value)` to stringify a `v8::Object`.
 
 Example:
 
