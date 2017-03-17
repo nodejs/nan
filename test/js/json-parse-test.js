@@ -10,8 +10,8 @@ test('parse', function (t) {
     JSON.parse('{ "a": "JSON", "string": "value" }')
   );
   t.deepEqual(
-    bindings.parse('[1, 2, 3]'),
-    JSON.parse('[1, 2, 3]')
+    bindings.parse('[ 1, 2, 3 ]'),
+    JSON.parse('[ 1, 2, 3 ]')
   );
   t.equal(
     bindings.parse('57'),
