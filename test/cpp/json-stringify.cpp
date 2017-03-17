@@ -11,11 +11,11 @@
 
 NAN_METHOD(Stringify) {
   if (0 == info.Length()) {
-    info.GetReturnValue().Set(v8::Local<v8::Value>());
+    info.GetReturnValue().Set(Nan::Undefined());
   } else {
     Nan::MaybeLocal<v8::Object> maybe_obj = Nan::To<v8::Object>(info[0]);
     if (maybe_obj.IsEmpty()) {
-      info.GetReturnValue().Set(v8::Local<v8::Value>());
+      info.GetReturnValue().Set(Nan::Undefined());
     } else {
       Nan::JSON NanJSON;
       v8::Local<v8::Object> obj = maybe_obj.ToLocalChecked();
@@ -32,7 +32,7 @@ NAN_METHOD(Stringify) {
             NanJSON.Stringify(obj, gap);
 
           if (result.IsEmpty()) {
-            info.GetReturnValue().Set(v8::Local<v8::String>());
+            info.GetReturnValue().Set(Nan::Undefined());
           } else {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
@@ -43,7 +43,7 @@ NAN_METHOD(Stringify) {
           );
 
           if (result.IsEmpty()) {
-            info.GetReturnValue().Set(v8::Local<v8::String>());
+            info.GetReturnValue().Set(Nan::Undefined());
           } else {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
@@ -51,7 +51,7 @@ NAN_METHOD(Stringify) {
           Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
 
           if (result.IsEmpty()) {
-            info.GetReturnValue().Set(v8::Local<v8::String>());
+            info.GetReturnValue().Set(Nan::Undefined());
           } else {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
@@ -60,7 +60,7 @@ NAN_METHOD(Stringify) {
         Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
 
         if (result.IsEmpty()) {
-          info.GetReturnValue().Set(v8::Local<v8::String>());
+          info.GetReturnValue().Set(Nan::Undefined());
         } else {
           info.GetReturnValue().Set(result.ToLocalChecked());
         }
