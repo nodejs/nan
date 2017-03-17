@@ -10,11 +10,22 @@
 
 NAN_METHOD(Parse) {
   Nan::JSON NanJSON;
-  info.GetReturnValue().Set(
-    NanJSON.Parse(
-      Nan::To<v8::String>(info[0]).ToLocalChecked()
-    ).ToLocalChecked()
-  );
+
+  Nan::MaybeLocal<v8::String> inp = Nan::To<v8::String>(info[0]);
+
+  if (inp.IsEmpty()) {
+    info.GetReturnValue().Set(v8::Local<v8::Value>());
+  } else {
+    Nan::MaybeLocal<v8::Value> result = NanJSON.Parse(
+      inp.ToLocalChecked()
+    );
+
+    if (result.IsEmpty()) {
+      info.GetReturnValue().Set(v8::Local<v8::Value>());
+    } else {
+      info.GetReturnValue().Set(result.ToLocalChecked());
+    }
+  }
 }
 
 NAN_MODULE_INIT(Init) {
