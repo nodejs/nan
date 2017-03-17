@@ -10,40 +10,44 @@
 #include <string>
 
 NAN_METHOD(Stringify) {
-  Nan::JSON NanJSON;
-
-  if (3 == info.Length()) {
-    if (info[2]->IsNumber()) {
-      int len = info[2]->IntegerValue();
-      len = (len > 10) ? 10 : len;
-      len = (len < 0) ? 0 : len;
-      v8::Local<v8::String> gap =
-        Nan::New<v8::String>(std::string(len, ' ')).ToLocalChecked();
-      info.GetReturnValue().Set(
-        NanJSON.Stringify(
-          Nan::To<v8::Object>(info[0]).ToLocalChecked(), gap
-        ).ToLocalChecked()
-      );
-    } else if (info[2]->IsString()) {
-      info.GetReturnValue().Set(
-        NanJSON.Stringify(
-          Nan::To<v8::Object>(info[0]).ToLocalChecked(),
-          Nan::To<v8::String>(info[2]).ToLocalChecked()
-        ).ToLocalChecked()
-      );
-    } else {
-      info.GetReturnValue().Set(
-        NanJSON.Stringify(
-          Nan::To<v8::Object>(info[0]).ToLocalChecked()
-        ).ToLocalChecked()
-      );
-    }
+  if (0 == info.Length()) {
+    info.GetReturnValue().Set(v8::Local<v8::Value>());
   } else {
-    info.GetReturnValue().Set(
-      NanJSON.Stringify(
-        Nan::To<v8::Object>(info[0]).ToLocalChecked()
-      ).ToLocalChecked()
-    );
+    Nan::MaybeLocal<v8::Object> maybe_obj = Nan::To<v8::Object>(info[0]);
+    if (maybe_obj.IsEmpty()) {
+      info.GetReturnValue().Set(v8::Local<v8::Value>());
+    } else {
+      Nan::JSON NanJSON;
+      v8::Local<v8::Object> obj = maybe_obj.ToLocalChecked();
+
+      if (3 == info.Length()) {
+        if (info[2]->IsNumber()) {
+          int len = info[2]->IntegerValue();
+          len = (len > 10) ? 10 : len;
+          len = (len < 0) ? 0 : len;
+          v8::Local<v8::String> gap =
+            Nan::New<v8::String>(std::string(len, ' ')).ToLocalChecked();
+          info.GetReturnValue().Set(
+            NanJSON.Stringify(obj, gap).ToLocalChecked()
+          );
+        } else if (info[2]->IsString()) {
+          info.GetReturnValue().Set(
+            NanJSON.Stringify(
+              obj,
+              Nan::To<v8::String>(info[2]).ToLocalChecked()
+            ).ToLocalChecked()
+          );
+        } else {
+          info.GetReturnValue().Set(
+            NanJSON.Stringify(obj).ToLocalChecked()
+          );
+        }
+      } else {
+        info.GetReturnValue().Set(
+          NanJSON.Stringify(obj).ToLocalChecked()
+        );
+      }
+    }
   }
 }
 
