@@ -25,16 +25,22 @@ NAN_METHOD(Stringify) {
           int len = info[2]->IntegerValue();
           len = (len > 10) ? 10 : len;
           len = (len < 0) ? 0 : len;
-          v8::Local<v8::String> gap =
-            Nan::New<v8::String>(std::string(len, ' ')).ToLocalChecked();
+          v8::MaybeLocal<v8::String> maybe_gap =
+            Nan::New<v8::String>(std::string(len, ' '));
 
-          Nan::MaybeLocal<v8::String> result =
-            NanJSON.Stringify(obj, gap);
-
-          if (result.IsEmpty()) {
+          if (maybe_gap.IsEmpty()) {
             info.GetReturnValue().Set(Nan::Undefined());
           } else {
-            info.GetReturnValue().Set(result.ToLocalChecked());
+            v8::Local<v8::String> gap = maybe_gap.ToLocalChecked();
+
+            Nan::MaybeLocal<v8::String> result =
+              NanJSON.Stringify(obj, gap);
+
+            if (result.IsEmpty()) {
+              info.GetReturnValue().Set(Nan::Undefined());
+            } else {
+              info.GetReturnValue().Set(result.ToLocalChecked());
+            }
           }
         } else if (info[2]->IsString()) {
           Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(
