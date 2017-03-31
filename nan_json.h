@@ -33,16 +33,13 @@ class JSON {
     );
 
     assert(!maybe_global_json.IsEmpty() && "global JSON is empty");
-
     v8::Local<v8::Value> val_global_json = maybe_global_json.ToLocalChecked();
 
     assert(val_global_json->IsObject() && "global JSON is not an object");
-
     Nan::MaybeLocal<v8::Object> maybe_obj_global_json =
       Nan::To<v8::Object>(val_global_json);
 
     assert(!maybe_obj_global_json.IsEmpty() && "global JSON object is empty");
-
     v8::Local<v8::Object> global_json = maybe_obj_global_json.ToLocalChecked();
 
 #if NAN_JSON_H_NEED_PARSE
