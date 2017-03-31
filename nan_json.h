@@ -130,20 +130,20 @@ class JSON {
 
 #if NAN_JSON_H_NEED_PARSE
   inline v8::Local<v8::Value> parse(v8::Local<v8::Value> arg) {
-    if (parse_cb_.IsEmpty()) return Nan::Undefined();
+    assert(!parse_cb_.IsEmpty() && "parse_cb_ is empty");
     return parse_cb_.Call(1, &arg);
   }
 #endif  // NAN_JSON_H_NEED_PARSE
 
 #if NAN_JSON_H_NEED_STRINGIFY
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg) {
-    if (stringify_cb_.IsEmpty()) return Nan::Undefined();
+    assert(!stringify_cb_.IsEmpty() && "stringify_cb_ is empty");
     return stringify_cb_.Call(1, &arg);
   }
 
   inline v8::Local<v8::Value> stringify(v8::Local<v8::Value> arg,
     v8::Local<v8::String> gap) {
-    if (stringify_cb_.IsEmpty()) return Nan::Undefined();
+    assert(!stringify_cb_.IsEmpty() && "stringify_cb_ is empty");
 
     v8::Local<v8::Value> argv[] = {
       arg,
