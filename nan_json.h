@@ -25,6 +25,8 @@ class JSON {
  public:
   JSON() {
 #if NAN_JSON_H_NEED_PARSE + NAN_JSON_H_NEED_STRINGIFY
+    Nan::HandleScope scope;
+
     Nan::MaybeLocal<v8::Value> maybe_global_json = Nan::Get(
       Nan::GetCurrentContext()->Global(),
       Nan::New("JSON").ToLocalChecked()
