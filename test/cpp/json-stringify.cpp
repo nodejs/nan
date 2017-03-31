@@ -11,11 +11,11 @@
 
 NAN_METHOD(Stringify) {
   if (0 == info.Length()) {
-    info.GetReturnValue().Set(Nan::Undefined());
+    info.GetReturnValue().SetUndefined();
   } else {
     Nan::MaybeLocal<v8::Object> maybe_obj = Nan::To<v8::Object>(info[0]);
     if (maybe_obj.IsEmpty()) {
-      info.GetReturnValue().Set(Nan::Undefined());
+      info.GetReturnValue().SetUndefined();
     } else {
       Nan::JSON NanJSON;
       v8::Local<v8::Object> obj = maybe_obj.ToLocalChecked();
@@ -29,7 +29,7 @@ NAN_METHOD(Stringify) {
             Nan::New<v8::String>(std::string(len, ' '));
 
           if (maybe_gap.IsEmpty()) {
-            info.GetReturnValue().Set(Nan::Undefined());
+            info.GetReturnValue().SetUndefined();
           } else {
             v8::Local<v8::String> gap = maybe_gap.ToLocalChecked();
 
@@ -37,7 +37,7 @@ NAN_METHOD(Stringify) {
               NanJSON.Stringify(obj, gap);
 
             if (result.IsEmpty()) {
-              info.GetReturnValue().Set(Nan::Undefined());
+              info.GetReturnValue().SetUndefined();
             } else {
               info.GetReturnValue().Set(result.ToLocalChecked());
             }
@@ -49,7 +49,7 @@ NAN_METHOD(Stringify) {
           );
 
           if (result.IsEmpty()) {
-            info.GetReturnValue().Set(Nan::Undefined());
+            info.GetReturnValue().SetUndefined();
           } else {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
@@ -57,7 +57,7 @@ NAN_METHOD(Stringify) {
           Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
 
           if (result.IsEmpty()) {
-            info.GetReturnValue().Set(Nan::Undefined());
+            info.GetReturnValue().SetUndefined();
           } else {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
@@ -66,7 +66,7 @@ NAN_METHOD(Stringify) {
         Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
 
         if (result.IsEmpty()) {
-          info.GetReturnValue().Set(Nan::Undefined());
+          info.GetReturnValue().SetUndefined();
         } else {
           info.GetReturnValue().Set(result.ToLocalChecked());
         }
