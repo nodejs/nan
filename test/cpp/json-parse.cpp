@@ -13,16 +13,12 @@ NAN_METHOD(Parse) {
 
   Nan::MaybeLocal<v8::String> inp = Nan::To<v8::String>(info[0]);
 
-  if (inp.IsEmpty()) {
-    info.GetReturnValue().SetUndefined();
-  } else {
+  if (!inp.IsEmpty()) {
     Nan::MaybeLocal<v8::Value> result = NanJSON.Parse(
       inp.ToLocalChecked()
     );
 
-    if (result.IsEmpty()) {
-      info.GetReturnValue().SetUndefined();
-    } else {
+    if (!result.IsEmpty()) {
       info.GetReturnValue().Set(result.ToLocalChecked());
     }
   }

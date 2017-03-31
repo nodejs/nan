@@ -10,13 +10,9 @@
 #include <string>
 
 NAN_METHOD(Stringify) {
-  if (0 == info.Length()) {
-    info.GetReturnValue().SetUndefined();
-  } else {
+  if (info.Length() > 0) {
     Nan::MaybeLocal<v8::Object> maybe_obj = Nan::To<v8::Object>(info[0]);
-    if (maybe_obj.IsEmpty()) {
-      info.GetReturnValue().SetUndefined();
-    } else {
+    if (!maybe_obj.IsEmpty()) {
       Nan::JSON NanJSON;
       v8::Local<v8::Object> obj = maybe_obj.ToLocalChecked();
 
@@ -28,17 +24,13 @@ NAN_METHOD(Stringify) {
           Nan::MaybeLocal<v8::String> maybe_gap =
             Nan::New<v8::String>(std::string(len, ' '));
 
-          if (maybe_gap.IsEmpty()) {
-            info.GetReturnValue().SetUndefined();
-          } else {
+          if (!maybe_gap.IsEmpty()) {
             v8::Local<v8::String> gap = maybe_gap.ToLocalChecked();
 
             Nan::MaybeLocal<v8::String> result =
               NanJSON.Stringify(obj, gap);
 
-            if (result.IsEmpty()) {
-              info.GetReturnValue().SetUndefined();
-            } else {
+            if (!result.IsEmpty()) {
               info.GetReturnValue().Set(result.ToLocalChecked());
             }
           }
@@ -48,26 +40,20 @@ NAN_METHOD(Stringify) {
             Nan::To<v8::String>(info[2]).ToLocalChecked()
           );
 
-          if (result.IsEmpty()) {
-            info.GetReturnValue().SetUndefined();
-          } else {
+          if (!result.IsEmpty()) {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
         } else {
           Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
 
-          if (result.IsEmpty()) {
-            info.GetReturnValue().SetUndefined();
-          } else {
+          if (!result.IsEmpty()) {
             info.GetReturnValue().Set(result.ToLocalChecked());
           }
         }
       } else {
         Nan::MaybeLocal<v8::String> result = NanJSON.Stringify(obj);
 
-        if (result.IsEmpty()) {
-          info.GetReturnValue().SetUndefined();
-        } else {
+        if (!result.IsEmpty()) {
           info.GetReturnValue().Set(result.ToLocalChecked());
         }
       }
