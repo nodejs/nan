@@ -19,7 +19,8 @@
     "Nathan Rajlich <nathan@tootallnate.net> (https://github.com/TooTallNate)",
     "Brett Lawson <brett19@gmail.com> (https://github.com/brett19)",
     "Ben Noordhuis <info@bnoordhuis.nl> (https://github.com/bnoordhuis)",
-    "David Siegel <david@artcom.de> (https://github.com/agnat)"
+    "David Siegel <david@artcom.de> (https://github.com/agnat)",
+    "Michael Ira Krufky <mkrufky@gmail.com> (https://github.com/mkrufky)"
   ],
   "devDependencies": {
     "bindings": "~1.2.1",
