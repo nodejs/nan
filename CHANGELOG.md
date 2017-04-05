@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.5.1: current Node 7.4.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.6.0: current Node 7.8.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.6.0 Apr 6 2017
+
+  - Feature: nan: add support for JSON::Parse & Stringify b533226c629cce70e1932a873bb6f849044a56c5
 
 ### 2.5.1 Jan 23 2017
 
