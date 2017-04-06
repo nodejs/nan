@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.6.0: current Node 7.8.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.6.1: current Node 7.8.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.6.0 Apr 6 2017
+
+  - Bugfix: nan_json.h: fix build breakage in Node 6 ac8d47dc3c10bfbf3f15a6b951633120c0ee6d51
 
 ### 2.6.0 Apr 6 2017
 
