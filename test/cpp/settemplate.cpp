@@ -98,7 +98,7 @@ NAN_METHOD(MyObject::New) {
     info.GetReturnValue().Set(info.This());
   } else {
     v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
-    info.GetReturnValue().Set(cons->NewInstance());
+    info.GetReturnValue().Set(Nan::NewInstance(cons).ToLocalChecked());
   }
 }
 

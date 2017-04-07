@@ -59,7 +59,7 @@ v8::Local<v8::Value> IndexedInterceptor::NewInstance () {
   v8::Local<v8::FunctionTemplate> constructorHandle =
       Nan::New(indexedinterceptors_constructor);
   v8::Local<v8::Object> instance =
-    constructorHandle->GetFunction()->NewInstance(0, NULL);
+    Nan::NewInstance(constructorHandle->GetFunction()).ToLocalChecked();
   return scope.Escape(instance);
 }
 
