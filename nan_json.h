@@ -77,15 +77,19 @@ class JSON {
 #if NAN_JSON_H_NEED_PARSE
     return scope.Escape(parse(json_string));
 #else
+    Nan::MaybeLocal<v8::Value> result;
+#if NODE_MODULE_VERSION == NODE_0_12_MODULE_VERSION
+    result = v8::JSON::Parse(json_string);
+#else
 #if NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION
-    Nan::MaybeLocal<v8::Value> result =
-      v8::JSON::Parse(Nan::GetCurrentContext(), json_string);
-
+    v8::Local<v8::Context> context_or_isolate = Nan::GetCurrentContext();
+#else
+    v8::Isolate* context_or_isolate = v8::Isolate::GetCurrent();
+#endif  // NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION
+    result = v8::JSON::Parse(context_or_isolate, json_string);
+#endif  // NODE_MODULE_VERSION == NODE_0_12_MODULE_VERSION
     if (result.IsEmpty()) return v8::Local<v8::Value>();
     return scope.Escape(result.ToLocalChecked());
-#else
-    return scope.Escape(v8::JSON::Parse(json_string));
-#endif  // NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION
 #endif  // NAN_JSON_H_NEED_PARSE
   }
 
