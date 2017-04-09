@@ -1615,7 +1615,7 @@ template<class T>
     uv_async_init(
         uv_default_loop()
       , async
-      , AsyncProgress_
+      , reinterpret_cast<uv_async_cb>(AsyncProgress_)
     );
     async->data = this;
 
