@@ -9,6 +9,7 @@
  *   - Brett Lawson <https://github.com/brett19>
  *   - Ben Noordhuis <https://github.com/bnoordhuis>
  *   - David Siegel <https://github.com/agnat>
+ *   - Michael Ira Krufky <https://github.com/mkrufky>
  *
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  *
