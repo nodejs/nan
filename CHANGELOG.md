@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.6.1: current Node 7.8.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.6.2: current Node 7.9.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.6.2 Apr 12 2017
+
+  - Bugfix: Fix v8::JSON::Parse() deprecation warning. 87f6a3c65815fa062296a994cc863e2fa124867d
 
 ### 2.6.1 Apr 6 2017
 
