@@ -343,13 +343,13 @@ make test
 
 ## Governance & Contributing
 
-NAN is governed by the [io.js](https://iojs.org/) Addon API Working Group
+NAN is governed by the [Node.js Addon API Working Group](https://github.com/nodejs/CTC/blob/master/WORKING_GROUPS.md#addon-api)
 
 ### Addon API Working Group (WG)
 
 The NAN project is jointly governed by a Working Group which is responsible for high-level guidance of the project.
 
-Members of the WG are also known as Collaborators, there is no distinction between the two, unlike other io.js projects.
+Members of the WG are also known as Collaborators, there is no distinction between the two, unlike other Node.js projects.
 
 The WG has final authority over this project including:
 
