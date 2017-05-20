@@ -1283,7 +1283,7 @@ typedef const PropertyCallbackInfo<v8::Value>&
     NAN_PROPERTY_GETTER_ARGS_TYPE;
 typedef void NAN_PROPERTY_GETTER_RETURN_TYPE;
 
-typedef const PropertyCallbackInfo<v8::Value>&
+typedef const PropertyCallbackInfo<void>&
     NAN_PROPERTY_SETTER_ARGS_TYPE;
 typedef void NAN_PROPERTY_SETTER_RETURN_TYPE;
 
