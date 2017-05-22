@@ -38,7 +38,6 @@ class ReturnValue {
     value_.Set(handle);
 #else
     value_.Set(*reinterpret_cast<const v8::Persistent<S>*>(&handle));
-    const_cast<Global<S> &>(handle).Reset();
 #endif
   }
 
