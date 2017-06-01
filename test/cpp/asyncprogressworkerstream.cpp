@@ -40,7 +40,7 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
     for (int i = 0; i < iters; ++i) {
       data.index = i;
       data.data = i * 2;
-      progress.Send(&data, sizeof( data ));
+      progress.Send(&data, 1);
       Sleep(milliseconds);
     }
   }
