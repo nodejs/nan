@@ -37,7 +37,7 @@ In order to expose functionality to JavaScript via a template, you must provide 
 <a name="api_nan_function_callback_info"></a>
 ### Nan::FunctionCallbackInfo
 
-`Nan::FunctionCallbackInfo` should be used in place of [`v8::FunctionCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html), even with older versions of Node where `v8::FunctionCallbackInfo` does not exist.
+`Nan::FunctionCallbackInfo` should be used in place of [`v8::FunctionCallbackInfo`](https://v8docs.nodesource.com/node-8.0/dd/d0d/classv8_1_1_function_callback_info.html), even with older versions of Node where `v8::FunctionCallbackInfo` does not exist.
 
 Definition:
 
@@ -56,12 +56,12 @@ template<typename T> class FunctionCallbackInfo {
 };
 ```
 
-See the [`v8::FunctionCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/dd/d0d/classv8_1_1_function_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from methods.
+See the [`v8::FunctionCallbackInfo`](https://v8docs.nodesource.com/node-8.0/dd/d0d/classv8_1_1_function_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from methods.
 
 <a name="api_nan_property_callback_info"></a>
 ### Nan::PropertyCallbackInfo
 
-`Nan::PropertyCallbackInfo` should be used in place of [`v8::PropertyCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html), even with older versions of Node where `v8::PropertyCallbackInfo` does not exist.
+`Nan::PropertyCallbackInfo` should be used in place of [`v8::PropertyCallbackInfo`](https://v8docs.nodesource.com/node-8.0/d7/dc5/classv8_1_1_property_callback_info.html), even with older versions of Node where `v8::PropertyCallbackInfo` does not exist.
 
 Definition:
 
@@ -76,12 +76,12 @@ template<typename T> class PropertyCallbackInfo : public PropertyCallbackInfoBas
 };
 ```
 
-See the [`v8::PropertyCallbackInfo`](https://v8docs.nodesource.com/io.js-3.0/d7/dc5/classv8_1_1_property_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from property accessor methods.
+See the [`v8::PropertyCallbackInfo`](https://v8docs.nodesource.com/node-8.0/d7/dc5/classv8_1_1_property_callback_info.html) documentation for usage details on these. See [`Nan::ReturnValue`](#api_nan_return_value) for further information on how to set a return value from property accessor methods.
 
 <a name="api_nan_return_value"></a>
 ### Nan::ReturnValue
 
-`Nan::ReturnValue` is used in place of [`v8::ReturnValue`](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) on both [`Nan::FunctionCallbackInfo`](#api_nan_function_callback_info) and [`Nan::PropertyCallbackInfo`](#api_nan_property_callback_info) as the return type of `GetReturnValue()`.
+`Nan::ReturnValue` is used in place of [`v8::ReturnValue`](https://v8docs.nodesource.com/node-8.0/da/da7/classv8_1_1_return_value.html) on both [`Nan::FunctionCallbackInfo`](#api_nan_function_callback_info) and [`Nan::PropertyCallbackInfo`](#api_nan_property_callback_info) as the return type of `GetReturnValue()`.
 
 Example usage:
 
@@ -116,7 +116,7 @@ template<typename T> class ReturnValue {
 };
 ```
 
-See the documentation on [`v8::ReturnValue`](https://v8docs.nodesource.com/io.js-3.0/da/da7/classv8_1_1_return_value.html) for further information on this.
+See the documentation on [`v8::ReturnValue`](https://v8docs.nodesource.com/node-8.0/da/da7/classv8_1_1_return_value.html) for further information on this.
 
 <a name="api_nan_method"></a>
 ### Method declaration
@@ -520,7 +520,7 @@ bool SetAccessor(v8::Local<v8::Object> obj,
                  v8::PropertyAttribute attribute = v8::None)
 ```
 
-See the V8 [`ObjectTemplate#SetAccessor()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#aa90691622f01269c6a11391d372ca0c5) and [`Object#SetAccessor()`](https://v8docs.nodesource.com/io.js-3.0/db/d85/classv8_1_1_object.html#a3f9dee085f5ec346465f1dc924325043) for further information about how to use `Nan::SetAccessor()`.
+See the V8 [`ObjectTemplate#SetAccessor()`](https://v8docs.nodesource.com/node-8.0/db/d5f/classv8_1_1_object_template.html#aca0ed196f8a9adb1f68b1aadb6c9cd77) and [`Object#SetAccessor()`](https://v8docs.nodesource.com/node-8.0/db/d85/classv8_1_1_object.html#a3f9dee085f5ec346465f1dc924325043) for further information about how to use `Nan::SetAccessor()`.
 
 <a name="api_nan_set_named_property_handler"></a>
 ### Nan::SetNamedPropertyHandler()
@@ -570,7 +570,7 @@ void SetIndexedPropertyHandler(v8::Local<v8::ObjectTemplate> tpl,
                                v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
-See the V8 [`ObjectTemplate#SetIndexedPropertyHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#ac0234cbede45d51778bb5f6a32a9e125) for further information about how to use `Nan::SetIndexedPropertyHandler()`.
+See the V8 [`ObjectTemplate#SetIndexedPropertyHandler()`](https://v8docs.nodesource.com/node-8.0/db/d5f/classv8_1_1_object_template.html#ac89f06d634add0e890452033f7d17ff1) for further information about how to use `Nan::SetIndexedPropertyHandler()`.
 
 <a name="api_nan_set_template"></a>
 ### Nan::SetTemplate()
@@ -589,7 +589,7 @@ void Nan::SetTemplate(v8::Local<v8::Template> templ,
                       v8::PropertyAttribute attributes)
 ```
 
-Calls the `Template`'s [`Set()`](https://v8docs.nodesource.com/io.js-3.0/db/df7/classv8_1_1_template.html#a2db6a56597bf23c59659c0659e564ddf).
+Calls the `Template`'s [`Set()`](https://v8docs.nodesource.com/node-8.0/db/df7/classv8_1_1_template.html#ae3fbaff137557aa6a0233bc7e52214ac).
 
 <a name="api_nan_set_prototype_template"></a>
 ### Nan::SetPrototypeTemplate()
@@ -641,7 +641,7 @@ Signature:
 void Nan::SetCallHandler(v8::Local<v8::FunctionTemplate> templ, Nan::FunctionCallback callback, v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
-Calls the `FunctionTemplate`'s [`SetCallHandler()`](https://v8docs.nodesource.com/io.js-3.0/d8/d83/classv8_1_1_function_template.html#a26cf14e36aa1a47091b98536d08ea821).
+Calls the `FunctionTemplate`'s [`SetCallHandler()`](https://v8docs.nodesource.com/node-8.0/d8/d83/classv8_1_1_function_template.html#a2d3845db66392074c5a018a66efbfada).
 
 <a name="api_nan_set_call_as_function_handler"></a>
 ### Nan::SetCallAsFunctionHandler()
@@ -655,5 +655,5 @@ Signature:
 void Nan::SetCallAsFunctionHandler(v8::Local<v8::ObjectTemplate> templ, Nan::FunctionCallback callback, v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
-Calls the `ObjectTemplate`'s [`SetCallAsFunctionHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#ae0a0e72fb0c5e5f32e255fe5bcc7316a).
+Calls the `ObjectTemplate`'s [`SetCallAsFunctionHandler()`](https://v8docs.nodesource.com/node-8.0/db/d5f/classv8_1_1_object_template.html#a5e9612fc80bf6db8f2da199b9b0bd04e).
 
