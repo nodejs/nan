@@ -8,6 +8,7 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
+    - bc
     - g++-4.8
 env:
   matrix:
