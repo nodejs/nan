@@ -18,12 +18,13 @@ env:
   - TRAVIS_NODE_VERSION="5"
   - TRAVIS_NODE_VERSION="6"
   - TRAVIS_NODE_VERSION="7"
+  - TRAVIS_NODE_VERSION="8"
 notifications:
   email:
     - rod@vagg.org
 install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
-  - if [[ $TRAVIS_NODE_VERSION == "0.8" ]]; then npm install npm@2 && node_modules/.bin/npm install npm; else npm install npm; fi
+  - if [[ $TRAVIS_NODE_VERSION == "0.8" ]]; then npm install npm@2 && node_modules/.bin/npm install npm@4; else if [[ $TRAVIS_NODE_VERSION == "0.10" || $TRAVIS_NODE_VERSION == "0.12" ]]; then npm install npm@4; else npm install npm; fi; fi
   - mv node_modules npm
   - npm/.bin/npm --version
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
