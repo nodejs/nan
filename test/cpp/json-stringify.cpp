@@ -18,7 +18,7 @@ NAN_METHOD(Stringify) {
 
       if (3 == info.Length()) {
         if (info[2]->IsNumber()) {
-          int len = info[2]->IntegerValue();
+          int len = Nan::To<int>(info[2]).FromJust();
           len = (len > 10) ? 10 : len;
           len = (len < 0) ? 0 : len;
           Nan::MaybeLocal<v8::String> maybe_gap =
