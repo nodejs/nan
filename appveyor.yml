@@ -17,9 +17,8 @@ environment:
 install:
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: Install-Product node $env:nodejs_version
-  - IF %nodejs_version% EQU 0.8 npm -g install npm@2
+  - IF %nodejs_version% LSS 4 npm -g install npm@2
   - set PATH=%APPDATA%\npm;%PATH%
-  - IF %nodejs_version% LT 4 npm -g install npm@4
   # Typical npm stuff.
   - npm install
   - npm run rebuild-tests
