@@ -26,6 +26,6 @@ install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
   - $CXX --version
-  - if [[ $TRAVIS_NODE_VERSION -lt "4" ]]; then npm install npm@2 && mv node_modules npm && npm/.bin/npm --version && npm/.bin/npm install; else npm --version && npm install; fi
+  - if [[ $(echo "$TRAVIS_NODE_VERSION < 4" | bc -l) ]]; then npm install npm@2 && mv node_modules npm && npm/.bin/npm --version && npm/.bin/npm install; else npm --version && npm install; fi
   - node_modules/.bin/node-gyp rebuild --directory test
 script: node_modules/.bin/tap --gc test/js/*-test.js
