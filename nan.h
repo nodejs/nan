@@ -1650,8 +1650,8 @@ template<class T>
         uv_async_send(that_->async);
     }
 
-    void Send(const T* data, size_t size) const {
-        that_->SendProgress_(data, size);
+    void Send(const T* data, size_t count) const {
+        that_->SendProgress_(data, count);
     }
 
    private:
@@ -1673,17 +1673,17 @@ template<class T>
       Execute(progress);
   }
 
-  void SendProgress_(const T *data, size_t size) {
-    T *new_data = new T[size];
+  void SendProgress_(const T *data, size_t count) {
+    T *new_data = new T[count];
     {
       T *it = new_data;
-      std::copy(data, data + size, it);
+      std::copy(data, data + count, it);
     }
 
     uv_mutex_lock(&async_lock);
     T *old_data = asyncdata_;
     asyncdata_ = new_data;
-    asyncsize_ = size;
+    asyncsize_ = count;
     uv_mutex_unlock(&async_lock);
 
     delete[] old_data;

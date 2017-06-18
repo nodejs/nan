@@ -32,7 +32,7 @@ class ProgressWorker : public AsyncProgressWorker {
     }
   }
 
-  void HandleProgressCallback(const char *data, size_t size) {
+  void HandleProgressCallback(const char *data, size_t count) {
     HandleScope scope;
 
     v8::Local<v8::Value> argv[] = {

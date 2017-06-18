@@ -79,12 +79,12 @@ class AsyncProgressWorkerBase<T> : public AsyncWorker {
   class ExecutionProgress {
    public:
     void Signal() const;
-    void Send(const T* data, size_t size) const;
+    void Send(const T* data, size_t count) const;
   };
 
   virtual void Execute(const ExecutionProgress& progress) = 0;
 
-  virtual void HandleProgressCallback(const T *data, size_t size) = 0;
+  virtual void HandleProgressCallback(const T *data, size_t count) = 0;
 
   virtual void Destroy();
 

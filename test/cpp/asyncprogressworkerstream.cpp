@@ -45,7 +45,7 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
     }
   }
 
-  void HandleProgressCallback(const T *data, size_t size) {
+  void HandleProgressCallback(const T *data, size_t count) {
     HandleScope scope;
     v8::Local<v8::Object> obj = Nan::New<v8::Object>();
     Nan::Set(
