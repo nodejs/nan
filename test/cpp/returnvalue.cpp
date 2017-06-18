@@ -10,8 +10,6 @@
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
-static Global<v8::Boolean> global;
-
 NAN_METHOD(ReturnAValue) {
   const FunctionCallbackInfo<v8::Value> &cbinfo = info;
   ReturnValue<v8::Value> ret = cbinfo.GetReturnValue();
@@ -27,6 +25,7 @@ NAN_METHOD(ReturnPrimitive) {
 }
 
 NAN_METHOD(ReturnGlobal) {
+  Nan::Global<v8::Boolean> global(New(true));
   info.GetReturnValue().Set(global);
 }
 
@@ -35,8 +34,6 @@ NAN_METHOD(ReturnUnsigned) {
 }
 
 NAN_MODULE_INIT(Init) {
-  global.Reset(New(true));
-
   Set(target
     , New<v8::String>("r").ToLocalChecked()
     , New<v8::FunctionTemplate>(ReturnAValue)->GetFunction()
