@@ -35,7 +35,6 @@ test('numbers', function (t) {
   t.equals(bindings.newUint32WithValue(23), 23);
   t.equals(bindings.newUint32WithValue(5), 5);
   t.type(bindings.newUint32WithValue(5), 'number');
-  t.end();
 });
 
 
@@ -45,12 +44,9 @@ test('strings', function (t) {
   t.equals(bindings.newStringFromChars(), "hello?");
   t.equals(bindings.newStringFromCharsWithLength(), "hell");
   t.equals(bindings.newStringFromStdString(), "hello!");
-
-  t.end();
 });
 
 test('test MakeMaybe(...)', function (t) {
   t.plan(1);
   t.ok(bindings.invokeMakeMaybe() - Math.PI < 10e-8);
-  t.end();
 });
