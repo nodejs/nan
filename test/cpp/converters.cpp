@@ -26,6 +26,10 @@ NAN_METHOD(ToDetailString) {
   info.GetReturnValue().Set(ToDetailString(info[0]).ToLocalChecked());
 }
 
+NAN_METHOD(ToFunction) {
+  info.GetReturnValue().Set(To<v8::Function>(info[0]).FromMaybe(info[1]));
+}
+
 NAN_METHOD(ToObject) {
   info.GetReturnValue().Set(To<v8::Object>(info[0]).ToLocalChecked());
 }
@@ -84,6 +88,10 @@ NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("toDetailString").ToLocalChecked()
     , New<v8::FunctionTemplate>(ToDetailString)->GetFunction()
+  );
+  Set(target
+    , New<v8::String>("toFunction").ToLocalChecked()
+    , New<v8::FunctionTemplate>(ToFunction)->GetFunction()
   );
   Set(target
     , New<v8::String>("toObject").ToLocalChecked()

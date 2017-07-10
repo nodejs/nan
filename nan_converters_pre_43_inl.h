@@ -9,6 +9,12 @@
 #ifndef NAN_CONVERTERS_PRE_43_INL_H_
 #define NAN_CONVERTERS_PRE_43_INL_H_
 
+imp::ToFactory<v8::Function>::return_t
+imp::ToFactory<v8::Function>::convert(v8::Local<v8::Value> val) {
+  if (val.IsEmpty() || !val->IsFunction()) return MaybeLocal<v8::Function>();
+  return MaybeLocal<v8::Function>(val.As<v8::Function>());
+}
+
 #define X(TYPE)                                                                \
 imp::ToFactory<v8::TYPE>::return_t                                             \
 imp::ToFactory<v8::TYPE>::convert(v8::Local<v8::Value> val) {                  \
