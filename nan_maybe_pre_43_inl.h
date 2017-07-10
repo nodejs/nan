@@ -41,7 +41,7 @@ class MaybeLocal {
 
   template<typename S>
   inline v8::Local<S> FromMaybe(v8::Local<S> default_value) const {
-    return IsEmpty() ? default_value : val_;
+    return IsEmpty() ? default_value : v8::Local<S>(val_);
   }
 
  private:
