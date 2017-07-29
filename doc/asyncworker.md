@@ -87,6 +87,7 @@ class AsyncProgressWorkerBase<T> : public AsyncWorker {
   virtual void HandleProgressCallback(const T *data, size_t count) = 0;
 
   virtual void Destroy();
+};
 
 typedef AsyncProgressWorkerBase<T> AsyncProgressWorker;
 ```
