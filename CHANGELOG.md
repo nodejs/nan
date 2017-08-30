@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 2.6.2: current Node 7.9.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.7.0: current Node 8.4.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.7.0 Aug 30 2017
+
+  - Feature: Add Nan::To<v8::Function>() overload. b93280670c9f6da42ed4cf6cbf085ffdd87bd65b
+  - Bugfix: Fix ternary in Nan::MaybeLocal<T>::FromMaybe<S>(). 79a26f7d362e756a9524e672a82c3d603b542867
 
 ### 2.6.2 Apr 12 2017
 
