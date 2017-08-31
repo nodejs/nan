@@ -62,6 +62,9 @@
 #else
 # include <string>
 # include <vector>
+# ifdef __MVS__
+#  include <unistd.h>
+# endif
 #endif
 
 // uv helpers
@@ -943,6 +946,51 @@ class Utf8String {
   int length_;
   char *str_;
   char str_st_[1024];
+};
+
+class NativeString {
+ public:
+  inline explicit NativeString(v8::Local<v8::Value> from) :
+      length_(0), str_(str_st_) {
+    HandleScope scope;
+    if (!from.IsEmpty()) {
+      v8::Local<v8::String> string = from->ToString();
+      if (!string.IsEmpty()) {
+        size_t len = string->Length() + 1;
+        assert(len <= INT_MAX);
+        if (len > sizeof (str_st_)) {
+          str_ = static_cast<uint8_t*>(malloc(len));
+          assert(str_ != 0);
+        }
+        const int flags = v8::String::NO_NULL_TERMINATION;
+        length_ = string->WriteOneByte(str_, 0, static_cast<int>(len), flags);
+        str_[length_] = '\0';
+# ifdef __MVS__
+        __a2e_s(reinterpret_cast<char*>(str_st_));
+# endif
+      }
+    }
+  }
+
+  inline int length() const {
+    return length_;
+  }
+
+  inline char* operator*() { return reinterpret_cast<char*>(str_); }
+  inline const char* operator*() const { return reinterpret_cast<char*>(str_); }
+
+  inline ~NativeString() {
+    if (str_ != str_st_) {
+      free(str_);
+    }
+  }
+
+ private:
+  NAN_DISALLOW_ASSIGN_COPY_MOVE(NativeString)
+
+  int length_;
+  uint8_t *str_;
+  uint8_t str_st_[1024];
 };
 
 #else  // Node 0.8 and 0.10
