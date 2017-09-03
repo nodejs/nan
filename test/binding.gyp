@@ -44,6 +44,10 @@
       , "sources"     : [ "cpp/returnemptystring.cpp" ]
     }
   , {
+        "target_name" : "asyncprogressqueueworker"
+      , "sources"     : [ "cpp/asyncprogressqueueworker.cpp" ]
+    }
+  , {
         "target_name" : "asyncworker"
       , "sources"     : [ "cpp/asyncworker.cpp" ]
     }
