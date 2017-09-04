@@ -89,8 +89,12 @@ Factory<v8::FunctionTemplate>::New( FunctionCallback callback
   if (callback) {
     v8::HandleScope scope;
 
-    v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New();
-    tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+    if (imp::Cache<>::functionTemplate.IsEmpty()) {
+      v8::Local<v8::ObjectTemplate> otpl = v8::ObjectTemplate::New();
+      otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+      imp::Cache<>::functionTemplate.Reset(otpl);
+    }
+    v8::Local<v8::ObjectTemplate> tpl = imp::Cache<>::functionTemplate.Get();
     v8::Local<v8::Object> obj = tpl->NewInstance();
 
     obj->SetInternalField(
