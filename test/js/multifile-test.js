@@ -14,9 +14,12 @@ const test     = require('tap').test
 // just to test that there aren't any conflicts from including nan.h
 // more than once in project files
 test('multifile', function (t) {
-  t.plan(2);
+  t.plan(4);
 
-  var r = bindings.r
+  var r = bindings.r,
+      s = bindings.s;
   t.type(r, 'function');
+  t.type(s, 'function');
   t.equal(r('a string value'), 'a string value');
+  t.equal(s(), 1337);
 });
