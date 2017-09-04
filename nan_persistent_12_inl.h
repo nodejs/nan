@@ -24,6 +24,10 @@ template<typename T, typename M> class Persistent :
 
   inline void Reset() { v8::PersistentBase<T>::Reset(); }
 
+  inline v8::Local<T> Get() {
+    v8::Local<T>::New(v8::Isolate::GetCurrent(), *this);
+  }
+
   template <typename S>
   inline void Reset(const v8::Local<S> &other) {
     v8::PersistentBase<T>::Reset(v8::Isolate::GetCurrent(), other);
@@ -70,6 +74,10 @@ class Global : public v8::Global<T> {
   inline
   Global(const v8::PersistentBase<S> &that) :  // NOLINT(runtime/explicit)
       v8::Global<S>(v8::Isolate::GetCurrent(), that) {}
+
+  inline v8::Local<T> Get() {
+    v8::Local<T>::New(v8::Isolate::GetCurrent(), *this);
+  }
 
   inline void Reset() { v8::PersistentBase<T>::Reset(); }
 
