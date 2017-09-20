@@ -545,7 +545,7 @@ void SetNamedPropertyHandler(v8::Local<v8::ObjectTemplate> tpl,
                              v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
-See the V8 [`ObjectTemplate#SetNamedPropertyHandler()`](https://v8docs.nodesource.com/io.js-3.0/db/d5f/classv8_1_1_object_template.html#a34d1cc45b642cd131706663801aadd76) for further information about how to use `Nan::SetNamedPropertyHandler()`.
+See the V8 [`ObjectTemplate#SetNamedPropertyHandler()`](https://v8docs.nodesource.com/io.js-3.3/db/d5f/classv8_1_1_object_template.html#a34d1cc45b642cd131706663801aadd76) for further information about how to use `Nan::SetNamedPropertyHandler()`.
 
 <a name="api_nan_set_indexed_property_handler"></a>
 ### Nan::SetIndexedPropertyHandler()
@@ -608,7 +608,7 @@ void Nan::SetPrototypeTemplate(v8::Local<v8::FunctionTemplate> templ,
                                v8::PropertyAttribute attributes)
 ```
 
-Calls the `FunctionTemplate`'s _PrototypeTemplate's_ [`Set()`](https://v8docs.nodesource.com/io.js-3.0/db/df7/classv8_1_1_template.html#a2db6a56597bf23c59659c0659e564ddf).
+Calls the `FunctionTemplate`'s _PrototypeTemplate's_ [`Set()`](https://v8docs.nodesource.com/io.js-3.3/db/df7/classv8_1_1_template.html#a2db6a56597bf23c59659c0659e564ddf).
 
 <a name="api_nan_set_instance_template"></a>
 ### Nan::SetInstanceTemplate()
@@ -627,7 +627,7 @@ void Nan::SetInstanceTemplate(v8::Local<v8::FunctionTemplate> templ,
                               v8::PropertyAttribute attributes)
 ```
 
-Calls the `FunctionTemplate`'s _InstanceTemplate's_ [`Set()`](https://v8docs.nodesource.com/io.js-3.0/db/df7/classv8_1_1_template.html#a2db6a56597bf23c59659c0659e564ddf).
+Calls the `FunctionTemplate`'s _InstanceTemplate's_ [`Set()`](https://v8docs.nodesource.com/io.js-3.3/db/df7/classv8_1_1_template.html#a2db6a56597bf23c59659c0659e564ddf).
 
 <a name="api_nan_set_call_handler"></a>
 ### Nan::SetCallHandler()
