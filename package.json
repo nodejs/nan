@@ -26,6 +26,7 @@
     "bindings": "~1.2.1",
     "commander": "^2.8.1",
     "glob": "^5.0.14",
+    "request": "=2.81.0",
     "node-gyp": "~3.0.1",
     "readable-stream": "^2.1.4",
     "tap": "~0.7.1",
