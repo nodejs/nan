@@ -1759,6 +1759,11 @@ class AsyncProgressQueueWorker : public AsyncBareProgressWorker<T> {
     uv_mutex_destroy(&async_lock);
   }
 
+  void WorkComplete() {
+    WorkProgress();
+    AsyncWorker::WorkComplete();
+  }
+
   void WorkProgress() {
     uv_mutex_lock(&async_lock);
 
