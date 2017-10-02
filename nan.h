@@ -1609,10 +1609,9 @@ class Callback {
   char *errmsg_;
 };
 
-template<class T>
-/* abstract */ class AsyncBareProgressWorker : public AsyncWorker {
+/* abstract */ class AsyncBareProgressWorkerBase : public AsyncWorker {
  public:
-  explicit AsyncBareProgressWorker(Callback *callback_)
+  explicit AsyncBareProgressWorkerBase(Callback *callback_)
       : AsyncWorker(callback_) {
     uv_async_init(
         uv_default_loop()
@@ -1622,10 +1621,42 @@ template<class T>
     async.data = this;
   }
 
-  virtual ~AsyncBareProgressWorker() {
+  virtual ~AsyncBareProgressWorkerBase() {
   }
 
   virtual void WorkProgress() = 0;
+
+  virtual void Destroy() {
+      uv_close(reinterpret_cast<uv_handle_t*>(&async), AsyncClose_);
+  }
+
+ private:
+  inline static NAUV_WORK_CB(AsyncProgress_) {
+    AsyncBareProgressWorkerBase *worker =
+            static_cast<AsyncBareProgressWorkerBase*>(async->data);
+    worker->WorkProgress();
+  }
+
+  inline static void AsyncClose_(uv_handle_t* handle) {
+    AsyncBareProgressWorkerBase *worker =
+            static_cast<AsyncBareProgressWorkerBase*>(handle->data);
+    delete worker;
+  }
+
+ protected:
+  uv_async_t async;
+};
+
+template<class T>
+/* abstract */
+class AsyncBareProgressWorker : public AsyncBareProgressWorkerBase {
+ public:
+  explicit AsyncBareProgressWorker(Callback *callback_)
+      : AsyncBareProgressWorkerBase(callback_) {
+  }
+
+  virtual ~AsyncBareProgressWorker() {
+  }
 
   class ExecutionProgress {
     friend class AsyncBareProgressWorker;
@@ -1647,10 +1678,6 @@ template<class T>
   virtual void Execute(const ExecutionProgress& progress) = 0;
   virtual void HandleProgressCallback(const T *data, size_t size) = 0;
 
-  virtual void Destroy() {
-      uv_close(reinterpret_cast<uv_handle_t*>(&async), AsyncClose_);
-  }
-
  private:
   void Execute() /*final override*/ {
       ExecutionProgress progress(this);
@@ -1658,21 +1685,6 @@ template<class T>
   }
 
   virtual void SendProgress_(const T *data, size_t count) = 0;
-
-  inline static NAUV_WORK_CB(AsyncProgress_) {
-    AsyncBareProgressWorker *worker =
-            static_cast<AsyncBareProgressWorker*>(async->data);
-    worker->WorkProgress();
-  }
-
-  inline static void AsyncClose_(uv_handle_t* handle) {
-    AsyncBareProgressWorker *worker =
-            static_cast<AsyncBareProgressWorker*>(handle->data);
-    delete worker;
-  }
-
- protected:
-  uv_async_t async;
 };
 
 template<class T>
