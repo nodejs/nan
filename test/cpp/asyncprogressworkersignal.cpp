@@ -23,7 +23,10 @@ class ProgressWorker : public AsyncProgressWorker {
     , int iters)
     : AsyncProgressWorker(callback), progress(progress)
     , milliseconds(milliseconds), iters(iters) {}
-  ~ProgressWorker() {}
+
+  ~ProgressWorker() {
+    delete progress;
+  }
 
   void Execute (const AsyncProgressWorker::ExecutionProgress& progress) {
     for (int i = 0; i < iters; ++i) {

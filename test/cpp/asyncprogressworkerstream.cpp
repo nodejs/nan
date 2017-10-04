@@ -32,7 +32,10 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
     , int iters)
     : AsyncProgressWorkerBase<T>(callback), progress(progress)
     , milliseconds(milliseconds), iters(iters) {}
-  ~ProgressWorker() {}
+
+  ~ProgressWorker() {
+    delete progress;
+  }
 
   void Execute (
     const typename AsyncProgressWorkerBase<T>::ExecutionProgress& progress) {
