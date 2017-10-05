@@ -1614,13 +1614,12 @@ template<class T>
  public:
   explicit AsyncBareProgressWorker(Callback *callback_)
       : AsyncWorker(callback_) {
-    async = new uv_async_t;
     uv_async_init(
         uv_default_loop()
-      , async
+      , &async
       , AsyncProgress_
     );
-    async->data = this;
+    async.data = this;
   }
 
   virtual ~AsyncBareProgressWorker() {
@@ -1632,7 +1631,7 @@ template<class T>
     friend class AsyncBareProgressWorker;
    public:
     void Signal() const {
-        uv_async_send(that_->async);
+        uv_async_send(&that_->async);
     }
 
     void Send(const T* data, size_t count) const {
@@ -1649,7 +1648,7 @@ template<class T>
   virtual void HandleProgressCallback(const T *data, size_t size) = 0;
 
   virtual void Destroy() {
-      uv_close(reinterpret_cast<uv_handle_t*>(async), AsyncClose_);
+      uv_close(reinterpret_cast<uv_handle_t*>(&async), AsyncClose_);
   }
 
  private:
@@ -1669,12 +1668,11 @@ template<class T>
   inline static void AsyncClose_(uv_handle_t* handle) {
     AsyncBareProgressWorker *worker =
             static_cast<AsyncBareProgressWorker*>(handle->data);
-    delete reinterpret_cast<uv_async_t*>(handle);
     delete worker;
   }
 
  protected:
-  uv_async_t *async;
+  uv_async_t async;
 };
 
 template<class T>
@@ -1721,7 +1719,7 @@ class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
     uv_mutex_unlock(&async_lock);
 
     delete[] old_data;
-    uv_async_send(this->async);
+    uv_async_send(&this->async);
   }
 
   uv_mutex_t async_lock;
@@ -1804,7 +1802,7 @@ class AsyncProgressQueueWorker : public AsyncBareProgressWorker<T> {
     asyncdata_.push(datapair);
     uv_mutex_unlock(&async_lock);
 
-    uv_async_send(this->async);
+    uv_async_send(&this->async);
   }
 
   uv_mutex_t async_lock;
