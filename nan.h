@@ -1798,7 +1798,7 @@ class AsyncProgressQueueWorker : public AsyncBareProgressWorker<T> {
     }
 
     std::pair<T*, size_t> *datapair =
-      new std::pair<T*, size_t>(new_data, count);
+        new std::pair<T*, size_t>(new_data, count);
 
     uv_mutex_lock(&async_lock);
     asyncdata_.push(datapair);
