@@ -48,6 +48,10 @@
       , "sources"     : [ "cpp/asyncprogressqueueworker.cpp" ]
     }
   , {
+        "target_name" : "asyncprogressqueueworkerstream"
+      , "sources"     : [ "cpp/asyncprogressqueueworkerstream.cpp" ]
+    }
+  , {
         "target_name" : "asyncworker"
       , "sources"     : [ "cpp/asyncworker.cpp" ]
     }
