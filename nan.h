@@ -1745,10 +1745,47 @@ typedef AsyncProgressWorkerBase<char> AsyncProgressWorker;
 
 template<class T>
 /* abstract */
-class AsyncProgressQueueWorker : public AsyncBareProgressWorker<T> {
+class AsyncBareProgressQueueWorker : public AsyncBareProgressWorkerBase {
+ public:
+  explicit AsyncBareProgressQueueWorker(Callback *callback_)
+      : AsyncBareProgressWorkerBase(callback_) {
+  }
+
+  virtual ~AsyncBareProgressQueueWorker() {
+  }
+
+  class ExecutionProgress {
+    friend class AsyncBareProgressQueueWorker;
+   public:
+    void Send(const T* data, size_t count) const {
+        that_->SendProgress_(data, count);
+    }
+
+   private:
+    explicit ExecutionProgress(AsyncBareProgressQueueWorker *that)
+        : that_(that) {}
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(ExecutionProgress)
+    AsyncBareProgressQueueWorker* const that_;
+  };
+
+  virtual void Execute(const ExecutionProgress& progress) = 0;
+  virtual void HandleProgressCallback(const T *data, size_t size) = 0;
+
+ private:
+  void Execute() /*final override*/ {
+      ExecutionProgress progress(this);
+      Execute(progress);
+  }
+
+  virtual void SendProgress_(const T *data, size_t count) = 0;
+};
+
+template<class T>
+/* abstract */
+class AsyncProgressQueueWorker : public AsyncBareProgressQueueWorker<T> {
  public:
   explicit AsyncProgressQueueWorker(Callback *callback_)
-      : AsyncBareProgressWorker<T>(callback_) {
+      : AsyncBareProgressQueueWorker<T>(callback_) {
     uv_mutex_init(&async_lock);
   }
 
