@@ -6,10 +6,6 @@
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
-#ifndef _WIN32
-#include <unistd.h>
-#define Sleep(x) usleep((x)*1000)
-#endif
 #include <nan.h>
 
 using namespace Nan;  // NOLINT(build/namespaces)
@@ -19,10 +15,9 @@ class ProgressQueueWorker : public AsyncProgressQueueWorker<char> {
   ProgressQueueWorker(
       Callback *callback
     , Callback *progress
-    , int milliseconds
     , int iters)
     : AsyncProgressQueueWorker(callback), progress(progress)
-    , milliseconds(milliseconds), iters(iters) {}
+    , iters(iters) {}
 
   ~ProgressQueueWorker() {
     delete progress;
@@ -31,7 +26,6 @@ class ProgressQueueWorker : public AsyncProgressQueueWorker<char> {
   void Execute (const AsyncProgressQueueWorker::ExecutionProgress& progress) {
     for (int i = 0; i < iters; ++i) {
       progress.Send(reinterpret_cast<const char*>(&i), sizeof(int));
-      Sleep(milliseconds);
     }
   }
 
@@ -46,23 +40,21 @@ class ProgressQueueWorker : public AsyncProgressQueueWorker<char> {
 
  private:
   Callback *progress;
-  int milliseconds;
   int iters;
 };
 
 NAN_METHOD(DoProgress) {
-  Callback *progress = new Callback(info[2].As<v8::Function>());
-  Callback *callback = new Callback(info[3].As<v8::Function>());
+  Callback *progress = new Callback(info[1].As<v8::Function>());
+  Callback *callback = new Callback(info[2].As<v8::Function>());
   AsyncQueueWorker(new ProgressQueueWorker(
       callback
     , progress
-    , To<uint32_t>(info[0]).FromJust()
-    , To<uint32_t>(info[1]).FromJust()));
+    , To<uint32_t>(info[0]).FromJust()));
 }
 
 NAN_MODULE_INIT(Init) {
   Set(target
-    , New<v8::String>("a").ToLocalChecked()
+    , New<v8::String>("doProgress").ToLocalChecked()
     , New<v8::FunctionTemplate>(DoProgress)->GetFunction());
 }
 
