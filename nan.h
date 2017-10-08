@@ -1662,11 +1662,11 @@ class AsyncBareProgressWorker : public AsyncBareProgressWorkerBase {
     friend class AsyncBareProgressWorker;
    public:
     void Signal() const {
-        uv_async_send(&that_->async);
+      uv_async_send(&that_->async);
     }
 
     void Send(const T* data, size_t count) const {
-        that_->SendProgress_(data, count);
+      that_->SendProgress_(data, count);
     }
 
    private:
@@ -1680,8 +1680,8 @@ class AsyncBareProgressWorker : public AsyncBareProgressWorkerBase {
 
  private:
   void Execute() /*final override*/ {
-      ExecutionProgress progress(this);
-      Execute(progress);
+    ExecutionProgress progress(this);
+    Execute(progress);
   }
 
   virtual void SendProgress_(const T *data, size_t count) = 0;
@@ -1758,7 +1758,7 @@ class AsyncBareProgressQueueWorker : public AsyncBareProgressWorkerBase {
     friend class AsyncBareProgressQueueWorker;
    public:
     void Send(const T* data, size_t count) const {
-        that_->SendProgress_(data, count);
+      that_->SendProgress_(data, count);
     }
 
    private:
@@ -1773,8 +1773,8 @@ class AsyncBareProgressQueueWorker : public AsyncBareProgressWorkerBase {
 
  private:
   void Execute() /*final override*/ {
-      ExecutionProgress progress(this);
-      Execute(progress);
+    ExecutionProgress progress(this);
+    Execute(progress);
   }
 
   virtual void SendProgress_(const T *data, size_t count) = 0;
