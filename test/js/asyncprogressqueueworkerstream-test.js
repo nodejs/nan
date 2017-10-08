@@ -23,7 +23,7 @@ function StreamProgressWorker(t) {
   var self = this
   // initialize stream from cpp on next tick
   process.nextTick(function () {
-    var worker = bindings.a
+    var worker = bindings.doProgress
     worker(5, function(i) {
       self.push(i)
     }, function () {
