@@ -116,7 +116,6 @@ class AsyncProgressQueueWorker<T> : public AsyncWorker {
 
   class ExecutionProgress {
    public:
-    void Signal() const;
     void Send(const T* data, size_t count) const;
   };
 
