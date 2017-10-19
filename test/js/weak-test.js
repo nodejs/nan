@@ -34,3 +34,13 @@ test('weak', function (t) {
     }
   }, 100);
 });
+
+test('weak external', function (t) {
+  t.plan(2);
+
+  var weak = bindings;
+  t.type(weak.weakExternal, 'function');
+
+  weak.weakExternal();
+  t.ok(true);  // All good if the previous line didn't crash.
+});
