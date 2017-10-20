@@ -59,6 +59,8 @@ class PersistentBase {
     }
   }
 
+  inline v8::Local<T> Get() const { return v8::Local<T>::New(persistent); }
+
   inline bool IsEmpty() const { return persistent.IsEmpty(); }
 
   inline void Empty() { persistent.Clear(); }

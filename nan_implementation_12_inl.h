@@ -86,8 +86,13 @@ Factory<v8::Function>::New( FunctionCallback callback
                           , v8::Local<v8::Value> data) {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
-  v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
-  tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  if (imp::Cache<>::functionTemplate.IsEmpty()) {
+    v8::Local<v8::ObjectTemplate> otpl = v8::ObjectTemplate::New(isolate);
+    otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+    imp::Cache<>::functionTemplate.Reset(otpl);
+  }
+  v8::Local<v8::ObjectTemplate> tpl =
+      v8::Local<v8::ObjectTemplate>::New(isolate, imp::Cache<>::functionTemplate);
   v8::Local<v8::Object> obj = NewInstance(tpl).ToLocalChecked();
 
   obj->SetInternalField(
@@ -114,8 +119,13 @@ Factory<v8::FunctionTemplate>::New( FunctionCallback callback
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   if (callback) {
     v8::EscapableHandleScope scope(isolate);
-    v8::Local<v8::ObjectTemplate> tpl = v8::ObjectTemplate::New(isolate);
-    tpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+    if (imp::Cache<>::functionTemplate.IsEmpty()) {
+      v8::Local<v8::ObjectTemplate> otpl = v8::ObjectTemplate::New(isolate);
+      otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+      imp::Cache<>::functionTemplate.Reset(otpl);
+    }
+    v8::Local<v8::ObjectTemplate> tpl =
+        v8::Local<v8::ObjectTemplate>::New(isolate, imp::Cache<>::functionTemplate);
     v8::Local<v8::Object> obj = NewInstance(tpl).ToLocalChecked();
 
     obj->SetInternalField(

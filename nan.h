@@ -198,7 +198,6 @@ class Persistent;
 #endif
 
 #include "nan_converters.h"  // NOLINT(build/include)
-#include "nan_new.h"  // NOLINT(build/include)
 
 #if NAUV_UVVERSION < 0x000b17
 #define NAUV_WORK_CB(func) \
@@ -292,11 +291,6 @@ inline void nauv_key_set(nauv_key_t* key, void* value) {
 #endif
 #endif
 
-#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
-template<typename T>
-v8::Local<T> New(v8::Handle<T>);
-#endif
-
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
   typedef v8::WeakCallbackType WeakCallbackType;
@@ -316,6 +310,32 @@ template<typename P> class WeakCallbackInfo;
 # include "nan_persistent_12_inl.h"  // NOLINT(build/include)
 #else
 # include "nan_persistent_pre_12_inl.h"  // NOLINT(build/include)
+#endif
+
+namespace imp {
+  template<typename = void>
+  struct Cache {
+    static Persistent<v8::ObjectTemplate> accessorTemplate;
+    static Persistent<v8::ObjectTemplate> propertyTemplate;
+    static Persistent<v8::ObjectTemplate> indexPropertyTemplate;
+    static Persistent<v8::ObjectTemplate> functionTemplate;
+  };
+
+  template<typename T>
+  Persistent<v8::ObjectTemplate> Cache<T>::accessorTemplate;
+  template<typename T>
+  Persistent<v8::ObjectTemplate> Cache<T>::propertyTemplate;
+  template<typename T>
+  Persistent<v8::ObjectTemplate> Cache<T>::indexPropertyTemplate;
+  template<typename T>
+  Persistent<v8::ObjectTemplate> Cache<T>::functionTemplate;
+}  // end of namespace imp
+
+#include "nan_new.h"  // NOLINT(build/include)
+
+#if NODE_MODULE_VERSION < IOJS_3_0_MODULE_VERSION
+template<typename T>
+v8::Local<T> New(v8::Handle<T>);
 #endif
 
 namespace imp {
@@ -2090,8 +2110,12 @@ inline void SetAccessor(
   imp::NativeSetter setter_ =
       setter ? imp::SetterCallbackWrapper : 0;
 
-  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
+   if (imp::Cache<>::accessorTemplate.IsEmpty()) {
+     v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+     otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
+     imp::Cache<>::accessorTemplate.Reset(otpl);
+   }
+  v8::Local<v8::ObjectTemplate> otpl = New(imp::Cache<>::accessorTemplate);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
 
   obj->SetInternalField(
@@ -2133,8 +2157,12 @@ inline bool SetAccessor(
   imp::NativeSetter setter_ =
       setter ? imp::SetterCallbackWrapper : 0;
 
-  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
+   if (imp::Cache<>::accessorTemplate.IsEmpty()) {
+     v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+     otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
+     imp::Cache<>::accessorTemplate.Reset(otpl);
+   }
+  v8::Local<v8::ObjectTemplate> otpl = New(imp::Cache<>::accessorTemplate);
   v8::Local<v8::Object> dataobj = NewInstance(otpl).ToLocalChecked();
 
   dataobj->SetInternalField(
@@ -2192,8 +2220,12 @@ inline void SetNamedPropertyHandler(
   imp::NativePropertyEnumerator enumerator_ =
       enumerator ? imp::PropertyEnumeratorCallbackWrapper : 0;
 
-  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(imp::kPropertyFieldCount);
+   if (imp::Cache<>::propertyTemplate.IsEmpty()) {
+     v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+     otpl->SetInternalFieldCount(imp::kPropertyFieldCount);
+     imp::Cache<>::propertyTemplate.Reset(otpl);
+   }
+  v8::Local<v8::ObjectTemplate> otpl = New(imp::Cache<>::propertyTemplate);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
   obj->SetInternalField(
       imp::kPropertyGetterIndex
@@ -2262,8 +2294,12 @@ inline void SetIndexedPropertyHandler(
   imp::NativeIndexEnumerator enumerator_ =
       enumerator ? imp::IndexEnumeratorCallbackWrapper : 0;
 
-  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(imp::kIndexPropertyFieldCount);
+   if (imp::Cache<>::indexPropertyTemplate.IsEmpty()) {
+     v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+     otpl->SetInternalFieldCount(imp::kIndexPropertyFieldCount);
+     imp::Cache<>::indexPropertyTemplate.Reset(otpl);
+   }
+  v8::Local<v8::ObjectTemplate> otpl = New(imp::Cache<>::indexPropertyTemplate);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
   obj->SetInternalField(
       imp::kIndexPropertyGetterIndex
@@ -2317,8 +2353,12 @@ inline void SetCallHandler(
   , v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
   HandleScope scope;
 
-  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  if (imp::Cache<>::functionTemplate.IsEmpty()) {
+    v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+    otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+    imp::Cache<>::functionTemplate.Reset(otpl);
+  }
+  v8::Local<v8::ObjectTemplate> otpl = New(imp::Cache<>::functionTemplate);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
 
   obj->SetInternalField(
@@ -2339,8 +2379,12 @@ inline void SetCallAsFunctionHandler(
     v8::Local<v8::Value> data = v8::Local<v8::Value>()) {
   HandleScope scope;
 
-  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
-  otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+  if (imp::Cache<>::functionTemplate.IsEmpty()) {
+    v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+    otpl->SetInternalFieldCount(imp::kFunctionFieldCount);
+    imp::Cache<>::functionTemplate.Reset(otpl);
+  }
+  v8::Local<v8::ObjectTemplate> otpl = New(imp::Cache<>::functionTemplate);
   v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
 
   obj->SetInternalField(
