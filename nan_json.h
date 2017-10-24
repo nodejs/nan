@@ -78,7 +78,8 @@ class JSON {
     return scope.Escape(parse(json_string));
 #else
     Nan::MaybeLocal<v8::Value> result;
-#if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION && NODE_MODULE_VERSION <= IOJS_2_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION && \
+    NODE_MODULE_VERSION <= IOJS_2_0_MODULE_VERSION
     result = v8::JSON::Parse(json_string);
 #else
 #if NODE_MODULE_VERSION > NODE_6_0_MODULE_VERSION
