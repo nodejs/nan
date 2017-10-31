@@ -174,7 +174,8 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="doc/maybe_types.md#api_nan_new_instance"><b><code>Nan::NewInstance()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_get_function"><b><code>Nan::GetFunction()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_set"><b><code>Nan::Set()</code></b></a>
-  - <a href="doc/maybe_types.md#api_nan_force_set"><b><code>Nan::ForceSet()</code></b></a>
+  - <a href="doc/maybe_types.md#api_nan_define_own_property"><b><code>Nan::DefineOwnProperty()</code></b></a>
+  - <a href="doc/maybe_types.md#api_nan_force_set"><del><b><code>Nan::ForceSet()</code></b></del></a>
   - <a href="doc/maybe_types.md#api_nan_get"><b><code>Nan::Get()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_get_property_attribute"><b><code>Nan::GetPropertyAttributes()</code></b></a>
   - <a href="doc/maybe_types.md#api_nan_has"><b><code>Nan::Has()</code></b></a>
