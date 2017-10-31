@@ -15,7 +15,8 @@ The `Nan::MaybeLocal` and `Nan::Maybe` types are monads that encapsulate `v8::Lo
   - <a href="#api_nan_new_instance"><b><code>Nan::NewInstance()</code></b></a>
   - <a href="#api_nan_get_function"><b><code>Nan::GetFunction()</code></b></a>
   - <a href="#api_nan_set"><b><code>Nan::Set()</code></b></a>
-  - <a href="#api_nan_force_set"><b><code>Nan::ForceSet()</code></b></a>
+  - <a href="#api_nan_define_own_property"><b><code>Nan::DefineOwnProperty()</code></b></a>
+  - <a href="#api_nan_force_set"><del><b><code>Nan::ForceSet()</code></b></del></a>
   - <a href="#api_nan_get"><b><code>Nan::Get()</code></b></a>
   - <a href="#api_nan_get_property_attribute"><b><code>Nan::GetPropertyAttributes()</code></b></a>
   - <a href="#api_nan_has"><b><code>Nan::Has()</code></b></a>
@@ -209,18 +210,35 @@ Nan::Maybe<bool> Nan::Set(v8::Local<v8::Object> obj,
 ```
 
 
-<a name="api_nan_force_set"></a>
-### Nan::ForceSet()
+<a name="api_nan_define_own_property"></a>
+### Nan::DefineOwnProperty()
 
-A helper method for calling [`v8::Object#ForceSet()`](https://v8docs.nodesource.com/io.js-3.3/db/d85/classv8_1_1_object.html#a796b7b682896fb64bf1872747734e836) in a way compatible across supported versions of V8.
+A helper method for calling [`v8::Object#DefineOwnProperty()`](https://v8docs.nodesource.com/node-4.8/db/d85/classv8_1_1_object.html#a6f76b2ed605cb8f9185b92de0033a820) in a way compatible across supported versions of V8.
 
 Signature:
 
 ```c++
-Nan::Maybe<bool> Nan::ForceSet(v8::Local<v8::Object> obj,
-                               v8::Local<v8::Value> key,
-                               v8::Local<v8::Value> value,
-                               v8::PropertyAttribute attribs = v8::None);
+Nan::Maybe<bool> Nan::DefineOwnProperty(v8::Local<v8::Object> obj,
+                                        v8::Local<v8::String> key,
+                                        v8::Local<v8::Value> value,
+                                        v8::PropertyAttribute attribs = v8::None);
+```
+
+
+<a name="api_nan_force_set"></a>
+### <del>Nan::ForceSet()</del>
+
+Deprecated, use <a href="#api_nan_define_own_property"><code>Nan::DefineOwnProperty()</code></a>.
+
+<del>A helper method for calling [`v8::Object#ForceSet()`](https://v8docs.nodesource.com/io.js-3.3/db/d85/classv8_1_1_object.html#a796b7b682896fb64bf1872747734e836) in a way compatible across supported versions of V8.</del>
+
+Signature:
+
+```c++
+NAN_DEPRECATED Nan::Maybe<bool> Nan::ForceSet(v8::Local<v8::Object> obj,
+                                              v8::Local<v8::Value> key,
+                                              v8::Local<v8::Value> value,
+                                              v8::PropertyAttribute attribs = v8::None);
 ```
 
 
