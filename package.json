@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "tap --gc --stderr test/js/*-test.js",
-    "rebuild-tests": "node-gyp rebuild --msvs_version=2013 --directory test",
+    "rebuild-tests": "node-gyp rebuild --msvs_version=2015 --directory test",
     "docs": "doc/.build.sh"
   },
   "contributors": [
@@ -27,7 +27,7 @@
     "commander": "^2.8.1",
     "glob": "^5.0.14",
     "request": "=2.81.0",
-    "node-gyp": "~3.0.1",
+    "node-gyp": "~3.6.2",
     "readable-stream": "^2.1.4",
     "tap": "~0.7.1",
     "xtend": "~4.0.0"
