@@ -51,8 +51,8 @@ class ProgressWorker : public AsyncProgressWorker {
 };
 
 NAN_METHOD(DoProgress) {
-  Callback *progress = new Callback(info[2].As<v8::Function>());
-  Callback *callback = new Callback(info[3].As<v8::Function>());
+  Callback *progress = new Callback(To<v8::Function>(info[2]).ToLocalChecked());
+  Callback *callback = new Callback(To<v8::Function>(info[3]).ToLocalChecked());
   AsyncQueueWorker(new ProgressWorker(
       callback
     , progress

@@ -33,7 +33,7 @@ NAN_GC_CALLBACK(gcPrologueCallback) {
 }
 
 NAN_METHOD(Hook) {
-  callback.Reset(args[0].As<Function>());
+  callback.Reset(To<Function>(args[0]).ToLocalChecked());
   Nan::AddGCPrologueCallback(gcPrologueCallback);
   info.GetReturnValue().Set(info.Holder());
 }

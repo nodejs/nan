@@ -14,7 +14,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 static Persistent<v8::String> persistentTest1;
 
 NAN_METHOD(Save1) {
-  persistentTest1.Reset(info[0].As<v8::String>());
+  persistentTest1.Reset(To<v8::String>(info[0]).ToLocalChecked());
 }
 
 NAN_METHOD(Get1) {
@@ -26,7 +26,7 @@ NAN_METHOD(Dispose1) {
 }
 
 NAN_METHOD(ToPersistentAndBackAgain) {
-  Persistent<v8::Object> persistent(info[0].As<v8::Object>());
+  Persistent<v8::Object> persistent(To<v8::Object>(info[0]).ToLocalChecked());
   v8::Local<v8::Object> object = New(persistent);
   persistent.Reset();
   memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
@@ -34,7 +34,7 @@ NAN_METHOD(ToPersistentAndBackAgain) {
 }
 
 NAN_METHOD(PersistentToPersistent) {
-  Persistent<v8::String> persistent(info[0].As<v8::String>());
+  Persistent<v8::String> persistent(To<v8::String>(info[0]).ToLocalChecked());
   persistentTest1.Reset(persistent);
   persistent.Reset();
   info.GetReturnValue().Set(New(persistentTest1));

@@ -58,7 +58,7 @@ class PiWorker : public AsyncWorker {
 // Asynchronous access to the `Estimate()` function
 NAN_METHOD(CalculateAsync) {
   int points = To<int>(info[0]).FromJust();
-  Callback *callback = new Callback(info[1].As<Function>());
+  Callback *callback = new Callback(To<Function>(info[1]).ToLocalChecked());
 
   AsyncQueueWorker(new PiWorker(callback, points));
 }

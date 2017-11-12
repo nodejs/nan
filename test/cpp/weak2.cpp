@@ -36,7 +36,7 @@ v8::Local<v8::String> wrap() {
 }
 
 NAN_METHOD(Hustle) {
-  cb.Reset(info[0].As<v8::Function>());
+  cb.Reset(To<v8::Function>(info[0]).ToLocalChecked());
   info.GetReturnValue().Set(wrap());
 }
 

@@ -31,8 +31,8 @@ v8::Local<v8::String> wrap(v8::Local<v8::Function> func) {
 }
 
 NAN_METHOD(Hustle) {
-  cb.Reset(info[1].As<v8::Function>());
-  info.GetReturnValue().Set(wrap(info[0].As<v8::Function>()));
+  cb.Reset(To<v8::Function>(info[1]).ToLocalChecked());
+  info.GetReturnValue().Set(wrap(To<v8::Function>(info[0]).ToLocalChecked()));
 }
 
 NAN_MODULE_INIT(Init) {
