@@ -29,7 +29,7 @@ class SleepWorker : public AsyncWorker {
 };
 
 NAN_METHOD(DoSleep) {
-  Callback *callback = new Callback(info[1].As<v8::Function>());
+  Callback *callback = new Callback(To<v8::Function>(info[1]).ToLocalChecked());
   AsyncQueueWorker(
       new SleepWorker(callback, To<uint32_t>(info[0]).FromJust()));
 }

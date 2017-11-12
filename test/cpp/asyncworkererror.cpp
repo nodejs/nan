@@ -21,7 +21,7 @@ class ErrorWorker : public AsyncWorker {
 };
 
 NAN_METHOD(Work) {
-  Callback *callback = new Callback(info[0].As<v8::Function>());
+  Callback *callback = new Callback(To<v8::Function>(info[0]).ToLocalChecked());
   AsyncQueueWorker(new ErrorWorker(callback));
   info.GetReturnValue().SetUndefined();
 }

@@ -54,7 +54,7 @@ NAN_METHOD(NoConflict) {
   SetPrivate(object, key, value);
   Set(object, key, other_value);
   v8::Local<v8::Value> got = GetPrivate(object, key).ToLocalChecked();
-  bool v1 = got.As<v8::String>()->StrictEquals(value);
+  bool v1 = To<v8::String>(got).ToLocalChecked()->StrictEquals(value);
   v8::Local<v8::Value> got_other = Get(object, key).ToLocalChecked();
   bool v2 = got_other->StrictEquals(other_value);
   DeletePrivate(object, key);

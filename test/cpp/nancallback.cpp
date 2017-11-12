@@ -11,34 +11,34 @@
 using namespace Nan;  // NOLINT(build/namespaces)
 
 NAN_METHOD(GlobalContext) {
-  Callback(info[0].As<v8::Function>()).Call(0, NULL);
+  Callback(To<v8::Function>(info[0]).ToLocalChecked()).Call(0, NULL);
 }
 
 NAN_METHOD(SpecificContext) {
-  Callback cb(info[0].As<v8::Function>());
+  Callback cb(To<v8::Function>(info[0]).ToLocalChecked());
   cb.Call(GetCurrentContext()->Global(), 0, NULL);
 }
 
 NAN_METHOD(CustomReceiver) {
-  Callback cb(info[0].As<v8::Function>());
-  cb.Call(info[1].As<v8::Object>(), 0, NULL);
+  Callback cb(To<v8::Function>(info[0]).ToLocalChecked());
+  cb.Call(To<v8::Object>(info[1]).ToLocalChecked(), 0, NULL);
 }
 
 NAN_METHOD(CompareCallbacks) {
-  Callback cb1(info[0].As<v8::Function>());
-  Callback cb2(info[1].As<v8::Function>());
-  Callback cb3(info[2].As<v8::Function>());
+  Callback cb1(To<v8::Function>(info[0]).ToLocalChecked());
+  Callback cb2(To<v8::Function>(info[1]).ToLocalChecked());
+  Callback cb3(To<v8::Function>(info[2]).ToLocalChecked());
 
   info.GetReturnValue().Set(New<v8::Boolean>(cb1 == cb2 && cb1 != cb3));
 }
 
 NAN_METHOD(CallDirect) {
-  Callback cb(info[0].As<v8::Function>());
+  Callback cb(To<v8::Function>(info[0]).ToLocalChecked());
   (*cb)->Call(GetCurrentContext()->Global(), 0, NULL);
 }
 
 NAN_METHOD(CallAsFunction) {
-  Callback(info[0].As<v8::Function>())();
+  Callback(To<v8::Function>(info[0]).ToLocalChecked())();
 }
 
 NAN_METHOD(ResetUnset) {
@@ -48,7 +48,7 @@ NAN_METHOD(ResetUnset) {
 }
 
 NAN_METHOD(ResetSet) {
-  Callback callback(info[0].As<v8::Function>());
+  Callback callback(To<v8::Function>(info[0]).ToLocalChecked());
   callback.Reset();
   info.GetReturnValue().Set(callback.IsEmpty());
 }
