@@ -1,6 +1,14 @@
 # NAN ChangeLog
 
-**Version 2.7.0: current Node 8.4.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.8.0: current Node 9.2.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+
+### 2.8.0 Nov 15 2017
+
+  - Deprecation: Deprecate `Nan::ForceSet` in favor of `Nan::DefineOwnProperty()` 95cbb976d6fbbba88ba0f86dd188223a8591b4e7
+  - Feature: Add `Nan::AsyncProgressQueueWorker` a976636ecc2ef617d1b061ce4a6edf39923691cb
+  - Feature: Add `Nan::DefineOwnProperty()` 95cbb976d6fbbba88ba0f86dd188223a8591b4e7
+  - Bugfix: Fix compiling on io.js 1 & 2 82705a64503ce60c62e98df5bd02972bba090900
+  - Bugfix: Use DefineOwnProperty instead of ForceSet 95cbb976d6fbbba88ba0f86dd188223a8591b4e7
 
 ### 2.7.0 Aug 30 2017
 
