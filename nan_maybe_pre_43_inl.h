@@ -156,7 +156,7 @@ inline Maybe<bool> DefineOwnProperty(
   v8::PropertyAttribute current = obj->GetPropertyAttributes(key);
   return !(current & v8::DontDelete) ||                     // configurable OR
                  !(current & v8::ReadOnly) &&               // writable AND
-                     !((attribs ^ current) & ~v8::ReadOnly) // same excluding RO
+                 !((attribs ^ current) & ~v8::ReadOnly)     // same excluding RO
              ? Just<bool>(obj->ForceSet(key, value, attribs))
              : Nothing<bool>();
 }
