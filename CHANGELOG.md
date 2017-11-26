@@ -1,6 +1,6 @@
 # NAN ChangeLog
 
-**Version 2.8.0: current Node 9.2.0, Node 12: 0.12.18, Node 10: 0.10.48, iojs: 3.3.1**
+**Version 2.8.0: current Node 9.2.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
 
 ### 2.8.0 Nov 15 2017
 
