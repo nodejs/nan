@@ -1273,6 +1273,104 @@ class Utf8String {
 
 #endif  // NODE_MODULE_VERSION
 
+//=== async_context ============================================================
+
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+  typedef node::async_context async_context;
+#else
+  struct async_context {};
+#endif
+
+// === AsyncResource ===========================================================
+
+  class AsyncResource {
+   public:
+    AsyncResource(
+        MaybeLocal<v8::Object> maybe_resource
+      , v8::Local<v8::String> resource_name) {
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+      v8::Local<v8::Object> resource =
+          maybe_resource.IsEmpty() ? New<v8::Object>()
+                                  : maybe_resource.ToLocalChecked();
+
+      node::async_context context =
+          node::EmitAsyncInit(isolate, resource, resource_name);
+      asyncContext = static_cast<async_context>(context);
+#endif
+    }
+
+    AsyncResource(MaybeLocal<v8::Object> maybe_resource, const char* name) {
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+      v8::Local<v8::Object> resource =
+          maybe_resource.IsEmpty() ? New<v8::Object>()
+                                  : maybe_resource.ToLocalChecked();
+      v8::Local<v8::String> name_string =
+          New<v8::String>(name).ToLocalChecked();
+      node::async_context context =
+          node::EmitAsyncInit(isolate, resource, name_string);
+      asyncContext = static_cast<async_context>(context);
+#endif
+    }
+
+    ~AsyncResource() {
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+      v8::Isolate* isolate = v8::Isolate::GetCurrent();
+      node::async_context node_context =
+          static_cast<node::async_context>(asyncContext);
+      node::EmitAsyncDestroy(isolate, node_context);
+#endif
+    }
+
+    inline MaybeLocal<v8::Value> runInAsyncScope(
+        v8::Local<v8::Object> target
+      , v8::Local<v8::Function> func
+      , int argc
+      , v8::Local<v8::Value>* argv) {
+#if NODE_MODULE_VERSION < NODE_8_0_MODULE_VERSION
+      return MakeCallback(target, func, argc, argv);
+#else
+      return node::MakeCallback(
+          v8::Isolate::GetCurrent(), target, func, argc, argv,
+          static_cast<node::async_context>(asyncContext));
+#endif
+    }
+
+    inline MaybeLocal<v8::Value> runInAsyncScope(
+        v8::Local<v8::Object> target
+      , v8::Local<v8::String> symbol
+      , int argc
+      , v8::Local<v8::Value>* argv) {
+#if NODE_MODULE_VERSION < NODE_8_0_MODULE_VERSION
+      return MakeCallback(target, symbol, argc, argv);
+#else
+      return node::MakeCallback(
+          v8::Isolate::GetCurrent(), target, symbol, argc, argv,
+          static_cast<node::async_context>(asyncContext));
+#endif
+    }
+
+    inline MaybeLocal<v8::Value> runInAsyncScope(
+        v8::Local<v8::Object> target
+      , const char* method
+      , int argc
+      , v8::Local<v8::Value>* argv) {
+#if NODE_MODULE_VERSION < NODE_8_0_MODULE_VERSION
+      return MakeCallback(target, method, argc, argv);
+#else
+      return node::MakeCallback(
+          v8::Isolate::GetCurrent(), target, method, argc, argv,
+          static_cast<node::async_context>(asyncContext));
+#endif
+    }
+
+   private:
+    async_context asyncContext;
+  };
+
 typedef void (*FreeCallback)(char *data, void *hint);
 
 typedef const FunctionCallbackInfo<v8::Value>& NAN_METHOD_ARGS_TYPE;

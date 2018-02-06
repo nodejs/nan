@@ -91,6 +91,10 @@
       , "sources"     : [ "cpp/makecallback.cpp" ]
     }
     , {
+        "target_name" : "asyncresource"
+      , "sources"     : [ "cpp/asyncresource.cpp" ]
+    }
+    , {
         "target_name" : "isolatedata"
       , "sources"     : [ "cpp/isolatedata.cpp" ]
     }
