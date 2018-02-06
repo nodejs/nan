@@ -35,6 +35,7 @@ LINT_SOURCES = \
 	nan_weak.h \
 	test/cpp/accessors.cpp \
 	test/cpp/accessors2.cpp \
+	test/cpp/asyncresource.cpp \
 	test/cpp/asyncworker.cpp \
 	test/cpp/asyncprogressworker.cpp \
 	test/cpp/asyncprogressworkerstream.cpp \
