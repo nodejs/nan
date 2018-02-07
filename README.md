@@ -21,6 +21,7 @@ This project also contains some helper utilities that make addon development a b
  * **[Example](#example)**
  * **[API](#api)**
  * **[Tests](#tests)**
+ * **[Knowns issues](#issues)**
  * **[Governance & Contributing](#governance)**
 
 <a name="news"></a>
@@ -340,6 +341,33 @@ Or just:
 npm install
 make test
 ```
+
+<a name="issues"></a>
+
+## Known issues
+
+### Compiling against Node.js 0.12 on OSX
+
+With new enough compilers available on OSX, the versions of V8 headers corresponding to Node.js 0.12
+do not compile anymore. The error looks something like:
+
+```
+❯   CXX(target) Release/obj.target/accessors/cpp/accessors.o
+In file included from ../cpp/accessors.cpp:9:
+In file included from ../../nan.h:51:
+In file included from /Users/ofrobots/.node-gyp/0.12.18/include/node/node.h:61:
+/Users/ofrobots/.node-gyp/0.12.18/include/node/v8.h:5800:54: error: 'CreateHandle' is a protected member of 'v8::HandleScope'
+  return Handle<T>(reinterpret_cast<T*>(HandleScope::CreateHandle(
+                                        ~~~~~~~~~~~~~^~~~~~~~~~~~
+```
+
+This can be worked around by patching your local versions of v8.h corresponding to Node 0.12 to make
+`v8::Handle` a friend of `v8::HandleScope`. Since neither Node.js not V8 support this release line anymore
+this patch cannot be released by either project in an official release.
+
+For this reason, we do not test against Node.js 0.12 on OSX in this project's CI. If you need to support
+that configuration, you will need to either get an older compiler, or apply a source patch to the version
+of V8 headers as a workaround.
 
 <a name="governance"></a>
 
