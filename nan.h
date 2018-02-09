@@ -1486,14 +1486,14 @@ class Callback {
     return this->Call(target, argc, argv);
   }
 
-  inline v8::Local<v8::Value> operator()(
+  inline v8::MaybeLocal<v8::Value> operator()(
       AsyncResource* resource
     , int argc = 0
     , v8::Local<v8::Value> argv[] = 0) const {
     return this->Call(argc, argv, resource);
   }
 
-  inline v8::Local<v8::Value> operator()(
+  inline v8::MaybeLocal<v8::Value> operator()(
       AsyncResource* resource
     , v8::Local<v8::Object> target
     , int argc = 0
@@ -1553,14 +1553,13 @@ class Callback {
 #endif
   }
 
-  inline v8::Local<v8::Value>
+  inline v8::MaybeLocal<v8::Value>
   Call(v8::Local<v8::Object> target
      , int argc
      , v8::Local<v8::Value> argv[]
      , AsyncResource* resource) const {
 #if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-
     return Call_(isolate, target, argc, argv, resource);
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
@@ -1570,16 +1569,11 @@ class Callback {
 #endif
   }
 
-  inline v8::Local<v8::Value>
+  inline v8::MaybeLocal<v8::Value>
   Call(int argc, v8::Local<v8::Value> argv[], AsyncResource* resource) const {
 #if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    v8::EscapableHandleScope scope(isolate);
-    return scope.Escape(Call_(isolate
-                            , isolate->GetCurrentContext()->Global()
-                            , argc
-                            , argv
-                            , resource));
+    return Call(isolate->GetCurrentContext()->Global(), argc, argv, resource);
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     v8::EscapableHandleScope scope(isolate);
@@ -1596,16 +1590,17 @@ class Callback {
   Persistent<v8::Function> handle_;
 
 #if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
-  v8::Local<v8::Value> Call_(v8::Isolate *isolate
-                           , v8::Local<v8::Object> target
-                           , int argc
-                           , v8::Local<v8::Value> argv[]
-                           , AsyncResource* resource) const {
+  v8::MaybeLocal<v8::Value> Call_(v8::Isolate *isolate
+                                , v8::Local<v8::Object> target
+                                , int argc
+                                , v8::Local<v8::Value> argv[]
+                                , AsyncResource* resource) const {
     EscapableHandleScope scope;
-
     v8::Local<v8::Function> func = New(handle_);
-    return scope.Escape(resource->runInAsyncScope(target, func, argc, argv)
-                                  .ToLocalChecked());
+    auto maybe = resource->runInAsyncScope(target, func, argc, argv);
+    v8::Local<v8::Value> local;
+    if (!maybe.ToLocal(&local)) return v8::MaybeLocal<v8::Value>();
+    return scope.Escape(local);
   }
 #endif
 
