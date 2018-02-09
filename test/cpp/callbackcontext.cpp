@@ -7,7 +7,7 @@
  ********************************************************************/
 
 #include <nan.h>
-#include <unistd.h>
+#include "sleep.h"
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
@@ -28,7 +28,7 @@ class DelayRequest : public AsyncResource {
 
 void Delay(uv_work_t* req) {
   DelayRequest *delay_request = static_cast<DelayRequest*>(req->data);
-  sleep(delay_request->milliseconds / 1000);
+  Sleep(delay_request->milliseconds);
 }
 
 void AfterDelay(uv_work_t* req, int status) {
