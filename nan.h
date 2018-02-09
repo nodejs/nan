@@ -1273,14 +1273,6 @@ class Utf8String {
 
 #endif  // NODE_MODULE_VERSION
 
-//=== async_context ============================================================
-
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
-  typedef node::async_context async_context;
-#else
-  struct async_context {};
-#endif
-
 // === AsyncResource ===========================================================
 
   class AsyncResource {
@@ -1295,9 +1287,7 @@ class Utf8String {
           maybe_resource.IsEmpty() ? New<v8::Object>()
                                   : maybe_resource.ToLocalChecked();
 
-      node::async_context context =
-          node::EmitAsyncInit(isolate, resource, resource_name);
-      asyncContext = static_cast<async_context>(context);
+      context = node::EmitAsyncInit(isolate, resource, resource_name);
 #endif
     }
 
@@ -1310,18 +1300,14 @@ class Utf8String {
                                   : maybe_resource.ToLocalChecked();
       v8::Local<v8::String> name_string =
           New<v8::String>(name).ToLocalChecked();
-      node::async_context context =
-          node::EmitAsyncInit(isolate, resource, name_string);
-      asyncContext = static_cast<async_context>(context);
+      context = node::EmitAsyncInit(isolate, resource, name_string);
 #endif
     }
 
     ~AsyncResource() {
 #if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
-      node::async_context node_context =
-          static_cast<node::async_context>(asyncContext);
-      node::EmitAsyncDestroy(isolate, node_context);
+      node::EmitAsyncDestroy(isolate, context);
 #endif
     }
 
@@ -1334,8 +1320,7 @@ class Utf8String {
       return MakeCallback(target, func, argc, argv);
 #else
       return node::MakeCallback(
-          v8::Isolate::GetCurrent(), target, func, argc, argv,
-          static_cast<node::async_context>(asyncContext));
+          v8::Isolate::GetCurrent(), target, func, argc, argv, context);
 #endif
     }
 
@@ -1348,8 +1333,7 @@ class Utf8String {
       return MakeCallback(target, symbol, argc, argv);
 #else
       return node::MakeCallback(
-          v8::Isolate::GetCurrent(), target, symbol, argc, argv,
-          static_cast<node::async_context>(asyncContext));
+          v8::Isolate::GetCurrent(), target, symbol, argc, argv, context);
 #endif
     }
 
@@ -1362,13 +1346,15 @@ class Utf8String {
       return MakeCallback(target, method, argc, argv);
 #else
       return node::MakeCallback(
-          v8::Isolate::GetCurrent(), target, method, argc, argv,
-          static_cast<node::async_context>(asyncContext));
+          v8::Isolate::GetCurrent(), target, method, argc, argv, context);
 #endif
     }
 
    private:
-    async_context asyncContext;
+    NAN_DISALLOW_ASSIGN_COPY_MOVE(AsyncResource)
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+    node::async_context context;
+#endif
   };
 
 typedef void (*FreeCallback)(char *data, void *hint);
