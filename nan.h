@@ -1668,13 +1668,15 @@ class Callback {
 
 /* abstract */ class AsyncWorker {
  public:
-  explicit AsyncWorker(Callback *callback_)
+  explicit AsyncWorker(Callback *callback_,
+                       const char* resource_name = "nan:AsyncWorker")
       : callback(callback_), errmsg_(NULL) {
     request.data = this;
 
     HandleScope scope;
     v8::Local<v8::Object> obj = New<v8::Object>();
     persistentHandle.Reset(obj);
+    async_resource = new AsyncResource(obj, resource_name);
   }
 
   virtual ~AsyncWorker() {
@@ -1684,6 +1686,7 @@ class Callback {
       persistentHandle.Reset();
     delete callback;
     delete[] errmsg_;
+    delete async_resource;
   }
 
   virtual void WorkComplete() {
@@ -1743,11 +1746,12 @@ class Callback {
  protected:
   Persistent<v8::Object> persistentHandle;
   Callback *callback;
+  AsyncResource *async_resource;
 
   virtual void HandleOKCallback() {
     HandleScope scope;
 
-    callback->Call(0, NULL);
+    callback->Call(0, NULL, async_resource);
   }
 
   virtual void HandleErrorCallback() {
@@ -1756,7 +1760,7 @@ class Callback {
     v8::Local<v8::Value> argv[] = {
       v8::Exception::Error(New<v8::String>(ErrorMessage()).ToLocalChecked())
     };
-    callback->Call(1, argv);
+    callback->Call(1, argv, async_resource);
   }
 
   void SetErrorMessage(const char *msg) {
@@ -1778,8 +1782,10 @@ class Callback {
 
 /* abstract */ class AsyncBareProgressWorkerBase : public AsyncWorker {
  public:
-  explicit AsyncBareProgressWorkerBase(Callback *callback_)
-      : AsyncWorker(callback_) {
+  explicit AsyncBareProgressWorkerBase(
+      Callback *callback_,
+      const char* resource_name = "nan:AsyncBareProgressWorkerBase")
+      : AsyncWorker(callback_, resource_name) {
     uv_async_init(
         uv_default_loop()
       , &async
@@ -1818,8 +1824,10 @@ template<class T>
 /* abstract */
 class AsyncBareProgressWorker : public AsyncBareProgressWorkerBase {
  public:
-  explicit AsyncBareProgressWorker(Callback *callback_)
-      : AsyncBareProgressWorkerBase(callback_) {
+  explicit AsyncBareProgressWorker(
+      Callback *callback_,
+      const char* resource_name = "nan:AsyncBareProgressWorker")
+      : AsyncBareProgressWorkerBase(callback_, resource_name) {
   }
 
   virtual ~AsyncBareProgressWorker() {
@@ -1858,8 +1866,11 @@ template<class T>
 /* abstract */
 class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
  public:
-  explicit AsyncProgressWorkerBase(Callback *callback_)
-      : AsyncBareProgressWorker<T>(callback_), asyncdata_(NULL), asyncsize_(0) {
+  explicit AsyncProgressWorkerBase(
+      Callback *callback_,
+      const char* resource_name = "nan:AsyncProgressWorkerBase")
+      : AsyncBareProgressWorker<T>(callback_, resource_name), asyncdata_(NULL),
+        asyncsize_(0) {
     uv_mutex_init(&async_lock);
   }
 
@@ -1914,8 +1925,10 @@ template<class T>
 /* abstract */
 class AsyncBareProgressQueueWorker : public AsyncBareProgressWorkerBase {
  public:
-  explicit AsyncBareProgressQueueWorker(Callback *callback_)
-      : AsyncBareProgressWorkerBase(callback_) {
+  explicit AsyncBareProgressQueueWorker(
+      Callback *callback_,
+      const char* resource_name = "nan:AsyncBareProgressQueueWorker")
+      : AsyncBareProgressWorkerBase(callback_, resource_name) {
   }
 
   virtual ~AsyncBareProgressQueueWorker() {
@@ -1951,7 +1964,9 @@ template<class T>
 /* abstract */
 class AsyncProgressQueueWorker : public AsyncBareProgressQueueWorker<T> {
  public:
-  explicit AsyncProgressQueueWorker(Callback *callback_)
+  explicit AsyncProgressQueueWorker(
+      Callback *callback_,
+      const char* resource_name = "nan:AsyncProgressQueueWorker")
       : AsyncBareProgressQueueWorker<T>(callback_) {
     uv_mutex_init(&async_lock);
   }

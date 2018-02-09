@@ -26,4 +26,67 @@ test('asyncworker', function (t) {
     t.ok(ticks > 6, 'got plenty of ticks! (' + ticks + ')')
     t.end()
   })
-})
+});
+
+test('asyncworker context', function (t) {
+  var asyncHooks;
+  try {
+    asyncHooks = require('async_hooks');
+  } catch (e) {
+    t.ok(true);
+    t.end();
+    return;
+  }
+
+  t.plan(7);
+
+  var sleep = bindings.a;
+  var resourceAsyncId;
+  var originalExecutionAsyncId;
+  var beforeCalled = false;
+  var afterCalled = false;
+  var destroyCalled = false;
+
+  var hooks = asyncHooks.createHook({
+    init: function(asyncId, type, triggerAsyncId, resource) {
+      if (type === 'nan:test.SleepWorker') {
+        resourceAsyncId = asyncId;
+      }
+    },
+    before: function(asyncId) {
+      if (asyncId === resourceAsyncId) {
+        beforeCalled = true;
+      }
+    },
+    after: function(asyncId) {
+      if (asyncId === resourceAsyncId) {
+        afterCalled = true;
+      }
+    },
+    destroy: function(asyncId) {
+      if (asyncId === resourceAsyncId) {
+        destroyCalled = true;
+      }
+    }
+
+  });
+  hooks.enable();
+
+  originalExecutionAsyncId = asyncHooks.executionAsyncId();
+  sleep(200, function() {
+    t.equal(asyncHooks.executionAsyncId(), resourceAsyncId,
+            'callback should have the correct execution context');
+    t.equal(asyncHooks.triggerAsyncId(), originalExecutionAsyncId,
+            'callback should have the correct trigger context');
+    t.ok(beforeCalled, 'before should have been called');
+    t.notOk(afterCalled, 'after should not have been called yet');
+    setTimeout(function() {
+      t.ok(afterCalled, 'after should have been called');
+      t.ok(destroyCalled, 'destroy should have been called');
+      t.equal(asyncHooks.triggerAsyncId(), resourceAsyncId,
+              'setTimeout should have been triggered by the async resource');
+      hooks.disable();
+    }, 1);
+  });
+});
+

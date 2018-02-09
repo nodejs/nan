@@ -17,7 +17,8 @@ using namespace Nan;  // NOLINT(build/namespaces)
 class SleepWorker : public AsyncWorker {
  public:
   SleepWorker(Callback *callback, int milliseconds)
-    : AsyncWorker(callback), milliseconds(milliseconds) {}
+    : AsyncWorker(callback, "nan:test.SleepWorker"),
+      milliseconds(milliseconds) {}
   ~SleepWorker() {}
 
   void Execute () {
