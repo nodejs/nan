@@ -48,6 +48,7 @@ LINT_SOURCES = \
 	test/cpp/error.cpp \
 	test/cpp/gc.cpp \
 	test/cpp/indexedinterceptors.cpp \
+	test/cpp/callbackcontext.cpp \
 	test/cpp/converters.cpp \
 	test/cpp/isolatedata.cpp \
 	test/cpp/json-parse.cpp \

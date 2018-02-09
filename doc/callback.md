@@ -22,11 +22,13 @@ class Callback {
 
   v8::Local<v8::Function> operator*() const;
 
-  v8::Local<v8::Value> operator()(v8::Local<v8::Object> target,
+  v8::Local<v8::Value> operator()(AsyncResource* async_resource,
+                                  v8::Local<v8::Object> target,
                                   int argc = 0,
                                   v8::Local<v8::Value> argv[] = 0) const;
 
-  v8::Local<v8::Value> operator()(int argc = 0,
+  v8::Local<v8::Value> operator()(AsyncResource* async_resource,
+                                  int argc = 0,
                                   v8::Local<v8::Value> argv[] = 0) const;
 
   void SetFunction(const v8::Local<v8::Function> &fn);
@@ -39,6 +41,23 @@ class Callback {
 
   void Reset();
 
+  v8::Local<v8::Value> Call(v8::Local<v8::Object> target,
+                            int argc,
+                            v8::Local<v8::Value> argv[],
+                            AsyncResource* async_resource) const;
+  v8::Local<v8::Value> Call(int argc,
+                            v8::Local<v8::Value> argv[],
+                            AsyncResource* async_resource) const;
+
+  // Legacy versions. Use the versions that accept an async_resource instead
+  // as they run the callback in the correct async context as specified by the
+  // resource.
+  v8::Local<v8::Value> operator()(v8::Local<v8::Object> target,
+                                  int argc = 0,
+                                  v8::Local<v8::Value> argv[] = 0) const;
+
+  v8::Local<v8::Value> operator()(int argc = 0,
+                                  v8::Local<v8::Value> argv[] = 0) const;
   v8::Local<v8::Value> Call(v8::Local<v8::Object> target,
                             int argc,
                             v8::Local<v8::Value> argv[]) const;

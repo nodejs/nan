@@ -1501,6 +1501,21 @@ class Callback {
   }
 
   inline v8::Local<v8::Value> operator()(
+      AsyncResource* resource
+    , int argc = 0
+    , v8::Local<v8::Value> argv[] = 0) const {
+    return this->Call(argc, argv, resource);
+  }
+
+  inline v8::Local<v8::Value> operator()(
+      AsyncResource* resource
+    , v8::Local<v8::Object> target
+    , int argc = 0
+    , v8::Local<v8::Value> argv[] = 0) const {
+    return this->Call(target, argc, argv, resource);
+  }
+
+  inline v8::Local<v8::Value> operator()(
       int argc = 0
     , v8::Local<v8::Value> argv[] = 0) const {
     return this->Call(argc, argv);
@@ -1531,7 +1546,7 @@ class Callback {
   Call(v8::Local<v8::Object> target
      , int argc
      , v8::Local<v8::Value> argv[]) const {
-#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     return Call_(isolate, target, argc, argv);
 #else
@@ -1541,7 +1556,45 @@ class Callback {
 
   inline v8::Local<v8::Value>
   Call(int argc, v8::Local<v8::Value> argv[]) const {
-#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::EscapableHandleScope scope(isolate);
+    return scope.Escape(
+        Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv));
+#else
+    v8::HandleScope scope;
+    return scope.Close(Call_(v8::Context::GetCurrent()->Global(), argc, argv));
+#endif
+  }
+
+  inline v8::Local<v8::Value>
+  Call(v8::Local<v8::Object> target
+     , int argc
+     , v8::Local<v8::Value> argv[]
+     , AsyncResource* resource) const {
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+    return Call_(isolate, target, argc, argv, resource);
+#elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    return Call_(isolate, target, argc, argv);
+#else
+    return Call_(target, argc, argv);
+#endif
+  }
+
+  inline v8::Local<v8::Value>
+  Call(int argc, v8::Local<v8::Value> argv[], AsyncResource* resource) const {
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::EscapableHandleScope scope(isolate);
+    return scope.Escape(Call_(isolate
+                            , isolate->GetCurrentContext()->Global()
+                            , argc
+                            , argv
+                            , resource));
+#elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     v8::EscapableHandleScope scope(isolate);
     return scope.Escape(
@@ -1556,7 +1609,21 @@ class Callback {
   NAN_DISALLOW_ASSIGN_COPY_MOVE(Callback)
   Persistent<v8::Function> handle_;
 
-#if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
+#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+  v8::Local<v8::Value> Call_(v8::Isolate *isolate
+                           , v8::Local<v8::Object> target
+                           , int argc
+                           , v8::Local<v8::Value> argv[]
+                           , AsyncResource* resource) const {
+    EscapableHandleScope scope;
+
+    v8::Local<v8::Function> func = New(handle_);
+    return scope.Escape(resource->runInAsyncScope(target, func, argc, argv)
+                                  .ToLocalChecked());
+  }
+#endif
+
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
   v8::Local<v8::Value> Call_(v8::Isolate *isolate
                            , v8::Local<v8::Object> target
                            , int argc
