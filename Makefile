@@ -71,6 +71,7 @@ LINT_SOURCES = \
 	test/cpp/returnvalue.cpp \
 	test/cpp/setcallhandler.cpp \
 	test/cpp/settemplate.cpp \
+	test/cpp/sleeph.h \
 	test/cpp/strings.cpp \
 	test/cpp/symbols.cpp \
 	test/cpp/threadlocal.cpp \
