@@ -38,12 +38,11 @@ void AfterDelay(uv_work_t* req, int status) {
 
   DelayRequest *delay_request = static_cast<DelayRequest*>(req->data);
   v8::Local<v8::Function> callback = New(delay_request->callback);
-  v8::Local<v8::Value> argv[0] = {};
 
   v8::Local<v8::Object> target = New<v8::Object>();
 
   // Run the callback in the async context.
-  delay_request->runInAsyncScope(target, callback, 0, argv);
+  delay_request->runInAsyncScope(target, callback, 0, NULL);
 
   delete delay_request;
 }
