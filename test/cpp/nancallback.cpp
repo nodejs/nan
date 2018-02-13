@@ -11,17 +11,20 @@
 using namespace Nan;  // NOLINT(build/namespaces)
 
 NAN_METHOD(GlobalContext) {
-  Callback(To<v8::Function>(info[0]).ToLocalChecked()).Call(0, NULL);
+  AsyncResource resource("nan:test.nancallback");
+  Callback(To<v8::Function>(info[0]).ToLocalChecked()).Call(0, NULL, &resource);
 }
 
 NAN_METHOD(SpecificContext) {
+  AsyncResource resource("nan:test.nancallback");
   Callback cb(To<v8::Function>(info[0]).ToLocalChecked());
-  cb.Call(GetCurrentContext()->Global(), 0, NULL);
+  cb.Call(GetCurrentContext()->Global(), 0, NULL, &resource);
 }
 
 NAN_METHOD(CustomReceiver) {
+  AsyncResource resource("nan:test.nancallback");
   Callback cb(To<v8::Function>(info[0]).ToLocalChecked());
-  cb.Call(To<v8::Object>(info[1]).ToLocalChecked(), 0, NULL);
+  cb.Call(To<v8::Object>(info[1]).ToLocalChecked(), 0, NULL, &resource);
 }
 
 NAN_METHOD(CompareCallbacks) {
@@ -38,7 +41,8 @@ NAN_METHOD(CallDirect) {
 }
 
 NAN_METHOD(CallAsFunction) {
-  Callback(To<v8::Function>(info[0]).ToLocalChecked())();
+  AsyncResource resource("nan:test.nancallback");
+  Callback(To<v8::Function>(info[0]).ToLocalChecked())(&resource);
 }
 
 NAN_METHOD(ResetUnset) {

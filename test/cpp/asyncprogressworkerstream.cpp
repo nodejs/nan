@@ -61,7 +61,7 @@ class ProgressWorker : public AsyncProgressWorkerBase<T> {
       New<v8::Integer>(data->data));
 
     v8::Local<v8::Value> argv[] = { obj };
-    progress->Call(1, argv);
+    progress->Call(1, argv, this->async_resource);
   }
 
  private:

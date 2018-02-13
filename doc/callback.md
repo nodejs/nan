@@ -49,7 +49,7 @@ class Callback {
                              v8::Local<v8::Value> argv[],
                              AsyncResource* async_resource) const;
 
-  // Legacy versions. Use the versions that accept an async_resource instead
+  // Deprecated versions. Use the versions that accept an async_resource instead
   // as they run the callback in the correct async context as specified by the
   // resource.
   v8::Local<v8::Value> operator()(v8::Local<v8::Object> target,

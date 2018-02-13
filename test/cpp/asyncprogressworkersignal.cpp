@@ -39,7 +39,7 @@ class ProgressWorker : public AsyncProgressWorker {
     HandleScope scope;
 
     v8::Local<v8::Value> arg = New<v8::Boolean>(data == NULL && count == 0);
-    progress->Call(1, &arg);
+    progress->Call(1, &arg, async_resource);
   }
 
  private:
