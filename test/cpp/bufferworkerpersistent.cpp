@@ -37,13 +37,13 @@ class BufferWorker : public AsyncWorker {
     HandleScope scope;
 
     v8::Local<v8::Value> handle = GetFromPersistent("buffer");
-    callback->Call(1, &handle);
+    callback->Call(1, &handle, async_resource);
 
     handle = GetFromPersistent(New("puffer").ToLocalChecked());
-    callback->Call(1, &handle);
+    callback->Call(1, &handle, async_resource);
 
     handle = GetFromPersistent(0u);
-    callback->Call(1, &handle);
+    callback->Call(1, &handle, async_resource);
   }
 
  private:

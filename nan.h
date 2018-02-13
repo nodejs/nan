@@ -1479,17 +1479,19 @@ class Callback {
     return !operator==(other);
   }
 
+  // TODO(ofrobots): This is dangerous as it allows a call without async
+  // context. In a semver-major consider disallowing this.
   inline
   v8::Local<v8::Function> operator*() const { return GetFunction(); }
 
-  inline v8::Local<v8::Value> operator()(
+  NAN_DEPRECATED inline v8::Local<v8::Value> operator()(
       v8::Local<v8::Object> target
     , int argc = 0
     , v8::Local<v8::Value> argv[] = 0) const {
     return this->Call(target, argc, argv);
   }
 
-  inline v8::Local<v8::Value> operator()(
+  NAN_DEPRECATED inline v8::Local<v8::Value> operator()(
       int argc = 0
     , v8::Local<v8::Value> argv[] = 0) const {
     return this->Call(argc, argv);
@@ -1523,6 +1525,8 @@ class Callback {
     handle_.Reset();
   }
 
+  // TODO(ofrobots): This is dangerous as it allows a call without async
+  // context. In a semver-major consider disallowing this.
   inline v8::Local<v8::Function> GetFunction() const {
     return New(handle_);
   }
@@ -1531,7 +1535,7 @@ class Callback {
     return handle_.IsEmpty();
   }
 
-  inline v8::Local<v8::Value>
+  NAN_DEPRECATED inline v8::Local<v8::Value>
   Call(v8::Local<v8::Object> target
      , int argc
      , v8::Local<v8::Value> argv[]) const {
@@ -1543,7 +1547,7 @@ class Callback {
 #endif
   }
 
-  inline v8::Local<v8::Value>
+  NAN_DEPRECATED inline v8::Local<v8::Value>
   Call(int argc, v8::Local<v8::Value> argv[]) const {
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
     v8::Isolate *isolate = v8::Isolate::GetCurrent();

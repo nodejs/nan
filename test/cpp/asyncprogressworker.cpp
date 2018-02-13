@@ -41,7 +41,7 @@ class ProgressWorker : public AsyncProgressWorker {
     v8::Local<v8::Value> argv[] = {
         New<v8::Integer>(*reinterpret_cast<int*>(const_cast<char*>(data)))
     };
-    progress->Call(1, argv);
+    progress->Call(1, argv, async_resource);
   }
 
  private:
