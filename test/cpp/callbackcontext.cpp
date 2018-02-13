@@ -14,7 +14,7 @@ using namespace Nan;  // NOLINT(build/namespaces)
 class DelayRequest : public AsyncResource {
  public:
   DelayRequest(int milliseconds_, v8::Local<v8::Function> callback_)
-    : AsyncResource(MaybeLocal<v8::Object>(), "nan:test.DelayRequest"),
+    : AsyncResource("nan:test.DelayRequest"),
       callback(callback_),
       milliseconds(milliseconds_) {
       request.data = this;
