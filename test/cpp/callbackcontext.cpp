@@ -35,12 +35,11 @@ void AfterDelay(uv_work_t* req, int status) {
   HandleScope scope;
 
   DelayRequest *delay_request = static_cast<DelayRequest*>(req->data);
-  v8::Local<v8::Value> argv[0] = {};
 
   v8::Local<v8::Object> target = New<v8::Object>();
 
   // Run the callback in the async context.
-  delay_request->callback.Call(target, 0, argv, delay_request);
+  delay_request->callback.Call(target, 0, NULL, delay_request);
 
   delete delay_request;
 }
