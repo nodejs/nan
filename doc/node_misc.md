@@ -21,8 +21,10 @@ Definition:
 ```c++
 class AsyncResource {
  public:
-  AsyncResource(MaybeLocal<v8::Object> maybe_resource, v8::Local<v8::String> name);
-  AsyncResource(MaybeLocal<v8::Object> maybe_resource, const char* name);
+  AsyncResource(v8::Local<v8::String> name,
+                v8::Local<v8::Object> resource = New<v8::Object>());
+  AsyncResource(const char* name,
+                v8::Local<v8::Object> resource = New<v8::Object>());
   ~AsyncResource();
 
   v8::MaybeLocal<v8::Value> runInAsyncScope(v8::Local<v8::Object> target,
@@ -43,12 +45,12 @@ class AsyncResource {
 };
 ```
 
-* `maybe_resource`: An optional object associated with the async work that will be passed to the possible [async_hooks][]
-  `init` hook.
-* `name`: Identified for the kind of resource that is being provided for diagnostics information exposed by the [async_hooks][]
+* `name`: Identifier for the kind of resource that is being provided for diagnostics information exposed by the [async_hooks][]
   API. This will be passed to the possible `init` hook as the `type`. To avoid name collisions with other modules we recommend
   that the name include the name of the owning module as a prefix. For example `mysql` module could use something like
   `mysql:batch-db-query-resource`.
+* `resource`: An optional object associated with the async work that will be passed to the possible [async_hooks][]
+  `init` hook. If this parameter is omitted, or an empty handle is provided, this object will be created automatically.
 * When calling JS on behalf of this resource, one can use `runInAsyncScope`. This will ensure that the callback runs in the
   correct async execution context.
 * `AsyncDestroy` is automatically called when an AsyncResource object is destroyed.

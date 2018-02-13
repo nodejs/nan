@@ -1278,26 +1278,29 @@ class Utf8String {
   class AsyncResource {
    public:
     AsyncResource(
-        MaybeLocal<v8::Object> maybe_resource
-      , v8::Local<v8::String> resource_name) {
+        v8::Local<v8::String> name
+      , v8::Local<v8::Object> resource = New<v8::Object>()) {
 #if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
-      v8::Local<v8::Object> resource =
-          maybe_resource.IsEmpty() ? New<v8::Object>()
-                                  : maybe_resource.ToLocalChecked();
+      if (resource.IsEmpty()) {
+        resource = New<v8::Object>();
+      }
 
-      context = node::EmitAsyncInit(isolate, resource, resource_name);
+      context = node::EmitAsyncInit(isolate, resource, name);
 #endif
     }
 
-    AsyncResource(MaybeLocal<v8::Object> maybe_resource, const char* name) {
+    AsyncResource(
+        const char* name
+      , v8::Local<v8::Object> resource = New<v8::Object>()) {
 #if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
-      v8::Local<v8::Object> resource =
-          maybe_resource.IsEmpty() ? New<v8::Object>()
-                                  : maybe_resource.ToLocalChecked();
+      if (resource.IsEmpty()) {
+        resource = New<v8::Object>();
+      }
+
       v8::Local<v8::String> name_string =
           New<v8::String>(name).ToLocalChecked();
       context = node::EmitAsyncInit(isolate, resource, name_string);
@@ -1657,7 +1660,7 @@ class Callback {
     HandleScope scope;
     v8::Local<v8::Object> obj = New<v8::Object>();
     persistentHandle.Reset(obj);
-    async_resource = new AsyncResource(obj, resource_name);
+    async_resource = new AsyncResource(resource_name, obj);
   }
 
   virtual ~AsyncWorker() {
