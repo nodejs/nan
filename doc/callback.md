@@ -51,7 +51,8 @@ class Callback {
 
   // Deprecated versions. Use the versions that accept an async_resource instead
   // as they run the callback in the correct async context as specified by the
-  // resource.
+  // resource. If you want to call a synchronous JS function (i.e. on a
+  // non-empty JS stack), you can use Nan::Call instead.
   v8::Local<v8::Value> operator()(v8::Local<v8::Object> target,
                                   int argc = 0,
                                   v8::Local<v8::Value> argv[] = 0) const;
