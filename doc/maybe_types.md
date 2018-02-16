@@ -122,12 +122,16 @@ template<typename T> Nan::Maybe<T> Nan::Just(const T &t);
 <a name="api_nan_call"></a>
 ### Nan::Call()
 
-A helper method for calling [`v8::Function#Call()`](https://v8docs.nodesource.com/io.js-3.3/d5/d54/classv8_1_1_function.html#a468a89f737af0612db10132799c827c0) in a way compatible across supported versions of V8.
+A helper method for calling a synchronous [`v8::Function#Call()`](https://v8docs.nodesource.com/io.js-3.3/d5/d54/classv8_1_1_function.html#a468a89f737af0612db10132799c827c0) in a way compatible across supported versions of V8.
+
+For asynchronous callbacks, use Nan::Callback::Call along with an AsyncResource.
 
 Signature:
 
 ```c++
 Nan::MaybeLocal<v8::Value> Nan::Call(v8::Local<v8::Function> fun, v8::Local<v8::Object> recv, int argc, v8::Local<v8::Value> argv[]);
+Nan::MaybeLocal<v8::Value> Nan::Call(Nan::Callback* callback, v8::Local<v8::Object> recv,
+ int argc, v8::Local<v8::Value> argv[]);
 ```
 
 
