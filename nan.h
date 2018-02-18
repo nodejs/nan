@@ -1659,11 +1659,11 @@ class Callback {
 };
 
 inline MaybeLocal<v8::Value> Call(
-    Nan::Callback* callback
+    const Nan::Callback& callback
   , v8::Local<v8::Object> recv
   , int argc
   , v8::Local<v8::Value> argv[]) {
-  return Call(callback->GetFunction(), recv, argc, argv);
+  return Call(*callback, recv, argc, argv);
 }
 
 /* abstract */ class AsyncWorker {
