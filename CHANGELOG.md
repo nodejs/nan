@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.9.1: current Node 9.5.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.9.2: current Node 9.5.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.9.2 Feb 22 2018
+
+  - Bugfix: Bandaid for async hooks 212bd2f849be14ef1b02fc85010b053daa24252b
 
 ### 2.9.1 Feb 22 2018
 
