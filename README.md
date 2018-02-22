@@ -316,6 +316,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
 
 ### Miscellaneous Node Helpers
 
+ - <a href="doc/node_misc.md#api_nan_asyncresource"><b><code>Nan::AsyncResource</code></b></a>
  - <a href="doc/node_misc.md#api_nan_make_callback"><b><code>Nan::MakeCallback()</code></b></a>
  - <a href="doc/node_misc.md#api_nan_module_init"><b><code>NAN_MODULE_INIT()</code></b></a>
  - <a href="doc/node_misc.md#api_nan_export"><b><code>Nan::Export()</code></b></a>
