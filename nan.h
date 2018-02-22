@@ -1486,13 +1486,26 @@ class Callback {
       v8::Local<v8::Object> target
     , int argc = 0
     , v8::Local<v8::Value> argv[] = 0) const {
-    return this->Call(target, argc, argv);
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    return Call_(isolate, target, argc, argv);
+#else
+    return Call_(target, argc, argv);
+#endif
   }
 
   NAN_DEPRECATED inline v8::Local<v8::Value> operator()(
       int argc = 0
     , v8::Local<v8::Value> argv[] = 0) const {
-    return this->Call(argc, argv);
+#if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::EscapableHandleScope scope(isolate);
+    return scope.Escape(
+        Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv));
+#else
+    v8::HandleScope scope;
+    return scope.Close(Call_(v8::Context::GetCurrent()->Global(), argc, argv));
+#endif
   }
 
   inline MaybeLocal<v8::Value> operator()(
