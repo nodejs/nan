@@ -1,6 +1,16 @@
 # NAN ChangeLog
 
-**Version 2.8.0: current Node 9.2.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.9.0: current Node 9.5.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.9.0 Feb 22 2018
+
+  - Deprecation: Deprecate legacy `Callback::Call` 6dd5fa690af61ca3523004b433304c581b3ea309
+  - Feature: introduce `AsyncResource` class 90c0a179c0d8cb5fd26f1a7d2b1d6231eb402d48o
+  - Feature: Add context aware `Nan::Callback::Call` functions 7169e09fb088418b6e388222e88b4c13f07ebaee
+  - Feature: Make `AsyncWorker` context aware 066ba21a6fb9e2b5230c9ed3a6fc51f1211736a4
+  - Feature: add `Callback` overload to `Nan::Call` 5328daf66e202658c1dc0d916c3aaba99b3cc606
+  - Bugfix: fix warning: suggest parentheses around `&&` within `||` b2bb63d68b8ae623a526b542764e1ac82319cb2c
+  - Bugfix: Fix compilation on io.js 3 d06114dba0a522fb436f0c5f47b994210968cd7b
 
 ### 2.8.0 Nov 15 2017
 
