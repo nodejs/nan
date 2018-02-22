@@ -1,6 +1,11 @@
 # NAN ChangeLog
 
-**Version 2.9.0: current Node 9.5.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.9.1: current Node 9.5.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.9.1 Feb 22 2018
+
+  - Bugfix: Avoid deprecation warnings in deprecated `Nan::Callback::operator()` 372b14d91289df4604b0f81780709708c45a9aa4
+  - Bugfix: Avoid deprecation warnings in `Nan::JSON` 3bc294bce0b7d0a3ee4559926303e5ed4866fda2
 
 ### 2.9.0 Feb 22 2018
 
