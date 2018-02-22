@@ -6,6 +6,7 @@
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
+const version = process.versions.node.split('.');
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
     , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncworker' });
@@ -30,6 +31,12 @@ test('asyncworker', function (t) {
 
 test('asyncworker context', function (t) {
   var asyncHooks;
+  if (version[0] < 9) {
+    t.ok(true);
+    t.end();
+    return;
+  }
+
   try {
     asyncHooks = require('async_hooks');
   } catch (e) {

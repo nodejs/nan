@@ -8,6 +8,12 @@
 
 const bindingName = 'callbackcontext';
 
+const version = process.versions.node.split('.');
+if (version[0] < 9) {
+  console.log('1..0 # Skipped: ' + bindingName);
+  process.exit(0);
+}
+
 try {
   require('async_hooks');
 } catch (e) {

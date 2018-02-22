@@ -6,6 +6,11 @@
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
+const version = process.versions.node.split('.');
+if (version[0] < 9) {
+  process.exit(0);
+}
+
 try {
   require('async_hooks');
 } catch (e) {

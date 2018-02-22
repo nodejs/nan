@@ -1280,7 +1280,7 @@ class Utf8String {
     AsyncResource(
         v8::Local<v8::String> name
       , v8::Local<v8::Object> resource = New<v8::Object>()) {
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
       if (resource.IsEmpty()) {
@@ -1294,7 +1294,7 @@ class Utf8String {
     AsyncResource(
         const char* name
       , v8::Local<v8::Object> resource = New<v8::Object>()) {
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
       if (resource.IsEmpty()) {
@@ -1308,7 +1308,7 @@ class Utf8String {
     }
 
     ~AsyncResource() {
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
       node::EmitAsyncDestroy(isolate, context);
 #endif
@@ -1319,7 +1319,7 @@ class Utf8String {
       , v8::Local<v8::Function> func
       , int argc
       , v8::Local<v8::Value>* argv) {
-#if NODE_MODULE_VERSION < NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION < NODE_9_0_MODULE_VERSION
       return MakeCallback(target, func, argc, argv);
 #else
       return node::MakeCallback(
@@ -1332,7 +1332,7 @@ class Utf8String {
       , v8::Local<v8::String> symbol
       , int argc
       , v8::Local<v8::Value>* argv) {
-#if NODE_MODULE_VERSION < NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION < NODE_9_0_MODULE_VERSION
       return MakeCallback(target, symbol, argc, argv);
 #else
       return node::MakeCallback(
@@ -1345,7 +1345,7 @@ class Utf8String {
       , const char* method
       , int argc
       , v8::Local<v8::Value>* argv) {
-#if NODE_MODULE_VERSION < NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION < NODE_9_0_MODULE_VERSION
       return MakeCallback(target, method, argc, argv);
 #else
       return node::MakeCallback(
@@ -1355,7 +1355,7 @@ class Utf8String {
 
    private:
     NAN_DISALLOW_ASSIGN_COPY_MOVE(AsyncResource)
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
     node::async_context context;
 #endif
   };
@@ -1582,7 +1582,7 @@ class Callback {
      , int argc
      , v8::Local<v8::Value> argv[]
      , AsyncResource* resource) const {
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     return Call_(isolate, target, argc, argv, resource);
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
@@ -1595,7 +1595,7 @@ class Callback {
 
   inline MaybeLocal<v8::Value>
   Call(int argc, v8::Local<v8::Value> argv[], AsyncResource* resource) const {
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     return Call(isolate->GetCurrentContext()->Global(), argc, argv, resource);
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
@@ -1613,7 +1613,7 @@ class Callback {
   NAN_DISALLOW_ASSIGN_COPY_MOVE(Callback)
   Persistent<v8::Function> handle_;
 
-#if NODE_MODULE_VERSION >= NODE_8_0_MODULE_VERSION
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
   MaybeLocal<v8::Value> Call_(v8::Isolate *isolate
                             , v8::Local<v8::Object> target
                             , int argc
