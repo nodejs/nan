@@ -6,11 +6,8 @@
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  ********************************************************************/
 
-#ifndef _WIN32
-#include <unistd.h>
-#define Sleep(x) usleep((x)*1000)
-#endif
 #include <nan.h>
+#include "sleep.h"  // NOLINT(build/include)
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
