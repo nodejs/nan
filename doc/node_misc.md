@@ -30,18 +30,15 @@ class AsyncResource {
   v8::MaybeLocal<v8::Value> runInAsyncScope(v8::Local<v8::Object> target,
                                             v8::Local<v8::Function> func,
                                             int argc,
-                                            v8::Local<v8::Value>* argv,
-                                            Nan::async_context async_context);
+                                            v8::Local<v8::Value>* argv);
   v8::MaybeLocal<v8::Value> runInAsyncScope(v8::Local<v8::Object> target,
                                             v8::Local<v8::String> symbol,
                                             int argc,
-                                            v8::Local<v8::Value>* argv,
-                                            Nan::async_context async_context);
+                                            v8::Local<v8::Value>* argv);
   v8::MaybeLocal<v8::Value> runInAsyncScope(v8::Local<v8::Object> target,
                                             const char* method,
                                             int argc,
-                                            v8::Local<v8::Value>* argv,
-                                            Nan::async_context async_context);
+                                            v8::Local<v8::Value>* argv);
 };
 ```
 
