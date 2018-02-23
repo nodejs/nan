@@ -7,7 +7,7 @@
  ********************************************************************/
 
 #include <nan.h>
-#include "sleep.h"
+#include "sleep.h"  // NOLINT(build/include)
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
