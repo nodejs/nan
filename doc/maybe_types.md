@@ -132,6 +132,7 @@ Signature:
 Nan::MaybeLocal<v8::Value> Nan::Call(v8::Local<v8::Function> fun, v8::Local<v8::Object> recv, int argc, v8::Local<v8::Value> argv[]);
 Nan::MaybeLocal<v8::Value> Nan::Call(const Nan::Callback& callback, v8::Local<v8::Object> recv,
  int argc, v8::Local<v8::Value> argv[]);
+Nan::MaybeLocal<v8::Value> Nan::Call(const Nan::Callback& callback, int argc, v8::Local<v8::Value> argv[]);
 ```
 
 
