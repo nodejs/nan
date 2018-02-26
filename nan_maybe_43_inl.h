@@ -123,7 +123,7 @@ inline Maybe<bool> DefineOwnProperty(
     return Nothing<bool>();
   }
   v8::PropertyAttribute current = maybeCurrent.FromJust();
-  return DefineOwnPropertyHelper(current, obj, key, value, attribs);
+  return imp::DefineOwnPropertyHelper(current, obj, key, value, attribs);
 #endif
 }
 

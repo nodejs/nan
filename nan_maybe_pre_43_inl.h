@@ -156,7 +156,7 @@ inline Maybe<bool> DefineOwnProperty(
   , v8::Handle<v8::Value> value
   , v8::PropertyAttribute attribs = v8::None) {
   v8::PropertyAttribute current = obj->GetPropertyAttributes(key);
-  return DefineOwnPropertyHelper(current, obj, key, value, attribs);
+  return imp::DefineOwnPropertyHelper(current, obj, key, value, attribs);
 }
 
 NAN_DEPRECATED inline Maybe<bool> ForceSet(

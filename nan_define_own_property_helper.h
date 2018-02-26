@@ -9,6 +9,8 @@
 #ifndef NAN_DEFINE_OWN_PROPERTY_HELPER_H_
 #define NAN_DEFINE_OWN_PROPERTY_HELPER_H_
 
+namespace imp {
+
 inline Maybe<bool> DefineOwnPropertyHelper(
     v8::PropertyAttribute current
   , v8::Handle<v8::Object> obj
@@ -21,5 +23,7 @@ inline Maybe<bool> DefineOwnPropertyHelper(
              ? Just<bool>(obj->ForceSet(key, value, attribs))
              : Nothing<bool>();
 }
+
+}  // end of namespace imp
 
 #endif  // NAN_DEFINE_OWN_PROPERTY_HELPER_H_
