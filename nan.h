@@ -1685,9 +1685,16 @@ inline MaybeLocal<v8::Value> Call(
   , v8::Local<v8::Value> argv[]) {
 #if NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  return Call(*callback, isolate->GetCurrentContext()->Global(), argc, argv);
+  v8::EscapableHandleScope scope(isolate);
+  return scope.Escape(
+      Call(*callback, isolate->GetCurrentContext()->Global(), argc, argv);
+  )
 #else
-  return Call(*callback, v8::Context::GetCurrent()->Global(), argc, argv);
+  EscapableHandleScope scope;
+  return scope.Escape(Call(*callback,
+                           v8::Context::GetCurrent()->Global(),
+                           argc,
+                           argv).ToLocalChecked());
 #endif
 }
 
