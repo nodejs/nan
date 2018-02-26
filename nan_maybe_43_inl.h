@@ -102,6 +102,10 @@ inline Maybe<bool> Set(
   return obj->Set(isolate->GetCurrentContext(), index, value);
 }
 
+#if NODE_MODULE_VERSION < NODE_4_0_MODULE_VERSION
+#include "nan_define_own_property_helper.h"  // NOLINT(build/include)
+#endif
+
 inline Maybe<bool> DefineOwnProperty(
     v8::Local<v8::Object> obj
   , v8::Local<v8::String> key
@@ -119,11 +123,7 @@ inline Maybe<bool> DefineOwnProperty(
     return Nothing<bool>();
   }
   v8::PropertyAttribute current = maybeCurrent.FromJust();
-  return !(current & v8::DontDelete) ||                     // configurable OR
-                  (!(current & v8::ReadOnly) &&             // writable AND
-                   !((attribs ^ current) & ~v8::ReadOnly))  // same excluding RO
-             ? Just<bool>(obj->ForceSet(key, value, attribs))
-             : Nothing<bool>();
+  return imp::DefineOwnPropertyHelper(current, obj, key, value, attribs);
 #endif
 }
 

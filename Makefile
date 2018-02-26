@@ -21,6 +21,7 @@ LINT_SOURCES = \
 	nan_converters.h \
 	nan_converters_43_inl.h \
 	nan_converters_pre_43_inl.h \
+	nan_define_own_property_helper.h \
 	nan_implementation_12_inl.h \
 	nan_implementation_pre_12_inl.h \
 	nan_json.h \
@@ -105,6 +106,7 @@ docs: README.md doc/.build.sh doc/asyncworker.md doc/buffers.md doc/callback.md 
 $(ADDONS): nan.h nan_new.h nan_implementation_pre_12_inl.h nan_implementation_12_inl.h \
 		nan_callbacks.h nan_callbacks_12_inl.h nan_callbacks_pre_12_inl.h \
 		nan_converters.h nan_converters_43_inl.h nan_converters_pre_43_inl.h \
+		nan_define_own_property_helper.h \
 		nan_json.h nan_maybe_43_inl.h nan_maybe_pre_43_inl.h \
 		nan_persistent_12_inl.h nan_persistent_pre_12_inl.h nan_private.h \
 		nan_weak.h nan_string_bytes.h test/binding.gyp $(SOURCES)

@@ -148,17 +148,15 @@ inline Maybe<bool> Set(
   return Just<bool>(obj->Set(index, value));
 }
 
+#include "nan_define_own_property_helper.h"  // NOLINT(build/include)
+
 inline Maybe<bool> DefineOwnProperty(
     v8::Handle<v8::Object> obj
   , v8::Handle<v8::String> key
   , v8::Handle<v8::Value> value
   , v8::PropertyAttribute attribs = v8::None) {
   v8::PropertyAttribute current = obj->GetPropertyAttributes(key);
-  return !(current & v8::DontDelete) ||                     // configurable OR
-                  (!(current & v8::ReadOnly) &&             // writable AND
-                   !((attribs ^ current) & ~v8::ReadOnly))  // same excluding RO
-             ? Just<bool>(obj->ForceSet(key, value, attribs))
-             : Nothing<bool>();
+  return imp::DefineOwnPropertyHelper(current, obj, key, value, attribs);
 }
 
 NAN_DEPRECATED inline Maybe<bool> ForceSet(
