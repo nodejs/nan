@@ -1687,14 +1687,13 @@ inline MaybeLocal<v8::Value> Call(
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope scope(isolate);
   return scope.Escape(
-      Call(*callback, isolate->GetCurrentContext()->Global(), argc, argv);
-  )
+      Call(*callback, isolate->GetCurrentContext()->Global(), argc, argv)
+          .FromMaybe(v8::Local<v8::Value>()));
 #else
   EscapableHandleScope scope;
-  return scope.Escape(Call(*callback,
-                           v8::Context::GetCurrent()->Global(),
-                           argc,
-                           argv).ToLocalChecked());
+  return scope.Escape(
+      Call(*callback, v8::Context::GetCurrent()->Global(), argc, argv)
+          .FromMaybe(v8::Local<v8::Value>()));
 #endif
 }
 
