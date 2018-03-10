@@ -1717,7 +1717,8 @@ inline MaybeLocal<v8::Value> Call(
   , int argc
   , v8::Local<v8::Value> argv[]) {
   EscapableHandleScope scope;
-  auto method_string = New<v8::String>(method).ToLocalChecked();
+  v8::Local<v8::String> method_string =
+      New<v8::String>(method).ToLocalChecked();
   return scope.Escape(
       Call(method_string, recv, argc, argv).FromMaybe(v8::Local<v8::Value>()));
 }
@@ -2650,7 +2651,7 @@ struct Tap {
 
   inline void end() {
     HandleScope scope;
-    Call("end", New(t_), 0, nullptr);
+    Call("end", New(t_), 0, NULL);
   }
 
  private:
