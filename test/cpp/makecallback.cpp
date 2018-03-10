@@ -15,8 +15,10 @@ class MyObject : public node::ObjectWrap {
   static NAN_MODULE_INIT(Init);
 
  private:
-  MyObject();
+  MyObject(v8::Local<v8::Object> resource);
   ~MyObject();
+
+  AsyncResource async_resource;
 
   static NAN_METHOD(New);
   static NAN_METHOD(CallEmit);
@@ -25,7 +27,8 @@ class MyObject : public node::ObjectWrap {
 
 Persistent<v8::Function> MyObject::constructor;
 
-MyObject::MyObject() {
+MyObject::MyObject(v8::Local<v8::Object> resource)
+  : async_resource("nan:test:makecallback", resource) {
 }
 
 MyObject::~MyObject() {
@@ -45,7 +48,7 @@ NAN_MODULE_INIT(MyObject::Init) {
 
 NAN_METHOD(MyObject::New) {
   if (info.IsConstructCall()) {
-    MyObject* obj = new MyObject();
+    MyObject* obj = new MyObject(info.This());
     obj->Wrap(info.This());
     info.GetReturnValue().Set(info.This());
   } else {
@@ -59,7 +62,8 @@ NAN_METHOD(MyObject::CallEmit) {
     Nan::New("event").ToLocalChecked(),  // event name
   };
 
-  MakeCallback(info.This(), "emit", 1, argv);
+  MyObject* obj = node::ObjectWrap::Unwrap<MyObject>(info.This());
+  obj->async_resource.runInAsyncScope(info.This(), "emit", 1, argv);
   info.GetReturnValue().SetUndefined();
 }
 
