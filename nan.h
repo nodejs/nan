@@ -1697,6 +1697,31 @@ inline MaybeLocal<v8::Value> Call(
 #endif
 }
 
+inline MaybeLocal<v8::Value> Call(
+    v8::Local<v8::String> symbol
+  , v8::Local<v8::Object> recv
+  , int argc
+  , v8::Local<v8::Value> argv[]) {
+  EscapableHandleScope scope;
+  v8::Local<v8::Value> fn_v = recv->Get(symbol);
+  if (fn_v.IsEmpty() || !fn_v->IsFunction()) return v8::Local<v8::Value>();
+  v8::Local<v8::Function> fn = fn_v.As<v8::Function>();
+
+  return scope.Escape(
+      Call(fn, recv, argc, argv).FromMaybe(v8::Local<v8::Value>()));
+}
+
+inline MaybeLocal<v8::Value> Call(
+    const char* method
+  , v8::Local<v8::Object> recv
+  , int argc
+  , v8::Local<v8::Value> argv[]) {
+  EscapableHandleScope scope;
+  auto method_string = New<v8::String>(method).ToLocalChecked();
+  return scope.Escape(
+      Call(method_string, recv, argc, argv).FromMaybe(v8::Local<v8::Value>()));
+}
+
 /* abstract */ class AsyncWorker {
  public:
   explicit AsyncWorker(Callback *callback_,
@@ -2605,7 +2630,7 @@ struct Tap {
   inline void plan(int i) {
     HandleScope scope;
     v8::Local<v8::Value> arg = New(i);
-    MakeCallback(New(t_), "plan", 1, &arg);
+    Call("plan", New(t_), 1, &arg);
   }
 
   inline void ok(bool isOk, const char *msg = NULL) {
@@ -2613,14 +2638,19 @@ struct Tap {
     v8::Local<v8::Value> args[2];
     args[0] = New(isOk);
     if (msg) args[1] = New(msg).ToLocalChecked();
-    MakeCallback(New(t_), "ok", msg ? 2 : 1, args);
+    Call("ok", New(t_), msg ? 2 : 1, args);
   }
 
   inline void pass(const char * msg = NULL) {
     HandleScope scope;
     v8::Local<v8::Value> hmsg;
     if (msg) hmsg = New(msg).ToLocalChecked();
-    MakeCallback(New(t_), "pass", msg ? 1 : 0, &hmsg);
+    Call("pass", New(t_), msg ? 1 : 0, &hmsg);
+  }
+
+  inline void end() {
+    HandleScope scope;
+    Call("end", New(t_), 0, nullptr);
   }
 
  private:

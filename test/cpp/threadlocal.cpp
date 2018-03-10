@@ -36,6 +36,7 @@ class TlsTest : public AsyncWorker {
       t->ok(res[j].ok, res[j].msg);
     nauv_key_delete(&tls_key);
     t->ok(_(NULL == ErrorMessage()));
+    t->end();
     delete t;
   }
 
