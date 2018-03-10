@@ -826,7 +826,7 @@ class TryCatch {
   }
 #endif
 
-  inline v8::Local<v8::Value> MakeCallback(
+  NAN_DEPRECATED inline v8::Local<v8::Value> MakeCallback(
       v8::Local<v8::Object> target
     , v8::Local<v8::Function> func
     , int argc
@@ -841,7 +841,7 @@ class TryCatch {
 #endif
   }
 
-  inline v8::Local<v8::Value> MakeCallback(
+  NAN_DEPRECATED inline v8::Local<v8::Value> MakeCallback(
       v8::Local<v8::Object> target
     , v8::Local<v8::String> symbol
     , int argc
@@ -856,7 +856,7 @@ class TryCatch {
 #endif
   }
 
-  inline v8::Local<v8::Value> MakeCallback(
+  NAN_DEPRECATED inline v8::Local<v8::Value> MakeCallback(
       v8::Local<v8::Object> target
     , const char* method
     , int argc

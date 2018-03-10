@@ -58,7 +58,9 @@ For more details, see the Node [async_hooks][] documentation. You might also wan
 <a name="api_nan_make_callback"></a>
 ### Nan::MakeCallback()
 
-Wrappers around the legacy `node::MakeCallback()` APIs.
+Deprecated wrappers around the legacy `node::MakeCallback()` APIs. Node.js 10+
+has deprecated these legacy APIs as they do not provide a mechanism to preserve
+async context.
 
 We recommend that you use the `AsyncResource` class and `AsyncResource::runInAsyncScope` instead of using `Nan::MakeCallback` or
 `v8::Function#Call()` directly. `AsyncResource` properly takes care of running the callback in the correct async execution
@@ -67,14 +69,17 @@ context – something that is essential for functionality like domains, async_ho
 Signatures:
 
 ```c++
+NAN_DEPRECATED
 v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
                                        v8::Local<v8::Function> func,
                                        int argc,
                                        v8::Local<v8::Value>* argv);
+NAN_DEPRECATED
 v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
                                        v8::Local<v8::String> symbol,
                                        int argc,
                                        v8::Local<v8::Value>* argv);
+NAN_DEPRECATED
 v8::Local<v8::Value> Nan::MakeCallback(v8::Local<v8::Object> target,
                                        const char* method,
                                        int argc,
