@@ -15,7 +15,7 @@ imp::ToFactory<v8::TYPE>::convert(v8::Local<v8::Value> val) {                  \
   v8::Isolate *isolate = v8::Isolate::GetCurrent();                            \
   v8::EscapableHandleScope scope(isolate);                                     \
   return scope.Escape(                                                         \
-      val->To ## TYPE(v8::Isolate::GetCurrent()->GetCurrentContext())          \
+      val->To ## TYPE(isolate->GetCurrentContext())                            \
           .FromMaybe(v8::Local<v8::TYPE>()));                                  \
 }
 
