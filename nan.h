@@ -1703,10 +1703,10 @@ inline MaybeLocal<v8::Value> Call(
   , int argc
   , v8::Local<v8::Value> argv[]) {
   EscapableHandleScope scope;
-  v8::Local<v8::Value> fn_v = recv->Get(symbol);
+  v8::Local<v8::Value> fn_v =
+      Get(recv, symbol).FromMaybe(v8::Local<v8::Value>());
   if (fn_v.IsEmpty() || !fn_v->IsFunction()) return v8::Local<v8::Value>();
   v8::Local<v8::Function> fn = fn_v.As<v8::Function>();
-
   return scope.Escape(
       Call(fn, recv, argc, argv).FromMaybe(v8::Local<v8::Value>()));
 }
