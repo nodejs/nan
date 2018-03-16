@@ -1,6 +1,13 @@
 # NAN ChangeLog
 
-**Version 2.9.2: current Node 9.5.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.10.0: current Node 9.8.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.10.0 Mar 16 2018
+
+  - Deprecation: Deprecate `MakeCallback` 5e92b19a59e194241d6a658bd6ff7bfbda372950
+  - Feature: add `Nan::Call` overload 4482e1242fe124d166fc1a5b2be3c1cc849fe452
+  - Feature: add more `Nan::Call` overloads 8584e63e6d04c7d2eb8c4a664e4ef57d70bf672b
+  - Feature: Fix deprecation warnings for Node 10 1caf258243b0602ed56922bde74f1c91b0cbcb6a
 
 ### 2.9.2 Feb 22 2018
 
