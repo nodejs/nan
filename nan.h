@@ -484,10 +484,11 @@ class AsyncResource {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
     if (resource.IsEmpty()) {
-      resource = New<v8::Object>();
+      HandleScope scope;
+      context = node::EmitAsyncInit(isolate, New<v8::Object>(), name);
+    } else {
+      context = node::EmitAsyncInit(isolate, resource, name);
     }
-
-    context = node::EmitAsyncInit(isolate, resource, name);
 #endif
   }
 
@@ -495,6 +496,7 @@ class AsyncResource {
       const char* name
     , v8::Local<v8::Object> resource = New<v8::Object>()) {
 #if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
+    HandleScope scope;
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
     if (resource.IsEmpty()) {
