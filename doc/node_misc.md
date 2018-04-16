@@ -10,7 +10,7 @@
 
 This class is analogous to the `AsyncResource` JavaScript class exposed by Node's [async_hooks][] API.
 
-When calling back into JavaScript asynchornously, special care must be taken to ensure that the runtime can properly track
+When calling back into JavaScript asynchronously, special care must be taken to ensure that the runtime can properly track
 async hops. `Nan::AsyncResource` is a class that provides an RAII wrapper around `node::EmitAsyncInit`, `node::EmitAsyncDestroy`,
 and `node::MakeCallback`. Using this mechanism to call back into JavaScript, as opposed to `Nan::MakeCallback` or
 `v8::Function::Call` ensures that the callback is executed in the correct async context. This ensures that async mechanisms
