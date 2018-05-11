@@ -19,5 +19,5 @@ test('indexedinterceptors', function (t) {
   delete interceptor[0];
   t.equal(interceptor[0], 'goober');
   t.ok(Object.prototype.hasOwnProperty.call(interceptor, 1));
-  t.equal(Object.keys(interceptor)[0], 'whee');
+  t.equal(Object.keys(interceptor)[0], '42');
 });
