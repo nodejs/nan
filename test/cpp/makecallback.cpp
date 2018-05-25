@@ -15,7 +15,7 @@ class MyObject : public node::ObjectWrap {
   static NAN_MODULE_INIT(Init);
 
  private:
-  MyObject(v8::Local<v8::Object> resource);
+  explicit MyObject(v8::Local<v8::Object> resource);
   ~MyObject();
 
   AsyncResource async_resource;
