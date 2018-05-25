@@ -47,7 +47,7 @@ assertType(U value) {
 
 bool
 stringMatches(Local<Value> value, const char * match) {
-  String::Utf8Value v(value);
+  Nan::Utf8String v(value);
   return std::string(*v) == std::string(match);
 }
 
