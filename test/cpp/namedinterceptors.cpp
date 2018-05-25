@@ -96,7 +96,7 @@ NAN_PROPERTY_SETTER(NamedInterceptor::PropertySetter) {
 
 NAN_PROPERTY_ENUMERATOR(NamedInterceptor::PropertyEnumerator) {
   v8::Local<v8::Array> arr = Nan::New<v8::Array>();
-  Set(arr, 0, Nan::New("value").ToLocalChecked());
+  Set(arr, 0, Nan::New(57));
   info.GetReturnValue().Set(arr);
 }
 
