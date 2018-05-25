@@ -25,7 +25,9 @@ test('FromV8String', function (t) {
 
   var buf;
 
-  if (typeof(Buffer.from) === "function") {
+  /* we check Buffer.alloc rather than Buffer.from because
+   * we don't want the base class Uint8Array.from */
+  if (typeof(Buffer.alloc) === "function") {
     buf = Buffer.from('hello');
   } else {
     buf = new Buffer('hello');
