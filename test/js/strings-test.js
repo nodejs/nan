@@ -23,10 +23,13 @@ test('FromV8String', function (t) {
   t.equal(a('an utf8 strïng'), 'an utf8 strïng');
   t.equal(b('an utf8 strïng'), 'an utf8 strïng');
 
+  var buf;
+
   if (typeof(Buffer.from) === "function") {
-    t.equal(bindings.encodeHex(), Buffer.from('hello').toString('hex'));
+    buf = Buffer.from('hello');
   } else {
-    t.equal(bindings.encodeHex(), new Buffer('hello').toString('hex'));
+    buf = new Buffer('hello');
   }
+  t.equal(bindings.encodeHex(), buf.toString('hex'));
   t.equal(bindings.encodeUCS2(), 'hello');
 });
