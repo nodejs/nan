@@ -133,7 +133,7 @@ NAN_SETTER(SetterGetter::SetProp2) {
       ObjectWrap::Unwrap<SetterGetter>(info.Holder());
   strncpy(
       settergetter->prop2
-    , *v8::String::Utf8Value(value)
+    , *Nan::Utf8String(value)
     , sizeof (settergetter->prop2));
   settergetter->prop2[sizeof (settergetter->prop2) - 1] = '\0';
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
