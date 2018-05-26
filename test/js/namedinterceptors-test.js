@@ -19,5 +19,5 @@ test('namedinterceptors', function (t) {
   delete interceptor.something;
   t.equal(interceptor.prop, 'goober');
   t.ok(Object.prototype.hasOwnProperty.call(interceptor, "thing"));
-  t.ok(Object.keys(interceptor)[0] === 'value');
+  t.ok(Object.keys(interceptor)['zero'] === 'value');
 });
