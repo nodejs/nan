@@ -86,7 +86,7 @@ NAN_INDEX_SETTER(IndexedInterceptor::PropertySetter) {
   if (index == 0) {
     std::strncpy(
         interceptor->buf
-      , *v8::String::Utf8Value(value)
+      , *Nan::Utf8String(value)
       , sizeof (interceptor->buf));
     info.GetReturnValue().Set(info.This());
   } else {

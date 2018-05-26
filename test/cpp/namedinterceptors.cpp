@@ -73,7 +73,7 @@ NAN_METHOD(NamedInterceptor::New) {
 NAN_PROPERTY_GETTER(NamedInterceptor::PropertyGetter) {
   NamedInterceptor* interceptor =
     ObjectWrap::Unwrap<NamedInterceptor>(info.Holder());
-  if (!std::strcmp(*v8::String::Utf8Value(property), "prop")) {
+  if (!std::strcmp(*Nan::Utf8String(property), "prop")) {
     info.GetReturnValue().Set(Nan::New(interceptor->buf).ToLocalChecked());
   } else {
     info.GetReturnValue().Set(Nan::New("bar").ToLocalChecked());
@@ -83,10 +83,10 @@ NAN_PROPERTY_GETTER(NamedInterceptor::PropertyGetter) {
 NAN_PROPERTY_SETTER(NamedInterceptor::PropertySetter) {
   NamedInterceptor* interceptor =
     ObjectWrap::Unwrap<NamedInterceptor>(info.Holder());
-  if (!std::strcmp(*v8::String::Utf8Value(property), "prop")) {
+  if (!std::strcmp(*Nan::Utf8String(property), "prop")) {
     std::strncpy(
         interceptor->buf
-      , *v8::String::Utf8Value(value)
+      , *Nan::Utf8String(value)
       , sizeof (interceptor->buf));
     info.GetReturnValue().Set(info.This());
   } else {
@@ -108,7 +108,7 @@ NAN_PROPERTY_DELETER(NamedInterceptor::PropertyDeleter) {
 }
 
 NAN_PROPERTY_QUERY(NamedInterceptor::PropertyQuery) {
-  if (!std::strcmp(*v8::String::Utf8Value(property), "thing")) {
+  if (!std::strcmp(*Nan::Utf8String(property), "thing")) {
     info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
   }
 }
