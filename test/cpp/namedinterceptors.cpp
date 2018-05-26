@@ -108,8 +108,12 @@ NAN_PROPERTY_DELETER(NamedInterceptor::PropertyDeleter) {
 }
 
 NAN_PROPERTY_QUERY(NamedInterceptor::PropertyQuery) {
-  if (!std::strcmp(*Nan::Utf8String(property), "thing")) {
-    info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
+  Nan::Utf8String s(property);
+  if (!std::strcmp(*s, "thing")) {
+    return info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
+  }
+  if (!std::strcmp(*s, "value")) {
+    return info.GetReturnValue().Set(Nan::New(0));
   }
 }
 
