@@ -23,6 +23,15 @@ test('FromV8String', function (t) {
   t.equal(a('an utf8 strïng'), 'an utf8 strïng');
   t.equal(b('an utf8 strïng'), 'an utf8 strïng');
 
-  t.equal(bindings.encodeHex(), new Buffer('hello').toString('hex'));
+  var buf;
+
+  /* we check Buffer.alloc rather than Buffer.from because
+   * we don't want the base class Uint8Array.from */
+  if (typeof(Buffer.alloc) === "function") {
+    buf = Buffer.from('hello');
+  } else {
+    buf = new Buffer('hello');
+  }
+  t.equal(bindings.encodeHex(), buf.toString('hex'));
   t.equal(bindings.encodeUCS2(), 'hello');
 });
