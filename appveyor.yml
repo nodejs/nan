@@ -15,10 +15,6 @@ environment:
     - nodejs_version: "9"
     - nodejs_version: "10"
 
-matrix:
-  allow_failures:
-    - nodejs_version: "0.8"
-
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node 0.STABLE.latest
