@@ -77,6 +77,7 @@ LINT_SOURCES = \
 	test/cpp/symbols.cpp \
 	test/cpp/threadlocal.cpp \
 	test/cpp/trycatch.cpp \
+	test/cpp/typedarrays.cpp \
 	test/cpp/weak.cpp \
 	test/cpp/weak2.cpp \
 	test/cpp/wrappedobjectfactory.cpp \
