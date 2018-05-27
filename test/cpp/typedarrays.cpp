@@ -16,7 +16,7 @@ NAN_METHOD(ReadU8) {
   TypedArrayContents<uint8_t> data(info[0]);
 
   v8::Local<v8::Array> result = New<v8::Array>(data.length());
-  for (size_t i=0; i<data.length(); i++) {
+  for (size_t i=0; i < data.length(); i++) {
     Set(result, i, New<v8::Number>((*data)[i]));
   }
 
@@ -27,7 +27,7 @@ NAN_METHOD(ReadI32) {
   TypedArrayContents<int32_t> data(info[0]);
 
   v8::Local<v8::Array> result = New<v8::Array>(data.length());
-  for (size_t i=0; i<data.length(); i++) {
+  for (size_t i=0; i < data.length(); i++) {
     Set(result, i, New<v8::Number>((*data)[i]));
   }
 
@@ -38,7 +38,7 @@ NAN_METHOD(ReadFloat) {
   TypedArrayContents<float> data(info[0]);
 
   v8::Local<v8::Array> result = New<v8::Array>(data.length());\
-  for (size_t i=0; i<data.length(); i++) {
+  for (size_t i=0; i < data.length(); i++) {
     Set(result, i, New<v8::Number>((*data)[i]));
   }
 
@@ -49,7 +49,7 @@ NAN_METHOD(ReadDouble) {
   TypedArrayContents<double> data(info[0]);
 
   v8::Local<v8::Array> result = New<v8::Array>(data.length());
-  for (size_t i=0; i<data.length(); i++) {
+  for (size_t i=0; i < data.length(); i++) {
     Set(result, i, New<v8::Number>((*data)[i]));
   }
 
