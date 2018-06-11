@@ -26,10 +26,10 @@
     "bindings": "~1.2.1",
     "commander": "^2.8.1",
     "glob": "^5.0.14",
-    "request": "=2.81.0",
-    "node-gyp": "~3.6.2",
+    "node-gyp": "^3.7.0",
     "readable-stream": "^2.1.4",
-    "tap": "~0.7.1",
+    "request": "^2.87.0",
+    "tap": "^0.7.1",
     "xtend": "~4.0.0"
   },
   "license": "MIT"
