@@ -25,6 +25,7 @@
   "devDependencies": {
     "bindings": "~1.2.1",
     "node-gyp": "^3.7.0",
+    "readable-stream": "^2.3.6",
     "tap": "^0.7.1"
   },
   "license": "MIT"
