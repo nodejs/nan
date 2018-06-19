@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "tap --gc --stderr test/js/*-test.js",
+    "rebuild-tests": "node-gyp rebuild --msvs_version=2015 --directory test",
     "docs": "doc/.build.sh"
   },
   "contributors": [
