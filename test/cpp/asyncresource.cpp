@@ -55,7 +55,7 @@ NAN_METHOD(Delay) {
   DelayRequest* delay_request = new DelayRequest(delay, cb);
 
   uv_queue_work(
-      uv_default_loop()
+      GetCurrentEventLoop()
     , &delay_request->request
     , Delay
     , reinterpret_cast<uv_after_work_cb>(AfterDelay));
