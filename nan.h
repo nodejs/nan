@@ -560,6 +560,14 @@ class AsyncResource {
 #endif
 };
 
+inline uv_loop_t* GetCurrentEventLoop() {
+#if NODE_MODULE_VERSION > NODE_9_0_MODULE_VERSION
+    return node::GetCurrentEventLoop(v8::Isolate::GetCurrent());
+#else
+    return uv_default_loop();
+#endif
+}
+
 //============ =================================================================
 
 /* node 0.12  */
@@ -1899,7 +1907,7 @@ inline MaybeLocal<v8::Value> Call(
       const char* resource_name = "nan:AsyncBareProgressWorkerBase")
       : AsyncWorker(callback_, resource_name) {
     uv_async_init(
-        uv_default_loop()
+        GetCurrentEventLoop()
       , &async
       , AsyncProgress_
     );
@@ -2161,7 +2169,7 @@ inline void AsyncExecuteComplete (uv_work_t* req) {
 
 inline void AsyncQueueWorker (AsyncWorker* worker) {
   uv_queue_work(
-      uv_default_loop()
+      GetCurrentEventLoop()
     , &worker->request
     , AsyncExecute
     , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
