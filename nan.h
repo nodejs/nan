@@ -561,9 +561,9 @@ class AsyncResource {
 };
 
 inline uv_loop_t* GetCurrentEventLoop() {
-#if NODE_MAJOR_VERSION >= 10 \
-  || NODE_MAJOR_VERSION == 9 && NODE_MINOR_VERSION >= 3 \
-  || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION >= 10
+#if NODE_MAJOR_VERSION >= 10 || \
+  NODE_MAJOR_VERSION == 9 && NODE_MINOR_VERSION >= 3 || \
+  NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION >= 10
     return node::GetCurrentEventLoop(v8::Isolate::GetCurrent());
 #else
     return uv_default_loop();
