@@ -91,6 +91,9 @@
 
 namespace Nan {
 
+#define NAN_CONCAT(a, b) NAN_CONCAT_HELPER(a, b)
+#define NAN_CONCAT_HELPER(a, b) a##b
+
 #define NAN_INLINE inline  // TODO(bnoordhuis) Remove in v3.0.0.
 
 #if defined(__GNUC__) && \
@@ -150,8 +153,6 @@ namespace Nan {
 
 #if NODE_MAJOR_VERSION >= 10 || \
     NODE_MAJOR_VERSION == 9 && NODE_MINOR_VERSION >= 3
-#define NAN_CONCAT(a, b) NAN_CONCAT_HELPER(a, b)
-#define NAN_CONCAT_HELPER(a, b) a##b
 #define NAN_MODULE_WORKER_ENABLED(module_name, registration)                   \
     extern "C" NODE_MODULE_EXPORT void                                         \
       NAN_CONCAT(node_register_module_v, NODE_MODULE_VERSION)(                 \
