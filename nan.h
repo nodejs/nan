@@ -91,6 +91,9 @@
 
 namespace Nan {
 
+#define NAN_CONCAT(a, b) NAN_CONCAT_HELPER(a, b)
+#define NAN_CONCAT_HELPER(a, b) a##b
+
 #define NAN_INLINE inline  // TODO(bnoordhuis) Remove in v3.0.0.
 
 #if defined(__GNUC__) && \
@@ -147,6 +150,21 @@ namespace Nan {
 
 #define NAN_MODULE_INIT(name)                                                  \
     void name(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target)
+
+#if NODE_MAJOR_VERSION >= 10 || \
+    NODE_MAJOR_VERSION == 9 && NODE_MINOR_VERSION >= 3
+#define NAN_MODULE_WORKER_ENABLED(module_name, registration)                   \
+    extern "C" NODE_MODULE_EXPORT void                                         \
+      NAN_CONCAT(node_register_module_v, NODE_MODULE_VERSION)(                 \
+        v8::Local<v8::Object> exports, v8::Local<v8::Value> module,            \
+        v8::Local<v8::Context> context)                                        \
+    {                                                                          \
+        registration(exports);                                                 \
+    }
+#else
+#define NAN_MODULE_WORKER_ENABLED(module_name, registration)                   \
+    NODE_MODULE(module_name, registration)
+#endif
 
 //=== CallbackInfo =============================================================
 
