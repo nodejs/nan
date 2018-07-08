@@ -2046,10 +2046,10 @@ class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
     T *old_data = asyncdata_;
     asyncdata_ = new_data;
     asyncsize_ = count;
+    uv_async_send(&this->async);
     uv_mutex_unlock(&async_lock);
 
     delete[] old_data;
-    uv_async_send(&this->async);
   }
 
   uv_mutex_t async_lock;
