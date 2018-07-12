@@ -2025,6 +2025,7 @@ class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
     T *data = asyncdata_;
     size_t size = asyncsize_;
     asyncdata_ = NULL;
+    asyncsize_ = 0;
     uv_mutex_unlock(&async_lock);
 
     // Don't send progress events after we've already completed.
