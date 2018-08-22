@@ -7,7 +7,7 @@
  ********************************************************************/
 
 #include <nan.h>
-#include <multifile2.h>
+#include "multifile2.h"
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
