@@ -1,6 +1,13 @@
 # NAN ChangeLog
 
-**Version 2.10.0: current Node 9.8.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.11.0: current Node 10.9.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.11.0 Aug 25 2018
+
+  - Removal: remove `FunctionCallbackInfo::Callee` for nodejs `>= 10` 1a56c0a6efd4fac944cb46c30912a8e023bda7d4
+  - Bugfix: Fix `AsyncProgressWorkerBase::WorkProgress` sends invalid data b0c764d1dab11e9f8b37ffb81e2560a4498aad5e
+  - Feature: Introduce `GetCurrentEventLoop` b4911b0bb1f6d47d860e10ec014d941c51efac5e
+  - Feature: Add `NAN_MODULE_WORKER_ENABLED` macro as a replacement for `NAN_MODULE` b058fb047d18a58250e66ae831444441c1f2ac7a
 
 ### 2.10.0 Mar 16 2018
 
