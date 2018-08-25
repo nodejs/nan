@@ -105,7 +105,9 @@ class FunctionCallbackInfo {
     return ReturnValue<T>(info_.GetReturnValue());
   }
 
+#if NODE_MAJOR_VERSION < 10
   inline v8::Local<v8::Function> Callee() const { return info_.Callee(); }
+#endif
   inline v8::Local<v8::Value> Data() const { return data_; }
   inline v8::Local<v8::Object> Holder() const { return info_.Holder(); }
   inline bool IsConstructCall() const { return info_.IsConstructCall(); }
