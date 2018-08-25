@@ -1969,16 +1969,20 @@ class AsyncBareProgressWorker : public AsyncBareProgressWorkerBase {
       Callback *callback_,
       const char* resource_name = "nan:AsyncBareProgressWorker")
       : AsyncBareProgressWorkerBase(callback_, resource_name) {
+    uv_mutex_init(&async_lock);
   }
 
   virtual ~AsyncBareProgressWorker() {
+    uv_mutex_destroy(&async_lock);
   }
 
   class ExecutionProgress {
     friend class AsyncBareProgressWorker;
    public:
     void Signal() const {
+      uv_mutex_lock(&that_->async_lock);
       uv_async_send(&that_->async);
+      uv_mutex_unlock(&that_->async_lock);
     }
 
     void Send(const T* data, size_t count) const {
@@ -1993,6 +1997,9 @@ class AsyncBareProgressWorker : public AsyncBareProgressWorkerBase {
 
   virtual void Execute(const ExecutionProgress& progress) = 0;
   virtual void HandleProgressCallback(const T *data, size_t size) = 0;
+
+ protected:
+  uv_mutex_t async_lock;
 
  private:
   void Execute() /*final override*/ {
@@ -2012,21 +2019,19 @@ class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
       const char* resource_name = "nan:AsyncProgressWorkerBase")
       : AsyncBareProgressWorker<T>(callback_, resource_name), asyncdata_(NULL),
         asyncsize_(0) {
-    uv_mutex_init(&async_lock);
   }
 
   virtual ~AsyncProgressWorkerBase() {
-    uv_mutex_destroy(&async_lock);
-
     delete[] asyncdata_;
   }
 
   void WorkProgress() {
-    uv_mutex_lock(&async_lock);
+    uv_mutex_lock(&this->async_lock);
     T *data = asyncdata_;
     size_t size = asyncsize_;
     asyncdata_ = NULL;
-    uv_mutex_unlock(&async_lock);
+    asyncsize_ = 0;
+    uv_mutex_unlock(&this->async_lock);
 
     // Don't send progress events after we've already completed.
     if (this->callback) {
@@ -2043,17 +2048,16 @@ class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
       std::copy(data, data + count, it);
     }
 
-    uv_mutex_lock(&async_lock);
+    uv_mutex_lock(&this->async_lock);
     T *old_data = asyncdata_;
     asyncdata_ = new_data;
     asyncsize_ = count;
-    uv_mutex_unlock(&async_lock);
+    uv_async_send(&this->async);
+    uv_mutex_unlock(&this->async_lock);
 
     delete[] old_data;
-    uv_async_send(&this->async);
   }
 
-  uv_mutex_t async_lock;
   T *asyncdata_;
   size_t asyncsize_;
 };
