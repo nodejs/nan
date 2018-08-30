@@ -43,12 +43,13 @@ template<typename T> class PersistentBase {
    */
   template<typename S> void Reset(const PersistentBase<S> &other);
 
+  /** Returns true if the handle is empty. */
+  bool IsEmpty() const;
+
   /**
    * If non-empty, destroy the underlying storage cell
    * IsEmpty() will return true after this call.
    */
-  bool IsEmpty();
-
   void Empty();
 
   template<typename S> bool operator==(const PersistentBase<S> &that);
