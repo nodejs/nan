@@ -80,3 +80,29 @@ test('typedarrays - bad arguments', function (t) {
     t.end();
   }
 });
+
+test('typed arrays - Nan::New<[typedarray]>', function (t) {
+  const types = [
+    {fn: "NewFloat32Array", ctor: Float32Array},
+    {fn: "NewFloat64Array", ctor: Float64Array},
+    {fn: "NewInt8Array", ctor: Int8Array},
+    {fn: "NewUint8Array", ctor: Uint8Array},
+    {fn: "NewUint8ClampedArray", ctor: Uint8ClampedArray},
+    {fn: "NewInt16Array", ctor: Int16Array},
+    {fn: "NewUint16Array", ctor: Uint16Array},
+    {fn: "NewInt32Array", ctor: Int32Array},
+    {fn: "NewUint32Array", ctor: Uint32Array}
+  ];
+
+  t.plan(4 * types.length);
+  types.forEach(function (type) {
+    t.type(bindings[type.fn], 'function');
+    t.same(bindings[type.fn](), new type.ctor([0, 0, 0, 0]));
+
+    // TODO:
+    var fname = type.fn + 'FromArrayBuffer';
+    t.type(bindings[fname], 'function');
+    t.same(bindings[fname](), new type.ctor([0, 0, 0, 0]));
+  });
+  t.end();
+});

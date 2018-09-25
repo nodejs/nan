@@ -51,6 +51,24 @@ struct Factory<v8::Array> : FactoryBase<v8::Array> {
   static inline return_t New(int length);
 };
 
+template <typename T>
+struct TypedArrayFactory : FactoryBase<T> {
+  static inline return_t New(size_t length);
+  static inline return_t New(v8::Local<v8::ArrayBuffer> buffer,
+                             size_t offset,
+                             size_t len);
+};
+
+template <> struct Factory<v8::Float32Array> : TypedArrayFactory<v8::Float32Array> {};
+template <> struct Factory<v8::Float64Array> : TypedArrayFactory<v8::Float64Array> {};
+template <> struct Factory<v8::Int8Array> : TypedArrayFactory<v8::Int8Array> {};
+template <> struct Factory<v8::Uint8Array> : TypedArrayFactory<v8::Uint8Array> {};
+template <> struct Factory<v8::Uint8ClampedArray> : TypedArrayFactory<v8::Uint8ClampedArray> {};
+template <> struct Factory<v8::Int16Array> : TypedArrayFactory<v8::Int16Array> {};
+template <> struct Factory<v8::Uint16Array> : TypedArrayFactory<v8::Uint16Array> {};
+template <> struct Factory<v8::Int32Array> : TypedArrayFactory<v8::Int32Array> {};
+template <> struct Factory<v8::Uint32Array> : TypedArrayFactory<v8::Uint32Array> {};
+
 template <>
 struct Factory<v8::Boolean> : FactoryBase<v8::Boolean> {
   static inline return_t New(bool value);

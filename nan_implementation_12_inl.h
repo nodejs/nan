@@ -26,6 +26,25 @@ Factory<v8::Array>::New(int length) {
   return v8::Array::New(v8::Isolate::GetCurrent(), length);
 }
 
+//=== TypedArrays ==============================================================
+
+template <typename T>
+typename TypedArrayFactory<T>::return_t
+TypedArrayFactory<T>::New(size_t len) {
+  size_t byteLength = len * sizeof(TypedArrayCType<T>::type);
+  v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(
+    v8::Isolate::GetCurrent(), byteLength);
+  return T::New(buffer, 0, len);
+}
+
+template <typename T>
+typename TypedArrayFactory<T>::return_t
+TypedArrayFactory<T>::New(v8::Local<v8::ArrayBuffer> buffer,
+                size_t offset,
+                size_t len) {
+  return T::New(buffer, offset, len);
+}
+
 //=== Boolean ==================================================================
 
 Factory<v8::Boolean>::return_t
