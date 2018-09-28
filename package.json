@@ -8,7 +8,7 @@
     "url": "git://github.com/nodejs/nan.git"
   },
   "scripts": {
-    "test": "tap --gc --stderr test/js/*-test.js",
+    "test": "tap --gc -Rtap test/js/*-test.js",
     "test:worker": "node --experimental-worker test/tap-as-worker.js --gc --stderr test/js/*-test.js",
     "rebuild-tests": "node-gyp rebuild --msvs_version=2015 --directory test",
     "docs": "doc/.build.sh"
@@ -24,14 +24,12 @@
     "Michael Ira Krufky <mkrufky@gmail.com> (https://github.com/mkrufky)"
   ],
   "devDependencies": {
-    "bindings": "~1.2.1",
+    "bindings": "~1.3.0",
     "commander": "^2.8.1",
-    "glob": "^5.0.14",
-    "request": "=2.81.0",
-    "node-gyp": "~3.6.2",
-    "readable-stream": "^2.1.4",
-    "tap": "~0.7.1",
-    "xtend": "~4.0.0"
+    "glob": "^7.1.3",
+    "node-gyp": "~3.8.0",
+    "readable-stream": "^3.0.3",
+    "tap": "^12.0.1"
   },
   "license": "MIT"
 }

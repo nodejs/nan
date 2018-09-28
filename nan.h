@@ -1060,7 +1060,11 @@ class Utf8String {
       length_(0), str_(str_st_) {
     HandleScope scope;
     if (!from.IsEmpty()) {
+#if V8_MAJOR_VERSION >= 7
+      v8::Local<v8::String> string = from->ToString(v8::Isolate::GetCurrent());
+#else
       v8::Local<v8::String> string = from->ToString();
+#endif
       if (!string.IsEmpty()) {
         size_t len = 3 * string->Length() + 1;
         assert(len <= INT_MAX);
@@ -1070,7 +1074,11 @@ class Utf8String {
         }
         const int flags =
             v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
+#if V8_MAJOR_VERSION >= 7
+        length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_, static_cast<int>(len), 0, flags);
+#else
         length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
+#endif
         str_[length_] = '\0';
       }
     }
