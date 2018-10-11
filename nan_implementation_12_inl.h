@@ -334,7 +334,7 @@ Factory<v8::String>::New(ExternalOneByteStringResource * value) {
 
 Factory<v8::StringObject>::return_t
 Factory<v8::StringObject>::New(v8::Local<v8::String> value) {
-#if V8_MAJOR_VERSION >= 7
+#if V8_MAJOR_VERSION >= 7 || defined(NAN_HAS_V8_7_DEPRECATIONS)
   return v8::StringObject::New(v8::Isolate::GetCurrent(), value).As<v8::StringObject>();
 #else
   return v8::StringObject::New(value).As<v8::StringObject>();

@@ -48,6 +48,10 @@
 # error This version of node/NAN/v8 requires a C++11 compiler
 #endif
 
+#if NODE_MAJOR_VERSION == 10 && NODE_MINOR_VERSION >= 12
+# define NAN_HAS_V8_7_DEPRECATIONS
+#endif
+
 #include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
@@ -1060,8 +1064,9 @@ class Utf8String {
       length_(0), str_(str_st_) {
     HandleScope scope;
     if (!from.IsEmpty()) {
-#if V8_MAJOR_VERSION >= 7
-      v8::Local<v8::String> string = from->ToString(v8::Isolate::GetCurrent());
+#if V8_MAJOR_VERSION >= 7 || defined(NAN_HAS_V8_7_DEPRECATIONS)
+      v8::Local<v8::String> string = from->ToString(
+          v8::Isolate::GetCurrent()->GetCurrentContext()).FromMaybe(v8::Local<v8::String>());
 #else
       v8::Local<v8::String> string = from->ToString();
 #endif
@@ -1074,7 +1079,7 @@ class Utf8String {
         }
         const int flags =
             v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
-#if V8_MAJOR_VERSION >= 7
+#if V8_MAJOR_VERSION >= 7 || defined(NAN_HAS_V8_7_DEPRECATIONS)
         length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_, static_cast<int>(len), 0, flags);
 #else
         length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
