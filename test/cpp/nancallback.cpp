@@ -57,6 +57,16 @@ NAN_METHOD(ResetSet) {
   info.GetReturnValue().Set(callback.IsEmpty());
 }
 
+NAN_METHOD(CallRetval) {
+  Callback callback(To<v8::Function>(info[0]).ToLocalChecked());
+  v8::Local<v8::Value> result = callback.Call(0, NULL);
+  if (result->IsNumber()) {
+    info.GetReturnValue().Set(Nan::True());
+  } else {
+    info.GetReturnValue().Set(Nan::False());
+  }
+}
+
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("globalContext").ToLocalChecked()
@@ -89,6 +99,10 @@ NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("resetSet").ToLocalChecked()
     , New<v8::FunctionTemplate>(ResetSet)->GetFunction()
+  );
+  Set(target
+    , New<v8::String>("callRetval").ToLocalChecked()
+    , New<v8::FunctionTemplate>(CallRetval)->GetFunction()
   );
 }
 
