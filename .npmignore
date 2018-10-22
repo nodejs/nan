@@ -6,4 +6,5 @@ examples/
 appveyor.yml
 Makefile
 cpplint.py
+nan-*.tgz
 doc/.build.sh
