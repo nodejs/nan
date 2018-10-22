@@ -1658,9 +1658,9 @@ class Callback {
     v8::EscapableHandleScope scope(isolate);
 # if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
     AsyncResource async("nan:Callback:Call");
-    return Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv,
-                 &async)
-        .FromMaybe(v8::Local<v8::Value>());
+    return scope.Escape(Call_(isolate, isolate->GetCurrentContext()->Global(),
+                              argc, argv, &async)
+                            .FromMaybe(v8::Local<v8::Value>()));
 # else
     return scope.Escape(
         Call_(isolate, isolate->GetCurrentContext()->Global(), argc, argv));
