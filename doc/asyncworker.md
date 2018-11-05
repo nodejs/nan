@@ -143,4 +143,4 @@ Definition:
 void AsyncQueueWorker(AsyncWorker *);
 ```
 
-[AsyncResource]: "node_misc.html#api_nan_asyncresource"
+[AsyncResource]: node_misc.md#api_nan_asyncresource
