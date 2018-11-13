@@ -56,19 +56,19 @@ NAN_MODULE_INIT(Init) {
   }
   Set(target
     , New<v8::String>("new1").ToLocalChecked()
-    , New<v8::FunctionTemplate>(New1)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(New1)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("new2").ToLocalChecked()
-    , New<v8::FunctionTemplate>(New2)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(New2)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("new3").ToLocalChecked()
-    , New<v8::FunctionTemplate>(New3)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(New3)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("copy").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Copy)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Copy)).ToLocalChecked()
   );
 }
 

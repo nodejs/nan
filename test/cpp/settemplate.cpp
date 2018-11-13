@@ -72,10 +72,11 @@ NAN_MODULE_INIT(MyObject::Init) {
   , Nan::New<v8::String>("dontDelete").ToLocalChecked()
   , v8::DontDelete);
 
-  constructor.Reset(tpl->GetFunction());
+  v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+  constructor.Reset(function);
   Set(target
   , Nan::New<v8::String>("MyObject").ToLocalChecked()
-  , tpl->GetFunction());
+  , function);
 
 
   //=== SetMethod ==============================================================

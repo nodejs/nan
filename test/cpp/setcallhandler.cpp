@@ -33,11 +33,11 @@ NAN_METHOD(CallAsFunctionHandlerSetter) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New("a").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CallHandlerSetter)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CallHandlerSetter)).ToLocalChecked()
   );
   Set(target
     , New("b").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CallAsFunctionHandlerSetter)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CallAsFunctionHandlerSetter)).ToLocalChecked()
   );
 }
 

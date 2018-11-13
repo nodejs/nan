@@ -61,7 +61,8 @@ NAN_MODULE_INIT(SetterGetter::Init) {
   );
 
   v8::Local<v8::Function> createnew =
-    Nan::New<v8::FunctionTemplate>(CreateNew)->GetFunction();
+    Nan::GetFunction(
+        Nan::New<v8::FunctionTemplate>(CreateNew)).ToLocalChecked();
   Set(target, Nan::New<v8::String>("create").ToLocalChecked(), createnew);
 }
 
@@ -70,7 +71,8 @@ v8::Local<v8::Value> SetterGetter::NewInstance () {
   v8::Local<v8::FunctionTemplate> constructorHandle =
       Nan::New(settergetter_constructor);
   v8::Local<v8::Object> instance =
-    Nan::NewInstance(constructorHandle->GetFunction()).ToLocalChecked();
+    Nan::NewInstance(
+        Nan::GetFunction(constructorHandle).ToLocalChecked()).ToLocalChecked();
   return scope.Escape(instance);
 }
 

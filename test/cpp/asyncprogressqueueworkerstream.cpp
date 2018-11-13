@@ -74,7 +74,7 @@ NAN_METHOD(DoProgress) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("doProgress").ToLocalChecked()
-    , New<v8::FunctionTemplate>(DoProgress)->GetFunction());
+    , GetFunction(New<v8::FunctionTemplate>(DoProgress)).ToLocalChecked());
 }
 
 NODE_MODULE(asyncprogressqueueworkerstream, Init)

@@ -24,7 +24,7 @@ NAN_METHOD(TryCatchTest) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("r").ToLocalChecked()
-    , New<v8::FunctionTemplate>(TryCatchTest)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(TryCatchTest)).ToLocalChecked()
   );
 }
 

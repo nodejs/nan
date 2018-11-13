@@ -50,11 +50,11 @@ NAN_METHOD(WeakExternal) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hustle").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Hustle)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Hustle)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("weakExternal").ToLocalChecked()
-    , New<v8::FunctionTemplate>(WeakExternal)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(WeakExternal)).ToLocalChecked()
   );
 }
 

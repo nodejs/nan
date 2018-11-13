@@ -45,7 +45,7 @@ X(TypeError)
   Nan::Set(                                                                    \
       target                                                                   \
     , Nan::New(#NAME).ToLocalChecked()                                         \
-    , Nan::New<v8::FunctionTemplate>(NAME)->GetFunction());
+    , Nan::GetFunction(New<v8::FunctionTemplate>(NAME)).ToLocalChecked());
 
 
 NAN_MODULE_INIT(Init) {

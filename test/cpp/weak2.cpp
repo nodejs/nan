@@ -27,7 +27,7 @@ v8::Local<v8::String> wrap() {
   v8::Local<v8::String> lstring = New("result").ToLocalChecked();
   v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
   otpl->SetInternalFieldCount(1);
-  v8::Local<v8::Object> obj = otpl->NewInstance();
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
   SetInternalFieldPointer(obj, 0, new int(42));
   Persistent<v8::Object> persistent(obj);
   persistent.SetWeak(
@@ -47,7 +47,7 @@ NAN_METHOD(Hustle) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hustle").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Hustle)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Hustle)).ToLocalChecked()
   );
 }
 

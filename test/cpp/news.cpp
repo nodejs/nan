@@ -165,107 +165,107 @@ NAN_METHOD(NewBoolean2) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("newNumber").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewNumber)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewNumber)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newNegativeInteger").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewNegativeInteger)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newPositiveInteger").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewPositiveInteger)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUnsignedInteger").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUnsignedInteger)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUnsignedInteger)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newInt32FromPositive").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewInt32FromPositive)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewInt32FromPositive)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newInt32FromNegative").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewInt32FromNegative)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewInt32FromNegative)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUint32FromPositive").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUint32FromPositive)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUint32FromPositive)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUint32FromNegative").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUint32FromNegative)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUint32FromNegative)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUtf8String").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUtf8String)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newLatin1String").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewLatin1String)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUcs2String").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUcs2String)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newStdString").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewStdString)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewStdString)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newRegExp").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewRegExp)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewRegExp)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newStringObject").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewStringObject)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewStringObject)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newNumberObject").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewNumberObject)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewNumberObject)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newBooleanObject").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewBooleanObject)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewBooleanObject)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newExternal").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewExternal)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewExternal)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newSignature").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewSignature)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewSignature)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newScript").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewScript)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewScript)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newScript2").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewScript2)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewScript2)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("compileScript").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CompileScript)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CompileScript)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("compileScript2").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CompileScript2)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CompileScript2)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newDate").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewDate)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewDate)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newArray").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewArray)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewArray)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newBoolean").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewBoolean)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewBoolean)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newBoolean2").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewBoolean2)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewBoolean2)).ToLocalChecked()
   );
 }
 

@@ -29,7 +29,7 @@ NAN_METHOD(Work) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New("a").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Work)->GetFunction());
+    , GetFunction(New<v8::FunctionTemplate>(Work)).ToLocalChecked());
 }
 
 NODE_MODULE(asyncworkererror, Init)

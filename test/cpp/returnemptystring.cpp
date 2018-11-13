@@ -17,7 +17,7 @@ NAN_METHOD(ReturnEmptyString) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("r").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ReturnEmptyString)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ReturnEmptyString)).ToLocalChecked()
   );
 }
 

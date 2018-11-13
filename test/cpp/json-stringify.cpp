@@ -64,7 +64,8 @@ NAN_METHOD(Stringify) {
 NAN_MODULE_INIT(Init) {
   Nan::Set(target
     , Nan::New<v8::String>("stringify").ToLocalChecked()
-    , Nan::New<v8::FunctionTemplate>(Stringify)->GetFunction()
+    , Nan::GetFunction(Nan::New<v8::FunctionTemplate>(Stringify))
+      .ToLocalChecked()
   );
 }
 

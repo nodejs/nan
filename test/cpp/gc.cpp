@@ -36,11 +36,11 @@ NAN_METHOD(Check) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hook").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Hook)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Hook)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("check").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Check)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Check)).ToLocalChecked()
   );
 }
 

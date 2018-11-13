@@ -75,63 +75,63 @@ NAN_METHOD(Int32Value) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("toBoolean").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToBoolean)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToBoolean)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toNumber").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToNumber)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToNumber)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toString").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToString)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToString)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toDetailString").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToDetailString)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToDetailString)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toFunction").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToFunction)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToFunction)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toObject").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToObject)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToObject)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toInteger").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToInteger)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToInteger)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toUint32").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToUint32)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToUint32)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toInt32").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToInt32)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToInt32)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("toArrayIndex").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ToArrayIndex)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ToArrayIndex)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("booleanValue").ToLocalChecked()
-    , New<v8::FunctionTemplate>(BooleanValue)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(BooleanValue)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("numberValue").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NumberValue)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NumberValue)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("integerValue").ToLocalChecked()
-    , New<v8::FunctionTemplate>(IntegerValue)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(IntegerValue)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("uint32Value").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Uint32Value)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Uint32Value)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("int32Value").ToLocalChecked()
-    , New<v8::FunctionTemplate>(Int32Value)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(Int32Value)).ToLocalChecked()
   );
 }
 

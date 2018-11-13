@@ -61,7 +61,7 @@ NAN_METHOD(DoSleep) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("a").ToLocalChecked()
-    , New<v8::FunctionTemplate>(DoSleep)->GetFunction());
+    , GetFunction(New<v8::FunctionTemplate>(DoSleep)).ToLocalChecked());
 }
 
 NODE_MODULE(bufferworkerpersistent, Init)

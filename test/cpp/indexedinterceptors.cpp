@@ -50,7 +50,8 @@ NAN_MODULE_INIT(IndexedInterceptor::Init) {
     , IndexedInterceptor::PropertyEnumerator);
 
   v8::Local<v8::Function> createnew =
-    Nan::New<v8::FunctionTemplate>(CreateNew)->GetFunction();
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(CreateNew))
+    .ToLocalChecked();
   Set(target, Nan::New("create").ToLocalChecked(), createnew);
 }
 
@@ -59,7 +60,8 @@ v8::Local<v8::Value> IndexedInterceptor::NewInstance () {
   v8::Local<v8::FunctionTemplate> constructorHandle =
       Nan::New(indexedinterceptors_constructor);
   v8::Local<v8::Object> instance =
-    Nan::NewInstance(constructorHandle->GetFunction()).ToLocalChecked();
+    Nan::NewInstance(Nan::GetFunction(constructorHandle).ToLocalChecked())
+    .ToLocalChecked();
   return scope.Escape(instance);
 }
 

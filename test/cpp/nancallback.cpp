@@ -37,7 +37,7 @@ NAN_METHOD(CompareCallbacks) {
 
 NAN_METHOD(CallDirect) {
   Callback cb(To<v8::Function>(info[0]).ToLocalChecked());
-  (*cb)->Call(GetCurrentContext()->Global(), 0, NULL);
+  Call(*cb, GetCurrentContext()->Global(), 0, NULL);
 }
 
 NAN_METHOD(CallAsFunction) {
@@ -58,8 +58,10 @@ NAN_METHOD(ResetSet) {
 }
 
 NAN_METHOD(CallRetval) {
+  AsyncResource resource("nan:test.nancallback");
   Callback callback(To<v8::Function>(info[0]).ToLocalChecked());
-  v8::Local<v8::Value> result = callback.Call(0, NULL);
+  v8::Local<v8::Value> result =
+    callback.Call(0, NULL, &resource).ToLocalChecked();
   if (result->IsNumber()) {
     info.GetReturnValue().Set(Nan::True());
   } else {
@@ -70,39 +72,39 @@ NAN_METHOD(CallRetval) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("globalContext").ToLocalChecked()
-    , New<v8::FunctionTemplate>(GlobalContext)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(GlobalContext)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("specificContext").ToLocalChecked()
-    , New<v8::FunctionTemplate>(SpecificContext)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(SpecificContext)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("customReceiver").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CustomReceiver)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CustomReceiver)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("compareCallbacks").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CompareCallbacks)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CompareCallbacks)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("callDirect").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CallDirect)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CallDirect)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("callAsFunction").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CallAsFunction)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CallAsFunction)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("resetUnset").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ResetUnset)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ResetUnset)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("resetSet").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ResetSet)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ResetSet)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("callRetval").ToLocalChecked()
-    , New<v8::FunctionTemplate>(CallRetval)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(CallRetval)).ToLocalChecked()
   );
 }
 

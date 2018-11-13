@@ -40,20 +40,20 @@ NAN_MODULE_INIT(Init) {
 
   returnUtf8String_persistent.Reset(returnUtf8String);
 
-  target->Set(
-      New("returnUtf8String").ToLocalChecked()
-    , returnUtf8String->GetFunction()
-  );
+  Set(target
+    , New("returnUtf8String").ToLocalChecked()
+    , GetFunction(returnUtf8String).ToLocalChecked()
+  ).FromJust();
 
   v8::Local<v8::FunctionTemplate> heapString =
     New<v8::FunctionTemplate>(HeapString);
 
   heapString_persistent.Reset(heapString);
 
-  target->Set(
-      New("heapString").ToLocalChecked()
-    , heapString->GetFunction()
-  );
+  Set(target
+    , New("heapString").ToLocalChecked()
+    , GetFunction(heapString).ToLocalChecked()
+  ).FromJust();
 
   v8::Local<v8::FunctionTemplate> encodeHex =
     New<v8::FunctionTemplate>(EncodeHex);
@@ -62,8 +62,8 @@ NAN_MODULE_INIT(Init) {
 
   Set(target
     , New("encodeHex").ToLocalChecked()
-    , encodeHex->GetFunction()
-  );
+    , GetFunction(encodeHex).ToLocalChecked()
+  ).FromJust();
 
   v8::Local<v8::FunctionTemplate> encodeUCS2 =
     New<v8::FunctionTemplate>(EncodeUCS2);
@@ -72,8 +72,8 @@ NAN_MODULE_INIT(Init) {
 
   Set(target
     , New("encodeUCS2").ToLocalChecked()
-    , encodeUCS2->GetFunction()
-  );
+    , GetFunction(encodeUCS2).ToLocalChecked()
+  ).FromJust();
 }
 
 NODE_MODULE(strings, Init)

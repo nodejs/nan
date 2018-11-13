@@ -31,7 +31,7 @@ NAN_METHOD(SetAndGet) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("setAndGet").ToLocalChecked()
-    , New<v8::FunctionTemplate>(SetAndGet)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(SetAndGet)).ToLocalChecked()
   );
 }
 

@@ -42,8 +42,9 @@ NAN_MODULE_INIT(MyObject::Init) {
 
   SetPrototypeMethod(tpl, "call_emit", CallEmit);
 
-  constructor.Reset(tpl->GetFunction());
-  Set(target, Nan::New("MyObject").ToLocalChecked(), tpl->GetFunction());
+  v8::Local<v8::Function> function = GetFunction(tpl).ToLocalChecked();
+  constructor.Reset(function);
+  Set(target, Nan::New("MyObject").ToLocalChecked(), function);
 }
 
 NAN_METHOD(MyObject::New) {

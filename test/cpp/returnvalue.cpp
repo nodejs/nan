@@ -39,19 +39,19 @@ NAN_MODULE_INIT(Init) {
 
   Set(target
     , New<v8::String>("r").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ReturnAValue)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ReturnAValue)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("p").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ReturnPrimitive)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ReturnPrimitive)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("q").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ReturnGlobal)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ReturnGlobal)).ToLocalChecked()
   );
   Set(target
     , New<v8::String>("u").ToLocalChecked()
-    , New<v8::FunctionTemplate>(ReturnUnsigned)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(ReturnUnsigned)).ToLocalChecked()
   );
 }
 

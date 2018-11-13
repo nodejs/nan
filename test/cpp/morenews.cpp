@@ -68,36 +68,35 @@ NAN_METHOD(NewExternalAsciiStringResource) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New("newNumber").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewNumber)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewNumber)).ToLocalChecked()
   );
   Set(target
     , New("newNegativeInteger").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewNegativeInteger)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewNegativeInteger)).ToLocalChecked()
   );
   Set(target
     , New("newPositiveInteger").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewPositiveInteger)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewPositiveInteger)).ToLocalChecked()
   );
   Set(target
     , New("newUtf8String").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUtf8String)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUtf8String)).ToLocalChecked()
   );
   Set(target
     , New("newLatin1String").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewLatin1String)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewLatin1String)).ToLocalChecked()
   );
   Set(target
     , New("newUcs2String").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewUcs2String)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewUcs2String)).ToLocalChecked()
   );
   Set(target
     , New("newExternalStringResource").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewExternalStringResource)->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewExternalStringResource)).ToLocalChecked()
   );
   Set(target
     , New("newExternalAsciiStringResource").ToLocalChecked()
-    , New<v8::FunctionTemplate>(NewExternalAsciiStringResource)
-    ->GetFunction()
+    , GetFunction(New<v8::FunctionTemplate>(NewExternalAsciiStringResource)).ToLocalChecked()
   );
 }
 

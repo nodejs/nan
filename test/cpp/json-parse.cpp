@@ -27,7 +27,7 @@ NAN_METHOD(Parse) {
 NAN_MODULE_INIT(Init) {
   Nan::Set(target
     , Nan::New<v8::String>("parse").ToLocalChecked()
-    , Nan::New<v8::FunctionTemplate>(Parse)->GetFunction()
+    , Nan::GetFunction(Nan::New<v8::FunctionTemplate>(Parse)).ToLocalChecked()
   );
 }
 
