@@ -64,7 +64,10 @@ class ObjectWrap {
   inline void MakeWeak() {
     persistent().v8::PersistentBase<v8::Object>::SetWeak(
         this, WeakCallback, v8::WeakCallbackType::kParameter);
+#if NODE_MAJOR_VERSION < 10
+    // FIXME(bnoordhuis) Probably superfluous in older Node.js versions too.
     persistent().MarkIndependent();
+#endif
   }
 
 #elif NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION

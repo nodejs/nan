@@ -1060,8 +1060,10 @@ class Utf8String {
       length_(0), str_(str_st_) {
     HandleScope scope;
     if (!from.IsEmpty()) {
-#if V8_MAJOR_VERSION >= 7
-      v8::Local<v8::String> string = from->ToString(v8::Isolate::GetCurrent());
+#if NODE_MAJOR_VERSION >= 10
+      v8::Local<v8::Context> context = GetCurrentContext();
+      v8::Local<v8::String> string =
+          from->ToString(context).FromMaybe(v8::Local<v8::String>());
 #else
       v8::Local<v8::String> string = from->ToString();
 #endif
@@ -1074,7 +1076,7 @@ class Utf8String {
         }
         const int flags =
             v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
-#if V8_MAJOR_VERSION >= 7
+#if NODE_MAJOR_VERSION >= 10
         length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_, static_cast<int>(len), 0, flags);
 #else
         length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
@@ -1852,36 +1854,41 @@ inline MaybeLocal<v8::Value> Call(
   inline void SaveToPersistent(
       const char *key, const v8::Local<v8::Value> &value) {
     HandleScope scope;
-    New(persistentHandle)->Set(New(key).ToLocalChecked(), value);
+    Set(New(persistentHandle), New(key).ToLocalChecked(), value).FromJust();
   }
 
   inline void SaveToPersistent(
       const v8::Local<v8::String> &key, const v8::Local<v8::Value> &value) {
     HandleScope scope;
-    New(persistentHandle)->Set(key, value);
+    Set(New(persistentHandle), key, value).FromJust();
   }
 
   inline void SaveToPersistent(
       uint32_t index, const v8::Local<v8::Value> &value) {
     HandleScope scope;
-    New(persistentHandle)->Set(index, value);
+    Set(New(persistentHandle), index, value).FromJust();
   }
 
   inline v8::Local<v8::Value> GetFromPersistent(const char *key) const {
     EscapableHandleScope scope;
     return scope.Escape(
-        New(persistentHandle)->Get(New(key).ToLocalChecked()));
+        Get(New(persistentHandle), New(key).ToLocalChecked())
+        .FromMaybe(v8::Local<v8::Value>()));
   }
 
   inline v8::Local<v8::Value>
   GetFromPersistent(const v8::Local<v8::String> &key) const {
     EscapableHandleScope scope;
-    return scope.Escape(New(persistentHandle)->Get(key));
+    return scope.Escape(
+        Get(New(persistentHandle), key)
+        .FromMaybe(v8::Local<v8::Value>()));
   }
 
   inline v8::Local<v8::Value> GetFromPersistent(uint32_t index) const {
     EscapableHandleScope scope;
-    return scope.Escape(New(persistentHandle)->Get(index));
+    return scope.Escape(
+        Get(New(persistentHandle), index)
+        .FromMaybe(v8::Local<v8::Value>()));
   }
 
   virtual void Execute() = 0;
@@ -2375,7 +2382,7 @@ SetMethodAux(T recv,
              v8::Local<v8::String> name,
              v8::Local<v8::FunctionTemplate> tpl,
              ...) {
-  recv->Set(name, GetFunction(tpl).ToLocalChecked());
+  Set(recv, name, GetFunction(tpl).ToLocalChecked());
 }
 
 }  // end of namespace imp
