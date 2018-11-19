@@ -25,6 +25,13 @@ matrix:
   exclude:
     - os: osx
       env: TRAVIS_NODE_VERSION="0.12"
+  include:
+    - language: python
+      python: 2.7
+      dist: xenial  # required for Python >= 3.7
+      sudo: true    # required for Python >= 3.7
+      install: pip intall flake8
+      script: flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
 install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
