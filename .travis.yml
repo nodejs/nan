@@ -27,7 +27,7 @@ matrix:
       env: TRAVIS_NODE_VERSION="0.12"
   include:
     - language: python
-      python: 2.7
+      python: 3.7
       dist: xenial  # required for Python >= 3.7
       sudo: true    # required for Python >= 3.7
       install: pip intall flake8
