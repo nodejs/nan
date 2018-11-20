@@ -39,10 +39,22 @@ NAN_METHOD(Hustle) {
   info.GetReturnValue().Set(wrap(To<v8::Function>(info[0]).ToLocalChecked()));
 }
 
+inline void WeakExternalCallback(const WeakCallbackInfo<void>&) {}
+
+NAN_METHOD(WeakExternal) {
+  void* baton = &baton;  // Actual value doesn't really matter.
+  Persistent<v8::External> external(New<v8::External>(baton));
+  external.SetWeak(baton, WeakExternalCallback, WeakCallbackType::kParameter);
+}
+
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("hustle").ToLocalChecked()
     , New<v8::FunctionTemplate>(Hustle)->GetFunction()
+  );
+  Set(target
+    , New<v8::String>("weakExternal").ToLocalChecked()
+    , New<v8::FunctionTemplate>(WeakExternal)->GetFunction()
   );
 }
 
