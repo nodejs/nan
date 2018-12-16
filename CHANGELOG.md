@@ -1,6 +1,12 @@
 # NAN ChangeLog
 
-**Version 2.11.1: current Node 10.11.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.12.0: current Node 11.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.12.0 Dec 16 2018
+
+- Bugfix: Add scope.Escape() to Call() (#817) 2e5ed4fc3a8ac80a6ef1f2a55099ab3ac8800dc6
+- Bugfix: Fix Node.js v10.12.0 deprecation warnings. 509859cc23b1770376b56550a027840a2ce0f73d
+- Feature: Allow SetWeak() for non-object persistent handles. (#824) e6ef6a48e7e671fe3e4b7dddaa8912a3f8262ecd
 
 ### 2.11.1 Sep 29 2018
 
