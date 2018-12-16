@@ -345,6 +345,9 @@ Factory<v8::String>::New(ExternalOneByteStringResource * value) {
 // TODO(bnoordhuis) Use isolate-based version in Node.js v12.
 Factory<v8::StringObject>::return_t
 Factory<v8::StringObject>::New(v8::Local<v8::String> value) {
+#if NODE_MODULE_VERSION > NODE_11_0_MODULE_VERSION
+  return v8::StringObject::New(v8::Isolate::GetCurrent(), value).As<v8::StringObject>();
+#else
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -359,6 +362,7 @@ Factory<v8::StringObject>::New(v8::Local<v8::String> value) {
 #endif
 #ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 #endif
 }
 

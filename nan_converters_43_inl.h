@@ -19,13 +19,22 @@ imp::ToFactory<v8::TYPE>::convert(v8::Local<v8::Value> val) {                  \
           .FromMaybe(v8::Local<v8::TYPE>()));                                  \
 }
 
-X(Boolean)
 X(Number)
 X(String)
 X(Object)
 X(Integer)
 X(Uint32)
 X(Int32)
+#if NODE_MODULE_VERSION <= NODE_11_0_MODULE_VERSION
+X(Boolean)
+#else
+imp::ToFactory<v8::Boolean>::return_t                                          \
+imp::ToFactory<v8::Boolean>::convert(v8::Local<v8::Value> val) {               \
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();                            \
+  v8::EscapableHandleScope scope(isolate);                                     \
+  return scope.Escape(val->ToBoolean(isolate));                                \
+}
+#endif
 
 #undef X
 
@@ -37,11 +46,20 @@ imp::ToFactory<TYPE>::convert(v8::Local<v8::Value> val) {                      \
   return val->NAME ## Value(isolate->GetCurrentContext());                     \
 }
 
-X(bool, Boolean)
 X(double, Number)
 X(int64_t, Integer)
 X(uint32_t, Uint32)
 X(int32_t, Int32)
+#if NODE_MODULE_VERSION <= NODE_11_0_MODULE_VERSION
+X(bool, Boolean)
+#else
+imp::ToFactory<bool>::return_t                                                 \
+imp::ToFactory<bool>::convert(v8::Local<v8::Value> val) {                      \
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();                            \
+  v8::HandleScope scope(isolate);                                              \
+  return Just<bool>(val->BooleanValue(isolate));                               \
+}
+#endif
 
 #undef X
 
