@@ -1077,11 +1077,27 @@ class Utf8String {
         }
         const int flags =
             v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
-#if NODE_MAJOR_VERSION >= 10
+#if NODE_MAJOR_VERSION >= 11
         length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_, static_cast<int>(len), 0, flags);
 #else
-        length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
+        // See https://github.com/nodejs/nan/issues/832.
+        // Disable the warning as there is no way around it.
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #endif
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+        length_ = string->WriteUtf8(str_, static_cast<int>(len), 0, flags);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+#endif  // NODE_MAJOR_VERSION < 11
         str_[length_] = '\0';
       }
     }
