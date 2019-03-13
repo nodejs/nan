@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.12.1: current Node 11.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.13.0: current Node 11.11.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.13.0 Mar 13 2019
+
+  - Feature: add support for node master (#831) 113c0282072e7ff4f9dfc98b432fd894b798c2c
 
 ### 2.12.1 Dec 18 2018
 
