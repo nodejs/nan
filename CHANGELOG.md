@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.13.0: current Node 11.11.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.13.1: current Node 11.11.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.13.1 Mar 14 2019
+
+  - Bugfix: check V8 version directly instead of inferring from NMV (#840) 12f9df9f393285de8fb4a8cd01478dc4fe3b089d
 
 ### 2.13.0 Mar 13 2019
 
