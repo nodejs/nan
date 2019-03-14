@@ -25,7 +25,8 @@ X(Object)
 X(Integer)
 X(Uint32)
 X(Int32)
-#if NODE_MODULE_VERSION <= NODE_11_0_MODULE_VERSION
+// V8 <= 7.0
+#if V8_MAJOR_VERSION < 7 || (V8_MAJOR_VERSION == 7 && V8_MINOR_VERSION == 0)
 X(Boolean)
 #else
 imp::ToFactory<v8::Boolean>::return_t                                          \
@@ -50,7 +51,8 @@ X(double, Number)
 X(int64_t, Integer)
 X(uint32_t, Uint32)
 X(int32_t, Int32)
-#if NODE_MODULE_VERSION <= NODE_11_0_MODULE_VERSION
+// V8 <= 7.0
+#if V8_MAJOR_VERSION < 7 || (V8_MAJOR_VERSION == 7 && V8_MINOR_VERSION == 0)
 X(bool, Boolean)
 #else
 imp::ToFactory<bool>::return_t                                                 \
