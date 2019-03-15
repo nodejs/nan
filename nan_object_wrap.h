@@ -21,7 +21,6 @@ class ObjectWrap {
       return;
     }
 
-    assert(persistent().IsNearDeath());
     persistent().ClearWeak();
     persistent().Reset();
   }
@@ -124,7 +123,6 @@ class ObjectWrap {
   WeakCallback(v8::WeakCallbackInfo<ObjectWrap> const& info) {
     ObjectWrap* wrap = info.GetParameter();
     assert(wrap->refs_ == 0);
-    assert(wrap->handle_.IsNearDeath());
     wrap->handle_.Reset();
     delete wrap;
   }
