@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.13.1: current Node 11.11.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.13.2: current Node 11.12.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.13.2 Mar 24 2019
+
+  - Bugfix: remove usage of deprecated `IsNearDeath` (#842) fbaf42252af279c3d867c6b193571f9711c39847
 
 ### 2.13.1 Mar 14 2019
 
