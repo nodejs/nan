@@ -1,7 +1,6 @@
 os:
   - linux
   - osx
-sudo: false
 language: cpp
 addons:
   apt:
