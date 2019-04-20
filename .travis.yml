@@ -34,7 +34,7 @@ install:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CXX=g++-4.8; fi
   - $CXX --version
   - if [[ $TRAVIS_NODE_VERSION == "0.8" ]]; then npm config set strict-ssl false; fi
-  - if [[ ! -v ELECTRON_VERSION && $(echo "$TRAVIS_NODE_VERSION < 4" | bc -l)  == "1" ]]; then npm install npm@2 && mv node_modules npm && npm/.bin/npm --version && npm/.bin/npm install; else npm --version && npm install; fi
-  - if [[ ! -v ELECTRON_VERSION ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/node-gyp rebuild --target=v$ELECTRON_VERSION --dist-url=https://atom.io/download/electron --directory test; fi
+  - if [[ -z "$ELECTRON_VERSION" && $(echo "$TRAVIS_NODE_VERSION < 4" | bc -l)  == "1" ]]; then npm install npm@2 && mv node_modules npm && npm/.bin/npm --version && npm/.bin/npm install; else npm --version && npm install; fi
+  - if [[ -z "$ELECTRON_VERSION" ]]; then node_modules/.bin/node-gyp rebuild --directory test; else node_modules/.bin/node-gyp rebuild --target=v$ELECTRON_VERSION --dist-url=https://atom.io/download/electron --directory test; fi
 script:
-  - if [[ ! -v ELECTRON_VERSION ]]; then node_modules/.bin/tap --gc test/js/*-test.js; fi
+  - if [[ -z "$ELECTRON_VERSION" ]]; then node_modules/.bin/tap --gc test/js/*-test.js; fi
