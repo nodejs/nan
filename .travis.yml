@@ -1,6 +1,7 @@
 os:
   - linux
   - osx
+  - windows
 language: cpp
 addons:
   apt:
