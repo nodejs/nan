@@ -21,7 +21,7 @@ This project also contains some helper utilities that make addon development a b
  * **[Example](#example)**
  * **[API](#api)**
  * **[Tests](#tests)**
- * **[Knowns issues](#issues)**
+ * **[Known issues](#issues)**
  * **[Governance & Contributing](#governance)**
 
 <a name="news"></a>
