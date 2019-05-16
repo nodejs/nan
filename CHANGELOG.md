@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.13.2: current Node 11.12.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.14.0: current Node 12.2.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.14.0 May 16 2019
+
+  - Feature: Add missing methods to Nan::Maybe<T> (#852) 4e962489fb84a184035b9fa74f245f650249aca6
 
 ### 2.13.2 Mar 24 2019
 
