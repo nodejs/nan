@@ -347,7 +347,8 @@ Factory<v8::StringObject>::return_t
 Factory<v8::StringObject>::New(v8::Local<v8::String> value) {
 // V8 > 7.0
 #if V8_MAJOR_VERSION > 7 || (V8_MAJOR_VERSION == 7 && V8_MINOR_VERSION > 0)
-  return v8::StringObject::New(v8::Isolate::GetCurrent(), value).As<v8::StringObject>();
+  return v8::StringObject::New(v8::Isolate::GetCurrent(), value)
+      .As<v8::StringObject>();
 #else
 #ifdef _MSC_VER
 #pragma warning(push)

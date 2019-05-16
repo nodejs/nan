@@ -63,7 +63,8 @@ NAN_METHOD(thread_local_storage) {
 NAN_MODULE_INIT(Init) {
   Set(target
     , New<v8::String>("thread_local_storage").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(thread_local_storage)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(thread_local_storage))
+        .ToLocalChecked()
   );
 }
 

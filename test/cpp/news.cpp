@@ -169,31 +169,38 @@ NAN_MODULE_INIT(Init) {
   );
   Set(target
     , New<v8::String>("newNegativeInteger").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewNegativeInteger)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewNegativeInteger))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newPositiveInteger").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewPositiveInteger)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewPositiveInteger))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUnsignedInteger").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewUnsignedInteger)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewUnsignedInteger))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newInt32FromPositive").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewInt32FromPositive)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewInt32FromPositive))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newInt32FromNegative").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewInt32FromNegative)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewInt32FromNegative))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUint32FromPositive").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewUint32FromPositive)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewUint32FromPositive))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUint32FromNegative").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewUint32FromNegative)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewUint32FromNegative))
+        .ToLocalChecked()
   );
   Set(target
     , New<v8::String>("newUtf8String").ToLocalChecked()
