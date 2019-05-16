@@ -213,6 +213,70 @@ template<typename T, typename M = NonCopyablePersistentTraits<T> >
 class Persistent;
 #endif  // NODE_MODULE_VERSION
 
+template<typename T>
+class Maybe {
+ public:
+  inline bool IsNothing() const { return !has_value_; }
+  inline bool IsJust() const { return has_value_; }
+
+  inline T ToChecked() const { return FromJust(); }
+  inline void Check() const { FromJust(); }
+
+  inline bool To(T* out) const {
+    if (IsJust()) *out = value_;
+    return IsJust();
+  }
+
+  inline T FromJust() const {
+#if defined(V8_ENABLE_CHECKS)
+    assert(IsJust() && "FromJust is Nothing");
+#endif  // V8_ENABLE_CHECKS
+    return value_;
+  }
+
+  inline T FromMaybe(const T& default_value) const {
+    return has_value_ ? value_ : default_value;
+  }
+
+  inline bool operator==(const Maybe &other) const {
+    return (IsJust() == other.IsJust()) &&
+        (!IsJust() || FromJust() == other.FromJust());
+  }
+
+  inline bool operator!=(const Maybe &other) const {
+    return !operator==(other);
+  }
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+  (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
+  // Allow implicit conversions from v8::Maybe<T> to Nan::Maybe<T>.
+  Maybe(const v8::Maybe<T>& that)  // NOLINT(runtime/explicit)
+    : has_value_(that.IsJust())
+    , value_(that.FromMaybe(T())) {}
+#endif
+
+ private:
+  Maybe() : has_value_(false) {}
+  explicit Maybe(const T& t) : has_value_(true), value_(t) {}
+  bool has_value_;
+  T value_;
+
+  template<typename U>
+  friend Maybe<U> Nothing();
+  template<typename U>
+  friend Maybe<U> Just(const U& u);
+};
+
+template<typename T>
+inline Maybe<T> Nothing() {
+  return Maybe<T>();
+}
+
+template<typename T>
+inline Maybe<T> Just(const T& t) {
+  return Maybe<T>(t);
+}
+
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
 # include "nan_maybe_43_inl.h"  // NOLINT(build/include)
@@ -1079,7 +1143,8 @@ class Utf8String {
         const int flags =
             v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
 #if NODE_MAJOR_VERSION >= 11
-        length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_, static_cast<int>(len), 0, flags);
+        length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_,
+                                    static_cast<int>(len), 0, flags);
 #else
         // See https://github.com/nodejs/nan/issues/832.
         // Disable the warning as there is no way around it.

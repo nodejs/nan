@@ -91,6 +91,10 @@
       , "sources"     : [ "cpp/makecallback.cpp" ]
     }
     , {
+        "target_name" : "maybe"
+      , "sources"     : [ "cpp/maybe.cpp" ]
+    }
+    , {
         "target_name" : "asyncresource"
       , "sources"     : [ "cpp/asyncresource.cpp" ]
     }

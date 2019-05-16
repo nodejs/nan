@@ -37,7 +37,8 @@ NAN_MODULE_INIT(Init) {
   );
   Set(target
     , New("b").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(CallAsFunctionHandlerSetter)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(CallAsFunctionHandlerSetter))
+        .ToLocalChecked()
   );
 }
 

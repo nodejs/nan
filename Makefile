@@ -55,6 +55,7 @@ LINT_SOURCES = \
 	test/cpp/json-parse.cpp \
 	test/cpp/json-stringify.cpp \
 	test/cpp/makecallback.cpp \
+	test/cpp/maybe.cpp \
 	test/cpp/morenews.cpp \
 	test/cpp/multifile1.cpp \
 	test/cpp/multifile2.cpp \

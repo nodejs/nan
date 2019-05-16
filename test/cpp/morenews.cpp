@@ -72,11 +72,13 @@ NAN_MODULE_INIT(Init) {
   );
   Set(target
     , New("newNegativeInteger").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewNegativeInteger)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewNegativeInteger))
+        .ToLocalChecked()
   );
   Set(target
     , New("newPositiveInteger").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewPositiveInteger)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewPositiveInteger))
+        .ToLocalChecked()
   );
   Set(target
     , New("newUtf8String").ToLocalChecked()
@@ -92,11 +94,13 @@ NAN_MODULE_INIT(Init) {
   );
   Set(target
     , New("newExternalStringResource").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewExternalStringResource)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewExternalStringResource))
+        .ToLocalChecked()
   );
   Set(target
     , New("newExternalAsciiStringResource").ToLocalChecked()
-    , GetFunction(New<v8::FunctionTemplate>(NewExternalAsciiStringResource)).ToLocalChecked()
+    , GetFunction(New<v8::FunctionTemplate>(NewExternalAsciiStringResource))
+        .ToLocalChecked()
   );
 }
 
