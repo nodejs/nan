@@ -22,10 +22,10 @@ test('weak2', function (t) {
   });
 
   // run weak callback, should dispose
-  gc();
+  require('./gc-fn')();
 
   // do not run weak callback
-  gc();
+  require('./gc-fn')();
 
   var timeout = setTimeout(function () {
     if (count > 0) {

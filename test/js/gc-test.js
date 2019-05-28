@@ -17,6 +17,6 @@ test('gc', function (t) {
   t.type(bindings.check, 'function');
 
   bindings.hook();
-  gc();
+  require('./gc-fn')();
   t.ok(bindings.check());
 });
