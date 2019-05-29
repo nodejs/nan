@@ -1,6 +1,6 @@
 if (global.gc) {
-  module.exports = global.gc
-  return
+  module.exports = global.gc;
+  return;
 }
 
 var v8 = require('v8');
