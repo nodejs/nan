@@ -8,7 +8,8 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak' })
+    , gc = require('./gc-fn');
 
 test('weak', function (t) {
   t.plan(3);
@@ -23,10 +24,10 @@ test('weak', function (t) {
 
   var timeout = setTimeout(function () {
     // run weak callback, should dispose
-    require('./gc-fn')();
+    gc();
 
     // do not run weak callback
-    require('./gc-fn')();
+    gc();
 
     if (count > 0) {
       clearTimeout(timeout);
