@@ -8,7 +8,8 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'gc' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'gc' })
+    , gc = require('./gc-fn');
 
 test('gc', function (t) {
   t.plan(3);

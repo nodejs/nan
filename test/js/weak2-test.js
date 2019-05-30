@@ -8,7 +8,8 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak2' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'weak2' })
+    , gc = require('./gc-fn');
 
 test('weak2', function (t) {
   t.plan(3);
