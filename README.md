@@ -68,8 +68,7 @@ Also take a look at our comprehensive **[C++ test suite](https://github.com/node
 
 Additional to the NAN documentation below, please consult:
 
-* [The V8 Getting Started * Guide](https://github.com/v8/v8/wiki/Getting%20Started%20with%20Embedding)
-* [The V8 Embedders * Guide](https://github.com/v8/v8/wiki/Embedder%27s%20Guide)
+* [The V8 Getting Started * Guide](https://v8.dev/docs/embed)
 * [V8 API Documentation](https://v8docs.nodesource.com/)
 * [Node Add-on Documentation](https://nodejs.org/api/addons.html)
 
