@@ -2812,7 +2812,7 @@ struct Tap {
     t_.Reset(To<v8::Object>(t).ToLocalChecked());
   }
 
-  ~Tap() { t_.Reset(); }  // not sure if neccessary
+  ~Tap() { t_.Reset(); }  // not sure if necessary
 
   inline void plan(int i) {
     HandleScope scope;
