@@ -2141,10 +2141,7 @@ class AsyncProgressWorkerBase : public AsyncBareProgressWorker<T> {
  private:
   void SendProgress_(const T *data, size_t count) {
     T *new_data = new T[count];
-    {
-      T *it = new_data;
-      std::copy(data, data + count, it);
-    }
+    std::copy(data, data + count, new_data);
 
     uv_mutex_lock(&this->async_lock);
     T *old_data = asyncdata_;
@@ -2263,10 +2260,7 @@ class AsyncProgressQueueWorker : public AsyncBareProgressQueueWorker<T> {
  private:
   void SendProgress_(const T *data, size_t count) {
     T *new_data = new T[count];
-    {
-      T *it = new_data;
-      std::copy(data, data + count, it);
-    }
+    std::copy(data, data + count, new_data);
 
     uv_mutex_lock(&async_lock);
     asyncdata_.push(std::pair<T*, size_t>(new_data, count));
