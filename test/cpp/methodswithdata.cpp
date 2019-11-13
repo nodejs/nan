@@ -191,4 +191,4 @@ NAN_MODULE_INIT(Init) {
   Set(target, Nan::New<v8::String>("create").ToLocalChecked(), createnew);
 }
 
-NODE_MODULE(maybe, Init)
+NODE_MODULE(methodswithdata, Init)
