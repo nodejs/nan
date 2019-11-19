@@ -478,10 +478,12 @@ Signature:
 ```c++
 void Nan::SetMethod(v8::Local<v8::Object> recv,
                     const char *name,
-                    Nan::FunctionCallback callback)
+                    Nan::FunctionCallback callback,
+                    v8::Local<v8::Value> data = v8::Local<v8::Value>())
 void Nan::SetMethod(v8::Local<v8::Template> templ,
                     const char *name,
-                    Nan::FunctionCallback callback)
+                    Nan::FunctionCallback callback,
+                    v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
 <a name="api_nan_set_prototype_method"></a>
@@ -494,7 +496,8 @@ Signature:
 ```c++
 void Nan::SetPrototypeMethod(v8::Local<v8::FunctionTemplate> recv,
                              const char* name,
-                             Nan::FunctionCallback callback)
+                             Nan::FunctionCallback callback,
+                             v8::Local<v8::Value> data = v8::Local<v8::Value>())
 ```
 
 <a name="api_nan_set_accessor"></a>

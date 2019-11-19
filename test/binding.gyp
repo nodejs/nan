@@ -185,4 +185,8 @@
         "target_name" : "stringify"
       , "sources"     : [ "cpp/json-stringify.cpp" ]
     }
+    , {
+        "target_name":"methodswithdata"
+      , "sources"     :["cpp/methodswithdata.cpp"]
+    }
 ]}
