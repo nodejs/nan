@@ -51,6 +51,8 @@
 # error This version of node/NAN/v8 requires a C++11 compiler
 #endif
 
+#define NAN_HAS_CPLUSPLUS_17 (__cplusplus >= 201703L)
+
 #include <uv.h>
 #include <node.h>
 #include <node_buffer.h>
