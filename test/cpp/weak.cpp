@@ -15,6 +15,7 @@ static Persistent<v8::Function> cb;
 
 void weakCallback(
     const WeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
+  v8::HandleScope scope(data.GetIsolate());
   int *parameter = data.GetParameter();
   v8::Local<v8::Value> val = New(*parameter);
   async_resource->runInAsyncScope(
