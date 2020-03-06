@@ -14,6 +14,7 @@ static AsyncResource* async_resource;
 static Persistent<v8::Function> cb;
 void weakCallback(
     const WeakCallbackInfo<int> &data) {  // NOLINT(runtime/references)
+  HandleScope scope;
   int *parameter = static_cast<int*>(data.GetInternalField(0));
   v8::Local<v8::Value> val = New(*parameter);
   async_resource->runInAsyncScope(

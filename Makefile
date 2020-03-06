@@ -84,7 +84,7 @@ LINT_SOURCES = \
 	test/cpp/wrappedobjectfactory.cpp \
 	node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 
-FILTER = -whitespace/parens
+FILTER = -build/include_subdir,-whitespace/parens
 
 .PHONY: lint
 
