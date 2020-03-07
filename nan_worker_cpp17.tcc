@@ -314,12 +314,12 @@ public:
     friend class AsyncBareProgressQueueWorker;
 
     public:
-        void Send(std::unique_ptr<T[]> messages, size_t nMessages) const {
+        void Send(std::unique_ptr<T[], std::function<void(T*)>> messages, size_t nMessages) const {
             that_->SendProgress_(std::move(messages), nMessages);
         }
 
-        NAN_DEPRECATED void Send(const T* messages, size_t nMessages) const {
-            that_->SendProgress_(messages, nMessages);
+        NAN_DEPRECATED void Send(const T* messages, size_t nMessages, size_t alignment = alignof(T)) const {
+            that_->SendProgress_(messages, nMessages, alignment);
         }
 
     private:
@@ -339,9 +339,9 @@ public:
         Execute(progress);
     }
 
-    virtual void SendProgress_(std::unique_ptr<T[]> messages, size_t nMessages) = 0;
+    virtual void SendProgress_(std::unique_ptr<T[], std::function<void(T*)>> messages, size_t nMessages) = 0;
 
-    NAN_DEPRECATED virtual void SendProgress_(const T *messages, size_t nMessages) = 0;
+    NAN_DEPRECATED virtual void SendProgress_(const T *messages, size_t nMessages, size_t alignment) = 0;
 };
 
 template<class T>
@@ -385,9 +385,12 @@ public:
             auto& datapair = progressMessageQueue_.front();
 
             auto buf = std::move(datapair.first);
+            assert(buf.get_deleter());
             auto nMessages = datapair.second;
 
             progressMessageQueue_.pop();
+
+            //Unlock the queue and allow the async running C++ part to enqueue new messages!
             lock.unlock();
 
             // Don't send progress events after we've already completed.
@@ -395,7 +398,7 @@ public:
                 this->HandleProgressCallback(buf.get(), nMessages);
             }
             
-            //Delete the array held by the smtart pointer before we reacquire the lock in 
+            //Delete the array held by the smart pointer before we reacquire the lock in 
             //order to keep the time the queue is locked as low as possibles
             buf.reset();
 
@@ -406,22 +409,31 @@ public:
     }
 
 private:
-    virtual void SendProgress_(std::unique_ptr<T[]> messages, size_t nMessages) override {
+    void emplaceIntoQueueAndWakeUp(std::unique_ptr<T[], std::function<void(T*)>> ptr, size_t nMessages) {
+        assert(ptr.get_deleter());
+
         {
         std::lock_guard lockGuard(queueLock_);
-        progressMessageQueue_.emplace(std::move(messages), nMessages);
+        progressMessageQueue_.emplace(std::move(ptr), nMessages);
         }
 
+        //Wake up the event loop!
         uv_async_send(&this->async);
     }
 
-    NAN_DEPRECATED virtual void SendProgress_(const T * const messages, const size_t nMessages) override {
+    virtual void SendProgress_(std::unique_ptr<T[], std::function<void(T*)>> messages, size_t nMessages) override {
+        assert(messages.get_deleter() && "Cannot emplace a progress message ptr with invalid deleter function!");
+
+        emplaceIntoQueueAndWakeUp(std::move(messages), nMessages);
+    }
+
+    NAN_DEPRECATED virtual void SendProgress_(const T * const messages, const size_t nMessages, size_t alignment) override {
 
         auto buffer = [&]() -> std::unique_ptr<T[], std::function<void(T*)>> {
             if(messages != nullptr) {
                 //Allocate memory
                 const size_t bufferSize = sizeof(T) * nMessages;
-                void* rawBuf = std::aligned_alloc(alignof(T), bufferSize);
+                void* rawBuf = Nan::detail::align::aligned_alloc(alignment, bufferSize);
                 if(!rawBuf) {
                     //No need to deallocate anything
                     throw std::bad_alloc();
@@ -438,7 +450,7 @@ private:
                         //No need to wrap destroy_n in a try catch block
                         //If something goes wrong, std::terminate is called anyways
                         std::destroy_n(ptr, nMessages);
-                        std::free(ptr);
+                        Nan::detail::align::aligned_free(ptr);
                     }
                 );
 
@@ -455,17 +467,11 @@ private:
             } else {
                 //Allow the user to send nullptrs if he desires to do so...
                 //We need to take special care because of memcpy and stuff
-                return std::unique_ptr<T[]>(nullptr);
+                return std::unique_ptr<T[], std::function<void(T*)>>(nullptr, [](T* ptr){ /* do nothing */});
             }
         }();
         
-        {
-        std::lock_guard lockGuard(queueLock_);
-        progressMessageQueue_.emplace(std::move(buffer), nMessages);
-        }
-
-        //Wake up the event loop!
-        uv_async_send(&this->async);
+        emplaceIntoQueueAndWakeUp(std::move(buffer), nMessages);
     }
 
     std::mutex queueLock_;

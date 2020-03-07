@@ -86,6 +86,7 @@
 # include <string_view>
 #endif
 #if NAN_ENABLE_CPP17_WORKERS
+# include "nan_aligned_alloc_cpp17.hpp"
 # include <functional>
 # include <mutex>
 #endif
