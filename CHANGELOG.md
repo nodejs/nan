@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.14.0: current Node 12.2.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.14.1: current Node 14.0.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.14.1 Apr 21 2020
+
+  - Bugfix: use GetBackingStore() instead of GetContents() (#888) 2c023bd447661a61071da318b0ff4003c3858d39
 
 ### 2.14.0 May 16 2019
 
