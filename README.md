@@ -213,7 +213,7 @@ NAN provides a `v8::Script` helpers as the API has changed over the supported ve
 
 ### JSON
 
-The _JSON_ object provides the c++ versions of the methods offered by the `JSON` object in javascript. V8 exposes these methods via the `v8::JSON` object.
+The _JSON_ object provides the C++ versions of the methods offered by the `JSON` object in javascript. V8 exposes these methods via the `v8::JSON` object.
 
  - <a href="doc/json.md#api_nan_json_parse"><b><code>Nan::JSON.Parse</code></b></a>
  - <a href="doc/json.md#api_nan_json_stringify"><b><code>Nan::JSON.Stringify</code></b></a>
