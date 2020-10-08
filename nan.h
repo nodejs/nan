@@ -2280,7 +2280,7 @@ inline void AsyncExecute (uv_work_t* req) {
   worker->Execute();
 }
 
-inline void AsyncExecuteComplete (uv_work_t* req) {
+inline void AsyncExecuteComplete(uv_work_t* req, int status = 0) {
   AsyncWorker* worker = static_cast<AsyncWorker*>(req->data);
   worker->WorkComplete();
   worker->Destroy();
