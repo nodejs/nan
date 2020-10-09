@@ -2280,6 +2280,10 @@ inline void AsyncExecute (uv_work_t* req) {
   worker->Execute();
 }
 
+/* uv_after_work_cb has 1 argument before node-v0.9.4 and
+ * 2 arguments since node-v0.9.4
+ * https://github.com/libuv/libuv/commit/92fb84b751e18f032c02609467f44bfe927b80c5
+ */
 inline void AsyncExecuteComplete(uv_work_t* req, int status = 0) {
   AsyncWorker* worker = static_cast<AsyncWorker*>(req->data);
   worker->WorkComplete();
