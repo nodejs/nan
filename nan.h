@@ -2284,12 +2284,12 @@ inline void AsyncExecute (uv_work_t* req) {
  * 2 arguments since node-v0.9.4
  * https://github.com/libuv/libuv/commit/92fb84b751e18f032c02609467f44bfe927b80c5
  */
-void AsyncExecuteComplete(uv_work_t *req) {
+inline void AsyncExecuteComplete(uv_work_t *req) {
   AsyncWorker* worker = static_cast<AsyncWorker*>(req->data);
   worker->WorkComplete();
   worker->Destroy();
 }
-void AsyncExecuteComplete (uv_work_t* req, int status) {
+inline void AsyncExecuteComplete (uv_work_t* req, int status) {
   AsyncExecuteComplete(req);
 }
 
