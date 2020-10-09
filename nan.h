@@ -2280,10 +2280,17 @@ inline void AsyncExecute (uv_work_t* req) {
   worker->Execute();
 }
 
-inline void AsyncExecuteComplete (uv_work_t* req) {
+/* uv_after_work_cb has 1 argument before node-v0.9.4 and
+ * 2 arguments since node-v0.9.4
+ * https://github.com/libuv/libuv/commit/92fb84b751e18f032c02609467f44bfe927b80c5
+ */
+inline void AsyncExecuteComplete(uv_work_t *req) {
   AsyncWorker* worker = static_cast<AsyncWorker*>(req->data);
   worker->WorkComplete();
   worker->Destroy();
+}
+inline void AsyncExecuteComplete (uv_work_t* req, int status) {
+  AsyncExecuteComplete(req);
 }
 
 inline void AsyncQueueWorker (AsyncWorker* worker) {
@@ -2291,7 +2298,7 @@ inline void AsyncQueueWorker (AsyncWorker* worker) {
       GetCurrentEventLoop()
     , &worker->request
     , AsyncExecute
-    , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
+    , AsyncExecuteComplete
   );
 }
 
