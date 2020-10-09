@@ -2290,7 +2290,7 @@ void AsyncExecuteComplete(uv_work_t *req) {
   worker->Destroy();
 }
 void AsyncExecuteComplete (uv_work_t* req, int status) {
-  AsyncExecute(req);
+  AsyncExecuteComplete(req);
 }
 
 inline void AsyncQueueWorker (AsyncWorker* worker) {
