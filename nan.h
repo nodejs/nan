@@ -2291,7 +2291,7 @@ inline void AsyncQueueWorker (AsyncWorker* worker) {
       GetCurrentEventLoop()
     , &worker->request
     , AsyncExecute
-    , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
+    , AsyncExecuteComplete
   );
 }
 
