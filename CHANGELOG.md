@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.14.1: current Node 14.0.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.14.2: current Node 14.13.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.14.2 Oct 13 2020
+
+  - Bugfix: fix gcc 8 function cast warning (#899) 35f0fab205574b2cbda04e6347c8b2db755e124f
 
 ### 2.14.1 Apr 21 2020
 
