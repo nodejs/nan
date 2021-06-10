@@ -26,7 +26,7 @@ NAN_METHOD(EncodeHex) {
 }
 
 NAN_METHOD(EncodeUCS2) {
-  info.GetReturnValue().Set(Encode("h\0e\0l\0l\0o\0", 10, UCS2));
+  info.GetReturnValue().Set(Encode(u"hello", 10, UCS2));
 }
 
 Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
