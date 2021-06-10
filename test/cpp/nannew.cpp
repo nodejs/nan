@@ -246,7 +246,12 @@ NAN_METHOD(testScript) {
 
   t.plan(6);
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 8 ||                      \
+  (V8_MAJOR_VERSION == 8 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 9))
+  ScriptOrigin origin(New("foo").ToLocalChecked(), 5);
+#else
   ScriptOrigin origin(New("foo").ToLocalChecked(), New(5));
+#endif
 
   t.ok(_( assertType<Script>(New<Script>(
       New("2 + 3").ToLocalChecked()).ToLocalChecked())));
