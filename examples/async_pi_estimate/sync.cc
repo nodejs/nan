@@ -13,7 +13,7 @@
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {
   // expect a number as the first argument
-  int points = info[0]->Uint32Value();
+  int points = Nan::To<int>(info[0]).FromJust();
   double est = Estimate(points);
 
   info.GetReturnValue().Set(est);
