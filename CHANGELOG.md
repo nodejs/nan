@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.14.2: current Node 14.13.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.15.0: current Node 16.6.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.15.0 Aug 4 2021
+
+  - Feature: add ScriptOrigin (#918) d09debf9eeedcb7ca4073e84ffe5fbb455ecb709
 
 ### 2.14.2 Oct 13 2020
 
