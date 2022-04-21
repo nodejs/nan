@@ -163,7 +163,7 @@ namespace Nan {
 #undef NODE_MODULE_X
 #define NODE_MODULE_X(modname, regfunc, priv, flags)                  \
   extern "C" {                                                        \
-    static void trampoline(v8::Local<v8::Object> target,              \
+    void nan_mod_init(v8::Local<v8::Object> target,                   \
       v8::Local<v8::Value>,                                           \
       void *) {                                                       \
       regfunc(target);                                                \
@@ -174,7 +174,7 @@ namespace Nan {
       flags,                                                          \
       NULL,  /* NOLINT (readability/null_usage) */                    \
       __FILE__,                                                       \
-      (node::addon_register_func) (trampoline),                       \
+      (node::addon_register_func) (nan_mod_init),                     \
       NULL,  /* NOLINT (readability/null_usage) */                    \
       NODE_STRINGIFY(modname),                                        \
       priv,                                                           \
