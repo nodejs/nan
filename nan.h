@@ -44,6 +44,7 @@
 #define NODE_15_0_MODULE_VERSION 88
 #define NODE_16_0_MODULE_VERSION 93
 #define NODE_17_0_MODULE_VERSION 102
+#define NODE_18_0_MODULE_VERSION 108
 
 #ifdef _MSC_VER
 # define NAN_HAS_CPLUSPLUS_11 (_MSC_VER >= 1800)
@@ -2549,7 +2550,10 @@ inline void SetAccessor(
     , obj
     , settings
     , attribute
-    , signature);
+#if (NODE_MODULE_VERSION < NODE_18_0_MODULE_VERSION)
+    , signature
+#endif
+  );
 }
 
 inline bool SetAccessor(
