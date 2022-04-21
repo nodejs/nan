@@ -159,6 +159,33 @@ namespace Nan {
 #define NAN_MODULE_INIT(name)                                                  \
     void name(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target)
 
+#if NODE_MODULE_VERSION >= NODE_14_MODULE_VERSION
+#undef NODE_MODULE_X
+#define NODE_MODULE_X(modname, regfunc, priv, flags)                  \
+  extern "C" {                                                        \
+    static void trampoline(v8::Local<v8::Object> target,              \
+      v8::Local<v8::Value>,                                           \
+      void *) {                                                       \
+      regfunc(target);                                                \
+    }                                                                 \
+    static node::node_module _module =                                \
+    {                                                                 \
+      NODE_MODULE_VERSION,                                            \
+      flags,                                                          \
+      NULL,  /* NOLINT (readability/null_usage) */                    \
+      __FILE__,                                                       \
+      (node::addon_register_func) (trampoline),                       \
+      NULL,  /* NOLINT (readability/null_usage) */                    \
+      NODE_STRINGIFY(modname),                                        \
+      priv,                                                           \
+      NULL   /* NOLINT (readability/null_usage) */                    \
+    };                                                                \
+    NODE_C_CTOR(_register_ ## modname) {                              \
+      node_module_register(&_module);                                 \
+    }                                                                 \
+  }
+#endif
+
 #if NODE_MAJOR_VERSION >= 10 || \
     NODE_MAJOR_VERSION == 9 && NODE_MINOR_VERSION >= 3
 #define NAN_MODULE_WORKER_ENABLED(module_name, registration)                   \
