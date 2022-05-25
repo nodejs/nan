@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.15.0: current Node 16.6.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.16.0: current Node 18.2.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.16.0 May 25 2022
+
+  - Feature: Add support for Node 18 (#937) 16fa32231e2ccd89d2804b3f765319128b20c4ac
 
 ### 2.15.0 Aug 4 2021
 
