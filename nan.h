@@ -2516,8 +2516,7 @@ inline void SetAccessor(
   , SetterCallback setter = 0
   , v8::Local<v8::Value> data = v8::Local<v8::Value>()
   , v8::AccessControl settings = v8::DEFAULT
-  , v8::PropertyAttribute attribute = v8::None
-  , imp::Sig signature = imp::Sig()) {
+  , v8::PropertyAttribute attribute = v8::None) {
   HandleScope scope;
 
   imp::NativeGetter getter_ =
@@ -2550,9 +2549,6 @@ inline void SetAccessor(
     , obj
     , settings
     , attribute
-#if (NODE_MODULE_VERSION < NODE_18_0_MODULE_VERSION)
-    , signature
-#endif
   );
 }
 
