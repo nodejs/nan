@@ -52,7 +52,9 @@ typedef void(*IndexQueryCallback)(
     const PropertyCallbackInfo<v8::Integer>&);
 
 namespace imp {
-typedef v8::Local<v8::AccessorSignature> Sig;
+#if (NODE_MODULE_VERSION < NODE_18_0_MODULE_VERSION)
+NAN_DEPRECATED typedef v8::Local<v8::AccessorSignature> Sig;
+#endif
 
 static const int kDataIndex =                    0;
 
