@@ -2550,7 +2550,7 @@ NAN_DEPRECATED inline void SetAccessor(
     , obj
     , settings
     , attribute
-#if (NODE_MODULE_VERSION < NODE_18_0_MODULE_VERSION)
+#if (NODE_MODULE_VERSION < NODE_16_0_MODULE_VERSION)
     , signature
 #endif
   );
