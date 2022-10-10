@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.16.0: current Node 18.2.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.17.0: current Node 18.10.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.17.0 Oct 10 2022
+
+  - Feature: overload deprecated AccessorSignatures (#943) 7f9ceb80fbc45c9ba1a10e6591ccbef9e8dee6b4
 
 ### 2.16.0 May 25 2022
 
