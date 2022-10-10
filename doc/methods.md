@@ -508,7 +508,8 @@ Sets getters and setters for a property with a given name on an `ObjectTemplate`
 Signature:
 
 ```c++
-void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
+// The signature parameter was deprecated in Node 16 and subsequently removed
+NAN_DEPRECATED void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
                  v8::Local<v8::String> name,
                  Nan::GetterCallback getter,
                  Nan::SetterCallback setter = 0,
@@ -516,6 +517,13 @@ void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
                  v8::AccessControl settings = v8::DEFAULT,
                  v8::PropertyAttribute attribute = v8::None,
                  imp::Sig signature = imp::Sig());
+void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
+                 v8::Local<v8::String> name,
+                 Nan::GetterCallback getter,
+                 Nan::SetterCallback setter = 0,
+                 v8::Local<v8::Value> data = v8::Local<v8::Value>(),
+                 v8::AccessControl settings = v8::DEFAULT,
+                 v8::PropertyAttribute attribute = v8::None);
 bool SetAccessor(v8::Local<v8::Object> obj,
                  v8::Local<v8::String> name,
                  Nan::GetterCallback getter,
