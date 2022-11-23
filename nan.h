@@ -13,7 +13,7 @@
  *
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  *
- * Version 2.17.0: current Node 18.10.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1
+ * Version 2.17.0: current Node 19.1.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1
  *
  * See https://github.com/nodejs/nan for the latest update to this file
  **********************************************************************************/
@@ -45,6 +45,7 @@
 #define NODE_16_0_MODULE_VERSION 93
 #define NODE_17_0_MODULE_VERSION 102
 #define NODE_18_0_MODULE_VERSION 108
+#define NODE_19_0_MODULE_VERSION 111
 
 #ifdef _MSC_VER
 # define NAN_HAS_CPLUSPLUS_11 (_MSC_VER >= 1800)
