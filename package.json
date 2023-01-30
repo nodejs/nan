@@ -1,7 +1,7 @@
 {
   "name": "nan",
-  "version": "2.15.0",
-  "description": "Native Abstractions for Node.js: C++ header for Node 0.8 -> 14 compatibility",
+  "version": "2.17.0",
+  "description": "Native Abstractions for Node.js: C++ header for Node 0.8 -> 19 compatibility",
   "main": "include_dirs.js",
   "repository": {
     "type": "git",
@@ -11,6 +11,7 @@
     "test": "tap --gc --stderr test/js/*-test.js",
     "test:worker": "node --experimental-worker test/tap-as-worker.js --gc --stderr test/js/*-test.js",
     "rebuild-tests": "node-gyp rebuild --msvs_version=2015 --directory test",
+    "rebuild-tests-2017": "node-gyp rebuild --msvs_version=2017 --directory test",
     "docs": "doc/.build.sh"
   },
   "contributors": [
@@ -28,7 +29,7 @@
     "commander": "^2.8.1",
     "glob": "^5.0.14",
     "request": "=2.81.0",
-    "node-gyp": "~3.6.2",
+    "node-gyp": "~8.4.1",
     "readable-stream": "^2.1.4",
     "tap": "~0.7.1",
     "xtend": "~4.0.0"
