@@ -51,7 +51,7 @@ class BufferWorker : public AsyncWorker {
 NAN_METHOD(DoSleep) {
   v8::Local<v8::Object> bufferHandle = To<v8::Object>(info[1]).ToLocalChecked();
   Callback *callback = new Callback(To<v8::Function>(info[2]).ToLocalChecked());
-  assert(!callback->IsEmpty() && "Callback shoud not be empty");
+  assert(!callback->IsEmpty() && "Callback should not be empty");
   AsyncQueueWorker(new BufferWorker(
       callback
     , To<uint32_t>(info[0]).FromJust()
