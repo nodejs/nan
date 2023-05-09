@@ -12,7 +12,7 @@ Due to the evolution of the V8 API, it is necessary for NAN to provide a wrapper
  - <a href="#api_nan_weak_callback_info"><b><code>Nan::WeakCallbackInfo</code></b></a>
  - <a href="#api_nan_weak_callback_type"><b><code>Nan::WeakCallbackType</code></b></a>
 
-Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://developers.google.com/v8/embed#handles).
+Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://v8.dev/docs/embed#handles-and-garbage-collection).
 
 <a name="api_nan_persistent_base"></a>
 ### Nan::PersistentBase & v8::PersistentBase

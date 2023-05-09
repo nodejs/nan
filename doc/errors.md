@@ -4,7 +4,7 @@ NAN includes helpers for creating, throwing and catching Errors as much of this 
 
 Note that an Error object is simply a specialized form of `v8::Value`.
 
-Also consult the V8 Embedders Guide section on [Exceptions](https://developers.google.com/v8/embed#exceptions) for more information.
+Also consult the V8 Embedders Guide section on [Exceptions](https://v8.dev/docs/embed#exceptions) for more information.
 
  - <a href="#api_nan_error"><b><code>Nan::Error()</code></b></a>
  - <a href="#api_nan_range_error"><b><code>Nan::RangeError()</code></b></a>
