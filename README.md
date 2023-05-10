@@ -137,7 +137,7 @@ Due to the evolution of the V8 API, it is necessary for NAN to provide a wrapper
  - <a href="doc/persistent.md#api_nan_weak_callback_info"><b><code>Nan::WeakCallbackInfo</code></b></a>
  - <a href="doc/persistent.md#api_nan_weak_callback_type"><b><code>Nan::WeakCallbackType</code></b></a>
 
-Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://developers.google.com/v8/embed#handles).
+Also see the V8 Embedders Guide section on [Handles and Garbage Collection](https://v8.dev/docs/embed#handles-and-garbage-collection).
 
 ### New
 
@@ -227,7 +227,7 @@ NAN includes helpers for creating, throwing and catching Errors as much of this 
 
 Note that an Error object is simply a specialized form of `v8::Value`.
 
-Also consult the V8 Embedders Guide section on [Exceptions](https://developers.google.com/v8/embed#exceptions) for more information.
+Also consult the V8 Embedders Guide section on [Exceptions](https://v8.dev/docs/embed#exceptions) for more information.
 
  - <a href="doc/errors.md#api_nan_error"><b><code>Nan::Error()</code></b></a>
  - <a href="doc/errors.md#api_nan_range_error"><b><code>Nan::RangeError()</code></b></a>
