@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.17.0: current Node 18.10.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.18.0: current Node 20.6.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.18.0 Sep 12 2023
+
+  - Feature: Cast v8::Object::GetInternalField() return value to v8::Value (#956) bdfee1788239f735b67fe6b46b1439da755e9b62
 
 ### 2.17.0 Oct 10 2022
 
