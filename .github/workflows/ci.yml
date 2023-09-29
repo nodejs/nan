@@ -10,6 +10,7 @@ on:
 jobs:
   ci:
     strategy:
+      fail-fast: false
       matrix:
         node-version: [18.x, 20.x]
     runs-on: ubuntu-latest
@@ -23,4 +24,4 @@ jobs:
       # - run: npm run build --if-present
       - run: npm run rebuild-tests-2017
       # - run: npm test
-      - run: node node_modules\tap\bin\tap.js --gc test/js/*-test.js
+      - run: node node_modules/tap/bin/tap.js --gc test/js/*-test.js
