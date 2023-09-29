@@ -1,0 +1,89 @@
+# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# https://github.com/actions/setup-node
+# https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+
+name: ci
+on:
+  push:
+  #  branches: [main]
+  pull_request:
+  #  branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:  # TODO: Enable 23.x after nodejs/nan#979 or similar.
+        node-version: [22.x, 21.x, 20.x, 19.x, 18.x, 17.x, 16.x, 15.x]
+        os: [windows-latest]
+        include:
+          # TODO: Enable macOS after nodejs/nan#985 or similar.
+          # - node-version: lts/*
+          #  os: macos-13  # macOS on Intel
+          # - node-version: lts/*
+          #  os: macos-latest  # macOS on arm64
+          - node-version: lts/*
+            os: ubuntu-latest  # Linux on x64
+          - node-version: lts/*
+            os: ubuntu-24.04-arm  # Linux on arm64
+          - node-version: 14.x
+            os: windows-2019
+          - node-version: 13.x
+            os: windows-2019
+          - node-version: 12.x
+            os: windows-2019
+          - node-version: 11.x
+            os: windows-2019
+          - node-version: 10.x
+            os: windows-2019
+          - node-version: 8.x
+            os: windows-2019
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      # TODO: On Windows Node.js v11 these will fail but `make test` will succeed
+      - if: matrix.node-version != '11.x'
+        run: |
+          npm run-script rebuild-tests
+          npm test
+      - run: make test
+  # TODO: Enable these older versions which require Python 2.
+  # This workflow properly enables legacy Python the default `python` but the tests still fail.
+  # See the AppVeyor file for hints.
+  # python2:
+  #  strategy:
+  #    fail-fast: false
+  #    matrix:
+  #      node-version: [6.x, 5.x, 4.x, 0.12, '0.10']
+  #  runs-on: windows-2019
+  #  env:
+  #    NODE_GYP_FORCE_PYTHON: C:\Python27\python
+  #    PYTHON: C:\Python27\python
+  #  steps:
+  #    - uses: actions/checkout@v4
+  #    - uses: actions/setup-node@v4
+  #      with:
+  #        node-version: ${{ matrix.node-version }}
+  #    - run: |
+  #        choco install python2
+  #        C:\Python27\python --version  # Python 2.7.18
+  #        python --version  # This is still Python 3
+  #    - name: Prepend Python27 to Windows PATH
+  #      shell: powershell
+  #      run: echo "C:\Python27`n$(Get-Content $env:GITHUB_PATH)" | Set-Content $env:GITHUB_PATH
+  #    - run: python --version  # This is now Python 2.7.18!
+  #
+  #    - if: matrix.node-version == '5.x'
+  #      run: npm -g install npm@3
+  #    - if: matrix.node-version == '0.12' || matrix.node-version == '0.10'
+  #      run: npm -g install npm@2
+  #    - run: npm install
+  #    - run: npm run-script rebuild-tests  # These fail!!
+  #    - run: npm test
+  #    - run: make test
