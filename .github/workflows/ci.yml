@@ -27,4 +27,4 @@ jobs:
       - name: Build
         run: node_modules/.bin/node-gyp rebuild --directory test
       - name: Test
-        run: node_modules/.bin/tap --gc test/js/*-test.js; fi
+        run: node_modules/.bin/tap --gc test/js/*-test.js
