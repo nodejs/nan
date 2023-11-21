@@ -2518,9 +2518,7 @@ NAN_DEPRECATED inline void SetAccessor(
   , GetterCallback getter
   , SetterCallback setter
   , v8::Local<v8::Value> data
-#if (NODE_MODULE_VERSION < NODE_21_0_MODULE_VERSION)
   , v8::AccessControl settings
-#endif
   , v8::PropertyAttribute attribute
   , imp::Sig signature) {
   HandleScope scope;
@@ -2569,9 +2567,7 @@ inline void SetAccessor(
   , GetterCallback getter
   , SetterCallback setter = 0
   , v8::Local<v8::Value> data = v8::Local<v8::Value>()
-#if (NODE_MODULE_VERSION < NODE_21_0_MODULE_VERSION)
   , v8::AccessControl settings = v8::DEFAULT
-#endif
   , v8::PropertyAttribute attribute = v8::None) {
   HandleScope scope;
 
