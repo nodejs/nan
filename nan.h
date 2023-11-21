@@ -47,6 +47,7 @@
 #define NODE_18_0_MODULE_VERSION 108
 #define NODE_19_0_MODULE_VERSION 111
 #define NODE_20_0_MODULE_VERSION 115
+#define NODE_21_0_MODULE_VERSION 120
 
 #ifdef _MSC_VER
 # define NAN_HAS_CPLUSPLUS_11 (_MSC_VER >= 1800)
@@ -2550,7 +2551,9 @@ NAN_DEPRECATED inline void SetAccessor(
     , getter_
     , setter_
     , obj
+#if (NODE_MODULE_VERSION < NODE_21_0_MODULE_VERSION)
     , settings
+#endif
     , attribute
 #if (NODE_MODULE_VERSION < NODE_16_0_MODULE_VERSION)
     , signature
@@ -2596,7 +2599,9 @@ inline void SetAccessor(
     , getter_
     , setter_
     , obj
+#if (NODE_MODULE_VERSION < NODE_21_0_MODULE_VERSION)
     , settings
+#endif
     , attribute
   );
 }
@@ -2634,7 +2639,15 @@ inline bool SetAccessor(
       , New<v8::External>(reinterpret_cast<void *>(setter)));
   }
 
-#if (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
+#if (NODE_MODULE_VERSION >= NODE_21_0_MODULE_VERSION)
+  return obj->SetNativeDataProperty(
+      GetCurrentContext()
+    , name
+    , getter_
+    , setter_
+    , dataobj
+    , attribute).FromMaybe(false);
+#elif (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
   return obj->SetAccessor(
       GetCurrentContext()
     , name
