@@ -2550,7 +2550,9 @@ NAN_DEPRECATED inline void SetAccessor(
     , getter_
     , setter_
     , obj
+#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12
     , settings
+#endif
     , attribute
 #if (NODE_MODULE_VERSION < NODE_16_0_MODULE_VERSION)
     , signature
@@ -2596,7 +2598,9 @@ inline void SetAccessor(
     , getter_
     , setter_
     , obj
+#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12
     , settings
+#endif
     , attribute
   );
 }
