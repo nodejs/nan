@@ -55,7 +55,7 @@ class WeakCallbackInfo {
     , void *field1 = 0
     , void *field2 = 0) :
         callback_(callback), isolate_(0), parameter_(parameter) {
-    std::memcpy(&persistent_, persistent, sizeof (v8::Persistent<v8::Value>));
+    std::memcpy((void*)&persistent_, (void*)persistent, sizeof (v8::Persistent<v8::Value>));
     internal_fields_[0] = field1;
     internal_fields_[1] = field2;
   }
