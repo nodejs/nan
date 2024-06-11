@@ -203,9 +203,21 @@ typedef v8::String::ExternalOneByteStringResource
 template<typename T>
 class NonCopyablePersistentTraits :
     public v8::NonCopyablePersistentTraits<T> {};
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 10 ||                     \
+  (V8_MAJOR_VERSION == 10 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 5))
+template<typename T> struct CopyablePersistentTraits {
+  typedef v8::Persistent<T, CopyablePersistentTraits<T> > CopyablePersistent;
+  static const bool kResetInDestructor = true;
+  template <typename S, typename M>
+  static NAN_INLINE void Copy(const v8::Persistent<S, M> &source,
+      CopyablePersistent *dest) {
+  }
+};
+#else
 template<typename T>
 class CopyablePersistentTraits :
     public v8::CopyablePersistentTraits<T> {};
+#endif
 
 template<typename T>
 class PersistentBase :
