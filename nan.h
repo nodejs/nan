@@ -13,7 +13,7 @@
  *
  * MIT License <https://github.com/nodejs/nan/blob/master/LICENSE.md>
  *
- * Version 2.19.0: current Node 21.6.2, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1
+ * Version 2.20.0: current Node 22.3.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1
  *
  * See https://github.com/nodejs/nan for the latest update to this file
  **********************************************************************************/

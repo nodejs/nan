@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.19.0: current Node 21.6.2, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.20.0: current Node 22.3.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.20.0 Jun 12 2024
+
+  - Feature: fix removal of v8::CopyablePersistent (#970) 5805ca5c4c2eef9a65316b68741e29f4825c511f
 
 ### 2.19.0 Mar 6 2024
 
