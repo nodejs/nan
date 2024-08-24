@@ -2564,7 +2564,11 @@ NAN_DEPRECATED inline void SetAccessor(
     obj->SetInternalField(imp::kDataIndex, data);
   }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 5)
+  tpl->SetNativeDataProperty(
+#else
   tpl->SetAccessor(
+#endif
       name
     , getter_
     , setter_
@@ -2612,7 +2616,11 @@ inline void SetAccessor(
     obj->SetInternalField(imp::kDataIndex, data);
   }
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 5)
+  tpl->SetNativeDataProperty(
+#else
   tpl->SetAccessor(
+#endif
       name
     , getter_
     , setter_
@@ -2658,7 +2666,14 @@ inline bool SetAccessor(
   }
 
 #if (NODE_MODULE_VERSION >= NODE_6_0_MODULE_VERSION)
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      V8_MINOR_VERSION >= 5)
+  return obj->SetNativeDataProperty(
+#else
   return obj->SetAccessor(
+#endif
       GetCurrentContext()
     , name
     , getter_
