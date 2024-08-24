@@ -9,9 +9,31 @@
 #ifndef NAN_CALLBACKS_12_INL_H_
 #define NAN_CALLBACKS_12_INL_H_
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+template<typename T>
+class ReturnValue;
+
+namespace imp {
+template<typename T>
+v8::Local<T> GetReturnValue(const ReturnValue<T> &);
+}
+#endif
+
 template<typename T>
 class ReturnValue {
   v8::ReturnValue<T> value_;
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+  template<typename S>
+  friend v8::Local<S> imp::GetReturnValue(const ReturnValue<S> &rv);
+#endif
 
  public:
   template <class S>
@@ -256,6 +278,39 @@ typedef void (*NativeSetter)(
 #endif
 
 #if NODE_MODULE_VERSION > NODE_0_12_MODULE_VERSION
+
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+
+template<typename T>
+inline v8::Local<T> GetReturnValue(const ReturnValue<T> &rv) {
+  return rv.value_.Get();
+}
+
+static
+v8::Intercepted PropertyGetterCallbackWrapper(
+    v8::Local<v8::Name> property
+  , const v8::PropertyCallbackInfo<v8::Value> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Value>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  PropertyGetterCallback callback = reinterpret_cast<PropertyGetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyGetterIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativePropertyGetter)
+    (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Value> &);
+#else
 static
 void PropertyGetterCallbackWrapper(
     v8::Local<v8::Name> property
@@ -272,7 +327,37 @@ void PropertyGetterCallbackWrapper(
 
 typedef void (*NativePropertyGetter)
     (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Value> &);
+#endif
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted PropertySetterCallbackWrapper(
+    v8::Local<v8::Name> property
+  , v8::Local<v8::Value> value
+  , const v8::PropertyCallbackInfo<void> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Value>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  PropertySetterCallback callback = reinterpret_cast<PropertySetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertySetterIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), value, cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativePropertySetter)(
+    v8::Local<v8::Name>
+  , v8::Local<v8::Value>
+  , const v8::PropertyCallbackInfo<void> &);
+#else
 static
 void PropertySetterCallbackWrapper(
     v8::Local<v8::Name> property
@@ -292,6 +377,7 @@ typedef void (*NativePropertySetter)(
     v8::Local<v8::Name>
   , v8::Local<v8::Value>
   , const v8::PropertyCallbackInfo<v8::Value> &);
+#endif
 
 static
 void PropertyEnumeratorCallbackWrapper(
@@ -309,6 +395,32 @@ void PropertyEnumeratorCallbackWrapper(
 typedef void (*NativePropertyEnumerator)
     (const v8::PropertyCallbackInfo<v8::Array> &);
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted PropertyDeleterCallbackWrapper(
+    v8::Local<v8::Name> property
+  , const v8::PropertyCallbackInfo<v8::Boolean> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Boolean>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  PropertyDeleterCallback callback = reinterpret_cast<PropertyDeleterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyDeleterIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativePropertyDeleter)
+    (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Boolean> &);
+#else
 static
 void PropertyDeleterCallbackWrapper(
     v8::Local<v8::Name> property
@@ -325,7 +437,34 @@ void PropertyDeleterCallbackWrapper(
 
 typedef void (*NativePropertyDeleter)
     (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Boolean> &);
+#endif
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted PropertyQueryCallbackWrapper(
+    v8::Local<v8::Name> property
+  , const v8::PropertyCallbackInfo<v8::Integer> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Integer>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  PropertyQueryCallback callback = reinterpret_cast<PropertyQueryCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kPropertyQueryIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(property.As<v8::String>(), cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativePropertyQuery)
+    (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Integer> &);
+#else
 static
 void PropertyQueryCallbackWrapper(
     v8::Local<v8::Name> property
@@ -342,6 +481,7 @@ void PropertyQueryCallbackWrapper(
 
 typedef void (*NativePropertyQuery)
     (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Integer> &);
+#endif
 #else
 static
 void PropertyGetterCallbackWrapper(
@@ -431,6 +571,31 @@ typedef void (*NativePropertyQuery)
     (v8::Local<v8::String>, const v8::PropertyCallbackInfo<v8::Integer> &);
 #endif
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted IndexGetterCallbackWrapper(
+    uint32_t index, const v8::PropertyCallbackInfo<v8::Value> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Value>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  IndexGetterCallback callback = reinterpret_cast<IndexGetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertyGetterIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(index, cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativeIndexGetter)
+    (uint32_t, const v8::PropertyCallbackInfo<v8::Value> &);
+#else
 static
 void IndexGetterCallbackWrapper(
     uint32_t index, const v8::PropertyCallbackInfo<v8::Value> &info) {
@@ -446,7 +611,37 @@ void IndexGetterCallbackWrapper(
 
 typedef void (*NativeIndexGetter)
     (uint32_t, const v8::PropertyCallbackInfo<v8::Value> &);
+#endif
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted IndexSetterCallbackWrapper(
+    uint32_t index
+  , v8::Local<v8::Value> value
+  , const v8::PropertyCallbackInfo<void> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Value>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  IndexSetterCallback callback = reinterpret_cast<IndexSetterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertySetterIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(index, value, cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativeIndexSetter)(
+    uint32_t
+  , v8::Local<v8::Value>
+  , const v8::PropertyCallbackInfo<void> &);
+#else
 static
 void IndexSetterCallbackWrapper(
     uint32_t index
@@ -466,6 +661,7 @@ typedef void (*NativeIndexSetter)(
     uint32_t
   , v8::Local<v8::Value>
   , const v8::PropertyCallbackInfo<v8::Value> &);
+#endif
 
 static
 void IndexEnumeratorCallbackWrapper(
@@ -484,6 +680,31 @@ void IndexEnumeratorCallbackWrapper(
 typedef void (*NativeIndexEnumerator)
     (const v8::PropertyCallbackInfo<v8::Array> &);
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted IndexDeleterCallbackWrapper(
+    uint32_t index, const v8::PropertyCallbackInfo<v8::Boolean> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Boolean>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  IndexDeleterCallback callback = reinterpret_cast<IndexDeleterCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertyDeleterIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(index, cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativeIndexDeleter)
+    (uint32_t, const v8::PropertyCallbackInfo<v8::Boolean> &);
+#else
 static
 void IndexDeleterCallbackWrapper(
     uint32_t index, const v8::PropertyCallbackInfo<v8::Boolean> &info) {
@@ -499,7 +720,33 @@ void IndexDeleterCallbackWrapper(
 
 typedef void (*NativeIndexDeleter)
     (uint32_t, const v8::PropertyCallbackInfo<v8::Boolean> &);
+#endif
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                   \
+      (V8_MINOR_VERSION > 6 ||                                                 \
+       V8_MINOR_VERSION == 6 && V8_BUILD_NUMBER >= 74)))
+static
+v8::Intercepted IndexQueryCallbackWrapper(
+    uint32_t index, const v8::PropertyCallbackInfo<v8::Integer> &info) {
+  v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
+  PropertyCallbackInfo<v8::Integer>
+      cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
+  IndexQueryCallback callback = reinterpret_cast<IndexQueryCallback>(
+      reinterpret_cast<intptr_t>(
+          obj->GetInternalField(kIndexPropertyQueryIndex)
+              .As<v8::Value>().As<v8::External>()->Value()));
+  callback(index, cbinfo);
+  return imp::GetReturnValue(cbinfo.GetReturnValue()) ==
+                 v8::Undefined(v8::Isolate::GetCurrent())
+             ? v8::Intercepted::kNo
+             : v8::Intercepted::kYes;
+}
+
+typedef v8::Intercepted (*NativeIndexQuery)
+    (uint32_t, const v8::PropertyCallbackInfo<v8::Integer> &);
+#else
 static
 void IndexQueryCallbackWrapper(
     uint32_t index, const v8::PropertyCallbackInfo<v8::Integer> &info) {
@@ -515,6 +762,7 @@ void IndexQueryCallbackWrapper(
 
 typedef void (*NativeIndexQuery)
     (uint32_t, const v8::PropertyCallbackInfo<v8::Integer> &);
+#endif
 }  // end of namespace imp
 
 #endif  // NAN_CALLBACKS_12_INL_H_
