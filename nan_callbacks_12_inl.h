@@ -323,7 +323,7 @@ void PropertyDeleterCallbackWrapper(
   callback(property.As<v8::String>(), cbinfo);
 }
 
-typedef void (NativePropertyDeleter)
+typedef void (*NativePropertyDeleter)
     (v8::Local<v8::Name>, const v8::PropertyCallbackInfo<v8::Boolean> &);
 
 static

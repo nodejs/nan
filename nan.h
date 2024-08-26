@@ -2686,7 +2686,7 @@ inline void SetNamedPropertyHandler(
       setter ? imp::PropertySetterCallbackWrapper : 0;
   imp::NativePropertyQuery query_ =
       query ? imp::PropertyQueryCallbackWrapper : 0;
-  imp::NativePropertyDeleter *deleter_ =
+  imp::NativePropertyDeleter deleter_ =
       deleter ? imp::PropertyDeleterCallbackWrapper : 0;
   imp::NativePropertyEnumerator enumerator_ =
       enumerator ? imp::PropertyEnumeratorCallbackWrapper : 0;

@@ -409,7 +409,7 @@ v8::Handle<v8::Boolean> PropertyDeleterCallbackWrapper(
   return ReturnValueImp<v8::Boolean>(cbinfo.GetReturnValue()).Value();
 }
 
-typedef v8::Handle<v8::Boolean> (NativePropertyDeleter)
+typedef v8::Handle<v8::Boolean> (*NativePropertyDeleter)
     (v8::Local<v8::String>, const v8::AccessorInfo &);
 
 static
