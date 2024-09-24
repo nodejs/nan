@@ -297,7 +297,7 @@ typedef v8::Intercepted (*NativePropertySetter)(
   , const v8::PropertyCallbackInfo<void> &);
 
 #else
-
+static
 void PropertyGetterCallbackWrapper(
     v8::Local<v8::Name> property
   , const v8::PropertyCallbackInfo<v8::Value> &info) {
