@@ -2576,8 +2576,7 @@ inline void SetPrototypeMethod(
 }
 
 //=== Accessors and Such =======================================================
-#if defined(V8_MAJOR_VERSION) && \
-    ((V8_MAJOR_VERSION) <= 6 && V8_MINOR_VERSION < 5)
+
 NAN_DEPRECATED inline void SetAccessor(
     v8::Local<v8::ObjectTemplate> tpl
   , v8::Local<v8::String> name
@@ -2724,7 +2723,6 @@ inline bool SetAccessor(
     , attribute);
 #endif
 }
-#endif
 
 inline void SetNamedPropertyHandler(
     v8::Local<v8::ObjectTemplate> tpl

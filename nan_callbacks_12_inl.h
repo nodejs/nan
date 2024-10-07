@@ -671,7 +671,6 @@ typedef void (*NativeIndexQuery)
     (uint32_t, const v8::PropertyCallbackInfo<v8::Integer> &);
 
 #endif
-}
-// end of namespace imp
+}  // end of namespace imp
 
 #endif  // NAN_CALLBACKS_12_INL_H_
