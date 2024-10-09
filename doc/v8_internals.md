@@ -11,7 +11,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
  - <a href="#api_nan_set_counter_function"><b><code>Nan::SetCounterFunction()</code></b></a>
  - <a href="#api_nan_set_create_histogram_function"><b><code>Nan::SetCreateHistogramFunction()</code></b></a>
  - <a href="#api_nan_set_add_histogram_sample_function"><b><code>Nan::SetAddHistogramSampleFunction()</code></b></a>
- - <a href="#api_nan_idle_notification"><b><code>Nan::IdleNotification()</code></b></a>
+ - <a href="#api_nan_idle_notification"><del><b><code>Nan::IdleNotification()</code></b></del></a>
  - <a href="#api_nan_low_memory_notification"><b><code>Nan::LowMemoryNotification()</code></b></a>
  - <a href="#api_nan_context_disposed_notification"><b><code>Nan::ContextDisposedNotification()</code></b></a>
  - <a href="#api_nan_get_internal_field_pointer"><b><code>Nan::GetInternalFieldPointer()</code></b></a>
@@ -128,15 +128,15 @@ void Nan::SetAddHistogramSampleFunction(v8::AddHistogramSampleCallback cb)
 Calls V8's [`SetAddHistogramSampleFunction()`](https://v8docs.nodesource.com/node-8.16/d5/dda/classv8_1_1_isolate.html#aeb420b690bc2c216882d6fdd00ddd3ea).
 
 <a name="api_nan_idle_notification"></a>
-### Nan::IdleNotification()
+### <del>Nan::IdleNotification()</del>
 
 Signature:
 
 ```c++
-bool Nan::IdleNotification(int idle_time_in_ms)
+NAN_DEPRECATED bool Nan::IdleNotification(int idle_time_in_ms)
 ```
 
-Calls V8's [`IdleNotification()` or `IdleNotificationDeadline()`](https://v8docs.nodesource.com/node-8.16/d5/dda/classv8_1_1_isolate.html#ad6a2a02657f5425ad460060652a5a118) depending on V8 version.
+Calls V8's [`IdleNotification()` or `IdleNotificationDeadline()`](https://v8docs.nodesource.com/node-8.16/d5/dda/classv8_1_1_isolate.html#ad6a2a02657f5425ad460060652a5a118) depending on V8 version. Removed in V8 12.7.41.
 
 <a name="api_nan_low_memory_notification"></a>
 ### Nan::LowMemoryNotification()

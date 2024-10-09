@@ -694,14 +694,21 @@ inline uv_loop_t* GetCurrentEventLoop() {
     v8::Isolate::GetCurrent()->SetAddHistogramSampleFunction(cb);
   }
 
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                      \
+#if defined(V8_MAJOR_VERSION) &&                                               \
+      (V8_MAJOR_VERSION > 12 ||                                                \
+       (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) &&                 \
+        V8_MINOR_VERSION >= 7))
+  NAN_DEPRECATED inline bool IdleNotification(int) {
+    return true;
+  }
+# elif defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                   \
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
-  inline bool IdleNotification(int idle_time_in_ms) {
+  NAN_DEPRECATED inline bool IdleNotification(int idle_time_in_ms) {
     return v8::Isolate::GetCurrent()->IdleNotificationDeadline(
         idle_time_in_ms * 0.001);
   }
 # else
-  inline bool IdleNotification(int idle_time_in_ms) {
+  NAN_DEPRECATED inline bool IdleNotification(int idle_time_in_ms) {
     return v8::Isolate::GetCurrent()->IdleNotification(idle_time_in_ms);
   }
 #endif
@@ -1546,11 +1553,23 @@ typedef void NAN_SETTER_RETURN_TYPE;
 
 typedef const PropertyCallbackInfo<v8::Value>&
     NAN_PROPERTY_GETTER_ARGS_TYPE;
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_PROPERTY_GETTER_RETURN_TYPE;
+#else
 typedef void NAN_PROPERTY_GETTER_RETURN_TYPE;
+#endif
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef const PropertyCallbackInfo<void>&
+    NAN_PROPERTY_SETTER_ARGS_TYPE;
+typedef v8::Intercepted NAN_PROPERTY_SETTER_RETURN_TYPE;
+#else
 typedef const PropertyCallbackInfo<v8::Value>&
     NAN_PROPERTY_SETTER_ARGS_TYPE;
 typedef void NAN_PROPERTY_SETTER_RETURN_TYPE;
+#endif
 
 typedef const PropertyCallbackInfo<v8::Array>&
     NAN_PROPERTY_ENUMERATOR_ARGS_TYPE;
@@ -1558,29 +1577,68 @@ typedef void NAN_PROPERTY_ENUMERATOR_RETURN_TYPE;
 
 typedef const PropertyCallbackInfo<v8::Boolean>&
     NAN_PROPERTY_DELETER_ARGS_TYPE;
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_PROPERTY_DELETER_RETURN_TYPE;
+#else
 typedef void NAN_PROPERTY_DELETER_RETURN_TYPE;
+#endif
+
 
 typedef const PropertyCallbackInfo<v8::Integer>&
     NAN_PROPERTY_QUERY_ARGS_TYPE;
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_PROPERTY_QUERY_RETURN_TYPE;
+#else
 typedef void NAN_PROPERTY_QUERY_RETURN_TYPE;
+#endif
 
 typedef const PropertyCallbackInfo<v8::Value>& NAN_INDEX_GETTER_ARGS_TYPE;
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_INDEX_GETTER_RETURN_TYPE;
+#else
 typedef void NAN_INDEX_GETTER_RETURN_TYPE;
+#endif
 
+
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef const PropertyCallbackInfo<void>& NAN_INDEX_SETTER_ARGS_TYPE;
+typedef v8::Intercepted NAN_INDEX_SETTER_RETURN_TYPE;
+#else
 typedef const PropertyCallbackInfo<v8::Value>& NAN_INDEX_SETTER_ARGS_TYPE;
 typedef void NAN_INDEX_SETTER_RETURN_TYPE;
+#endif
 
 typedef const PropertyCallbackInfo<v8::Array>&
     NAN_INDEX_ENUMERATOR_ARGS_TYPE;
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_INDEX_ENUMERATOR_RETURN_TYPE;
+#else
 typedef void NAN_INDEX_ENUMERATOR_RETURN_TYPE;
+#endif
 
 typedef const PropertyCallbackInfo<v8::Boolean>&
     NAN_INDEX_DELETER_ARGS_TYPE;
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_INDEX_DELETER_RETURN_TYPE;
+#else
 typedef void NAN_INDEX_DELETER_RETURN_TYPE;
+#endif
 
 typedef const PropertyCallbackInfo<v8::Integer>&
     NAN_INDEX_QUERY_ARGS_TYPE;
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+typedef v8::Intercepted NAN_INDEX_QUERY_RETURN_TYPE;
+#else
 typedef void NAN_INDEX_QUERY_RETURN_TYPE;
+#endif
 
 #define NAN_METHOD(name)                                                       \
     Nan::NAN_METHOD_RETURN_TYPE name(Nan::NAN_METHOD_ARGS_TYPE info)
