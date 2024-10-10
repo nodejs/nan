@@ -28,6 +28,7 @@ NAN_METHOD(ReturnPrimitive) {
 
 NAN_METHOD(ReturnGlobal) {
   info.GetReturnValue().Set(global);
+  global.Reset();
 }
 
 NAN_METHOD(ReturnUnsigned) {
