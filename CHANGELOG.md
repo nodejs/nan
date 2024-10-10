@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.20.0: current Node 22.3.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.21.0: current Node 22.9.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.21.0 Oct 10 2024
+
+  - Feature: Support for node version 20.17.0 (#976) a7df36eda8a7fe8581c00a18590f5e4faafca7ae
 
 ### 2.20.0 Jun 12 2024
 
