@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.21.0: current Node 22.9.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.22.0: current Node 22.9.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.22.0 Oct 11 2024
+
+  - Feature: replace SetAccessor -> SetNativeDataProperty (#977) 6bd62c9a0004339d5d1e18a945c84929d0f6b808
 
 ### 2.21.0 Oct 10 2024
 
