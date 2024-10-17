@@ -27,6 +27,10 @@ environment:
     - nodejs_version: "19"
     - nodejs_version: "20"
     - nodejs_version: "21"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      nodejs_version: "22"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      nodejs_version: "23"
 
 # Install scripts. (runs after repo cloning)
 install:
@@ -37,7 +41,8 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
   - npm install
-  - IF %nodejs_version% LSS 8 (npm run rebuild-tests) ELSE (npm run rebuild-tests-2017)
+  - IF %nodejs_version% GEQ 22 set NODE_GYP_FORCE_PYTHON=C:\Python38-x64\python.exe
+  - IF %nodejs_version% LSS 8 (npm run rebuild-tests-2015) ELSE (npm run rebuild-tests)
 
 # Post-install test scripts.
 test_script:
