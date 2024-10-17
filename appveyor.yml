@@ -1,7 +1,7 @@
 # http://www.appveyor.com/docs/appveyor-yml
 
 image:
-  - Visual Studio 2017
+  - Visual Studio 2022
 
 # Test against these versions of Io.js and Node.js.
 environment:
@@ -37,7 +37,7 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
   - npm install
-  - IF %nodejs_version% LSS 8 (npm run rebuild-tests) ELSE (npm run rebuild-tests-2017)
+  - npm run rebuild-tests
 
 # Post-install test scripts.
 test_script:
