@@ -29,7 +29,7 @@ NAN_METHOD(ToPersistentAndBackAgain) {
   Persistent<v8::Object> persistent(To<v8::Object>(info[0]).ToLocalChecked());
   v8::Local<v8::Object> object = New(persistent);
   persistent.Reset();
-  memset(&persistent, -1, sizeof(persistent));  // Clobber it good.
+  memset((void*)&persistent, -1, sizeof(persistent));  // Clobber it good.
   info.GetReturnValue().Set(object);
 }
 

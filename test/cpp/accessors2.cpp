@@ -95,8 +95,8 @@ NAN_GETTER(SetterGetter::GetProp1) {
     , "Prop1:GETTER("
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
-  strncat(
-      settergetter->log
+  strncpy(
+      settergetter->log + strlen(settergetter->log)
     , settergetter->prop1
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
@@ -117,8 +117,8 @@ NAN_GETTER(SetterGetter::GetProp2) {
     , "Prop2:GETTER("
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
-  strncat(
-      settergetter->log
+  strncpy(
+      settergetter->log + strlen(settergetter->log)
     , settergetter->prop2
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
@@ -144,8 +144,8 @@ NAN_SETTER(SetterGetter::SetProp2) {
     , "Prop2:SETTER("
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
-  strncat(
-      settergetter->log
+  strncpy(
+      settergetter->log + strlen(settergetter->log)
     , settergetter->prop2
     , sizeof (settergetter->log) - 1 - strlen(settergetter->log));
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
