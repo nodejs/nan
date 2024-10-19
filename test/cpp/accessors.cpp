@@ -90,7 +90,7 @@ NAN_METHOD(SetterGetter::New) {
 
 NAN_GETTER(SetterGetter::GetProp1) {
   SetterGetter* settergetter =
-    ObjectWrap::Unwrap<SetterGetter>(info.Holder());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -112,7 +112,7 @@ NAN_GETTER(SetterGetter::GetProp1) {
 
 NAN_GETTER(SetterGetter::GetProp2) {
   SetterGetter* settergetter =
-    ObjectWrap::Unwrap<SetterGetter>(info.Holder());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
   assert(strlen(settergetter->log) < sizeof (settergetter->log));
   strncat(
       settergetter->log
@@ -134,7 +134,7 @@ NAN_GETTER(SetterGetter::GetProp2) {
 
 NAN_SETTER(SetterGetter::SetProp2) {
   SetterGetter* settergetter =
-      ObjectWrap::Unwrap<SetterGetter>(info.Holder());
+      ObjectWrap::Unwrap<SetterGetter>(info.This());
   strncpy(
       settergetter->prop2
     , *Utf8String(value)
@@ -159,7 +159,7 @@ NAN_SETTER(SetterGetter::SetProp2) {
 
 NAN_METHOD(SetterGetter::Log) {
   SetterGetter* settergetter =
-    ObjectWrap::Unwrap<SetterGetter>(info.Holder());
+    ObjectWrap::Unwrap<SetterGetter>(info.This());
 
   info.GetReturnValue().Set(Nan::New(settergetter->log).ToLocalChecked());
 }
