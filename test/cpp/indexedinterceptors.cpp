@@ -80,6 +80,7 @@ NAN_INDEX_GETTER(IndexedInterceptor::PropertyGetter) {
   } else {
     info.GetReturnValue().Set(Nan::New("bar").ToLocalChecked());
   }
+  return Intercepted::Yes();
 }
 
 NAN_INDEX_SETTER(IndexedInterceptor::PropertySetter) {
@@ -94,12 +95,14 @@ NAN_INDEX_SETTER(IndexedInterceptor::PropertySetter) {
   } else {
     info.GetReturnValue().Set(info.This());
   }
+  return Intercepted::Yes();
 }
 
 NAN_INDEX_ENUMERATOR(IndexedInterceptor::PropertyEnumerator) {
   v8::Local<v8::Array> arr = Nan::New<v8::Array>();
   Set(arr, 0, Nan::New(42));
   info.GetReturnValue().Set(arr);
+  return Intercepted::Yes();
 }
 
 NAN_INDEX_DELETER(IndexedInterceptor::PropertyDeleter) {
@@ -107,15 +110,19 @@ NAN_INDEX_DELETER(IndexedInterceptor::PropertyDeleter) {
     ObjectWrap::Unwrap<IndexedInterceptor>(info.Holder());
   std::strncpy(interceptor->buf, "goober", sizeof (interceptor->buf));
   info.GetReturnValue().Set(True());
+  return Intercepted::Yes();
 }
 
 NAN_INDEX_QUERY(IndexedInterceptor::PropertyQuery) {
   if (index == 1) {
     info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
+    return Intercepted::Yes();
   }
   if (index == 42) {
     info.GetReturnValue().Set(Nan::New(0));
+    return Intercepted::Yes();
   }
+  return Intercepted::No();
 }
 
 NODE_MODULE(indexedinterceptors, IndexedInterceptor::Init)
