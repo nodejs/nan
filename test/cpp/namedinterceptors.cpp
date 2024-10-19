@@ -80,6 +80,7 @@ NAN_PROPERTY_GETTER(NamedInterceptor::PropertyGetter) {
   } else {
     info.GetReturnValue().Set(Nan::New("bar").ToLocalChecked());
   }
+  return Intercepted::Yes();
 }
 
 NAN_PROPERTY_SETTER(NamedInterceptor::PropertySetter) {
@@ -94,6 +95,7 @@ NAN_PROPERTY_SETTER(NamedInterceptor::PropertySetter) {
   } else {
     info.GetReturnValue().Set(info.This());
   }
+  return Intercepted::Yes();
 }
 
 NAN_PROPERTY_ENUMERATOR(NamedInterceptor::PropertyEnumerator) {
@@ -107,16 +109,20 @@ NAN_PROPERTY_DELETER(NamedInterceptor::PropertyDeleter) {
     ObjectWrap::Unwrap<NamedInterceptor>(info.Holder());
   std::strncpy(interceptor->buf, "goober", sizeof (interceptor->buf));
   info.GetReturnValue().Set(True());
+  return Intercepted::Yes();
 }
 
 NAN_PROPERTY_QUERY(NamedInterceptor::PropertyQuery) {
   Nan::Utf8String s(property);
   if (!std::strcmp(*s, "thing")) {
-    return info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
+    info.GetReturnValue().Set(Nan::New<v8::Integer>(v8::DontEnum));
+    return Intercepted::Yes();
   }
   if (!std::strcmp(*s, "value")) {
-    return info.GetReturnValue().Set(Nan::New(0));
+    info.GetReturnValue().Set(Nan::New(0));
+    return Intercepted::Yes();
   }
+  return Intercepted::No();
 }
 
 NODE_MODULE(namedinterceptors, NamedInterceptor::Init)
