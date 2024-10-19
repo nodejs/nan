@@ -106,7 +106,9 @@ class FunctionCallbackInfo {
   }
 
 #if NODE_MAJOR_VERSION < 10
-  inline v8::Local<v8::Function> Callee() const { return info_.Callee(); }
+  NAN_DEPRECATED inline v8::Local<v8::Function> Callee() const {
+    return info_.Callee();
+  }
 #endif
   inline v8::Local<v8::Value> Data() const { return data_; }
   inline v8::Local<v8::Object> Holder() const { return info_.Holder(); }
