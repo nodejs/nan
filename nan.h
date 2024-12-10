@@ -47,6 +47,7 @@
 #define NODE_18_0_MODULE_VERSION 108
 #define NODE_19_0_MODULE_VERSION 111
 #define NODE_20_0_MODULE_VERSION 115
+#define ELECTRON_28_0_MODULE_VERSION 119
 
 #ifdef _MSC_VER
 # define NAN_HAS_CPLUSPLUS_11 (_MSC_VER >= 1800)
@@ -2624,7 +2625,7 @@ NAN_DEPRECATED inline void SetAccessor(
     , getter_
     , setter_
     , obj
-#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12
+#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12 || NODE_MODULE_VERSION == ELECTRON_28_0_MODULE_VERSION
     , settings
 #endif
     , attribute
@@ -2676,7 +2677,7 @@ inline void SetAccessor(
     , getter_
     , setter_
     , obj
-#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12
+#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12 || NODE_MODULE_VERSION == ELECTRON_28_0_MODULE_VERSION
     , settings
 #endif
     , attribute
