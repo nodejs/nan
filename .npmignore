@@ -1,7 +1,6 @@
 test/
 examples/
 .dntrc
-.travis.yml
 .npmignore
 appveyor.yml
 Makefile
