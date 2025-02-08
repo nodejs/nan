@@ -41,7 +41,7 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
   - npm install
-  - IF %nodejs_version% GEQ 22 set NODE_GYP_FORCE_PYTHON=C:\Python38-x64\python.exe
+  - IF %nodejs_version% GEQ 22 set NODE_GYP_FORCE_PYTHON=C:\Python312-x64\python.exe
   - IF %nodejs_version% LSS 8 (npm run rebuild-tests-2015) ELSE (npm run rebuild-tests)
 
 # Post-install test scripts.
