@@ -114,10 +114,7 @@ NAN_METHOD(NewScript) {
 }
 
 NAN_METHOD(NewScript2) {
-  v8::ScriptOrigin origin(
-#if NODE_MODULE_VERSION >= NODE_18_0_MODULE_VERSION
-    info.GetIsolate(),
-#endif
+  ScriptOrigin origin(
     New<v8::String>("x").ToLocalChecked());
   v8::Local<UnboundScript> script =
       New<UnboundScript>(
@@ -135,10 +132,7 @@ NAN_METHOD(CompileScript) {
 }
 
 NAN_METHOD(CompileScript2) {
-  v8::ScriptOrigin origin(
-#if NODE_MODULE_VERSION >= NODE_18_0_MODULE_VERSION
-    info.GetIsolate(),
-#endif
+  ScriptOrigin origin(
     New<v8::String>("x").ToLocalChecked());
   v8::Local<BoundScript> script =
       CompileScript(New("2+4").ToLocalChecked(), origin).ToLocalChecked();

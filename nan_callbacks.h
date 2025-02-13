@@ -13,6 +13,19 @@ template<typename T> class FunctionCallbackInfo;
 template<typename T> class PropertyCallbackInfo;
 template<typename T> class Global;
 
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                     \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 4))
+namespace Intercepted {
+  constexpr v8::Intercepted No() { return v8::Intercepted::kNo; }
+  constexpr v8::Intercepted Yes() { return v8::Intercepted::kYes; }
+};
+#else
+namespace Intercepted {
+  inline void No() {}
+  inline void Yes() {}
+};
+#endif
+
 typedef void(*FunctionCallback)(const FunctionCallbackInfo<v8::Value>&);
 typedef void(*GetterCallback)
     (v8::Local<v8::String>, const PropertyCallbackInfo<v8::Value>&);
