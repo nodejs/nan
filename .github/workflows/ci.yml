@@ -31,8 +31,6 @@ jobs:
             os: windows-2025
           - node-version: 14.x
             os: windows-2019
-          - node-version: 13.x
-            os: windows-2019
           - node-version: 12.x
             os: windows-2019
           - node-version: 10.x
