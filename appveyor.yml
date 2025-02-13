@@ -1,56 +1,67 @@
 # http://www.appveyor.com/docs/appveyor-yml
+# https://www.appveyor.com/docs/windows-images-software
+# https://nodejs.org/en/about/previous-releases
+# https://devguide.python.org/versions
+
+# Test supported Node.js versions before unsupported versions.
+# Run on the most current Visual Studio possible for each nodejs_version.
+# Run on the earliest supported Python version when possible (currently py39).
+# For all supported Node.js versions test also on the latest Python (currently py313).
 
 image:
-  - Visual Studio 2017
+  - Visual Studio 2022
 
-# Test against these versions of Io.js and Node.js.
 environment:
-  matrix:
-  # node.js
-    - nodejs_version: "0.10"
-    - nodejs_version: "0.12"
-    - nodejs_version: "4"
-    - nodejs_version: "5"
-    - nodejs_version: "6"
-    - nodejs_version: "7"
-    - nodejs_version: "8"
-    - nodejs_version: "9"
-    - nodejs_version: "10"
-    - nodejs_version: "11"
-    - nodejs_version: "12"
-    - nodejs_version: "13"
-    - nodejs_version: "14"
-    - nodejs_version: "15"
-    - nodejs_version: "16"
-    - nodejs_version: "17"
-    - nodejs_version: "18"
-    - nodejs_version: "19"
-    - nodejs_version: "20"
+  NODE_GYP_FORCE_PYTHON: C:\Python39-x64\python.exe
+  matrix:  # Test against these versions of Io.js and Node.js.
+    # - nodejs_version: "23"  # Enable after nodejs/nan#979 or similar.
+    - nodejs_version: "22"
+    - nodejs_version: "22"
+      NODE_GYP_FORCE_PYTHON: C:\Python312-x64\python.exe
     - nodejs_version: "21"
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
-      nodejs_version: "22"
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
-      nodejs_version: "23"
+    - nodejs_version: "20"
+    - nodejs_version: "19"
+    - nodejs_version: "18"
+    - nodejs_version: "17"
+    - nodejs_version: "16"
+    - nodejs_version: "14"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    - nodejs_version: "12"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    - nodejs_version: "10"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    - nodejs_version: "8"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+
+matrix:
+  fast_finish: true
 
 # Install scripts. (runs after repo cloning)
 install:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  - py --list
+  - py -VV          # py is 64-bit AMD64 Python 3 on Visual Studio images
+  - python -VV  # python is 32-bit Intel Python 3 on Visual Studio images
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) x64
-  - IF %nodejs_version% LSS 4 npm -g install npm@2
-  - IF %nodejs_version% EQU 5 npm -g install npm@3
+  - node --version
   - set PATH=%APPDATA%\npm;%PATH%
   # Typical npm stuff.
   - npm install
-  - IF %nodejs_version% GEQ 22 set NODE_GYP_FORCE_PYTHON=C:\Python38-x64\python.exe
-  - IF %nodejs_version% LSS 8 (npm run rebuild-tests-2015) ELSE (npm run rebuild-tests)
+  - npm run rebuild-tests
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
   - node --version
   - npm --version
+  - py --list
+  - py -VV          # py is 64-bit AMD64 Python 3 on Visual Studio images
+  - python -VV  # python is 32-bit Intel Python 3 on Visual Studio images
   # run tests
-  - IF %nodejs_version% LSS 1 (npm test) ELSE (IF %nodejs_version% LSS 4 (iojs node_modules\tap\bin\tap.js --gc test/js/*-test.js) ELSE (node node_modules\tap\bin\tap.js --gc test/js/*-test.js))
+  - node node_modules\tap\bin\tap.js --gc test/js/*-test.js
 
 # Don't actually build.
 build: off
