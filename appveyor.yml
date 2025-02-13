@@ -17,25 +17,14 @@ environment:
     # - nodejs_version: "23"  # Enable after nodejs/nan#979 or similar.
     - nodejs_version: "22"
     - nodejs_version: "22"
-      NODE_GYP_FORCE_PYTHON: C:\Python310-x64\python.exe
-    - nodejs_version: "22"
-      NODE_GYP_FORCE_PYTHON: C:\Python311-x64\python.exe
-    # node-gyp >= v3.10 is required for Python >= 3.12
-    #- nodejs_version: "22"  # These fail because of nodejs/node-gyp#2869
-    #  NODE_GYP_FORCE_PYTHON: C:\Python312-x64\python.exe
-    #- nodejs_version: "22"
-    #  NODE_GYP_FORCE_PYTHON: C:\Python313-x64\python.exe
+      NODE_GYP_FORCE_PYTHON: C:\Python312-x64\python.exe
     - nodejs_version: "21"
     - nodejs_version: "20"
-    #- nodejs_version: "20"
-    #  NODE_GYP_FORCE_PYTHON: C:\Python313-x64\python.exe
     - nodejs_version: "19"
     - nodejs_version: "18"
-    #- nodejs_version: "18"
-    #  NODE_GYP_FORCE_PYTHON: C:\Python313-x64\python.exe
     - nodejs_version: "17"
     - nodejs_version: "16"
-    - nodejs_version: "15"
+    # - nodejs_version: "15"
     - nodejs_version: "14"
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     - nodejs_version: "13"
@@ -47,17 +36,18 @@ environment:
     - nodejs_version: "10"
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     - nodejs_version: "9"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     - nodejs_version: "8"
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-    - nodejs_version: "7"
-    - nodejs_version: "6"
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - nodejs_version: "5"
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - nodejs_version: "4"
-      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    - nodejs_version: "0.12"
-    - nodejs_version: "0.10"
+    # - nodejs_version: "7"
+    # - nodejs_version: "6"
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - nodejs_version: "5"
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - nodejs_version: "4"
+    #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # - nodejs_version: "0.12"
+    # - nodejs_version: "0.10"
 
 matrix:
   fast_finish: true
