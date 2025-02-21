@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.22.0: current Node 22.9.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.22.1: current Node 22.14.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.22.1 Feb 21 2025
+
+  - Build: Fix compatibility with Python >= 3.12 (#987) b5d90f15730b620fb6cc4fed079674740424539a
 
 ### 2.22.0 Oct 11 2024
 
