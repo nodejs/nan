@@ -12,8 +12,10 @@
 class ScriptOrigin : public v8::ScriptOrigin {
  public:
 
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 11 \
-    && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 7)
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                      \
+  (V8_MAJOR_VERSION == 12 && (defined(V8_MINOR_VERSION) && (V8_MINOR_VERSION > 6\
+      || (V8_MINOR_VERSION == 6 && defined(V8_BUILD_NUMBER)                     \
+          && V8_BUILD_NUMBER >= 175)))))
   explicit ScriptOrigin(v8::Local<v8::Value> name) :
       v8::ScriptOrigin(name) {}
 
