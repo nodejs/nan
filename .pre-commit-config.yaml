@@ -1,0 +1,7 @@
+repos:
+  - repo: https://github.com/cpplint/cpplint
+    rev: 2.0.0
+    hooks:
+      - id: cpplint
+        args:
+          - --filter=-build/include_subdir,-build/include_what_you_use,-whitespace/blank_line,-whitespace/indent_namespace,-whitespace/line_length,-whitespace/parens

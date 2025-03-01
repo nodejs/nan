@@ -83,7 +83,7 @@ class TypedArrayContents {
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(TypedArrayContents)
 
-  //Disable heap allocation
+  // Disable heap allocation
   void *operator new(size_t size);
   void operator delete(void *, size_t) {
     abort();
