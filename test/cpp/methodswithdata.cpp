@@ -7,6 +7,7 @@
  ********************************************************************/
 
 #include <nan.h>
+#include <string>
 
 using namespace Nan;  // NOLINT(build/namespaces)
 

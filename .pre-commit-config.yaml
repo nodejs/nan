@@ -4,4 +4,4 @@ repos:
     hooks:
       - id: cpplint
         args:
-          - --filter=-build/include_subdir,-build/include_what_you_use,-whitespace/blank_line,-whitespace/indent_namespace,-whitespace/line_length,-whitespace/parens
+          - --filter=-build/include_subdir,-whitespace/indent_namespace,-whitespace/line_length,-whitespace/parens
