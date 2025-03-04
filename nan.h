@@ -2615,7 +2615,9 @@ NAN_DEPRECATED inline void SetAccessor(
     obj->SetInternalField(imp::kDataIndex, data);
   }
 
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 5))
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 \
+            || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) \
+            && V8_MINOR_VERSION >= 5))
   tpl->SetNativeDataProperty(
 #else
   tpl->SetAccessor(
@@ -2667,7 +2669,9 @@ inline void SetAccessor(
     obj->SetInternalField(imp::kDataIndex, data);
   }
 
-#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 5))
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 \
+            || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) \
+            && V8_MINOR_VERSION >= 5))
   tpl->SetNativeDataProperty(
 #else
   tpl->SetAccessor(
