@@ -7,8 +7,8 @@
  ********************************************************************/
 
 #include <nan.h>
-#include "sync.h"   // NOLINT(build/include)
-#include "async.h"  // NOLINT(build/include)
+#include "sync.h"   // NOLINT(build/include_subdir)
+#include "async.h"  // NOLINT(build/include_subdir)
 
 using v8::FunctionTemplate;
 using v8::Object;

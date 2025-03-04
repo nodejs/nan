@@ -7,8 +7,8 @@
  ********************************************************************/
 
 #include <nan.h>
-#include "pi_est.h"  // NOLINT(build/include)
-#include "sync.h"  // NOLINT(build/include)
+#include "pi_est.h"  // NOLINT(build/include_subdir)
+#include "sync.h"  // NOLINT(build/include_subdir)
 
 // Simple synchronous access to the `Estimate()` function
 NAN_METHOD(CalculateSync) {

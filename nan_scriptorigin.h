@@ -11,7 +11,6 @@
 
 class ScriptOrigin : public v8::ScriptOrigin {
  public:
-
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                      \
   (V8_MAJOR_VERSION == 12 && (defined(V8_MINOR_VERSION) && (V8_MINOR_VERSION > 6\
       || (V8_MINOR_VERSION == 6 && defined(V8_BUILD_NUMBER)                     \
