@@ -4,4 +4,5 @@ repos:
     hooks:
       - id: cpplint
         args:
-          - --filter=-whitespace/indent_namespace,-whitespace/line_length,-whitespace/parens
+          - --filter=-whitespace/indent_namespace,-whitespace/parens
+          - --linelength=88
