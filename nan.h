@@ -179,7 +179,7 @@ namespace Nan {
 
 //=== CallbackInfo =============================================================
 
-#include "nan_callbacks.h"  // NOLINT(build/include)
+#include "nan_callbacks.h"  // NOLINT(build/include_subdir)
 
 //==============================================================================
 
@@ -304,8 +304,8 @@ inline Maybe<T> Just(const T& t) {
 # include "nan_maybe_pre_43_inl.h"  // NOLINT(build/include)
 #endif
 
-#include "nan_converters.h"  // NOLINT(build/include)
-#include "nan_new.h"  // NOLINT(build/include)
+#include "nan_converters.h"  // NOLINT(build/include_subdir)
+#include "nan_new.h"  // NOLINT(build/include_subdir)
 
 #if NAUV_UVVERSION < 0x000b17
 #define NAUV_WORK_CB(func) \
@@ -2934,15 +2934,15 @@ inline void SetCallAsFunctionHandler(
 
 //=== Weak Persistent Handling =================================================
 
-#include "nan_weak.h"  // NOLINT(build/include)
+#include "nan_weak.h"  // NOLINT(build/include_subdir)
 
 //=== ObjectWrap ===============================================================
 
-#include "nan_object_wrap.h"  // NOLINT(build/include)
+#include "nan_object_wrap.h"  // NOLINT(build/include_subdir)
 
 //=== HiddenValue/Private ======================================================
 
-#include "nan_private.h"  // NOLINT(build/include)
+#include "nan_private.h"  // NOLINT(build/include_subdir)
 
 //=== Export ==================================================================
 
@@ -3034,15 +3034,15 @@ MakeMaybe(MaybeMaybe<T> v) {
 
 //=== TypedArrayContents =======================================================
 
-#include "nan_typedarray_contents.h"  // NOLINT(build/include)
+#include "nan_typedarray_contents.h"  // NOLINT(build/include_subdir)
 
 //=== JSON =====================================================================
 
-#include "nan_json.h"  // NOLINT(build/include)
+#include "nan_json.h"  // NOLINT(build/include_subdir)
 
 //=== ScriptOrigin =============================================================
 
-#include "nan_scriptorigin.h"  // NOLINT(build/include)
+#include "nan_scriptorigin.h"  // NOLINT(build/include_subdir)
 
 }  // end of namespace Nan
 

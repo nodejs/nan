@@ -90,7 +90,7 @@ inline Maybe<bool> Set(
 }
 
 #if NODE_MODULE_VERSION < NODE_4_0_MODULE_VERSION
-#include "nan_define_own_property_helper.h"  // NOLINT(build/include)
+#include "nan_define_own_property_helper.h"  // NOLINT(build/include_subdir)
 #endif
 
 inline Maybe<bool> DefineOwnProperty(

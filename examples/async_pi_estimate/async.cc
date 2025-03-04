@@ -7,8 +7,8 @@
  ********************************************************************/
 
 #include <nan.h>
-#include "pi_est.h"  // NOLINT(build/include)
-#include "async.h"  // NOLINT(build/include)
+#include "pi_est.h"  // NOLINT(build/include_subdir)
+#include "async.h"  // NOLINT(build/include_subdir)
 
 using v8::Function;
 using v8::Local;
