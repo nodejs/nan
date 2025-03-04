@@ -100,7 +100,7 @@ inline Maybe<bool> Set(
   return Just<bool>(obj->Set(index, value));
 }
 
-#include "nan_define_own_property_helper.h"  // NOLINT(build/include)
+#include "nan_define_own_property_helper.h"  // NOLINT(build/include_subdir)
 
 inline Maybe<bool> DefineOwnProperty(
     v8::Handle<v8::Object> obj

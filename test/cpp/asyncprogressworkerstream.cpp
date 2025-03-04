@@ -8,7 +8,7 @@
 
 #include <nan.h>
 
-#include "sleep.h"  // NOLINT(build/include)
+#include "sleep.h"  // NOLINT(build/include_subdir)
 
 using namespace Nan;  // NOLINT(build/namespaces)
 
