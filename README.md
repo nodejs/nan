@@ -31,10 +31,10 @@ This project also contains some helper utilities that make addon development a b
 
 ## Usage
 
-Simply add **NAN** as a dependency in the *package.json* of your Node addon:
+Simply add **NAN** as a dependency using a package manager like npm, yarn, or bun:
 
 ``` bash
-$ npm install --save nan
+$ npm install nan
 ```
 
 Pull in the path to **NAN** in your *binding.gyp* so that you can use `#include <nan.h>` in your *.cpp* files:
