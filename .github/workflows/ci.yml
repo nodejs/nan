@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:  # TODO: Enable 23.x after nodejs/nan#979 or similar.
-        node-version: [22.x, 21.x, 20.x, 19.x, 18.x, 17.x, 16.x]
+        node-version: [24.x, 22.x, 21.x, 20.x, 19.x, 18.x, 17.x, 16.x]
         os: [windows-latest]
         include:
           - node-version: lts/*
