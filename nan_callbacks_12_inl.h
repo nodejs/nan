@@ -106,10 +106,24 @@ class FunctionCallbackInfo {
   }
 
 #if NODE_MAJOR_VERSION < 10
-  inline v8::Local<v8::Function> Callee() const { return info_.Callee(); }
+  NAN_DEPRECATED inline v8::Local<v8::Function> Callee() const {
+    return info_.Callee();
+  }
 #endif
   inline v8::Local<v8::Value> Data() const { return data_; }
-  inline v8::Local<v8::Object> Holder() const { return info_.Holder(); }
+  inline v8::Local<v8::Object> Holder() const {
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 12 ||                                                  \
+     (V8_MAJOR_VERSION == 12 &&                                                \
+      (defined(V8_MINOR_VERSION) &&                                            \
+       (V8_MINOR_VERSION > 5 ||                                                \
+        (V8_MINOR_VERSION == 5 && defined(V8_BUILD_NUMBER) &&                  \
+         V8_BUILD_NUMBER >= 214)))))
+    return info_.This();
+#else
+    return info_.Holder();
+#endif
+  }
   inline bool IsConstructCall() const { return info_.IsConstructCall(); }
   inline int Length() const { return info_.Length(); }
   inline v8::Local<v8::Value> operator[](int i) const { return info_[i]; }

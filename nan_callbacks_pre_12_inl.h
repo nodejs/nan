@@ -136,9 +136,13 @@ class FunctionCallbackInfo {
     return ReturnValue<T>(return_value_);
   }
 
-  inline v8::Local<v8::Function> Callee() const { return args_.Callee(); }
+  NAN_DEPRECATED inline v8::Local<v8::Function> Callee() const {
+    return args_.Callee();
+  }
   inline v8::Local<v8::Value> Data() const { return data_; }
-  inline v8::Local<v8::Object> Holder() const { return args_.Holder(); }
+  inline v8::Local<v8::Object> Holder() const {
+    return args_.Holder();
+  }
   inline bool IsConstructCall() const { return args_.IsConstructCall(); }
   inline int Length() const { return args_.Length(); }
   inline v8::Local<v8::Value> operator[](int i) const { return args_[i]; }
