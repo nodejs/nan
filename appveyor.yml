@@ -15,6 +15,8 @@ environment:
   NODE_GYP_FORCE_PYTHON: C:\Python39-x64\python.exe
   matrix:  # Test against these versions of Io.js and Node.js.
     # - nodejs_version: "23"  # Enable after nodejs/nan#979 or similar.
+    - nodejs_version: "24"
+    - nodejs_version: "23"
     - nodejs_version: "22"
     - nodejs_version: "22"
       NODE_GYP_FORCE_PYTHON: C:\Python312-x64\python.exe
