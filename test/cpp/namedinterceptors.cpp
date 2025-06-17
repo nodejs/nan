@@ -122,7 +122,7 @@ NAN_PROPERTY_QUERY(NamedInterceptor::PropertyQuery) {
     info.GetReturnValue().Set(Nan::New(0));
     return Intercepted::Yes();
   }
-  return Intercepted::No();
+  return Intercepted::Yes();
 }
 
 NODE_MODULE(namedinterceptors, NamedInterceptor::Init)
