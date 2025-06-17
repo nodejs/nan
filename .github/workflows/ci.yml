@@ -22,19 +22,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [24.x, 22.x, 20.x, 18.x]
-        os: [windows-latest]
-        include:
-          - node-version: lts/*
-            os: macos-13  # macOS on Intel
-          - node-version: lts/*
-            os: macos-latest  # macOS on arm64
-          - node-version: lts/*
-            os: ubuntu-latest  # Linux on x64
-          - node-version: lts/*
-            os: ubuntu-24.04-arm  # Linux on arm64
-          - node-version: lts/*
-            os: windows-11-arm
+        node-version: [24, 23, 22, 20, 18]
+        os: [windows-latest, macos-13, macos-latest, ubuntu-latest, ubuntu-24.04-arm, windows-11-arm]
+        # include:
+        #   - node-version: lts/*
+        #     os: macos-13  # macOS on Intel
+        #   - node-version: lts/*
+        #     os: macos-latest  # macOS on arm64
+        #   - node-version: lts/*
+        #     os: ubuntu-latest  # Linux on x64
+        #   - node-version: lts/*
+        #     os: ubuntu-24.04-arm  # Linux on arm64
+        #   - node-version: lts/*
+        #     os: windows-2025
 
     runs-on: ${{ matrix.os }}
     steps:
