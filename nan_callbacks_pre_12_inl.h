@@ -141,7 +141,7 @@ class FunctionCallbackInfo {
   }
   inline v8::Local<v8::Value> Data() const { return data_; }
   inline v8::Local<v8::Object> Holder() const {
-      return args_.Holder();
+    return args_.Holder();
   }
   inline bool IsConstructCall() const { return args_.IsConstructCall(); }
   inline int Length() const { return args_.Length(); }
