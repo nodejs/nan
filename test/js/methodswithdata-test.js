@@ -19,7 +19,7 @@ test('SetMethod with data', function (t) {
 test('accessors with data', function (t) {
     var settergetter = bindings.create()
     var derived = Object.create(settergetter)
-    if(nodeVersion > 22){
+    if (nodeVersion > 22) {
         t.plan(9)
         t.equal(settergetter.prop1, 'this is property 1')
         t.ok(settergetter.prop2 === '')
@@ -39,8 +39,7 @@ test('accessors with data', function (t) {
         settergetter.prop2 = 'setting another value'
         t.equal(settergetter.prop2, 'setting another value')
         t.equal(derived.prop2, 'setting a new value')
-    }
-    else{
+    } else {
         t.plan(7)
         t.equal(settergetter.prop1, 'this is property 1')
         t.ok(settergetter.prop2 === '')
@@ -58,6 +57,5 @@ test('accessors with data', function (t) {
         t.equal(derived.prop2, 'setting a new value')
         t.equal(settergetter.prop2, 'setting a new value')
 
-    }
-  })
-  
+  }
+})
