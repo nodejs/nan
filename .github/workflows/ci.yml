@@ -35,6 +35,8 @@ jobs:
             os: ubuntu-24.04-arm  # Linux on arm64
           - node-version: lts/*
             os: windows-2025
+          - node-version: lts/*
+            os: windows-11-arm  # Windows on arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

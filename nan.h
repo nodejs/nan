@@ -1170,8 +1170,15 @@ class Utf8String {
         const int flags =
             v8::String::NO_NULL_TERMINATION | imp::kReplaceInvalidUtf8;
 #if NODE_MAJOR_VERSION >= 11
-        length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_,
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 13 ||                     \
+  (V8_MAJOR_VERSION == 13 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION > 3))
+    length_ = string->WriteUtf8V2(v8::Isolate::GetCurrent(), str_,
+                                    static_cast<int>(len), imp::kReplaceInvalidUtf8);
+#else
+    length_ = string->WriteUtf8(v8::Isolate::GetCurrent(), str_,
                                     static_cast<int>(len), 0, flags);
+#endif
+
 #else
         // See https://github.com/nodejs/nan/issues/832.
         // Disable the warning as there is no way around it.

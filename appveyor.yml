@@ -14,17 +14,6 @@ image:
 environment:
   NODE_GYP_FORCE_PYTHON: C:\Python39-x64\python.exe
   matrix:  # Test against these versions of Io.js and Node.js.
-    - nodejs_version: "24"
-    - nodejs_version: "23"
-    - nodejs_version: "22"
-    - nodejs_version: "22"
-      NODE_GYP_FORCE_PYTHON: C:\Python312-x64\python.exe
-    - nodejs_version: "21"
-    - nodejs_version: "20"
-    - nodejs_version: "19"
-    - nodejs_version: "18"
-    - nodejs_version: "17"
-    - nodejs_version: "16"
     - nodejs_version: "14"
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     - nodejs_version: "12"
