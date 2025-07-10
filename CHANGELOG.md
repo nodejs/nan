@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.22.2: current Node 22.14.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.23.0: current Node 24.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.23.0 Jul 10 2025
+
+  - Feature:  Support Node 23 (#979) 59ab6d03d5d68554290ee9f34003cd90aa92c185
 
 ### 2.22.2 Feb 26 2025
 
