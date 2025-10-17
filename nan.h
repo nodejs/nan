@@ -429,7 +429,8 @@ namespace imp {
   static const size_t kMaxLength = 0x3fffffff;
 #if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 13 ||                     \
   (V8_MAJOR_VERSION == 13 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 4))
-  static const unsigned kReplaceInvalidUtf8 = v8::String::WriteFlags::kReplaceInvalidUtf8;
+  static const unsigned kReplaceInvalidUtf8
+    = v8::String::WriteFlags::kReplaceInvalidUtf8;
 #else
   static const unsigned kReplaceInvalidUtf8 = v8::String::REPLACE_INVALID_UTF8;
 #endif
