@@ -2632,7 +2632,9 @@ NAN_DEPRECATED inline void SetAccessor(
     , getter_
     , setter_
     , obj
-#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION < 12 \
+            || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) \
+            && V8_MINOR_VERSION == 0))
     , settings
 #endif
     , attribute
@@ -2686,7 +2688,9 @@ inline void SetAccessor(
     , getter_
     , setter_
     , obj
-#if !defined(V8_MAJOR_VERSION) || V8_MAJOR_VERSION < 12
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION < 12 \
+            || (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) \
+            && V8_MINOR_VERSION == 0))
     , settings
 #endif
     , attribute
