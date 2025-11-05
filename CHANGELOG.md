@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.23.0: current Node 24.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.23.1: current Node 25.1.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.23.1 Nov 05 2025
+  - Feature: Adding WriteUtf8V2() and SetPrototypeV2() methods to support v8 14.3 (#1004) 9e1106ab7b7036d262df7f430eee3bff33757e9a
 
 ### 2.23.0 Jul 10 2025
 
