@@ -698,7 +698,14 @@ inline uv_loop_t* GetCurrentEventLoop() {
   NAN_DEPRECATED inline bool IdleNotification(int) {
     return true;
   }
-# elif defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 ||                   \
+#elif defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 12 ||                      \
+  (V8_MAJOR_VERSION == 12 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 7))
+  inline bool IdleNotification(int idle_time_in_ms) {
+    v8::Isolate::GetCurrent()->MemoryPressureNotification(
+      v8::MemoryPressureLevel::kModerate);
+    return true;
+  }
+#elif defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 4 || 
   (V8_MAJOR_VERSION == 4 && defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 3))
   NAN_DEPRECATED inline bool IdleNotification(int idle_time_in_ms) {
     return v8::Isolate::GetCurrent()->IdleNotificationDeadline(
