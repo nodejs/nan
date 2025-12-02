@@ -2442,11 +2442,12 @@ inline v8::Local<v8::Value> TryEncode(
 
 #if NODE_MAJOR_VERSION >= 24
 NAN_DEPRECATED inline v8::Local<v8::Value> Encode(
-    const void *buf, size_t len, enum Encoding encoding = BINARY) {
+    const void *buf, size_t len, enum Encoding encoding = BINARY)
 #else
 inline v8::Local<v8::Value> Encode(
-    const char *buf, size_t len, enum Encoding encoding = BINARY) {
+    const void *buf, size_t len, enum Encoding encoding = BINARY)
 #endif
+{
 #if (NODE_MODULE_VERSION >= ATOM_0_21_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   node::encoding node_enc = static_cast<node::encoding>(encoding);
