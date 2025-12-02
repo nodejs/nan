@@ -2420,8 +2420,8 @@ enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 #endif
 
 #if NODE_MAJOR_VERSION >= 24
-inline v8::Local<v8::Value> TryEncode(
-    const char *buf, size_t len, enum Encoding encoding = BINARY) {
+inline MaybeLocal<v8::Value> TryEncode(
+    const void *buf, size_t len, enum Encoding encoding = BINARY) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   node::encoding node_enc = static_cast<node::encoding>(encoding);
 
@@ -2429,24 +2429,25 @@ inline v8::Local<v8::Value> TryEncode(
     return node::TryEncode(
         isolate
       , reinterpret_cast<const uint16_t *>(buf)
-      , len / 2).FromMaybe(v8::Local<v8::Value>());
+      , len / 2);
   } else {
     return node::TryEncode(
         isolate
       , reinterpret_cast<const char *>(buf)
       , len
-      , node_enc).FromMaybe(v8::Local<v8::Value>());
+      , node_enc);
   }
 }
-#endif
 
-#if NODE_MAJOR_VERSION >= 24
-NAN_DEPRECATED inline v8::Local<v8::Value> Encode(
-    const void *buf, size_t len, enum Encoding encoding = BINARY)
+inline v8::Local<v8::Value> Encode(
+    const void *buf, size_t len, enum Encoding encoding = BINARY){
+  return TryEncode(buf, len, encoding).ToLocalChecked();
+}
+
 #else
+
 inline v8::Local<v8::Value> Encode(
     const void *buf, size_t len, enum Encoding encoding = BINARY)
-#endif
 {
 #if (NODE_MODULE_VERSION >= ATOM_0_21_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -2477,6 +2478,7 @@ inline v8::Local<v8::Value> Encode(
 # endif
 #endif
 }
+#endif
 
 inline ssize_t DecodeBytes(
     v8::Local<v8::Value> val, enum Encoding encoding = BINARY) {

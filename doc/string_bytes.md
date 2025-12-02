@@ -47,7 +47,7 @@ A wrapper around `node::TryEncode()` that provides a consistent implementation a
 Signature:
 
 ```c++
-v8::Local<v8::Value> Nan::TryEncode(const void *buf,
+Nan::MaybeLocal<v8::Value> Nan::TryEncode(const void *buf,
                                  size_t len,
                                  enum Nan::Encoding encoding = BINARY);
 ```
