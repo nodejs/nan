@@ -4,6 +4,7 @@ Miscellaneous string & byte encoding and decoding functionality provided for com
 
  - <a href="#api_nan_encoding"><b><code>Nan::Encoding</code></b></a>
  - <a href="#api_nan_encode"><b><code>Nan::Encode()</code></b></a>
+ - <a href="#api_nan_try_encode"><b><code>Nan::TryEncode()</code></b></a>
  - <a href="#api_nan_decode_bytes"><b><code>Nan::DecodeBytes()</code></b></a>
  - <a href="#api_nan_decode_write"><b><code>Nan::DecodeWrite()</code></b></a>
 
