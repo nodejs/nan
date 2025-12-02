@@ -2440,15 +2440,14 @@ inline MaybeLocal<v8::Value> TryEncode(
 }
 
 inline v8::Local<v8::Value> Encode(
-    const void *buf, size_t len, enum Encoding encoding = BINARY){
+    const void *buf, size_t len, enum Encoding encoding = BINARY) {
   return TryEncode(buf, len, encoding).ToLocalChecked();
 }
 
 #else
 
 inline v8::Local<v8::Value> Encode(
-    const void *buf, size_t len, enum Encoding encoding = BINARY)
-{
+    const void *buf, size_t len, enum Encoding encoding = BINARY) {
 #if (NODE_MODULE_VERSION >= ATOM_0_21_MODULE_VERSION)
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   node::encoding node_enc = static_cast<node::encoding>(encoding);
