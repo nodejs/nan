@@ -2619,6 +2619,96 @@ inline void SetPrototypeMethod(
 }
 
 //=== Accessors and Such =======================================================
+#if defined(V8_MAJOR_VERSION) && (V8_MAJOR_VERSION > 14 \
+            || (V8_MAJOR_VERSION == 14 && defined(V8_MINOR_VERSION) \
+            && V8_MINOR_VERSION >= 2))
+
+enum AccessControl {DEFAULT = 0};
+
+inline void SetAccessor(
+    v8::Local<v8::ObjectTemplate> tpl
+  , v8::Local<v8::String> name
+  , GetterCallback getter
+  , SetterCallback setter = 0
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()
+  , enum AccessControl settings = DEFAULT
+  , v8::PropertyAttribute attribute = v8::None) {
+  HandleScope scope;
+
+  imp::NativeGetter getter_ =
+      imp::GetterCallbackWrapper;
+  imp::NativeSetter setter_ =
+      setter ? imp::SetterCallbackWrapper : 0;
+
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
+  v8::Local<v8::Object> obj = NewInstance(otpl).ToLocalChecked();
+
+  obj->SetInternalField(
+      imp::kGetterIndex
+    , New<v8::External>(reinterpret_cast<void *>(getter)));
+
+  if (setter != 0) {
+    obj->SetInternalField(
+        imp::kSetterIndex
+      , New<v8::External>(reinterpret_cast<void *>(setter)));
+  }
+
+  if (!data.IsEmpty()) {
+    obj->SetInternalField(imp::kDataIndex, data);
+  }
+
+  tpl->SetNativeDataProperty(
+      name
+    , getter_
+    , setter_
+    , obj
+    , attribute
+  );
+}
+
+inline bool SetAccessor(
+    v8::Local<v8::Object> obj
+  , v8::Local<v8::String> name
+  , GetterCallback getter
+  , SetterCallback setter = 0
+  , v8::Local<v8::Value> data = v8::Local<v8::Value>()
+  , enum AccessControl settings = DEFAULT
+  , v8::PropertyAttribute attribute = v8::None) {
+  HandleScope scope;
+
+  imp::NativeGetter getter_ =
+      imp::GetterCallbackWrapper;
+  imp::NativeSetter setter_ =
+      setter ? imp::SetterCallbackWrapper : 0;
+
+  v8::Local<v8::ObjectTemplate> otpl = New<v8::ObjectTemplate>();
+  otpl->SetInternalFieldCount(imp::kAccessorFieldCount);
+  v8::Local<v8::Object> dataobj = NewInstance(otpl).ToLocalChecked();
+
+  dataobj->SetInternalField(
+      imp::kGetterIndex
+    , New<v8::External>(reinterpret_cast<void *>(getter)));
+
+  if (!data.IsEmpty()) {
+    dataobj->SetInternalField(imp::kDataIndex, data);
+  }
+
+  if (setter) {
+    dataobj->SetInternalField(
+        imp::kSetterIndex
+      , New<v8::External>(reinterpret_cast<void *>(setter)));
+  }
+  return obj->SetNativeDataProperty(
+      GetCurrentContext()
+    , name
+    , getter_
+    , setter_
+    , dataobj
+    , attribute).FromMaybe(false);
+}
+
+#else
 
 NAN_DEPRECATED inline void SetAccessor(
     v8::Local<v8::ObjectTemplate> tpl
@@ -2795,7 +2885,7 @@ inline bool SetAccessor(
     , attribute);
 #endif
 }
-
+#endif
 inline void SetNamedPropertyHandler(
     v8::Local<v8::ObjectTemplate> tpl
   , PropertyGetterCallback getter
