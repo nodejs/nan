@@ -534,6 +534,13 @@ bool SetAccessor(v8::Local<v8::Object> obj,
                  v8::AccessControl settings = v8::DEFAULT,
                  v8::PropertyAttribute attribute = v8::None)
 // Starting from v8 14.2 new enum is used
+void SetAccessor(v8::Local<v8::ObjectTemplate> tpl,
+                 v8::Local<v8::String> name,
+                 Nan::GetterCallback getter,
+                 Nan::SetterCallback setter = 0,
+                 v8::Local<v8::Value> data = v8::Local<v8::Value>(),
+                 enum Nan::AccessControl settings = DEFAULT,
+                 v8::PropertyAttribute attribute = v8::None);
 bool SetAccessor(v8::Local<v8::Object> obj,
                  v8::Local<v8::String> name,
                  Nan::GetterCallback getter,
