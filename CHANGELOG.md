@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.24.0: current Node 25.2.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.25.0: current Node 25.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.25.0 Jan 25 2026
+  - Feature: Updating SetAccessor method to support v8 14.4 (#1007) 333d98942f1fe412a4dd859d6b1b0a9bef43c1f8
 
 ### 2.24.0 Dec 03 2025
   - Feature: Adding new Nan::TryEncode() wrapper for node::TryEncode() (#1005) fd5ff3f5ab3f5bb6bb6dd2d247f3eccd79227854
