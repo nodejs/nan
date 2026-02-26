@@ -1,13 +1,15 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2014 NAN contributors
+ * Copyright (c) 2015 NAN contributors
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
- **********************************************************************************/
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
+#ifndef _WIN32
 #include <unistd.h>
-#include <node.h>
+#define Sleep(x) usleep((x)*1000)
+#endif
 #include <nan.h>
 
 class BufferWorker : public NanAsyncWorker {
@@ -27,7 +29,7 @@ class BufferWorker : public NanAsyncWorker {
   ~BufferWorker() {}
 
   void Execute () {
-    usleep(milliseconds * 1000);
+    Sleep(milliseconds);
   }
 
   void HandleOKCallback () {
@@ -42,18 +44,20 @@ class BufferWorker : public NanAsyncWorker {
   int milliseconds;
 };
 
-NAN_METHOD(Sleep) {
+NAN_METHOD(DoSleep) {
   NanScope();
   v8::Local<v8::Object> bufferHandle = args[1].As<v8::Object>();
   NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
-  NanAsyncQueueWorker(new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
+  assert(!callback->IsEmpty() && "Callback shoud not be empty");
+  NanAsyncQueueWorker(
+      new BufferWorker(callback, args[0]->Uint32Value(), bufferHandle));
   NanReturnUndefined();
 }
 
 void Init(v8::Handle<v8::Object> exports) {
   exports->Set(
-      NanSymbol("a")
-    , NanNew<v8::FunctionTemplate>(Sleep)->GetFunction());
+      NanNew<v8::String>("a")
+    , NanNew<v8::FunctionTemplate>(DoSleep)->GetFunction());
 }
 
 NODE_MODULE(bufferworkerpersistent, Init)

@@ -1,5 +1,14 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2015 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
+
 const test     = require('tap').test
-    , bindings = require('bindings')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'optionvalues' })
     , xtend    = require('xtend');
 
 test('optionvalues', function (t) {
@@ -18,7 +27,7 @@ test('optionvalues', function (t) {
       })
     , actobj;
 
-  t.type(bindings('optionvalues').o, 'function');
-  actobj = bindings('optionvalues').o(obj);
+  t.type(bindings.o, 'function');
+  actobj = bindings.o(obj);
   t.deepEqual(actobj, expobj);
 });

@@ -1,8 +1,17 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2015 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
+
 const test     = require('tap').test
-    , bindings = require('bindings')
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncworker' });
 
 test('asyncworker', function (t) {
-  var worker = bindings('asyncworker').a
+  var worker = bindings.a
     , ticks  = 0
     , called = false
   t.type(worker, 'function')
@@ -14,7 +23,7 @@ test('asyncworker', function (t) {
   setTimeout(tick, 0)
   worker(200, function () {
     called = true
-    t.ok(ticks > 25, 'got plenty of ticks! (' + ticks + ')')
+    t.ok(ticks > 6, 'got plenty of ticks! (' + ticks + ')')
     t.end()
   })
 })

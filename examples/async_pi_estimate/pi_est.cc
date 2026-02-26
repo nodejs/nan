@@ -1,13 +1,13 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2014 NAN contributors
+ * Copyright (c) 2015 NAN contributors
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
- **********************************************************************************/
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
 #include <cstdlib>
-#include "./pi_est.h"
+#include "pi_est.h"  // NOLINT(build/include)
 
 /*
 Estimate the value of π by using a Monte Carlo method.
@@ -22,17 +22,34 @@ See https://en.wikipedia.org/wiki/File:Pi_30K.gif
 for a visualization of how this works.
 */
 
+inline int randall(unsigned int *p_seed) {
+// windows has thread safe rand()
+#ifdef _WIN32
+  return rand();  // NOLINT(runtime/threadsafe_fn)
+#else
+  return rand_r(p_seed);
+#endif
+}
+
 double Estimate (int points) {
   int i = points;
   int inside = 0;
   unsigned int randseed = 1;
+
+#ifdef _WIN32
+  srand(randseed);
+#endif
+
   // unique seed for each run, for threaded use
-  unsigned int seed = rand_r(&randseed);
+  unsigned int seed = randall(&randseed);
+
+#ifdef _WIN32
+  srand(seed);
+#endif
 
   while (i-- > 0) {
-    // rand_r() is used to avoid thread locking
-    double x = rand_r(&seed) / static_cast<double>(RAND_MAX);
-    double y = rand_r(&seed) / static_cast<double>(RAND_MAX);
+    double x = randall(&seed) / static_cast<double>(RAND_MAX);
+    double y = randall(&seed) / static_cast<double>(RAND_MAX);
 
     // x & y and now values between 0 and 1
     // now do a pythagorean diagonal calculation

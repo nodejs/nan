@@ -1,173 +1,94 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2014 NAN contributors
+ * Copyright (c) 2015 NAN contributors
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
- **********************************************************************************/
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
-#include <node.h>
 #include <nan.h>
 
-NAN_METHOD(ReturnString) {
+NAN_METHOD(ReturnAsciiString) {
   NanScope();
-  Nan::Encoding enc = Nan::UTF8;
-  size_t bc;
-  int flags = v8::String::HINT_MANY_WRITES_EXPECTED
-                     | v8::String::NO_NULL_TERMINATION;
-
-  if (args[1]->IsUint32()) {
-    enc = (Nan::Encoding) args[1]->Uint32Value();
-  }
-
-  if (args[2]->IsUint32()) {
-    flags = args[2]->Uint32Value();
-  }
-
-  void *s = NanRawString(args[0], enc, &bc, NULL, 0, flags);
-  if (enc == Nan::UCS2) {
-    v8::Local<v8::String> retval = NanNew<v8::String>(static_cast<uint16_t *>(s)
-      , (flags & v8::String::NO_NULL_TERMINATION) ? bc / 2 : -1);
-    assert((bc & 1) == 0 && "UCS2 string byte count was not even");
-    NanReturnValue(retval);
-  } else {
-    NanReturnValue(
-      NanNew<v8::String>(
-          static_cast<char *>(s)
-        , (flags & v8::String::NO_NULL_TERMINATION) ? bc : -1)
-    );
-  }
+  NanReturnValue(NanNew(*NanAsciiString(args[0])));
 }
 
-NAN_METHOD(ReturnCString) {
+NAN_METHOD(ReturnUtf8String) {
   NanScope();
-
-  size_t bc;
-  char *s = NanCString(args[0], &bc);
-  v8::Local<v8::String> str = NanNew<v8::String>(s);
-  delete[] s;
-
-  NanReturnValue(str);
+  NanReturnValue(NanNew(*NanUtf8String(args[0])));
 }
 
-NAN_METHOD(CompareCStringToBuffer) {
+NAN_METHOD(ReturnUcs2String) {
   NanScope();
-
-  size_t expectedLen = node::Buffer::Length(args[1]->ToObject());
-  char* expectedChars = node::Buffer::Data(args[1]->ToObject());
-
-  size_t actualLen;
-  char* actualChars = NanCString(args[0], &actualLen);
-
-  if (actualLen != expectedLen) {
-    NanThrowError(NanNew<v8::String>("actual length != expected length"));
-    NanReturnUndefined();
-  }
-
-  if (actualChars[expectedLen] != '\0') {
-    NanThrowError(NanNew<v8::String>("should be null-terminated"));
-    NanReturnUndefined();
-  }
-
-  if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
-    NanThrowError(NanNew<v8::String>("actual chars != expected chars"));
-    NanReturnUndefined();
-  }
-
-  NanReturnValue(NanNew<v8::Boolean>(true));
+  NanReturnValue(NanNew(*NanUcs2String(args[0])));
 }
 
-NAN_METHOD(CompareRawStringToBuffer) {
+NAN_METHOD(HeapString) {
   NanScope();
-
-  size_t expectedLen = node::Buffer::Length(args[1]->ToObject());
-  char* expectedChars = node::Buffer::Data(args[1]->ToObject());
-
-  size_t actualLen;
-  char* decoded = static_cast<char *>(
-    NanRawString(
-      args[0]
-    , Nan::BASE64
-    , &actualLen
-    , NULL
-    , 0
-    , v8::String::HINT_MANY_WRITES_EXPECTED
-    )
-  );
-  char *actualChars = new char[actualLen];
-  memcpy(actualChars, decoded, actualLen);
-  delete[] decoded;
-
-  if (actualLen != expectedLen) {
-    NanThrowError(NanNew<v8::String>("actual length != expected length"));
-    NanReturnUndefined();
-  }
-
-  /* this is silly, it could easily be a virgin, zeroed buffer we're inspecting
-  if (actualChars[expectedLen] == '\0') {
-    delete[] actualChars;
-    NanThrowError(NanNew<v8::String>("should not be null-terminated"));
-    NanReturnUndefined();
-  }*/
-
-  if (strncmp(actualChars, expectedChars, expectedLen) != 0) {
-    delete[] actualChars;
-    NanThrowError(NanNew<v8::String>("actual chars != expected chars"));
-    NanReturnUndefined();
-  }
-
-  delete[] actualChars;
-
-  NanReturnValue(NanNew<v8::Boolean>(true));
+  NanUcs2String *s = new NanUcs2String(args[0]);
+  v8::Local<v8::String> res = NanNew(**s);
+  delete s;
+  NanReturnValue(res);
 }
 
-v8::Persistent<v8::FunctionTemplate> returnString_persistent;
-v8::Persistent<v8::FunctionTemplate> returnCString_persistent;
-v8::Persistent<v8::FunctionTemplate> compareCStringToBuffer_persistent;
-v8::Persistent<v8::FunctionTemplate> compareRawStringToBuffer_persistent;
+v8::Persistent<v8::FunctionTemplate> returnAsciiString_persistent;
+v8::Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
+v8::Persistent<v8::FunctionTemplate> returnUcs2String_persistent;
+v8::Persistent<v8::FunctionTemplate> heapString_persistent;
 
 void Init (v8::Handle<v8::Object> target) {
   NanScope();
 
-  v8::Local<v8::FunctionTemplate> returnString =
-    NanNew<v8::FunctionTemplate>(ReturnString);
+  v8::Local<v8::FunctionTemplate> returnAsciiString =
+    NanNew<v8::FunctionTemplate>(ReturnAsciiString);
+
   NanAssignPersistent(
-    returnString_persistent
-  , returnString
+    returnAsciiString_persistent
+  , returnAsciiString
   );
+
   target->Set(
-      NanSymbol("returnString")
-    , returnString->GetFunction()
+      NanNew("returnAsciiString")
+    , returnAsciiString->GetFunction()
   );
-  v8::Local<v8::FunctionTemplate> returnCString =
-    NanNew<v8::FunctionTemplate>(ReturnCString);
+
+  v8::Local<v8::FunctionTemplate> returnUtf8String =
+    NanNew<v8::FunctionTemplate>(ReturnUtf8String);
+
   NanAssignPersistent(
-    returnCString_persistent
-  , returnCString
+    returnUtf8String_persistent
+  , returnUtf8String
   );
+
   target->Set(
-      NanSymbol("returnCString")
-    , returnCString->GetFunction()
+      NanNew("returnUtf8String")
+    , returnUtf8String->GetFunction()
   );
-  v8::Local<v8::FunctionTemplate> compareCStringToBuffer =
-    NanNew<v8::FunctionTemplate>(CompareCStringToBuffer);
+
+  v8::Local<v8::FunctionTemplate> returnUcs2String =
+    NanNew<v8::FunctionTemplate>(ReturnUcs2String);
+
   NanAssignPersistent(
-    compareCStringToBuffer_persistent
-  , compareCStringToBuffer
+    returnUcs2String_persistent
+  , returnUcs2String
   );
+
   target->Set(
-      NanSymbol("compareCStringToBuffer")
-    , compareCStringToBuffer->GetFunction()
+      NanNew("returnUcs2String")
+    , returnUcs2String->GetFunction()
   );
-  v8::Local<v8::FunctionTemplate> compareRawStringToBuffer =
-    NanNew<v8::FunctionTemplate>(CompareRawStringToBuffer);
+
+  v8::Local<v8::FunctionTemplate> heapString =
+    NanNew<v8::FunctionTemplate>(HeapString);
+
   NanAssignPersistent(
-    compareRawStringToBuffer_persistent
-  , compareRawStringToBuffer
+    heapString_persistent
+  , heapString
   );
+
   target->Set(
-      NanSymbol("compareRawStringToBuffer")
-    , compareRawStringToBuffer->GetFunction()
+      NanNew("heapString")
+    , heapString->GetFunction()
   );
 }
 

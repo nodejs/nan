@@ -8,11 +8,12 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'returnemptystring' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'isolatedata' });
 
-test('returnemptystring', function (t) {
-  t.plan(3);
-  t.type(bindings.r, 'function');
-  t.equal(bindings.r('a string value'), '');
-  t.equal(bindings.r(), '');
+test('isolatedata', function (t) {
+  t.plan(2);
+
+  var isolatedata = bindings;
+  t.type(isolatedata.setAndGet, 'function');
+  t.ok(isolatedata.setAndGet);
 });

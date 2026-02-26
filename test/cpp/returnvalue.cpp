@@ -1,12 +1,11 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2014 NAN contributors
+ * Copyright (c) 2015 NAN contributors
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
- **********************************************************************************/
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
-#include <node.h>
 #include <nan.h>
 
 NAN_METHOD(ReturnValue) {
@@ -20,7 +19,7 @@ NAN_METHOD(ReturnValue) {
 
 void Init (v8::Handle<v8::Object> target) {
   target->Set(
-      NanSymbol("r")
+      NanNew<v8::String>("r")
     , NanNew<v8::FunctionTemplate>(ReturnValue)->GetFunction()
   );
 }

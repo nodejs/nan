@@ -1,15 +1,14 @@
-/**********************************************************************************
+/*********************************************************************
  * NAN - Native Abstractions for Node.js
  *
- * Copyright (c) 2014 NAN contributors
+ * Copyright (c) 2015 NAN contributors
  *
- * MIT +no-false-attribs License <https://github.com/rvagg/nan/blob/master/LICENSE>
- **********************************************************************************/
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
 
-#include <node.h>
 #include <nan.h>
-#include "./pi_est.h"
-#include "./async.h"
+#include "pi_est.h"  // NOLINT(build/include)
+#include "async.h"  // NOLINT(build/include)
 
 using v8::Function;
 using v8::Local;
@@ -38,7 +37,7 @@ class PiWorker : public NanAsyncWorker {
     NanScope();
 
     Local<Value> argv[] = {
-        NanNew(NanNull())
+        NanNull()
       , NanNew<Number>(estimate)
     };
 
