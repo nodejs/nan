@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.26.0: current Node 25.8.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.26.1: current Node 25.8.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.26.1 Mar 17 2026
+  - Bugfix: remove unintended copy-pasted line (#1011) 0456abb33a3ce412b644c45fb8401776d2f647eb
 
 ### 2.26.0 Mar 17 2026
   - Feature: Add EmbedderDataTypeTag to SetAlignedPointerInInternalField and GetAlignedPointerFromInternalField for v8 >= 14 (#1010) fcc7b7d4698f9cd87c7dc08b431ab82bed1b3b8c
