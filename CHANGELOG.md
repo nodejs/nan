@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.25.0: current Node 25.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.26.0: current Node 25.8.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.26.0 Mar 17 2026
+  - Feature: Add EmbedderDataTypeTag to SetAlignedPointerInInternalField and GetAlignedPointerFromInternalField for v8 >= 14 (#1010) fcc7b7d4698f9cd87c7dc08b431ab82bed1b3b8c
 
 ### 2.25.0 Jan 25 2026
   - Feature: Updating SetAccessor method to support v8 14.4 (#1007) 333d98942f1fe412a4dd859d6b1b0a9bef43c1f8
