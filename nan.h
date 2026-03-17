@@ -819,14 +819,31 @@ inline uv_loop_t* GetCurrentEventLoop() {
   inline void* GetInternalFieldPointer(
       v8::Local<v8::Object> object
     , int index) {
+#if (V8_MAJOR_VERSION > 14) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION > 2) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION == 2 && V8_BUILD_NUMBER >= 194)
+    return object->GetAlignedPointerFromInternalField(
+        index, v8::kEmbedderDataTypeTagDefault
+    );
+# else
     return object->GetAlignedPointerFromInternalField(index);
+# endif
   }
 
   inline void SetInternalFieldPointer(
       v8::Local<v8::Object> object
     , int index
     , void* value) {
+#if (V8_MAJOR_VERSION > 14) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION > 2) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION == 2 && V8_BUILD_NUMBER >= 194)
+    return object->GetAlignedPointerFromInternalField(
+    object->SetAlignedPointerInInternalField(
+        index, value, v8::kEmbedderDataTypeTagDefault
+    );
+# else
     object->SetAlignedPointerInInternalField(index, value);
+# endif
   }
 
 # define NAN_GC_CALLBACK(name)                                                 \
