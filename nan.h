@@ -837,7 +837,6 @@ inline uv_loop_t* GetCurrentEventLoop() {
 #if (V8_MAJOR_VERSION > 14) || \
     (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION > 2) || \
     (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION == 2 && V8_BUILD_NUMBER >= 194)
-    return object->GetAlignedPointerFromInternalField(
     object->SetAlignedPointerInInternalField(
         index, value, v8::kEmbedderDataTypeTagDefault
     );
