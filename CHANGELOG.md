@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.26.1: current Node 25.8.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.26.2: current Node 25.8.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.26.2 Mar 18 2026
+  - Bugfix: Fix nan_weak.h for V8 >= 14.2.194 (missing EmbedderDataTypeTag) (#1013) 794124c493555106eebaa3e82c0d6147d0213183
 
 ### 2.26.1 Mar 17 2026
   - Bugfix: remove unintended copy-pasted line (#1011) 0456abb33a3ce412b644c45fb8401776d2f647eb
