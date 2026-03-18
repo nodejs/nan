@@ -276,7 +276,15 @@ inline void Persistent<T, M>::SetWeak(
     int count = self->InternalFieldCount();
     void *internal_fields[kInternalFieldsInWeakCallback] = {0, 0};
     for (int i = 0; i < count && i < kInternalFieldsInWeakCallback; i++) {
+#if (V8_MAJOR_VERSION > 14) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION > 2) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION == 2 && V8_BUILD_NUMBER >= 194)
+      internal_fields[i] = self->GetAlignedPointerFromInternalField(
+          i, v8::kEmbedderDataTypeTagDefault
+      );
+# else
       internal_fields[i] = self->GetAlignedPointerFromInternalField(i);
+# endif
     }
     wcbd = new WeakCallbackInfo<P>(
         reinterpret_cast<Persistent<v8::Value>*>(this)
@@ -284,7 +292,15 @@ inline void Persistent<T, M>::SetWeak(
       , 0
       , internal_fields[0]
       , internal_fields[1]);
+#if (V8_MAJOR_VERSION > 14) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION > 2) || \
+    (V8_MAJOR_VERSION == 14 && V8_MINOR_VERSION == 2 && V8_BUILD_NUMBER >= 194)
+    self->SetAlignedPointerInInternalField(
+        0, wcbd, v8::kEmbedderDataTypeTagDefault
+    );
+# else
     self->SetAlignedPointerInInternalField(0, wcbd);
+# endif
     v8::PersistentBase<T>::SetWeak(
         static_cast<WeakCallbackInfo<P>*>(0)
       , WeakCallbackInfo<P>::template invoketwofield<true>
