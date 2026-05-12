@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.26.2: current Node 25.8.1, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.27.0: current Node 26.1.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.27.0 May 12 2026
+  - Feature: support Node.js v26 (#1016) ed08562fd56734ce0512e723366702e1d1cbdc41
 
 ### 2.26.2 Mar 18 2026
   - Bugfix: Fix nan_weak.h for V8 >= 14.2.194 (missing EmbedderDataTypeTag) (#1013) 794124c493555106eebaa3e82c0d6147d0213183

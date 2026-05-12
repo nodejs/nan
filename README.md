@@ -1,9 +1,9 @@
 Native Abstractions for Node.js
 ===============================
 
-**A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 8, 10, 12, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24 and 25.**
+**A header file filled with macro and utility goodness for making add-on development for Node.js easier across versions 8, 10, 12, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 and 26.**
 
-***Current version: 2.26.2***
+***Current version: 2.27.0***
 
 *(See [CHANGELOG.md](https://github.com/nodejs/nan/blob/master/CHANGELOG.md) for complete ChangeLog)*
 
