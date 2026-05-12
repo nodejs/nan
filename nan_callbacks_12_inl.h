@@ -9,6 +9,13 @@
 #ifndef NAN_CALLBACKS_12_INL_H_
 #define NAN_CALLBACKS_12_INL_H_
 
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 14 ||                                                  \
+     (V8_MAJOR_VERSION == 14 &&                                                \
+      defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 6))
+# define NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2 1
+#endif
+
 template<typename T>
 class ReturnValue {
   v8::ReturnValue<T> value_;
@@ -89,6 +96,12 @@ class ReturnValue {
   inline void Set(S *whatever) { TYPE_CHECK(S*, v8::Primitive); }
 };
 
+#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2)
+template<>
+template <typename S>
+inline void ReturnValue<void>::Set(const v8::Local<S> &) {}
+#endif
+
 template<typename T>
 class FunctionCallbackInfo {
   const v8::FunctionCallbackInfo<T> &info_;
@@ -159,8 +172,20 @@ class PropertyCallbackInfo {
 
   inline v8::Isolate* GetIsolate() const { return info_.GetIsolate(); }
   inline v8::Local<v8::Value> Data() const { return data_; }
-  inline v8::Local<v8::Object> This() const { return info_.This(); }
-  inline v8::Local<v8::Object> Holder() const { return info_.Holder(); }
+  inline v8::Local<v8::Object> This() const {
+#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2)
+    return info_.HolderV2();
+#else
+    return info_.This();
+#endif
+  }
+  inline v8::Local<v8::Object> Holder() const {
+#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2)
+    return info_.HolderV2();
+#else
+    return info_.Holder();
+#endif
+  }
   inline ReturnValue<T> GetReturnValue() const {
     return ReturnValue<T>(info_.GetReturnValue());
   }
