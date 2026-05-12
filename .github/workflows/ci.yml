@@ -22,15 +22,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [26.x, 25.x, 24.x, 23.x, 22.x, 21.x, 20.x, 19.x, 18.x, 17.x, 16.x]
-        os: [windows-latest]
+        node-version: [26.x, 25.x, 24.x, 22.x, 20.x, 18.x]
+        os: [windows-latest, macos-latest, ubuntu-latest]
         include:
           - node-version: lts/*
             os: macos-15-intel  # macOS on Intel
-          - node-version: lts/*
-            os: macos-latest  # macOS on arm64
-          - node-version: lts/*
-            os: ubuntu-latest  # Linux on x64
           - node-version: lts/*
             os: ubuntu-24.04-arm  # Linux on arm64
           - node-version: lts/*
@@ -44,9 +40,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      # TODO: On Windows Node.js v11 these will fail but `make test` will succeed
-      - if: matrix.node-version != '11.x'
-        run: |
+      - run: |
           npm run-script rebuild-tests
           npm test
       - run: make test
