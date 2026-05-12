@@ -93,7 +93,12 @@ NAN_METHOD(NewBooleanObject) {
 
 NAN_METHOD(NewExternal) {
   v8::Local<v8::External> ext = New<v8::External>(&magic);
+#ifdef V8_EXTERNAL_POINTER_TAG_COUNT
+  assert(*static_cast<int *>(
+      ext->Value(v8::kExternalPointerTypeTagDefault)) == 1337);
+#else
   assert(*static_cast<int *>(ext->Value()) == 1337);
+#endif
   info.GetReturnValue().Set(New("passed").ToLocalChecked());
 }
 
