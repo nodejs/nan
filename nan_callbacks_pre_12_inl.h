@@ -287,6 +287,10 @@ class PropertyCallbackInfo<v8::Integer> :
   }
 };
 
+inline void* GetExternalValue(v8::Local<v8::External> ext) {
+  return ext->Value();
+}
+
 namespace imp {
 template<typename T>
 class ReturnValueImp : public ReturnValue<T> {

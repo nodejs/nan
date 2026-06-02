@@ -136,11 +136,7 @@ NAN_METHOD(testExternal) {
 
   t.plan(2);
 
-#ifdef V8_EXTERNAL_POINTER_TAG_COUNT
-  t.ok(_(New<External>(&ttt)->Value(v8::kExternalPointerTypeTagDefault) == &ttt));
-#else
-  t.ok(_(New<External>(&ttt)->Value() == &ttt));
-#endif
+  t.ok(_(GetExternalValue(New<External>(&ttt)) == &ttt));
   t.ok(_( assertType<External>(New<External>(&ttt))));
 
   info.GetReturnValue().SetUndefined();
