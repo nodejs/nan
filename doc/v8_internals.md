@@ -17,6 +17,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
  - <a href="#api_nan_get_internal_field_pointer"><b><code>Nan::GetInternalFieldPointer()</code></b></a>
  - <a href="#api_nan_set_internal_field_pointer"><b><code>Nan::SetInternalFieldPointer()</code></b></a>
  - <a href="#api_nan_adjust_external_memory"><b><code>Nan::AdjustExternalMemory()</code></b></a>
+ - <a href="#api_nan_get_external_value"><b><code>Nan::GetExternalValue()</code></b></a>
 
 
 <a name="api_nan_gc_callback"></a>
@@ -196,4 +197,15 @@ int Nan::AdjustExternalMemory(int bytesChange)
 ```
 
 Calls V8's [`AdjustAmountOfExternalAllocatedMemory()`](https://v8docs.nodesource.com/node-8.16/d5/dda/classv8_1_1_isolate.html#ae1a59cac60409d3922582c4af675473e).
+
+<a name="api_nan_get_external_value"></a>
+### Nan::GetExternalValue()
+
+Reads the pointer stored in a `v8::External`. On V8 versions that require an `ExternalPointerTypeTag` on `v8::External::Value()`, the default tag is applied (matching the tag used when the External is created via `Nan::New<v8::External>()`).
+
+Signature:
+
+```c++
+void* Nan::GetExternalValue(v8::Local<v8::External> ext)
+```
 

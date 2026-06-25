@@ -303,6 +303,7 @@ The hooks to access V8 internals—including GC and statistics—are different a
  - <a href="doc/v8_internals.md#api_nan_get_internal_field_pointer"><b><code>Nan::GetInternalFieldPointer()</code></b></a>
  - <a href="doc/v8_internals.md#api_nan_set_internal_field_pointer"><b><code>Nan::SetInternalFieldPointer()</code></b></a>
  - <a href="doc/v8_internals.md#api_nan_adjust_external_memory"><b><code>Nan::AdjustExternalMemory()</code></b></a>
+ - <a href="doc/v8_internals.md#api_nan_get_external_value"><b><code>Nan::GetExternalValue()</code></b></a>
 
 
 ### Miscellaneous V8 Helpers

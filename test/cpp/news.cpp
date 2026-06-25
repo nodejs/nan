@@ -93,7 +93,7 @@ NAN_METHOD(NewBooleanObject) {
 
 NAN_METHOD(NewExternal) {
   v8::Local<v8::External> ext = New<v8::External>(&magic);
-  assert(*static_cast<int *>(ext->Value()) == 1337);
+  assert(*static_cast<int *>(GetExternalValue(ext)) == 1337);
   info.GetReturnValue().Set(New("passed").ToLocalChecked());
 }
 

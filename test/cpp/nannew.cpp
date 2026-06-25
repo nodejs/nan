@@ -136,7 +136,7 @@ NAN_METHOD(testExternal) {
 
   t.plan(2);
 
-  t.ok(_(New<External>(&ttt)->Value() == &ttt));
+  t.ok(_(GetExternalValue(New<External>(&ttt)) == &ttt));
   t.ok(_( assertType<External>(New<External>(&ttt))));
 
   info.GetReturnValue().SetUndefined();
