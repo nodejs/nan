@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.27.0: current Node 26.1.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.28.0: current Node 26.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.28.0 Jun 25 2026
+  - Feature: Fix v8::External::Value/New for the new ExternalPointerTypeTag API (#1015) c54668972803f24695c1002102dfd667a0ac57e5
 
 ### 2.27.0 May 12 2026
   - Feature: support Node.js v26 (#1016) ed08562fd56734ce0512e723366702e1d1cbdc41
