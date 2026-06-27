@@ -8,6 +8,7 @@ NAN provides a `Nan::New()` helper for the creation of new JavaScript objects in
  - <a href="#api_nan_true"><b><code>Nan::True()</code></b></a>
  - <a href="#api_nan_false"><b><code>Nan::False()</code></b></a>
  - <a href="#api_nan_empty_string"><b><code>Nan::EmptyString()</code></b></a>
+ - <a href="#api_nan_new_one_byte_string"><b><code>Nan::NewOneByteString()</code></b></a>
 
 
 <a name="api_nan_new"></a>
