@@ -16,9 +16,38 @@
 # define NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2 1
 #endif
 
+// 14.7 renamed HolderV2()/SetPrototypeV2() to Holder()/SetPrototype(); the V2
+// names were removed in 15.3.
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 14 ||                                                  \
+     (V8_MAJOR_VERSION == 14 &&                                                \
+      defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 7))
+# define NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2_AS_HOLDER 1
+#endif
+
+// 14.8 added setter callbacks taking PropertyCallbackInfo<v8::Boolean>; the
+// PropertyCallbackInfo<void> ones were removed in 15.3.
+#if defined(V8_MAJOR_VERSION) &&                                               \
+    (V8_MAJOR_VERSION > 14 ||                                                  \
+     (V8_MAJOR_VERSION == 14 &&                                                \
+      defined(V8_MINOR_VERSION) && V8_MINOR_VERSION >= 8))
+# define NAN_HAS_PROPERTY_CALLBACK_INFO_BOOLEAN_SETTER 1
+#endif
+
+namespace imp {
+// The V8 value type behind Nan::PropertyCallbackInfo<T> and
+// Nan::ReturnValue<T>. Setters keep PropertyCallbackInfo<void> in Nan's API.
+template<typename T> struct PropertyCallbackValue { typedef T Type; };
+#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_BOOLEAN_SETTER)
+template<> struct PropertyCallbackValue<void> { typedef v8::Boolean Type; };
+#endif
+typedef v8::PropertyCallbackInfo<PropertyCallbackValue<void>::Type>
+    SetterPropertyCallbackInfo;
+}  // end of namespace imp
+
 template<typename T>
 class ReturnValue {
-  v8::ReturnValue<T> value_;
+  v8::ReturnValue<typename imp::PropertyCallbackValue<T>::Type> value_;
 
  public:
   template <class S>
@@ -160,12 +189,14 @@ class FunctionCallbackInfo {
 
 template<typename T>
 class PropertyCallbackInfo {
-  const v8::PropertyCallbackInfo<T> &info_;
+  typedef v8::PropertyCallbackInfo<
+      typename imp::PropertyCallbackValue<T>::Type> Info;
+  const Info &info_;
   const v8::Local<v8::Value> data_;
 
  public:
   explicit inline PropertyCallbackInfo(
-      const v8::PropertyCallbackInfo<T> &info
+      const Info &info
     , const v8::Local<v8::Value> data) :
           info_(info)
         , data_(data) {}
@@ -173,14 +204,17 @@ class PropertyCallbackInfo {
   inline v8::Isolate* GetIsolate() const { return info_.GetIsolate(); }
   inline v8::Local<v8::Value> Data() const { return data_; }
   inline v8::Local<v8::Object> This() const {
-#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2)
+#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2_AS_HOLDER)
+    return info_.Holder();
+#elif defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2)
     return info_.HolderV2();
 #else
     return info_.This();
 #endif
   }
   inline v8::Local<v8::Object> Holder() const {
-#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2)
+#if defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2) &&                       \
+    !defined(NAN_HAS_PROPERTY_CALLBACK_INFO_HOLDER_V2_AS_HOLDER)
     return info_.HolderV2();
 #else
     return info_.Holder();
@@ -253,7 +287,7 @@ static
 void SetterCallbackWrapper(
     v8::Local<v8::Name> property
   , v8::Local<v8::Value> value
-  , const v8::PropertyCallbackInfo<void> &info) {
+  , const SetterPropertyCallbackInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<void>
       cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
@@ -267,7 +301,7 @@ void SetterCallbackWrapper(
 typedef void (*NativeSetter)(
     v8::Local<v8::Name>
   , v8::Local<v8::Value>
-  , const v8::PropertyCallbackInfo<void> &);
+  , const SetterPropertyCallbackInfo &);
 #else
 static
 void GetterCallbackWrapper(
@@ -332,7 +366,7 @@ static
 v8::Intercepted PropertySetterCallbackWrapper(
     v8::Local<v8::Name> property
   , v8::Local<v8::Value> value
-  , const v8::PropertyCallbackInfo<void> &info) {
+  , const SetterPropertyCallbackInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<void>
       cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
@@ -346,7 +380,7 @@ v8::Intercepted PropertySetterCallbackWrapper(
 typedef v8::Intercepted (*NativePropertySetter)(
     v8::Local<v8::Name>
   , v8::Local<v8::Value>
-  , const v8::PropertyCallbackInfo<void> &);
+  , const SetterPropertyCallbackInfo &);
 
 #else
 static
@@ -585,7 +619,7 @@ static
 v8::Intercepted IndexSetterCallbackWrapper(
     uint32_t index
   , v8::Local<v8::Value> value
-  , const v8::PropertyCallbackInfo<void> &info) {
+  , const SetterPropertyCallbackInfo &info) {
   v8::Local<v8::Object> obj = info.Data().As<v8::Object>();
   PropertyCallbackInfo<void>
       cbinfo(info, obj->GetInternalField(kDataIndex).As<v8::Value>());
@@ -599,7 +633,7 @@ v8::Intercepted IndexSetterCallbackWrapper(
 typedef v8::Intercepted (*NativeIndexSetter)(
     uint32_t
   , v8::Local<v8::Value>
-  , const v8::PropertyCallbackInfo<void> &);
+  , const SetterPropertyCallbackInfo &);
 
 #else
 static
