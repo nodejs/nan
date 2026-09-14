@@ -1,6 +1,9 @@
 # NAN ChangeLog
 
-**Version 2.28.0: current Node 26.4.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.29.0: current Node 26.8.2, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.29.0 Sep 14 2026
+  - Feature: Support V8 15.3 and later (#1022) 368054da40eca115ba357cab10e72a2171f01e5a
 
 ### 2.28.0 Jun 25 2026
   - Feature: Fix v8::External::Value/New for the new ExternalPointerTypeTag API (#1015) c54668972803f24695c1002102dfd667a0ac57e5
