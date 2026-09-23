@@ -660,6 +660,12 @@ class AsyncResource {
 #endif
   }
 
+#if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
+  inline node::CallbackScope makeCallbackScope(v8::Local<v8::Object> target) {
+    return {v8::Isolate::GetCurrent(), target, context};
+  }
+#endif
+
  private:
   NAN_DISALLOW_ASSIGN_COPY_MOVE(AsyncResource)
 #if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION

@@ -16,6 +16,8 @@ and `node::MakeCallback`. Using this mechanism to call back into JavaScript, as 
 `v8::Function::Call` ensures that the callback is executed in the correct async context. This ensures that async mechanisms
 such as domains and [async_hooks][] function correctly.
 
+`makeCallBackScope` is a factory for `node::callbackScope`. A `callbackScope` ensures that micro-tasks such as `Pormise` handlers and `nextTick` callbacks will be executed after the function returns. It is a RAII guard and must always be allocated on the stack. This must be used when an async worker does an action with an effect on the event loop such as resolving a `Promise` without calling JavaScript - otherwise `makeCallback` already takes care of the micro-tasks queue.
+
 Definition:
 
 ```c++
@@ -39,6 +41,9 @@ class AsyncResource {
                                             const char* method,
                                             int argc,
                                             v8::Local<v8::Value>* argv);
+
+  node::CallbackScope node::CallbackScope makeCallbackScope(
+                                            v8::Local<v8::Object> target);
 };
 ```
 
