@@ -26,21 +26,7 @@ NAN_METHOD(EncodeHex) {
 }
 
 NAN_METHOD(EncodeUCS2) {
-  // node::Encode(uint16_t*) reverses endianness on BE platforms.
-  // The char16_t literal u"hello" is BE on s390x but node::Encode expects LE,
-  // so we convert each code unit to LE explicitly before passing to Encode.
-  static const char16_t src[] = u"hello";
-  static const size_t kNumChars = (sizeof(src) / sizeof(src[0])) - 1;  // exclude NUL
-  uint16_t buf[kNumChars];
-  for (size_t i = 0; i < kNumChars; i++) {
-    uint16_t v = static_cast<uint16_t>(src[i]);
-#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-    buf[i] = static_cast<uint16_t>((v >> 8) | (v << 8));
-#else
-    buf[i] = v;
-#endif
-  }
-  info.GetReturnValue().Set(Encode(buf, kNumChars * sizeof(uint16_t), UCS2));
+  info.GetReturnValue().Set(Encode(u"hello", 10, UCS2));
 }
 
 Persistent<v8::FunctionTemplate> returnUtf8String_persistent;
