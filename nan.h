@@ -2435,6 +2435,16 @@ enum Encoding {ASCII, UTF8, BASE64, UCS2, BINARY, HEX, BUFFER};
 # include "nan_string_bytes.h"  // NOLINT(build/include)
 #endif
 
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+namespace imp {
+inline void SwapBytes16(const uint16_t* src, uint16_t* dst, size_t count) {
+  for (size_t i = 0; i < count; i++) {
+    dst[i] = static_cast<uint16_t>((src[i] >> 8) | (src[i] << 8));
+  }
+}
+}  // namespace imp
+#endif
+
 #if NODE_MAJOR_VERSION >= 24
 inline MaybeLocal<v8::Value> TryEncode(
     const void *buf, size_t len, enum Encoding encoding = BINARY) {
@@ -2442,10 +2452,22 @@ inline MaybeLocal<v8::Value> TryEncode(
   node::encoding node_enc = static_cast<node::encoding>(encoding);
 
   if (encoding == UCS2) {
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    size_t count = len / 2;
+    uint16_t* swapped = new uint16_t[count];
+    imp::SwapBytes16(reinterpret_cast<const uint16_t*>(buf), swapped, count);
+    MaybeLocal<v8::Value> result = node::TryEncode(
+        isolate
+      , swapped
+      , count);
+    delete[] swapped;
+    return result;
+#else
     return node::TryEncode(
         isolate
       , reinterpret_cast<const uint16_t *>(buf)
       , len / 2);
+#endif
   } else {
     return node::TryEncode(
         isolate
@@ -2469,10 +2491,22 @@ inline v8::Local<v8::Value> Encode(
   node::encoding node_enc = static_cast<node::encoding>(encoding);
 
   if (encoding == UCS2) {
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    size_t count = len / 2;
+    uint16_t* swapped = new uint16_t[count];
+    imp::SwapBytes16(reinterpret_cast<const uint16_t*>(buf), swapped, count);
+    v8::Local<v8::Value> result = node::Encode(
+        isolate
+      , swapped
+      , count);
+    delete[] swapped;
+    return result;
+#else
     return node::Encode(
         isolate
       , reinterpret_cast<const uint16_t *>(buf)
       , len / 2);
+#endif
   } else {
     return node::Encode(
         isolate
@@ -2481,14 +2515,51 @@ inline v8::Local<v8::Value> Encode(
       , node_enc);
   }
 #elif (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
+# if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  if (encoding == UCS2) {
+    size_t count = len / 2;
+    uint16_t* swapped = new uint16_t[count];
+    imp::SwapBytes16(reinterpret_cast<const uint16_t*>(buf), swapped, count);
+    v8::Local<v8::Value> result = node::Encode(
+        v8::Isolate::GetCurrent()
+      , reinterpret_cast<const char*>(swapped)
+      , len
+      , static_cast<node::encoding>(encoding));
+    delete[] swapped;
+    return result;
+  }
+# endif
   return node::Encode(
       v8::Isolate::GetCurrent()
     , buf, len
     , static_cast<node::encoding>(encoding));
 #else
 # if NODE_MODULE_VERSION >= NODE_0_10_MODULE_VERSION
+#  if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  if (encoding == UCS2) {
+    size_t count = len / 2;
+    uint16_t* swapped = new uint16_t[count];
+    imp::SwapBytes16(reinterpret_cast<const uint16_t*>(buf), swapped, count);
+    v8::Local<v8::Value> result =
+        node::Encode(reinterpret_cast<const char*>(swapped), len,
+                     static_cast<node::encoding>(encoding));
+    delete[] swapped;
+    return result;
+  }
+#  endif
   return node::Encode(buf, len, static_cast<node::encoding>(encoding));
 # else
+#  if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  if (encoding == UCS2) {
+    size_t count = len / 2;
+    uint16_t* swapped = new uint16_t[count];
+    imp::SwapBytes16(reinterpret_cast<const uint16_t*>(buf), swapped, count);
+    v8::Local<v8::Value> result =
+        imp::Encode(reinterpret_cast<const char*>(swapped), len, encoding);
+    delete[] swapped;
+    return result;
+  }
+#  endif
   return imp::Encode(reinterpret_cast<const char*>(buf), len, encoding);
 # endif
 #endif
@@ -3200,3 +3271,4 @@ MakeMaybe(MaybeMaybe<T> v) {
 }  // end of namespace Nan
 
 #endif  // NAN_H_
+
