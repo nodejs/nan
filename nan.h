@@ -661,8 +661,8 @@ class AsyncResource {
   }
 
 #if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
-  inline operator node::async_context() {
-    return (node::async_context)context;
+  inline operator node::async_context() const {
+    return context;
   }
 #endif
 
