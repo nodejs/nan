@@ -39,7 +39,7 @@ void AfterDelay(uv_work_t* req, int status) {
 
   DelayRequest *delay_request = static_cast<DelayRequest*>(req->data);
   v8::Local<v8::Promise::Resolver> resolver = New(delay_request->resolver);
-  resolver->Resolve(Nan::GetCurrentContext(), New<v8::Boolean>(true));
+  resolver->Resolve(Nan::GetCurrentContext(), New<v8::Boolean>(true)).ToChecked();
 
   v8::Local<v8::Object> target = New<v8::Object>();
 
