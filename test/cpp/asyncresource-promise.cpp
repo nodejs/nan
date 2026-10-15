@@ -44,7 +44,8 @@ void AfterDelay(uv_work_t* req, int status) {
   v8::Local<v8::Object> target = New<v8::Object>();
 
   // Run the callback in the async context.
-  node::CallbackScope callback_scope = delay_request->makeCallbackScope(target);
+  node::CallbackScope callback_scope(v8::Isolate::GetCurrent(), target,
+                                       (node::async_context)*delay_request);
 
   delete delay_request;
 }
