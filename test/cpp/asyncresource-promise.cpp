@@ -45,7 +45,7 @@ void AfterDelay(uv_work_t* req, int status) {
 
   // Run the callback in the async context.
   node::CallbackScope callback_scope(v8::Isolate::GetCurrent(), target,
-                                       (node::async_context)*delay_request);
+                                       static_cast<node::async_context>(*delay_request));
 
   delete delay_request;
 }
