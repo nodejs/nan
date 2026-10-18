@@ -1,6 +1,10 @@
 # NAN ChangeLog
 
-**Version 2.29.0: current Node 26.8.2, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+**Version 2.30.0: current Node 26.12.0, Node 0.12: 0.12.18, Node 0.10: 0.10.48, iojs: 3.3.1**
+
+### 2.30.0 Oct 18 2026
+  - Bugfix: fix: handle big-endian encoding in `Nan::Encode/TryEncode` for UCS2 (#1023) 3467088c4dc4a4ee07b622d40c0428646c85dbba
+  - Feature: allow retrieving of `node::async_context` from `Nan::AsyncResource` (#1026) d3becc5d0d94844cd99206dd30aa54f8193aa725
 
 ### 2.29.0 Sep 14 2026
   - Feature: Support V8 15.3 and later (#1022) 368054da40eca115ba357cab10e72a2171f01e5a
