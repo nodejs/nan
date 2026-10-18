@@ -99,6 +99,10 @@
       , "sources"     : [ "cpp/asyncresource.cpp" ]
     }
     , {
+        "target_name" : "asyncresource-promise"
+      , "sources"     : [ "cpp/asyncresource-promise.cpp" ]
+    }
+    , {
         "target_name" : "callbackcontext"
       , "sources"     : [ "cpp/callbackcontext.cpp" ]
     }
