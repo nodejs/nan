@@ -582,6 +582,12 @@ v8::Local<v8::Value> MakeCallback(v8::Local<v8::Object> target,
 
 // === AsyncResource ===========================================================
 
+// node::MakeCallback() taking the Environment (nodejs/node#66510).
+// Placeholder version, to be set to the first release that has it.
+#if NODE_MAJOR_VERSION >= 27
+# define NAN_MAKECALLBACK_ENV 1
+#endif
+
 class AsyncResource {
  public:
   AsyncResource(
@@ -595,6 +601,9 @@ class AsyncResource {
     }
 
     context = node::EmitAsyncInit(isolate, resource, name);
+#if defined(NAN_MAKECALLBACK_ENV)
+    env = node::GetCurrentEnvironment(isolate->GetCurrentContext());
+#endif
 #endif
   }
 
@@ -611,6 +620,9 @@ class AsyncResource {
     v8::Local<v8::String> name_string =
         New<v8::String>(name).ToLocalChecked();
     context = node::EmitAsyncInit(isolate, resource, name_string);
+#if defined(NAN_MAKECALLBACK_ENV)
+    env = node::GetCurrentEnvironment(isolate->GetCurrentContext());
+#endif
 #endif
   }
 
@@ -628,6 +640,9 @@ class AsyncResource {
     , v8::Local<v8::Value>* argv) {
 #if NODE_MODULE_VERSION < NODE_9_0_MODULE_VERSION
     return MakeCallback(target, func, argc, argv);
+#elif defined(NAN_MAKECALLBACK_ENV)
+    // taken once in the constructor, so Node does not look it up per call
+    return node::MakeCallback(env, target, func, argc, argv, context);
 #else
     return node::MakeCallback(
         v8::Isolate::GetCurrent(), target, func, argc, argv, context);
@@ -670,6 +685,9 @@ class AsyncResource {
   NAN_DISALLOW_ASSIGN_COPY_MOVE(AsyncResource)
 #if NODE_MODULE_VERSION >= NODE_9_0_MODULE_VERSION
   node::async_context context;
+#endif
+#if defined(NAN_MAKECALLBACK_ENV)
+  node::Environment* env;
 #endif
 };
 
